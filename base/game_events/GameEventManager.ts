@@ -137,7 +137,7 @@ export class GameEventManager {
             case npc_types.SHOP:
                 if (!this.data.shop_open) {
                     const previous_npc_direction = await this.handle_npc_interaction_start(npc);
-                    this.data.shop_menu.open_menu(npc.shop_key, npc.voice_key, async () => {
+                    this.data.shop_menu.open_menu(npc.shop_key, npc.avatar, npc.voice_key, async () => {
                         await this.handle_npc_interaction_end(npc, previous_npc_direction);
                     });
                 }

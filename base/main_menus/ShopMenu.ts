@@ -30,7 +30,6 @@ export type ShopItem = {
 export type Shop = {
     key_name: string;
     dialog_key: string;
-    avatar_key: string;
     shop_type: shop_types;
     item_list: ShopItem[];
 };
@@ -89,6 +88,7 @@ export class ShopMenu {
     public items_db: {[key_name: string]: Item};
     public shops_db: {[key_name: string]: Shop};
     public shopkeep_dialog_db: {[key_name: string]: DialogData};
+    public avatar_key: string;
     public voice_key: string;
 
     public normal_item_list: {[key_name: string]: ShopItem};
@@ -393,7 +393,7 @@ export class ShopMenu {
         if (!this.npc_dialog.is_active) {
             this.npc_dialog.open(
                 this.shop_key,
-                this.data.info.shops_list[this.shop_key].avatar_key,
+                this.avatar_key,
                 this.data.info.shops_list[this.shop_key].dialog_key,
                 this.voice_key
             );
@@ -403,9 +403,10 @@ export class ShopMenu {
         this.horizontal_menu.open(undefined, this.current_index);
     }
 
-    open_menu(shop_key: string, voice_key: string, close_callback?: Function) {
+    open_menu(shop_key: string, avatar_key: string, voice_key: string, close_callback?: Function) {
         this.shop_key = shop_key;
         this.shop_type = this.shops_db[this.shop_key].shop_type ?? shop_types.GENERAL_SHOP;
+        this.avatar_key = avatar_key;
         this.voice_key = voice_key;
         this.close_callback = close_callback;
 
