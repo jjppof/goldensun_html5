@@ -11,7 +11,15 @@ import {CharsMenu} from "../support_menus/CharsMenu";
 import {HorizontalMenu} from "../support_menus/HorizontalMenu";
 import {GoldenSun} from "../GoldenSun";
 import * as _ from "lodash";
-import {Item} from "../Item";
+import {Item, item_types} from "../Item";
+
+export enum shop_types {
+    WEAPON_SHOP = "weapon_shop",
+    ARMOR_SHOP = "armor_shop",
+    MEDICINE_SHOP = "medicine_shop",
+    WEAPON_ARMOR_SHOP = "weapon_armor_shop",
+    GENERAL_SHOP = "general_shop",
+}
 
 export type ShopItem = {
     key_name: string;
@@ -23,6 +31,7 @@ export type Shop = {
     key_name: string;
     dialog_key: string;
     avatar_key: string;
+    shop_type: shop_types;
     item_list: ShopItem[];
 };
 
@@ -75,6 +84,7 @@ export class ShopMenu {
     public game: Phaser.Game;
     public data: GoldenSun;
     public shop_key: string;
+    public shop_type: shop_types;
     public close_callback: Function;
     public items_db: {[key_name: string]: Item};
     public shops_db: {[key_name: string]: Shop};
@@ -259,7 +269,31 @@ export class ShopMenu {
                 }
             }
         });
-        const artifact_list = _.cloneDeep(this.data.info.artifacts_global_list);
+        const artifact_list = this.data.info.artifacts_global_list.filter(item_data => {
+            const item = this.data.info.items_list[item_data.key_name];
+            if (this.shop_type === shop_types.WEAPON_SHOP || this.shop_type === shop_types.WEAPON_ARMOR_SHOP) {
+                switch (item.type) {
+                    case item_types.WEAPONS:
+                    case item_types.CLASS_CHANGER:
+                        return item_data;
+                }
+            }
+            if (this.shop_type === shop_types.ARMOR_SHOP || this.shop_type === shop_types.WEAPON_ARMOR_SHOP) {
+                switch (item.type) {
+                    case item_types.ARMOR:
+                    case item_types.CHEST_PROTECTOR:
+                    case item_types.HEAD_PROTECTOR:
+                    case item_types.LEG_PROTECTOR:
+                    case item_types.RING:
+                    case item_types.UNDERWEAR:
+                        return item_data;
+                }
+            } else if (this.shop_type === shop_types.MEDICINE_SHOP && item.type === item_types.GENERAL_ITEM) {
+                return item_data;
+            } else if (this.shop_type === shop_types.GENERAL_SHOP) {
+                return item_data;
+            }
+        });
         const normal_list = item_list.filter(item_data => {
             return item_data.quantity && !this.items_db[item_data.key_name].rare_item;
         });
@@ -371,6 +405,7 @@ export class ShopMenu {
 
     open_menu(shop_key: string, voice_key: string, close_callback?: Function) {
         this.shop_key = shop_key;
+        this.shop_type = this.shops_db[this.shop_key].shop_type ?? shop_types.GENERAL_SHOP;
         this.voice_key = voice_key;
         this.close_callback = close_callback;
 

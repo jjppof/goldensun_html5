@@ -3,6 +3,7 @@
         "key_name": "madra_test_shop",
         "dialog_key": "female_medicine_shopkeep_00",
         "avatar_key": "potion_shopkeeper",
+        "shop_type": "general_shop",
         "item_list": [
             {
                 "key_name":"herb",
