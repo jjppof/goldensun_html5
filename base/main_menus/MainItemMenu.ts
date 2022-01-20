@@ -132,6 +132,7 @@ export class MainItemMenu {
             ARRANGE_WINDOW_WIDTH,
             ARRANGE_WINDOW_HEIGHT
         );
+        this.config_arrange_window();
         this.item_overview_window = new Window(
             this.game,
             ITEM_OVERVIEW_WIN_X,
@@ -155,6 +156,19 @@ export class MainItemMenu {
             DETAILS_WINDOW_WIDTH,
             DETAILS_WINDOW_HEIGHT
         );
+    }
+
+    config_arrange_window() {
+        this.arrange_window.create_at_group(9, 9, "keyboard_buttons", {frame: "l_button", color: 0x0});
+        this.arrange_window.create_at_group(8, 8, "keyboard_buttons", {frame: "l_button"});
+        this.arrange_window.set_text_in_position("+", 23, 9);
+        this.arrange_window.create_at_group(30, 9, "keyboard_buttons", {frame: "a_button", color: 0x0});
+        this.arrange_window.create_at_group(29, 8, "keyboard_buttons", {frame: "a_button"});
+        this.arrange_window.set_text_in_position("= Arrange items", 38, 8);
+
+        this.arrange_window.create_at_group(9, 17, "keyboard_buttons", {frame: "r_button", color: 0x0});
+        this.arrange_window.create_at_group(8, 16, "keyboard_buttons", {frame: "r_button"});
+        this.arrange_window.set_text_in_position("= View equipment", 23, 16);
     }
 
     shift_item_overview(down: boolean, hide_sub_menus: boolean = true) {
