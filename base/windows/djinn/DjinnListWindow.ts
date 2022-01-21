@@ -500,13 +500,13 @@ export class DjinnListWindow {
     grant_control(on_cancel: Function, on_select: Function, on_change_djinn_status?: Function) {
         //Missing check for different states on R Button. Using "Set" sound for all
         const controls = [
-            {button: Button.LEFT, on_down: this.previous_character.bind(this), sfx: {down: "menu/move"}},
-            {button: Button.RIGHT, on_down: this.next_character.bind(this), sfx: {down: "menu/move"}},
-            {button: Button.UP, on_down: this.previous_djinni.bind(this), sfx: {down: "menu/move"}},
-            {button: Button.DOWN, on_down: this.next_djinni.bind(this), sfx: {down: "menu/move"}},
-            {button: Button.A, on_down: on_select, sfx: {down: "menu/positive"}},
-            {button: Button.B, on_down: on_cancel, sfx: {down: "menu/negative"}},
-            {button: Button.R, on_down: on_change_djinn_status, sfx: {down: "menu/positive_3"}},
+            {buttons: Button.LEFT, on_down: this.previous_character.bind(this), sfx: {down: "menu/move"}},
+            {buttons: Button.RIGHT, on_down: this.next_character.bind(this), sfx: {down: "menu/move"}},
+            {buttons: Button.UP, on_down: this.previous_djinni.bind(this), sfx: {down: "menu/move"}},
+            {buttons: Button.DOWN, on_down: this.next_djinni.bind(this), sfx: {down: "menu/move"}},
+            {buttons: Button.A, on_down: on_select, sfx: {down: "menu/positive"}},
+            {buttons: Button.B, on_down: on_cancel, sfx: {down: "menu/negative"}},
+            {buttons: Button.R, on_down: on_change_djinn_status, sfx: {down: "menu/positive_3"}},
         ];
         this.data.control_manager.add_controls(controls, {
             loop_config: {vertical: true, horizontal: true},

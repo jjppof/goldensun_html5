@@ -477,11 +477,14 @@ export class Gamepad {
 
     /**
      * Returns a gamepad button state with its signal attached.
-     * @param {AnyButton} button - GBA (custom) button
-     * @return {GamepadButton} - GBA button state
+     * @param buttons - GBA (custom) button (or array of buttons)
+     * @return - GBA button (or array of buttons) state
      */
-    get_button(button: AnyButton): GamepadButton {
-        return this.buttons[button];
+    get_button(buttons: AnyButton | AnyButton[]): GamepadButton | GamepadButton[] {
+        if (Array.isArray(buttons)) {
+            return buttons.map(button => this.buttons[button]);
+        }
+        return this.buttons[buttons];
     }
 
     /**

@@ -72,7 +72,7 @@ export class GameEventManager {
         this.data.control_manager.add_controls(
             [
                 {
-                    button: Button.A,
+                    buttons: Button.A,
                     on_down: () => {
                         if (
                             this.data.hero.in_action() ||

@@ -436,12 +436,12 @@ export class ItemOptionsWindow {
         //Missing sound for item removal
         //Missing check for item use and item remove, and using appropriate sound
         const controls = [
-            {button: Button.LEFT, on_down: this.previous_horizontal.bind(this), sfx: {down: "menu/move"}},
-            {button: Button.RIGHT, on_down: this.next_horizontal.bind(this), sfx: {down: "menu/move"}},
-            {button: Button.UP, on_down: this.next_vertical.bind(this), sfx: {down: "menu/move"}},
-            {button: Button.DOWN, on_down: this.previous_vertical.bind(this), sfx: {down: "menu/move"}},
-            {button: Button.A, on_down: this.on_choose.bind(this), sfx: {down: "menu/positive"}},
-            {button: Button.B, on_down: this.close.bind(this, this.close_callback), sfx: {down: "menu/negative"}},
+            {buttons: Button.LEFT, on_down: this.previous_horizontal.bind(this), sfx: {down: "menu/move"}},
+            {buttons: Button.RIGHT, on_down: this.next_horizontal.bind(this), sfx: {down: "menu/move"}},
+            {buttons: Button.UP, on_down: this.next_vertical.bind(this), sfx: {down: "menu/move"}},
+            {buttons: Button.DOWN, on_down: this.previous_vertical.bind(this), sfx: {down: "menu/move"}},
+            {buttons: Button.A, on_down: this.on_choose.bind(this), sfx: {down: "menu/positive"}},
+            {buttons: Button.B, on_down: this.close.bind(this, this.close_callback), sfx: {down: "menu/negative"}},
         ];
 
         this.data.control_manager.add_controls(controls, {

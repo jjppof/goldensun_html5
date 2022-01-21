@@ -282,17 +282,17 @@ export class BattleDjinnWindow {
 
         const controls = [
             {
-                button: Button.LEFT,
+                buttons: Button.LEFT,
                 on_down: this.psynergy_window.previous_page.bind(this.psynergy_window),
                 sfx: {down: "menu/move"},
             },
             {
-                button: Button.RIGHT,
+                buttons: Button.RIGHT,
                 on_down: this.psynergy_window.next_page.bind(this.psynergy_window),
                 sfx: {down: "menu/move"},
             },
-            {button: Button.UP, on_down: this.previous_djinn.bind(this), sfx: {down: "menu/move"}},
-            {button: Button.DOWN, on_down: this.next_djinn.bind(this), sfx: {down: "menu/move"}},
+            {buttons: Button.UP, on_down: this.previous_djinn.bind(this), sfx: {down: "menu/move"}},
+            {buttons: Button.DOWN, on_down: this.next_djinn.bind(this), sfx: {down: "menu/move"}},
         ];
 
         this.data.control_manager.add_controls(controls, {
@@ -312,12 +312,12 @@ export class BattleDjinnWindow {
 
     djinn_choose() {
         const controls = [
-            {button: Button.LEFT, on_down: this.previous_page.bind(this), sfx: {down: "menu/move"}},
-            {button: Button.RIGHT, on_down: this.next_page.bind(this), sfx: {down: "menu/move"}},
-            {button: Button.UP, on_down: this.previous_djinn.bind(this), sfx: {down: "menu/move"}},
-            {button: Button.DOWN, on_down: this.next_djinn.bind(this), sfx: {down: "menu/move"}},
+            {buttons: Button.LEFT, on_down: this.previous_page.bind(this), sfx: {down: "menu/move"}},
+            {buttons: Button.RIGHT, on_down: this.next_page.bind(this), sfx: {down: "menu/move"}},
+            {buttons: Button.UP, on_down: this.previous_djinn.bind(this), sfx: {down: "menu/move"}},
+            {buttons: Button.DOWN, on_down: this.next_djinn.bind(this), sfx: {down: "menu/move"}},
             {
-                button: Button.A,
+                buttons: Button.A,
                 on_down: () => {
                     const this_djinn = this.data.info.djinni_list[this.djinni[this.djinn_index]];
                     if (this_djinn.status !== djinn_status.RECOVERY) {
@@ -328,7 +328,7 @@ export class BattleDjinnWindow {
                 sfx: {down: "menu/positive"},
             },
             {
-                button: Button.B,
+                buttons: Button.B,
                 on_down: () => {
                     this.choosen_ability = null;
                     this.close(this.close_callback);
@@ -343,7 +343,7 @@ export class BattleDjinnWindow {
 
         if (!this.open_psy_key) {
             const controls = [
-                {button: Button.R, on_down: this.show_psynergy.bind(this), on_up: this.hide_psynergy.bind(this)},
+                {buttons: Button.R, on_down: this.show_psynergy.bind(this), on_up: this.hide_psynergy.bind(this)},
             ];
             this.open_psy_key = this.data.control_manager.add_controls(controls, {
                 persist: true,

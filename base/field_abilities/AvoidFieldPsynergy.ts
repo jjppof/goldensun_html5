@@ -54,7 +54,7 @@ export class AvoidFieldPsynergy extends FieldAbilities {
         const control_key = this.data.control_manager.add_controls(
             [
                 {
-                    button: Button.A,
+                    buttons: Button.A,
                     on_down: () => {
                         if (controls_enabled) {
                             dialog.kill_dialog(

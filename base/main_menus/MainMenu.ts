@@ -139,8 +139,8 @@ export function initialize_menu(game: Phaser.Game, data: GoldenSun) {
     };
 
     const controls = [
-        {button: Button.A, on_down: trigger_menu},
-        {button: Button.SELECT, on_down: trigger_menu},
+        {buttons: Button.A, on_down: trigger_menu},
+        {buttons: Button.SELECT, on_down: trigger_menu},
     ];
 
     data.control_manager.add_controls(controls, {persist: true});

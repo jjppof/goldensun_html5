@@ -35,7 +35,7 @@ export class SummonEvent extends GameEvent {
         this.control_key = this.data.control_manager.add_controls(
             [
                 {
-                    button: Button.A,
+                    buttons: Button.A,
                     on_down: () => {
                         if (!this.active || !this.running || !this.control_enable) return;
                         this.control_enable = false;

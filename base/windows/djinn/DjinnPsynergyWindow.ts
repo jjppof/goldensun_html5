@@ -95,11 +95,11 @@ export class DjinnPsynergyWindow {
             this.close(this.close_callback);
         };
         const controls = [
-            {button: Button.LEFT, on_down: this.previous_page.bind(this), sfx: {down: "menu/move"}},
-            {button: Button.RIGHT, on_down: this.next_page.bind(this), sfx: {down: "menu/move"}},
-            {button: Button.R, on_down: this.next_state_callback, sfx: {down: "menu/move"}},
-            {button: Button.A, on_down: () => close(true), sfx: {down: "menu/positive_3"}},
-            {button: Button.B, on_down: () => close(false), sfx: {down: "menu/negative"}},
+            {buttons: Button.LEFT, on_down: this.previous_page.bind(this), sfx: {down: "menu/move"}},
+            {buttons: Button.RIGHT, on_down: this.next_page.bind(this), sfx: {down: "menu/move"}},
+            {buttons: Button.R, on_down: this.next_state_callback, sfx: {down: "menu/move"}},
+            {buttons: Button.A, on_down: () => close(true), sfx: {down: "menu/positive_3"}},
+            {buttons: Button.B, on_down: () => close(false), sfx: {down: "menu/negative"}},
         ];
         this.data.control_manager.add_controls(controls, {loop_config: {horizontal: true}});
     }

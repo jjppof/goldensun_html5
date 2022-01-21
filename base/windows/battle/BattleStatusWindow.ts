@@ -607,27 +607,27 @@ export class BattleStatusWindow {
 
     public grant_control() {
         const controls = [
-            {button: Button.A, on_down: this.trigger_state_change.bind(this), sfx: {down: "menu/positive"}},
-            {button: Button.B, on_down: this.close.bind(this, this.close_callback)},
-            {button: Button.L, on_down: this.previous_char.bind(this), sfx: {down: "menu/move"}},
-            {button: Button.R, on_down: this.next_char.bind(this), sfx: {down: "menu/move"}},
+            {buttons: Button.A, on_down: this.trigger_state_change.bind(this), sfx: {down: "menu/positive"}},
+            {buttons: Button.B, on_down: this.close.bind(this, this.close_callback)},
+            {buttons: Button.L, on_down: this.previous_char.bind(this), sfx: {down: "menu/move"}},
+            {buttons: Button.R, on_down: this.next_char.bind(this), sfx: {down: "menu/move"}},
             {
-                button: Button.LEFT,
+                buttons: Button.LEFT,
                 on_down: this.current_component.on_left.bind(this.current_component),
                 sfx: {down: "menu/move"},
             },
             {
-                button: Button.RIGHT,
+                buttons: Button.RIGHT,
                 on_down: this.current_component.on_right.bind(this.current_component),
                 sfx: {down: "menu/move"},
             },
             {
-                button: Button.UP,
+                buttons: Button.UP,
                 on_down: this.current_component.on_up.bind(this.current_component),
                 sfx: {down: "menu/move"},
             },
             {
-                button: Button.DOWN,
+                buttons: Button.DOWN,
                 on_down: this.current_component.on_down.bind(this.current_component),
                 sfx: {down: "menu/move"},
             },

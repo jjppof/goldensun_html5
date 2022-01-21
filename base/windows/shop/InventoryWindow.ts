@@ -213,12 +213,12 @@ export class InventoryWindow {
      */
     grant_control(on_cancel: Function, on_select: Function) {
         const controls = [
-            {button: Button.LEFT, on_down: this.previous_col.bind(this), sfx: {down: "menu/move"}},
-            {button: Button.RIGHT, on_down: this.next_col.bind(this), sfx: {down: "menu/move"}},
-            {button: Button.UP, on_down: this.previous_line.bind(this), sfx: {down: "menu/move"}},
-            {button: Button.DOWN, on_down: this.next_line.bind(this), sfx: {down: "menu/move"}},
-            {button: Button.A, on_down: on_select, sfx: {down: "menu/positive"}},
-            {button: Button.B, on_down: on_cancel, sfx: {down: "menu/negative"}},
+            {buttons: Button.LEFT, on_down: this.previous_col.bind(this), sfx: {down: "menu/move"}},
+            {buttons: Button.RIGHT, on_down: this.next_col.bind(this), sfx: {down: "menu/move"}},
+            {buttons: Button.UP, on_down: this.previous_line.bind(this), sfx: {down: "menu/move"}},
+            {buttons: Button.DOWN, on_down: this.next_line.bind(this), sfx: {down: "menu/move"}},
+            {buttons: Button.A, on_down: on_select, sfx: {down: "menu/positive"}},
+            {buttons: Button.B, on_down: on_cancel, sfx: {down: "menu/negative"}},
         ];
         this.data.control_manager.add_controls(controls, {
             loop_config: {vertical: true, horizontal: true},

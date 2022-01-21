@@ -62,12 +62,12 @@ export class MoveFieldPsynergy extends FieldAbilities {
         };
 
         const controls = [
-            {button: Button.LEFT, on_down: () => turn_then_fire_push(directions.left)},
-            {button: Button.RIGHT, on_down: () => turn_then_fire_push(directions.right)},
-            {button: Button.UP, on_down: () => turn_then_fire_push(directions.up)},
-            {button: Button.DOWN, on_down: () => turn_then_fire_push(directions.down)},
+            {buttons: Button.LEFT, on_down: () => turn_then_fire_push(directions.left)},
+            {buttons: Button.RIGHT, on_down: () => turn_then_fire_push(directions.right)},
+            {buttons: Button.UP, on_down: () => turn_then_fire_push(directions.up)},
+            {buttons: Button.DOWN, on_down: () => turn_then_fire_push(directions.down)},
             {
-                button: Button.B,
+                buttons: Button.B,
                 on_down: () => {
                     this.finish_hand();
                     this.return_to_idle_anim();

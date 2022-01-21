@@ -163,10 +163,10 @@ export class DropItemWindow {
         }, false);
 
         const controls = [
-            {button: Button.UP, on_down: this.change_answer.bind(this), sfx: {down: "menu/move"}},
-            {button: Button.DOWN, on_down: this.change_answer.bind(this), sfx: {down: "menu/move"}},
-            {button: Button.A, on_down: this.on_drop.bind(this), sfx: {down: "menu/positive"}},
-            {button: Button.B, on_down: this.close.bind(this), sfx: {down: "menu/negative"}},
+            {buttons: Button.UP, on_down: this.change_answer.bind(this), sfx: {down: "menu/move"}},
+            {buttons: Button.DOWN, on_down: this.change_answer.bind(this), sfx: {down: "menu/move"}},
+            {buttons: Button.A, on_down: this.on_drop.bind(this), sfx: {down: "menu/positive"}},
+            {buttons: Button.B, on_down: this.close.bind(this), sfx: {down: "menu/negative"}},
         ];
         this.data.control_manager.add_controls(controls, {loop_config: {vertical: true}});
     }

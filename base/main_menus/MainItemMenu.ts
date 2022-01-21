@@ -572,7 +572,7 @@ export class MainItemMenu {
         const text_objs = this.details_window.set_lines_of_text(lines, {space_between_lines: 2});
         this.data.control_manager.add_controls([
             {
-                button: Button.B,
+                buttons: Button.B,
                 on_down: () => {
                     text_objs.forEach(obj => this.details_window.destroy_text_obj(obj));
                     this.details_window.close(callback);

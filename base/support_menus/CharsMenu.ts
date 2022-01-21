@@ -4,6 +4,7 @@ import {GoldenSun} from "../GoldenSun";
 import {Button} from "../XGamepad";
 import {MainChar} from "../MainChar";
 import {CursorManager, PointVariants} from "../utils/CursorManager";
+import { Control } from "../utils/ControlManager";
 
 const MAX_PER_LINE = 4;
 
@@ -364,20 +365,21 @@ export class CharsMenu {
         this.change_line(new_line, new_index);
     }
 
-    grant_control(on_cancel?: Function, on_select?: Function, enable_swap?: boolean) {
+    grant_control(on_cancel?: Function, on_select?: Function, enable_swap?: boolean, extra_controls?: Control[]) {
         const controls = [
-            {button: Button.LEFT, on_down: this.previous_char.bind(this), sfx: {down: "menu/move"}},
-            {button: Button.RIGHT, on_down: this.next_char.bind(this), sfx: {down: "menu/move"}},
-            {button: Button.UP, on_down: this.previous_line.bind(this), sfx: {down: "menu/move"}},
-            {button: Button.DOWN, on_down: this.next_line.bind(this), sfx: {down: "menu/move"}},
+            {buttons: Button.LEFT, on_down: this.previous_char.bind(this), sfx: {down: "menu/move"}},
+            {buttons: Button.RIGHT, on_down: this.next_char.bind(this), sfx: {down: "menu/move"}},
+            {buttons: Button.UP, on_down: this.previous_line.bind(this), sfx: {down: "menu/move"}},
+            {buttons: Button.DOWN, on_down: this.next_line.bind(this), sfx: {down: "menu/move"}},
+            ... extra_controls ?? [],
             {
-                button: Button.A,
+                buttons: Button.A,
                 on_down: () => on_select?.(),
                 params: {reset_controls: true},
                 sfx: {down: "menu/positive"},
             },
             {
-                button: Button.B,
+                buttons: Button.B,
                 on_down: () => on_cancel?.(),
                 params: {reset_controls: true},
                 sfx: {down: "menu/negative"},
@@ -385,8 +387,8 @@ export class CharsMenu {
         ];
         if (enable_swap) {
             controls.push(
-                {button: Button.L, on_down: this.swap_previous.bind(this), sfx: {down: "menu/positive"}},
-                {button: Button.R, on_down: this.swap_next.bind(this), sfx: {down: "menu/positive"}}
+                {buttons: Button.L, on_down: this.swap_previous.bind(this), sfx: {down: "menu/positive"}},
+                {buttons: Button.R, on_down: this.swap_next.bind(this), sfx: {down: "menu/positive"}}
             );
         }
         this.data.control_manager.add_controls(controls, {loop_config: {horizontal: true}});

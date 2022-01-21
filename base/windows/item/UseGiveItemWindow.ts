@@ -257,10 +257,10 @@ export class UseGiveItemWindow {
             this.set_answer_index(YES_Y);
 
             const controls = [
-                {button: Button.UP, on_down: this.change_answer.bind(this), sfx: {down: "menu/move"}},
-                {button: Button.DOWN, on_down: this.change_answer.bind(this), sfx: {down: "menu/move"}},
-                {button: Button.A, on_down: this.on_give.bind(this), sfx: {down: "menu/positive_3"}},
-                {button: Button.B, on_down: this.on_give.bind(this, false), sfx: {down: "menu/negative"}},
+                {buttons: Button.UP, on_down: this.change_answer.bind(this), sfx: {down: "menu/move"}},
+                {buttons: Button.DOWN, on_down: this.change_answer.bind(this), sfx: {down: "menu/move"}},
+                {buttons: Button.A, on_down: this.on_give.bind(this), sfx: {down: "menu/positive_3"}},
+                {buttons: Button.B, on_down: this.on_give.bind(this, false), sfx: {down: "menu/negative"}},
             ];
             this.data.control_manager.add_controls(controls, {
                 loop_config: {vertical: true},
@@ -289,7 +289,7 @@ export class UseGiveItemWindow {
             this.data.cursor_manager.hide();
             this.data.control_manager.add_controls([
                 {
-                    button: Button.A,
+                    buttons: Button.A,
                     on_down: () => {
                         this.item_menu.set_description_window_text();
                         const char_index = this.data.info.party_data.members.indexOf(this.char);

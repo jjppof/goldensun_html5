@@ -49,7 +49,7 @@ export class RetreatFieldPsynergy extends FieldAbilities {
         const control_key = this.data.control_manager.add_controls(
             [
                 {
-                    button: Button.A,
+                    buttons: Button.A,
                     on_down: () => {
                         if (next) {
                             dialog.next_dialog(`It doesn't work here.`, () => {

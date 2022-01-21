@@ -313,31 +313,31 @@ export class GoldenSun {
 
         const controls = [
             {
-                button: Button.ZOOM1,
+                buttons: Button.ZOOM1,
                 on_down: () => setup_scale(1),
             },
             {
-                button: Button.ZOOM2,
+                buttons: Button.ZOOM2,
                 on_down: () => setup_scale(2),
             },
             {
-                button: Button.ZOOM3,
+                buttons: Button.ZOOM3,
                 on_down: () => setup_scale(3),
             },
             {
-                button: Button.PSY1,
+                buttons: Button.PSY1,
                 on_down: () => quick_ability(0),
             },
             {
-                button: Button.PSY2,
+                buttons: Button.PSY2,
                 on_down: () => quick_ability(1),
             },
             {
-                button: Button.PSY3,
+                buttons: Button.PSY3,
                 on_down: () => quick_ability(2),
             },
             {
-                button: Button.PSY4,
+                buttons: Button.PSY4,
                 on_down: () => quick_ability(3),
             },
         ];

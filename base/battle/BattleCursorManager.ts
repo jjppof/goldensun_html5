@@ -249,11 +249,11 @@ export class BattleCursorManager {
 
                     // Sound for A key unavailable, using Menu Positive instead
                     const controls = [
-                        {button: Button.LEFT, on_down: this.next_target.bind(this), sfx: {down: "menu/move"}},
-                        {button: Button.RIGHT, on_down: this.previous_target.bind(this), sfx: {down: "menu/move"}},
-                        {button: Button.A, on_down: this.set_targets.bind(this), sfx: {down: "menu/positive"}},
+                        {buttons: Button.LEFT, on_down: this.next_target.bind(this), sfx: {down: "menu/move"}},
+                        {buttons: Button.RIGHT, on_down: this.previous_target.bind(this), sfx: {down: "menu/move"}},
+                        {buttons: Button.A, on_down: this.set_targets.bind(this), sfx: {down: "menu/positive"}},
                         {
-                            button: Button.B,
+                            buttons: Button.B,
                             on_down: this.choosing_targets_finished.bind(this, null),
                             sfx: {down: "menu/negative"},
                         },

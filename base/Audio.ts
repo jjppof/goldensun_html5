@@ -40,19 +40,19 @@ export class Audio {
     initialize_controls() {
         const controls = [
             {
-                button: Button.MUTE,
+                buttons: Button.MUTE,
                 on_down: () => {
                     this.game.sound.context.resume();
                     this.game.sound.mute = !this.game.sound.mute;
                 },
             },
             {
-                button: Button.VOL_UP,
+                buttons: Button.VOL_UP,
                 on_down: () => this.alter_volume(+Audio.VOLUME_STEP),
                 params: {loop_time: Audio.VOLUME_ALTER_LOOP_TIME},
             },
             {
-                button: Button.VOL_DOWN,
+                buttons: Button.VOL_DOWN,
                 on_down: () => this.alter_volume(-Audio.VOLUME_STEP),
                 params: {loop_time: Audio.VOLUME_ALTER_LOOP_TIME},
             },

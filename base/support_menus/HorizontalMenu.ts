@@ -118,10 +118,10 @@ export class HorizontalMenu {
 
     set_controls() {
         const controls = [
-            {button: Button.LEFT, on_down: this.previous_button.bind(this), sfx: {down: "menu/move"}},
-            {button: Button.RIGHT, on_down: this.next_button.bind(this), sfx: {down: "menu/move"}},
-            {button: Button.A, on_down: this.on_press.bind(this), sfx: {down: "menu/positive"}},
-            {button: Button.B, on_down: this.on_cancel.bind(this), sfx: {down: "menu/negative"}},
+            {buttons: Button.LEFT, on_down: this.previous_button.bind(this), sfx: {down: "menu/move"}},
+            {buttons: Button.RIGHT, on_down: this.next_button.bind(this), sfx: {down: "menu/move"}},
+            {buttons: Button.A, on_down: this.on_press.bind(this), sfx: {down: "menu/positive"}},
+            {buttons: Button.B, on_down: this.on_cancel.bind(this), sfx: {down: "menu/negative"}},
         ];
 
         this.data.control_manager.add_controls(controls, {loop_config: {horizontal: true}});

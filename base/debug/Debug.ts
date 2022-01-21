@@ -33,12 +33,12 @@ export class Debug {
 
     initialize_controls() {
         const debug_controls = [
-            {button: Button.DEBUG_PHYSICS, on_down: this.toggle_debug_physics.bind(this)},
-            {button: Button.DEBUG_GRID, on_down: this.toggle_grid.bind(this)},
-            {button: Button.DEBUG_KEYS, on_down: this.toggle_keys.bind(this)},
-            {button: Button.DEBUG_STATS, on_down: this.toggle_stats.bind(this)},
-            {button: Button.DEBUG_FPS, on_down: this.toggle_fps.bind(this)},
-            {button: Button.DEBUG_SLIDERS, on_down: this.toggle_sliders.bind(this)},
+            {buttons: Button.DEBUG_PHYSICS, on_down: this.toggle_debug_physics.bind(this)},
+            {buttons: Button.DEBUG_GRID, on_down: this.toggle_grid.bind(this)},
+            {buttons: Button.DEBUG_KEYS, on_down: this.toggle_keys.bind(this)},
+            {buttons: Button.DEBUG_STATS, on_down: this.toggle_stats.bind(this)},
+            {buttons: Button.DEBUG_FPS, on_down: this.toggle_fps.bind(this)},
+            {buttons: Button.DEBUG_SLIDERS, on_down: this.toggle_sliders.bind(this)},
         ];
         this.data.control_manager.add_controls(debug_controls, {persist: true});
     }

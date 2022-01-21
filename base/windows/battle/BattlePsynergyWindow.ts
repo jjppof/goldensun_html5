@@ -380,12 +380,12 @@ export class BattlePsynergyWindow {
 
     ability_choose() {
         const controls = [
-            {button: Button.LEFT, on_down: this.previous_page.bind(this), sfx: {down: "menu/move"}},
-            {button: Button.RIGHT, on_down: this.next_page.bind(this), sfx: {down: "menu/move"}},
-            {button: Button.UP, on_down: this.previous_ability.bind(this), sfx: {down: "menu/move"}},
-            {button: Button.DOWN, on_down: this.next_ability.bind(this), sfx: {down: "menu/move"}},
+            {buttons: Button.LEFT, on_down: this.previous_page.bind(this), sfx: {down: "menu/move"}},
+            {buttons: Button.RIGHT, on_down: this.next_page.bind(this), sfx: {down: "menu/move"}},
+            {buttons: Button.UP, on_down: this.previous_ability.bind(this), sfx: {down: "menu/move"}},
+            {buttons: Button.DOWN, on_down: this.next_ability.bind(this), sfx: {down: "menu/move"}},
             {
-                button: Button.A,
+                buttons: Button.A,
                 on_down: () => {
                     if (!this.expanded) {
                         this.choosen_ability = this.abilities[this.ability_index];
@@ -396,7 +396,7 @@ export class BattlePsynergyWindow {
                 params: {reset_controls: true},
             },
             {
-                button: Button.B,
+                buttons: Button.B,
                 on_down: () => {
                     if (!this.expanded) {
                         this.choosen_ability = null;

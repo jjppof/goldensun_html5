@@ -48,7 +48,7 @@ export class MindReadFieldPsynergy extends FieldAbilities {
         this.control_id = this.data.control_manager.add_controls(
             [
                 {
-                    button: Button.A,
+                    buttons: Button.A,
                     on_down: () => {
                         if (!this.control_enable) {
                             return;

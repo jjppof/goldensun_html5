@@ -234,12 +234,12 @@ export class BattleSummonWindow {
 
     summon_choose() {
         let controls = [
-            {button: Button.LEFT, on_down: this.previous_page.bind(this), sfx: {down: "menu/move"}},
-            {button: Button.RIGHT, on_down: this.next_page.bind(this), sfx: {down: "menu/move"}},
-            {button: Button.UP, on_down: this.previous_summon.bind(this), sfx: {down: "menu/move"}},
-            {button: Button.DOWN, on_down: this.next_summon.bind(this), sfx: {down: "menu/move"}},
+            {buttons: Button.LEFT, on_down: this.previous_page.bind(this), sfx: {down: "menu/move"}},
+            {buttons: Button.RIGHT, on_down: this.next_page.bind(this), sfx: {down: "menu/move"}},
+            {buttons: Button.UP, on_down: this.previous_summon.bind(this), sfx: {down: "menu/move"}},
+            {buttons: Button.DOWN, on_down: this.next_summon.bind(this), sfx: {down: "menu/move"}},
             {
-                button: Button.A,
+                buttons: Button.A,
                 on_down: () => {
                     this.choosen_ability = this.summons[this.summon_index].key_name;
                     this.hide(this.close_callback);
@@ -247,7 +247,7 @@ export class BattleSummonWindow {
                 sfx: {down: "menu/positive"},
             },
             {
-                button: Button.B,
+                buttons: Button.B,
                 on_down: () => {
                     this.choosen_ability = null;
                     this.close(this.close_callback);

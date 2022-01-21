@@ -1,13 +1,16 @@
 import * as _ from "lodash";
 import {Audio} from "../Audio";
-import {Gamepad as XGamepad, Button} from "../XGamepad";
+import {Gamepad as XGamepad, Button, GamepadButton} from "../XGamepad";
 
 const DEFAULT_LOOP_TIME = Phaser.Timer.QUARTER >> 1;
 
-type Control = {
-    button: Button;
+export type Control = {
+    /** The button that will fire the callbacks. If it's an array, the buttons will be tested if pressed in order. */
+    buttons: Button | Button[];
     on_down?: Function;
     on_up?: Function;
+    /** Stop propagation of the event, blocking the dispatch to next listener on the queue. Does not work for loops. */
+    halt?: boolean;
     params?: {
         /** Whether to reset the binding set upon press */
         reset_controls?: boolean;
@@ -88,7 +91,7 @@ export class ControlManager {
     add_simple_controls(callback: Function, params?: SimpleControlParams, sfx?: string) {
         const controls: Control[] = [
             {
-                button: Button.A,
+                buttons: Button.A,
                 on_down: callback,
                 params: {reset_controls: params?.reset_on_press},
                 sfx: sfx ? {down: sfx} : null,
@@ -98,7 +101,7 @@ export class ControlManager {
         if (params?.confirm_only !== true) {
             controls.push({
                 // ... controls[0]
-                button: Button.B,
+                buttons: Button.B,
                 on_down: callback,
                 params: {reset_controls: params?.reset_on_press},
                 sfx: sfx ? {down: sfx} : null,
@@ -145,7 +148,7 @@ export class ControlManager {
             edits.push({button: Button.R, loop_time: options?.shoulder_time});
         }
         edits.forEach(edit => {
-            const c = controls.find(c => c.button === edit.button);
+            const c = controls.find(c => c.buttons === edit.button);
             if (!c) return;
             c.params ??= {};
             c.params.loop_time = edit.loop_time ?? DEFAULT_LOOP_TIME;
@@ -166,10 +169,23 @@ export class ControlManager {
 
         controls.forEach(control => {
             if (control.on_up) {
-                const b = this.gamepad.get_button(control.button).on_up.add(() => {
+                const gamepad_button = this.gamepad.get_button(control.buttons);
+                const last_gamepad_bt = Array.isArray(gamepad_button) ? gamepad_button[gamepad_button.length - 1] : gamepad_button;
+
+                const b = last_gamepad_bt.on_up.add(() => {
                     if (this.disabled) return;
+                    if (Array.isArray(control.buttons)) {
+                        if (!this.check_bt_sequence_is_down(control.buttons as Button[])) return;
+                    }
 
                     if (control.sfx?.up) this.audio.play_se(control.sfx.up);
+                    if (control.halt) {
+                        if (Array.isArray(gamepad_button)) {
+                            gamepad_button.forEach(bt => bt.on_up.halt());
+                        } else {
+                            last_gamepad_bt.on_up.halt();
+                        }
+                    }
                     control.on_up();
                 });
                 register(b);
@@ -179,39 +195,58 @@ export class ControlManager {
                 const loop_time = control.params?.loop_time;
                 const trigger_reset = control.params?.reset_controls;
 
-                const gamepad_button = this.gamepad.get_button(control.button);
+                const last_bt = control.buttons[(control.buttons as Button[]).length - 1];
+                const gamepad_button = this.gamepad.get_button(control.buttons);
+                const last_gamepad_bt = Array.isArray(gamepad_button) ? gamepad_button[gamepad_button.length - 1] : gamepad_button;
 
                 if (loop_time) {
-                    const b1 = gamepad_button.on_down.add(event => {
+                    const b1 = last_gamepad_bt.on_down.add(event => {
                         if (this.disabled) return;
+                        if (Array.isArray(control.buttons)) {
+                            if (!this.check_bt_sequence_is_down(control.buttons as Button[])) return;
+                        }
 
-                        const opposite_button = XGamepad.get_opposite_button(control.button);
+                        const opposite_button = XGamepad.get_opposite_button(last_bt);
 
                         if (opposite_button && this.gamepad.is_down(opposite_button)) {
-                            this.gamepad.get_button(opposite_button).is_up = true;
+                            const opposite_gamepad_bt = this.gamepad.get_button(opposite_button) as GamepadButton;
+                            opposite_gamepad_bt.is_up = true;
                             this.stop_timers();
                         }
 
                         // Done in XGamepad._on_down
-                        // gamepad_button.is_down = true;
+                        // last_gamepad_bt.is_down = true;
                         this.start_loop_timers(control.on_down, loop_time, control.sfx?.down);
                     });
-                    const b2 = gamepad_button.on_up.add(event => {
+                    const b2 = last_gamepad_bt.on_up.add(event => {
                         if (this.disabled) return;
+                        if (Array.isArray(control.buttons)) {
+                            if (!this.check_bt_sequence_is_down(control.buttons as Button[])) return;
+                        }
 
                         // Done in XGamepad._on_up
-                        // gamepad_button.is_up = true;
+                        // last_gamepad_bt.is_up = true;
                         this.stop_timers();
                     });
                     register(b1);
                     register(b2);
                 } else {
-                    const b = gamepad_button.on_down.add(event => {
+                    const b = last_gamepad_bt.on_down.add(event => {
                         if (this.disabled) return;
+                        if (Array.isArray(control.buttons)) {
+                            if (!this.check_bt_sequence_is_down(control.buttons as Button[])) return;
+                        }
 
                         if (trigger_reset) this.reset();
                         if (control.sfx?.down) this.audio.play_se(control.sfx.down);
-                        control.on_down();
+                        if (control.halt) {
+                            if (Array.isArray(gamepad_button)) {
+                                gamepad_button.forEach(bt => bt.on_down.halt());
+                            } else {
+                                last_gamepad_bt.on_down.halt();
+                            }
+                        }
+                        control.on_down(event);
                     });
                     register(b);
                 }
@@ -266,6 +301,21 @@ export class ControlManager {
         this.signal_bindings[i] = [];
 
         return i;
+    }
+
+    /**
+     * Checks if a sequence of given buttons is down till the one before the last of the given list.
+     * @param buttons the sequence of buttons.
+     * @returns returns whether the sequence of buttons till the one before the last is down.
+     */
+    private check_bt_sequence_is_down(buttons: Button[]) {
+        for (let i = 0; i < buttons.length - 1; ++i) {
+            const button = buttons[i];
+            if (!this.gamepad.is_down(button)) {
+                return false;
+            }
+        }
+        return true
     }
 
     /**

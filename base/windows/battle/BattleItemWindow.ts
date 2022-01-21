@@ -225,12 +225,12 @@ export class BattleItemWindow {
 
     item_choose() {
         const controls = [
-            {button: Button.LEFT, on_down: this.previous_page.bind(this), sfx: {down: "menu/move"}},
-            {button: Button.RIGHT, on_down: this.next_page.bind(this), sfx: {down: "menu/move"}},
-            {button: Button.UP, on_down: this.previous_item.bind(this), sfx: {down: "menu/move"}},
-            {button: Button.DOWN, on_down: this.next_item.bind(this), sfx: {down: "menu/move"}},
+            {buttons: Button.LEFT, on_down: this.previous_page.bind(this), sfx: {down: "menu/move"}},
+            {buttons: Button.RIGHT, on_down: this.next_page.bind(this), sfx: {down: "menu/move"}},
+            {buttons: Button.UP, on_down: this.previous_item.bind(this), sfx: {down: "menu/move"}},
+            {buttons: Button.DOWN, on_down: this.next_item.bind(this), sfx: {down: "menu/move"}},
             {
-                button: Button.A,
+                buttons: Button.A,
                 on_down: () => {
                     const this_item = this.data.info.items_list[this.items[this.item_index].key_name];
                     if (
@@ -245,7 +245,7 @@ export class BattleItemWindow {
                 sfx: {down: "menu/positive"},
             },
             {
-                button: Button.B,
+                buttons: Button.B,
                 on_down: () => {
                     this.choosen_ability = null;
                     this.item_obj = null;

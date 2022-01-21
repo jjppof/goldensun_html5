@@ -56,7 +56,7 @@ export class DjinnGetEvent extends GameEvent {
         this.control_key = this.data.control_manager.add_controls(
             [
                 {
-                    button: Button.A,
+                    buttons: Button.A,
                     on_down: () => {
                         if (!this.running || !this.control_enable) return;
                         this.next();
