@@ -13,6 +13,19 @@ export enum item_types {
     GENERAL_ITEM = "general_item",
 }
 
+export const item_types_sort_priority = {
+    [item_types.GENERAL_ITEM]: 10,
+    [item_types.WEAPONS]: 9,
+    [item_types.CHEST_PROTECTOR]: 8,
+    [item_types.HEAD_PROTECTOR]: 7,
+    [item_types.ARMOR]: 6,
+    [item_types.LEG_PROTECTOR]: 5,
+    [item_types.ABILITY_GRANTOR]: 4,
+    [item_types.RING]: 3,
+    [item_types.UNDERWEAR]: 2,
+    [item_types.CLASS_CHANGER]: 1,
+};
+
 export enum use_types {
     MULTIPLE_USES = "multiple_uses",
     SINGLE_USE = "single_use",
@@ -57,6 +70,7 @@ export class Item {
         key_name: string;
         chance: number;
     }[];
+    public index: number;
 
     constructor(
         key_name,
@@ -79,7 +93,8 @@ export class Item {
         granted_ability,
         granted_class_type,
         weapon_type,
-        items_after_forge
+        items_after_forge,
+        index
     ) {
         this.key_name = key_name;
         this.name = name;
@@ -103,5 +118,6 @@ export class Item {
         this.granted_class_type = granted_class_type;
         this.weapon_type = weapon_type ?? weapon_types.NOT_A_WEAPON;
         this.items_after_forge = items_after_forge ?? [];
+        this.index = index;
     }
 }

@@ -2,7 +2,7 @@ import {SpriteBase} from "./SpriteBase";
 import {Classes} from "./Classes";
 import {Djinn, djinn_status} from "./Djinn";
 import {Effect, effect_types} from "./Effect";
-import {Item, item_types} from "./Item";
+import {Item, item_types, item_types_sort_priority} from "./Item";
 import {Player, fighter_types, permanent_status, main_stats, effect_type_stat} from "./Player";
 import {elements, ordered_elements} from "./utils";
 import {ELEM_ATTR_MIN, ELEM_ATTR_MAX} from "./magic_numbers";
@@ -447,6 +447,32 @@ export class MainChar extends Player {
             this.update_abilities();
         }
         this.update_attributes();
+    }
+
+    /**
+     * Sorts this char items inventory.
+     */
+    sort_items() {
+        this.items.sort((b, a) => {
+            if (a.equipped && !b.equipped) {
+                return 1;
+            } else if (!a.equipped && b.equipped) {
+                return -1;
+            }
+            const item_a = this.info.items_list[a.key_name];
+            const item_b = this.info.items_list[b.key_name];
+            if (item_types_sort_priority[item_a.type] > item_types_sort_priority[item_b.type]) {
+                return 1;
+            } else if (item_types_sort_priority[item_a.type] < item_types_sort_priority[item_b.type]) {
+                return -1;
+            }
+            if (item_a.index > item_b.index) {
+                return 1;
+            } else if (item_a.index < item_b.index) {
+                return -1;
+            }
+        });
+        this.items.forEach((item_obj, i) => item_obj.index = i);
     }
 
     /**

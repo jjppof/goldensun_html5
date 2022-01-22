@@ -246,7 +246,7 @@ export class ControlManager {
                                 last_gamepad_bt.on_down.halt();
                             }
                         }
-                        control.on_down(event);
+                        control.on_down();
                     });
                     register(b);
                 }

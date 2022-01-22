@@ -492,7 +492,18 @@ export class MainItemMenu {
         this.shift_item_overview(false);
 
         this.chars_menu.select_char(this.selected_char_index);
-        this.chars_menu.grant_control(this.close_menu.bind(this), this.char_choose.bind(this));
+        this.chars_menu.grant_control(this.close_menu.bind(this), this.char_choose.bind(this), false, [{
+            buttons: [Button.L, Button.A],
+            on_down: this.sort_items.bind(this),
+            halt: true,
+            sfx: {down: "menu/positive"},
+        }]);
+    }
+
+    sort_items() {
+        const char = this.data.info.party_data.members[this.selected_char_index];
+        char.sort_items();
+        this.set_item_icons();
     }
 
     show_details(item: Item, item_slot: ItemSlot, callback?: () => void) {

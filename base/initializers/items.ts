@@ -27,7 +27,8 @@ export function initialize_items(game: Phaser.Game, data: GoldenSun, items_db: a
             item_data.granted_ability,
             item_data.granted_class_type,
             item_data.weapon_type,
-            item_data.items_after_forge
+            item_data.items_after_forge,
+            i
         );
     }
     const loader = game.load.atlasJSONHash(
