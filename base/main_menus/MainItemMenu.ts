@@ -84,6 +84,7 @@ export class MainItemMenu {
     public details_window: Window;
     public arrange_window: Window;
     public item_overview_window: Window;
+    public gear_overview_window: Window;
     public item_choose_window: ItemPsynergyChooseWindow;
     public item_options_window: ItemOptionsWindow;
     public item_quant_win: ItemQuantityManagerWindow;
@@ -140,6 +141,14 @@ export class MainItemMenu {
             ITEM_OVERVIEW_WIN_WIDTH,
             ITEM_OVERVIEW_WIN_HEIGHT
         );
+        this.gear_overview_window = new Window(
+            this.game,
+            ITEM_OVERVIEW_WIN_X,
+            ITEM_OVERVIEW_WIN_Y,
+            ITEM_OVERVIEW_WIN_WIDTH,
+            ITEM_OVERVIEW_WIN_HEIGHT
+        );
+        this.config_gear_window();
         this.item_choose_window = new ItemPsynergyChooseWindow(
             this.game,
             this.data,
@@ -164,11 +173,15 @@ export class MainItemMenu {
         this.arrange_window.set_text_in_position("+", 23, 9);
         this.arrange_window.create_at_group(30, 9, "keyboard_buttons", {frame: "a_button", color: 0x0});
         this.arrange_window.create_at_group(29, 8, "keyboard_buttons", {frame: "a_button"});
-        this.arrange_window.set_text_in_position("= Arrange items", 38, 8);
+        this.arrange_window.set_text_in_position(": Arrange items", 38, 8);
 
         this.arrange_window.create_at_group(9, 17, "keyboard_buttons", {frame: "r_button", color: 0x0});
         this.arrange_window.create_at_group(8, 16, "keyboard_buttons", {frame: "r_button"});
-        this.arrange_window.set_text_in_position("= View equipment", 23, 16);
+        this.arrange_window.set_text_in_position(": View equipment", 23, 16);
+    }
+
+    config_gear_window() {
+
     }
 
     shift_item_overview(down: boolean, hide_sub_menus: boolean = true) {
@@ -284,7 +297,7 @@ export class MainItemMenu {
 
     char_change() {
         this.selected_char_index = this.chars_menu.selected_index;
-        this.basic_info_window.set_char(this.data.info.party_data.members[this.selected_char_index]);
+        this.basic_info_window.set_char_basic_stats(this.data.info.party_data.members[this.selected_char_index]);
         this.set_item_icons();
 
         if (this.choosing_destination) {
@@ -497,6 +510,10 @@ export class MainItemMenu {
             on_down: this.sort_items.bind(this),
             halt: true,
             sfx: {down: "menu/positive"},
+        }, {
+            buttons: [Button.R],
+            on_down: this.show_gear_window.bind(this),
+            on_up: this.close_gear_window.bind(this),
         }]);
     }
 
@@ -504,6 +521,14 @@ export class MainItemMenu {
         const char = this.data.info.party_data.members[this.selected_char_index];
         char.sort_items();
         this.set_item_icons();
+    }
+
+    show_gear_window() {
+        this.gear_overview_window.show(undefined, false);
+    }
+
+    close_gear_window() {
+        this.gear_overview_window.close(undefined, false);
     }
 
     show_details(item: Item, item_slot: ItemSlot, callback?: () => void) {
