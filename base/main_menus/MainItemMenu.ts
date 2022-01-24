@@ -1,6 +1,6 @@
 import {BasicInfoWindow} from "../windows/BasicInfoWindow";
 import {ItemPsynergyChooseWindow} from "../windows/ItemPsynergyChooseWindow";
-import {TextObj, Window} from "../Window";
+import {ItemObj, TextObj, Window} from "../Window";
 import * as numbers from "../magic_numbers";
 import {ItemOptionsWindow} from "../windows/item/ItemOptionsWindow";
 import {Item, item_types} from "../Item";
@@ -85,6 +85,12 @@ export class MainItemMenu {
     public arrange_window: Window;
     public item_overview_window: Window;
     public gear_overview_window: Window;
+    public gear_overview_items: {
+        weapon: {item_obj: ItemObj, text_obj: TextObj},
+        head: {item_obj: ItemObj, text_obj: TextObj},
+        body: {item_obj: ItemObj, text_obj: TextObj},
+        chest: {item_obj: ItemObj, text_obj: TextObj},
+    };
     public item_choose_window: ItemPsynergyChooseWindow;
     public item_options_window: ItemOptionsWindow;
     public item_quant_win: ItemQuantityManagerWindow;
@@ -181,7 +187,28 @@ export class MainItemMenu {
     }
 
     config_gear_window() {
-
+        this.gear_overview_window.set_text_in_position("Weapon", 8, 8);
+        this.gear_overview_window.set_text_in_position("Head", 8, 24);
+        this.gear_overview_window.set_text_in_position("Shield", 8, 40);
+        this.gear_overview_window.set_text_in_position("Chest", 8, 56);
+        this.gear_overview_items = {
+            weapon: {
+                text_obj: this.gear_overview_window.set_text_in_position("", 24, 16),
+                item_obj: this.gear_overview_window.make_item_obj("", {x: 112, y: 8})
+            },
+            head: {
+                text_obj: this.gear_overview_window.set_text_in_position("", 24, 32),
+                item_obj: this.gear_overview_window.make_item_obj("", {x: 112, y: 24})
+            },
+            body: {
+                text_obj: this.gear_overview_window.set_text_in_position("", 24, 48),
+                item_obj: this.gear_overview_window.make_item_obj("", {x: 112, y: 40})
+            },
+            chest: {
+                text_obj: this.gear_overview_window.set_text_in_position("", 24, 64),
+                item_obj: this.gear_overview_window.make_item_obj("", {x: 112, y: 56})
+            },
+        };
     }
 
     shift_item_overview(down: boolean, hide_sub_menus: boolean = true) {
@@ -299,6 +326,9 @@ export class MainItemMenu {
         this.selected_char_index = this.chars_menu.selected_index;
         this.basic_info_window.set_char_basic_stats(this.data.info.party_data.members[this.selected_char_index]);
         this.set_item_icons();
+        if (this.gear_overview_window.open) {
+            this.set_gear_window(false);
+        }
 
         if (this.choosing_destination) {
             if (this.item_options_window.item.type === item_types.ABILITY_GRANTOR) {
@@ -321,6 +351,9 @@ export class MainItemMenu {
     }
 
     char_choose() {
+        if (this.gear_overview_window.open) {
+            this.close_gear_window();
+        }
         if (this.choosing_destination) {
             if (
                 this.data.info.party_data.members[this.selected_char_index].key_name ===
@@ -512,7 +545,7 @@ export class MainItemMenu {
             sfx: {down: "menu/positive"},
         }, {
             buttons: [Button.R],
-            on_down: this.show_gear_window.bind(this),
+            on_down: this.set_gear_window.bind(this),
             on_up: this.close_gear_window.bind(this),
         }]);
     }
@@ -523,8 +556,24 @@ export class MainItemMenu {
         this.set_item_icons();
     }
 
-    show_gear_window() {
-        this.gear_overview_window.show(undefined, false);
+    set_gear_window(show_window: boolean = true) {
+        const char = this.data.info.party_data.members[this.selected_char_index];
+        for (let slot_type in this.gear_overview_items) {
+            const slot = char.equip_slots[slot_type] as ItemSlot;
+            if (slot) {
+                const name = this.data.info.items_list[slot.key_name].name;
+                this.gear_overview_window.update_text(name, this.gear_overview_items[slot_type].text_obj);
+                this.gear_overview_window.set_text_obj_visibility(true, this.gear_overview_items[slot_type].text_obj);
+                this.gear_overview_items[slot_type].item_obj.icon.frameName = slot.key_name;
+                this.gear_overview_items[slot_type].item_obj.icon.visible = true;
+            } else {
+                this.gear_overview_window.set_text_obj_visibility(false, this.gear_overview_items[slot_type].text_obj);
+                this.gear_overview_items[slot_type].item_obj.icon.visible = false;
+            }
+        }
+        if (show_window) {
+            this.gear_overview_window.show(undefined, false);
+        }
     }
 
     close_gear_window() {
@@ -643,6 +692,9 @@ export class MainItemMenu {
         this.chars_menu.close();
         this.basic_info_window.close();
         this.item_change_stats_window.close();
+        if (this.gear_overview_window.open) {
+            this.close_gear_window();
+        }
 
         this.is_open = false;
 

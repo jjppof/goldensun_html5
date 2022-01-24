@@ -1058,6 +1058,21 @@ export class Window {
     }
 
     /**
+     * Sets the visibility of a given text object.
+     * @param visible The visibility state.
+     * @param text_obj The text obj.
+     */
+    set_text_obj_visibility(visible: boolean, text_obj: TextObj) {
+        text_obj.text.visible = visible;
+        if (text_obj.shadow) {
+            text_obj.shadow.visible = visible;
+        }
+        if (text_obj.text_bg) {
+            text_obj.text_bg.visible = visible;
+        }
+    }
+
+    /**
      * Destroys a given text object.
      * @param text_obj The text obj. to be destroyed.
      */
