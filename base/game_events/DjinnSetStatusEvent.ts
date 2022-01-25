@@ -30,7 +30,6 @@ export class DjinnSetStatusEvent extends GameEvent {
         //status
         this.status_key = status_key;
         this.status = this.status_key as djinn_status;
-
     }
 
     protected _fire(oringin_npc: NPC): void {
