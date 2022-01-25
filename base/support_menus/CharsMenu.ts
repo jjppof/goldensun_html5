@@ -4,7 +4,7 @@ import {GoldenSun} from "../GoldenSun";
 import {Button} from "../XGamepad";
 import {MainChar} from "../MainChar";
 import {CursorManager, PointVariants} from "../utils/CursorManager";
-import { Control } from "../utils/ControlManager";
+import {Control} from "../utils/ControlManager";
 
 const MAX_PER_LINE = 4;
 
@@ -371,7 +371,7 @@ export class CharsMenu {
             {buttons: Button.RIGHT, on_down: this.next_char.bind(this), sfx: {down: "menu/move"}},
             {buttons: Button.UP, on_down: this.previous_line.bind(this), sfx: {down: "menu/move"}},
             {buttons: Button.DOWN, on_down: this.next_line.bind(this), sfx: {down: "menu/move"}},
-            ... extra_controls ?? [],
+            ...(extra_controls ?? []),
             {
                 buttons: Button.A,
                 on_down: () => on_select?.(),

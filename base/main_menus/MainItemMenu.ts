@@ -86,10 +86,10 @@ export class MainItemMenu {
     public item_overview_window: Window;
     public gear_overview_window: Window;
     public gear_overview_items: {
-        weapon: {item_obj: ItemObj, text_obj: TextObj},
-        head: {item_obj: ItemObj, text_obj: TextObj},
-        body: {item_obj: ItemObj, text_obj: TextObj},
-        chest: {item_obj: ItemObj, text_obj: TextObj},
+        weapon: {item_obj: ItemObj; text_obj: TextObj};
+        head: {item_obj: ItemObj; text_obj: TextObj};
+        body: {item_obj: ItemObj; text_obj: TextObj};
+        chest: {item_obj: ItemObj; text_obj: TextObj};
     };
     public item_choose_window: ItemPsynergyChooseWindow;
     public item_options_window: ItemOptionsWindow;
@@ -194,19 +194,19 @@ export class MainItemMenu {
         this.gear_overview_items = {
             weapon: {
                 text_obj: this.gear_overview_window.set_text_in_position("", 24, 16),
-                item_obj: this.gear_overview_window.make_item_obj("", {x: 112, y: 8})
+                item_obj: this.gear_overview_window.make_item_obj("", {x: 112, y: 8}),
             },
             head: {
                 text_obj: this.gear_overview_window.set_text_in_position("", 24, 32),
-                item_obj: this.gear_overview_window.make_item_obj("", {x: 112, y: 24})
+                item_obj: this.gear_overview_window.make_item_obj("", {x: 112, y: 24}),
             },
             body: {
                 text_obj: this.gear_overview_window.set_text_in_position("", 24, 48),
-                item_obj: this.gear_overview_window.make_item_obj("", {x: 112, y: 40})
+                item_obj: this.gear_overview_window.make_item_obj("", {x: 112, y: 40}),
             },
             chest: {
                 text_obj: this.gear_overview_window.set_text_in_position("", 24, 64),
-                item_obj: this.gear_overview_window.make_item_obj("", {x: 112, y: 56})
+                item_obj: this.gear_overview_window.make_item_obj("", {x: 112, y: 56}),
             },
         };
     }
@@ -538,16 +538,19 @@ export class MainItemMenu {
         this.shift_item_overview(false);
 
         this.chars_menu.select_char(this.selected_char_index);
-        this.chars_menu.grant_control(this.close_menu.bind(this), this.char_choose.bind(this), false, [{
-            buttons: [Button.L, Button.A],
-            on_down: this.sort_items.bind(this),
-            halt: true,
-            sfx: {down: "menu/positive"},
-        }, {
-            buttons: [Button.R],
-            on_down: this.set_gear_window.bind(this),
-            on_up: this.close_gear_window.bind(this),
-        }]);
+        this.chars_menu.grant_control(this.close_menu.bind(this), this.char_choose.bind(this), false, [
+            {
+                buttons: [Button.L, Button.A],
+                on_down: this.sort_items.bind(this),
+                halt: true,
+                sfx: {down: "menu/positive"},
+            },
+            {
+                buttons: [Button.R],
+                on_down: this.set_gear_window.bind(this),
+                on_up: this.close_gear_window.bind(this),
+            },
+        ]);
     }
 
     sort_items() {
@@ -571,12 +574,15 @@ export class MainItemMenu {
                 this.gear_overview_items[slot_type].item_obj.icon.visible = false;
             }
         }
+        this.basic_info_window.set_char_gear_stats(char);
         if (show_window) {
             this.gear_overview_window.show(undefined, false);
         }
     }
 
     close_gear_window() {
+        const char = this.data.info.party_data.members[this.selected_char_index];
+        this.basic_info_window.set_char_basic_stats(char);
         this.gear_overview_window.close(undefined, false);
     }
 

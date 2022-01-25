@@ -472,7 +472,7 @@ export class MainChar extends Player {
                 return -1;
             }
         });
-        this.items.forEach((item_obj, i) => item_obj.index = i);
+        this.items.forEach((item_obj, i) => (item_obj.index = i));
     }
 
     /**

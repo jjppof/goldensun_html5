@@ -170,7 +170,9 @@ export class ControlManager {
         controls.forEach(control => {
             if (control.on_up) {
                 const gamepad_button = this.gamepad.get_button(control.buttons);
-                const last_gamepad_bt = Array.isArray(gamepad_button) ? gamepad_button[gamepad_button.length - 1] : gamepad_button;
+                const last_gamepad_bt = Array.isArray(gamepad_button)
+                    ? gamepad_button[gamepad_button.length - 1]
+                    : gamepad_button;
 
                 const b = last_gamepad_bt.on_up.add(() => {
                     if (this.disabled) return;
@@ -197,7 +199,9 @@ export class ControlManager {
 
                 const last_bt = control.buttons[(control.buttons as Button[]).length - 1];
                 const gamepad_button = this.gamepad.get_button(control.buttons);
-                const last_gamepad_bt = Array.isArray(gamepad_button) ? gamepad_button[gamepad_button.length - 1] : gamepad_button;
+                const last_gamepad_bt = Array.isArray(gamepad_button)
+                    ? gamepad_button[gamepad_button.length - 1]
+                    : gamepad_button;
 
                 if (loop_time) {
                     const b1 = last_gamepad_bt.on_down.add(event => {
@@ -315,7 +319,7 @@ export class ControlManager {
                 return false;
             }
         }
-        return true
+        return true;
     }
 
     /**

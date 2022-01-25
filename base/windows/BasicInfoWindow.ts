@@ -32,6 +32,10 @@ export class BasicInfoWindow {
     public max_hp_text: TextObj;
     public max_pp_text: TextObj;
     public exp_text: TextObj;
+    public attack_text: TextObj;
+    public defense_text: TextObj;
+    public agility_text: TextObj;
+    public luck_text: TextObj;
     public basic_stats_group: Phaser.Group;
     public gear_stats_group: Phaser.Group;
 
@@ -52,21 +56,71 @@ export class BasicInfoWindow {
         this.basic_stats_group = this.base_window.define_internal_group(BasicInfoWindow.BASIC_STATS_GROUP_KEY);
         this.gear_stats_group = this.base_window.define_internal_group(BasicInfoWindow.GEAR_STATS_GROUP_KEY);
 
-        this.base_window.set_text_in_position("Lv", 48, 24, {internal_group_key: BasicInfoWindow.BASIC_STATS_GROUP_KEY});
+        this.base_window.set_text_in_position("Lv", 48, 24);
+        this.lv_text = this.base_window.set_text_in_position("0", 80, 24);
+        this.name_text = this.base_window.set_text_in_position("0", 40, 8);
+
         this.base_window.set_text_in_position("HP", 8, 48, {internal_group_key: BasicInfoWindow.BASIC_STATS_GROUP_KEY});
         this.base_window.set_text_in_position("PP", 8, 56, {internal_group_key: BasicInfoWindow.BASIC_STATS_GROUP_KEY});
         this.base_window.set_text_in_position("/", 56, 49, {internal_group_key: BasicInfoWindow.BASIC_STATS_GROUP_KEY});
         this.base_window.set_text_in_position("/", 56, 56, {internal_group_key: BasicInfoWindow.BASIC_STATS_GROUP_KEY});
-        this.base_window.set_text_in_position("Exp", 8, 73, {internal_group_key: BasicInfoWindow.BASIC_STATS_GROUP_KEY});
+        this.base_window.set_text_in_position("Exp", 8, 73, {
+            internal_group_key: BasicInfoWindow.BASIC_STATS_GROUP_KEY,
+        });
 
-        this.name_text = this.base_window.set_text_in_position("0", 40, 8, {internal_group_key: BasicInfoWindow.BASIC_STATS_GROUP_KEY});
-        this.lv_text = this.base_window.set_text_in_position("0", 80, 24, {internal_group_key: BasicInfoWindow.BASIC_STATS_GROUP_KEY});
-        this.class_text = this.base_window.set_text_in_position("0", 8, 40, {internal_group_key: BasicInfoWindow.BASIC_STATS_GROUP_KEY});
-        this.hp_text = this.base_window.set_text_in_position("0", 51, 48, {right_align: true, internal_group_key: BasicInfoWindow.BASIC_STATS_GROUP_KEY});
-        this.pp_text = this.base_window.set_text_in_position("0", 51, 56, {right_align: true, internal_group_key: BasicInfoWindow.BASIC_STATS_GROUP_KEY});
-        this.max_hp_text = this.base_window.set_text_in_position("0", 94, 48, {right_align: true, internal_group_key: BasicInfoWindow.BASIC_STATS_GROUP_KEY});
-        this.max_pp_text = this.base_window.set_text_in_position("0", 94, 56, {right_align: true, internal_group_key: BasicInfoWindow.BASIC_STATS_GROUP_KEY});
-        this.exp_text = this.base_window.set_text_in_position("0", 94, 80, {right_align: true, internal_group_key: BasicInfoWindow.BASIC_STATS_GROUP_KEY});
+        this.class_text = this.base_window.set_text_in_position("0", 8, 40, {
+            internal_group_key: BasicInfoWindow.BASIC_STATS_GROUP_KEY,
+        });
+        this.hp_text = this.base_window.set_text_in_position("0", 51, 48, {
+            right_align: true,
+            internal_group_key: BasicInfoWindow.BASIC_STATS_GROUP_KEY,
+        });
+        this.pp_text = this.base_window.set_text_in_position("0", 51, 56, {
+            right_align: true,
+            internal_group_key: BasicInfoWindow.BASIC_STATS_GROUP_KEY,
+        });
+        this.max_hp_text = this.base_window.set_text_in_position("0", 94, 48, {
+            right_align: true,
+            internal_group_key: BasicInfoWindow.BASIC_STATS_GROUP_KEY,
+        });
+        this.max_pp_text = this.base_window.set_text_in_position("0", 94, 56, {
+            right_align: true,
+            internal_group_key: BasicInfoWindow.BASIC_STATS_GROUP_KEY,
+        });
+        this.exp_text = this.base_window.set_text_in_position("0", 94, 80, {
+            right_align: true,
+            internal_group_key: BasicInfoWindow.BASIC_STATS_GROUP_KEY,
+        });
+
+        this.base_window.set_text_in_position("Attack", 8, 48, {
+            internal_group_key: BasicInfoWindow.GEAR_STATS_GROUP_KEY,
+        });
+        this.base_window.set_text_in_position("Defense", 8, 56, {
+            internal_group_key: BasicInfoWindow.GEAR_STATS_GROUP_KEY,
+        });
+        this.base_window.set_text_in_position("Agility", 8, 64, {
+            internal_group_key: BasicInfoWindow.GEAR_STATS_GROUP_KEY,
+        });
+        this.base_window.set_text_in_position("Luck", 8, 72, {
+            internal_group_key: BasicInfoWindow.GEAR_STATS_GROUP_KEY,
+        });
+
+        this.attack_text = this.base_window.set_text_in_position("0", 94, 48, {
+            right_align: true,
+            internal_group_key: BasicInfoWindow.GEAR_STATS_GROUP_KEY,
+        });
+        this.defense_text = this.base_window.set_text_in_position("0", 94, 56, {
+            right_align: true,
+            internal_group_key: BasicInfoWindow.GEAR_STATS_GROUP_KEY,
+        });
+        this.agility_text = this.base_window.set_text_in_position("0", 94, 64, {
+            right_align: true,
+            internal_group_key: BasicInfoWindow.GEAR_STATS_GROUP_KEY,
+        });
+        this.luck_text = this.base_window.set_text_in_position("0", 94, 72, {
+            right_align: true,
+            internal_group_key: BasicInfoWindow.GEAR_STATS_GROUP_KEY,
+        });
     }
 
     /** Places the avatar group correctly on screen */
@@ -83,6 +137,7 @@ export class BasicInfoWindow {
         if (char !== undefined) {
             this.char = char;
         }
+        this.gear_stats_group.visible = false;
         this.basic_stats_group.visible = true;
 
         this.base_window.update_text(this.char.name, this.name_text);
@@ -94,14 +149,23 @@ export class BasicInfoWindow {
         this.base_window.update_text(this.char.max_pp.toString(), this.max_pp_text);
         this.base_window.update_text(this.char.current_exp.toString(), this.exp_text);
 
-        this.avatar.frameName = this.char.key_name
+        this.avatar.frameName = this.char.key_name;
     }
 
     set_char_gear_stats(char: MainChar) {
         if (char !== undefined) {
             this.char = char;
         }
+        this.basic_stats_group.visible = false;
         this.gear_stats_group.visible = true;
+
+        this.base_window.update_text(this.char.name, this.name_text);
+        this.base_window.update_text(this.char.level.toString(), this.lv_text);
+        this.base_window.update_text(this.char.atk.toString(), this.attack_text);
+        this.base_window.update_text(this.char.def.toString(), this.defense_text);
+        this.base_window.update_text(this.char.agi.toString(), this.agility_text);
+        this.base_window.update_text(this.char.luk.toString(), this.luck_text);
+
         this.avatar.frameName = this.char.key_name;
     }
 
