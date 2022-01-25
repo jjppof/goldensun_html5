@@ -34,6 +34,7 @@ export enum event_types {
     PARTY_JOIN = "party_join",
     SUMMON = "summon",
     DJINN_GET = "djinn_get",
+    DJINN_SET_STATUS = "djinn_set_status",
     JUMP = "jump",
     FACE_DIRECTION = "face_direction",
     EMOTICON = "emoticon",

@@ -19,6 +19,7 @@ import {TileEvent} from "../tile_events/TileEvent";
 import * as _ from "lodash";
 import {SummonEvent} from "./SummonEvent";
 import {DjinnGetEvent} from "./DjinnGetEvent";
+import {DjinnSetStatusEvent} from "./DjinnSetStatusEvent";
 import {JumpEvent} from "./JumpEvent";
 import {FaceDirectionEvent} from "./FaceDirectionEvent";
 import {EmoticonEvent} from "./EmoticonEvent";
@@ -380,6 +381,16 @@ export class GameEventManager {
                     info.custom_battle_bg,
                     info.finish_events,
                     info.on_battle_defeat_events
+                );
+            case event_types.DJINN_SET_STATUS:
+                return new DjinnSetStatusEvent(
+                    this.game,
+                    this.data,
+                    info.active,
+                    info.key_name,
+                    info.djinn_key,
+                    info.character_key,
+                    info.status_key
                 );
             case event_types.JUMP:
                 return new JumpEvent(
