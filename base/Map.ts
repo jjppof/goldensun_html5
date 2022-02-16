@@ -79,6 +79,9 @@ export class Map {
     };
     private _paused: boolean;
 
+    /** If true, sprites in middlelayer_group won't be sorted. */
+    public sprites_sort_paused: boolean;
+
     constructor(
         game,
         data,
@@ -135,6 +138,7 @@ export class Map {
         this.game_events = [];
         this._retreat_data = null;
         this._paused = false;
+        this.sprites_sort_paused = false;
     }
 
     /** The list of TileEvents of this map. */
@@ -241,6 +245,9 @@ export class Map {
      * are checked in this order.
      */
     sort_sprites() {
+        if (this.sprites_sort_paused) {
+            return;
+        }
         //these array initializations need a better performative approach...
         const send_to_back_list = new Array(this.data.middlelayer_group.children.length);
         const send_to_front_list = new Array(this.data.middlelayer_group.children.length);

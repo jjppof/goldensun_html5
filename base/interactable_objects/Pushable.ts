@@ -290,9 +290,6 @@ export class Pushable extends InteractableObjects {
                                 drop_found = true;
                                 const dest_y_shift_px =
                                     (drop_tile.dest_y - this.tile_y_pos) * this.data.map.tile_height;
-                                this.change_collision_layer(drop_tile.destination_collision_layer);
-                                this.shift_events_and_check_collision(0, drop_tile.dest_y - this.tile_y_pos);
-                                this.set_tile_position({y: drop_tile.dest_y});
                                 this.game.add
                                     .tween(this.sprite.body)
                                     .to(
@@ -304,6 +301,9 @@ export class Pushable extends InteractableObjects {
                                         true
                                     )
                                     .onComplete.addOnce(() => {
+                                        this.change_collision_layer(drop_tile.destination_collision_layer);
+                                        this.shift_events_and_check_collision(0, drop_tile.dest_y - this.tile_y_pos);
+                                        this.set_tile_position({y: drop_tile.dest_y});
                                         this.data.audio.play_se("misc/rock_drop");
                                         if (drop_tile.dust_animation) {
                                             char.change_action(base_actions.IDLE);
