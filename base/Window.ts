@@ -126,9 +126,11 @@ export class Window {
         this._page_indicator = new PageIndicator(this.game, this);
     }
 
+    /** The window background color. */
     get color() {
         return this._color;
     }
+    /** The window font color. */
     get font_color() {
         return this._font_color;
     }

@@ -5,6 +5,7 @@ import * as numbers from "../magic_numbers";
 import {GoldenSun} from "../GoldenSun";
 import {CharsMenu, CharsMenuModes} from "../support_menus/CharsMenu";
 import {Ability} from "../Ability";
+import {Button} from "../XGamepad";
 
 const GUIDE_WINDOW_X = 104;
 const GUIDE_WINDOW_Y = 0;
@@ -53,6 +54,12 @@ export class MainPsynergyMenu {
     public guide_window: Window;
     public psynergy_overview_window: Window;
     public shortcuts_window: Window;
+    public shortcuts_info: {
+        l_ability?: TextObj;
+        l_char?: TextObj;
+        r_ability?: TextObj;
+        r_char?: TextObj;
+    };
 
     public guide_window_text: TextObj;
     public description_window_text: TextObj;
@@ -108,13 +115,56 @@ export class MainPsynergyMenu {
             SHORTCUTS_WINDOW_WIDTH,
             SHORTCUTS_WINDOW_HEIGHT
         );
+        this.init_shortcuts_window();
 
         this.guide_window_text = this.guide_window.set_text_in_position("");
         this.description_window_text = this.description_window.set_text_in_position("");
-        this.shortcuts_window.set_lines_of_text(["Use a keyboard number", "to set a shorcut."], {
-            padding_y: 7,
-            space_between_lines: 3,
-        });
+    }
+
+    init_shortcuts_window() {
+        this.shortcuts_info = {};
+
+        const buttons_bg = this.game.add.graphics(8, 0);
+        buttons_bg.beginFill(this.shortcuts_window.color, 1);
+        buttons_bg.drawRect(0, 0, 28, 8);
+        buttons_bg.endFill();
+        this.shortcuts_window.add_sprite_to_window_group(buttons_bg);
+
+        this.shortcuts_window.set_text_in_position(": Change shortcut", 37, 0, {with_bg: true});
+        this.shortcuts_window.create_at_group(9, 1, "keyboard_buttons", {frame: "l_button", color: 0x0});
+        this.shortcuts_window.create_at_group(8, 0, "keyboard_buttons", {frame: "l_button"});
+        this.shortcuts_window.create_at_group(23, 1, "keyboard_buttons", {frame: "r_button", color: 0x0});
+        this.shortcuts_window.create_at_group(22, 0, "keyboard_buttons", {frame: "r_button"});
+
+        this.shortcuts_window.create_at_group(9, 9, "keyboard_buttons", {frame: "l_button", color: 0x0});
+        this.shortcuts_window.create_at_group(8, 8, "keyboard_buttons", {frame: "l_button"});
+        this.shortcuts_window.set_text_in_position(":", 23, 8);
+        this.shortcuts_info.l_ability = this.shortcuts_window.set_text_in_position("", 27, 8);
+        this.shortcuts_info.l_char = this.shortcuts_window.set_text_in_position("", 88, 8);
+
+        this.shortcuts_window.create_at_group(9, 17, "keyboard_buttons", {frame: "r_button", color: 0x0});
+        this.shortcuts_window.create_at_group(8, 16, "keyboard_buttons", {frame: "r_button"});
+        this.shortcuts_window.set_text_in_position(":", 23, 16);
+        this.shortcuts_info.r_ability = this.shortcuts_window.set_text_in_position("", 27, 16);
+        this.shortcuts_info.r_char = this.shortcuts_window.set_text_in_position("", 88, 16);
+    }
+
+    set_shortcuts_window_info() {
+        const l_shortcut_info = this.data.info.party_data.psynergies_shortcuts[Button.L];
+        if (l_shortcut_info) {
+            const char_name = this.data.info.main_char_list[l_shortcut_info.main_char].name;
+            const ability_name = this.data.info.abilities_list[l_shortcut_info.ability].name;
+            this.shortcuts_window.update_text(char_name, this.shortcuts_info.l_char);
+            this.shortcuts_window.update_text(ability_name, this.shortcuts_info.l_ability);
+        }
+
+        const r_shortcut_info = this.data.info.party_data.psynergies_shortcuts[Button.R];
+        if (r_shortcut_info) {
+            const char_name = this.data.info.main_char_list[r_shortcut_info.main_char].name;
+            const ability_name = this.data.info.abilities_list[r_shortcut_info.ability].name;
+            this.shortcuts_window.update_text(char_name, this.shortcuts_info.r_char);
+            this.shortcuts_window.update_text(ability_name, this.shortcuts_info.r_ability);
+        }
     }
 
     char_change() {
@@ -237,6 +287,7 @@ export class MainPsynergyMenu {
 
         this.is_open = true;
 
+        this.set_shortcuts_window_info();
         this.set_psynergy_icons();
         this.set_guide_window_text();
         this.set_description_window_text();
