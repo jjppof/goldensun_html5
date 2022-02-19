@@ -15,7 +15,7 @@ import {ShopMenu} from "./main_menus/ShopMenu";
 import {InnMenu} from "./main_menus/InnMenu";
 import {ControlManager} from "./utils/ControlManager";
 import {CursorManager} from "./utils/CursorManager";
-import {Gamepad as XGamepad, Button} from "./XGamepad";
+import {Gamepad as XGamepad, Button, AdvanceButton} from "./XGamepad";
 import {Audio} from "./Audio";
 import {Storage} from "./Storage";
 import {Camera} from "./Camera";
@@ -306,12 +306,29 @@ export class GoldenSun {
 
         const quick_ability = (index: number) => {
             if (!this.hero_movement_allowed(false)) return;
-            // TODO Replace with ingame configuration
             const shortcut = this.dbs.init_db.initial_shortcuts[index];
             this.info.field_abilities_list[shortcut.ability].cast(this.hero, shortcut.adept);
         };
 
+        const fire_psynergy_shortcut = (button: AdvanceButton.L | AdvanceButton.R) => {
+            if (!this.hero_movement_allowed(false)) return;
+            const ability_info = this.info.party_data.psynergies_shortcuts[button];
+            if (ability_info) {
+                const char_key = ability_info.main_char;
+                const ability_key = ability_info.ability;
+                this.info.field_abilities_list[ability_key].cast(this.hero, char_key);
+            }
+        };
+
         const controls = [
+            {
+                buttons: Button.L,
+                on_down: () => fire_psynergy_shortcut(Button.L),
+            },
+            {
+                buttons: Button.R,
+                on_down: () => fire_psynergy_shortcut(Button.R),
+            },
             {
                 buttons: Button.ZOOM1,
                 on_down: () => setup_scale(1),

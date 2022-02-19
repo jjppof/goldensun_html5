@@ -24,6 +24,7 @@ import {initialize_se} from "./sound_effects";
 import {initialize_npcs_data} from "./npcs";
 import {initialize_cast_recipes} from "./cast_recipes";
 import {ShopItem, Shop} from "../main_menus/ShopMenu";
+import {Button} from "../XGamepad";
 
 export type PartyData = {
     members: MainChar[];
@@ -35,6 +36,10 @@ export type PartyData = {
         tickets_bought: number;
     };
     visited_shops: Set<string>;
+    psynergies_shortcuts: {
+        [Button.L]: {main_char: string; ability: string};
+        [Button.R]: {main_char: string; ability: string};
+    };
 };
 
 export type GameInfo = {
@@ -102,6 +107,10 @@ export async function initialize_game_data(game: Phaser.Game, data: GoldenSun) {
         random_battle_extra_rate: 0,
         game_tickets: {coins_remaining: 300, tickets_bought: 0},
         visited_shops: new Set<string>(),
+        psynergies_shortcuts: {
+            [Button.L]: null,
+            [Button.R]: null,
+        },
     };
 
     let load_chars_promise_resolve;

@@ -161,16 +161,16 @@ export class Ability {
         this.effects = effects;
         this.ability_category = ability_category;
         this.battle_animation_key = battle_animation_key;
-        this.priority_move = priority_move ? priority_move : false;
-        this.has_critical = has_critical ? has_critical : false;
-        this.crit_mult_factor = crit_mult_factor !== undefined ? crit_mult_factor : 1;
-        this.can_switch_to_unleash = can_switch_to_unleash ? can_switch_to_unleash : false;
-        this.can_be_evaded = can_be_evaded ? can_be_evaded : false;
-        this.use_diminishing_ratio = use_diminishing_ratio ? use_diminishing_ratio : false;
-        this.msg_type = msg_type === undefined ? ability_msg_types.CAST : msg_type;
-        this.affects_pp = affects_pp === undefined ? false : affects_pp;
-        this.has_animation_variation = has_animation_variation === undefined ? false : has_animation_variation;
-        this.can_be_mirrored = can_be_mirrored === undefined ? false : can_be_mirrored;
+        this.priority_move = priority_move ?? false;
+        this.has_critical = has_critical ?? false;
+        this.crit_mult_factor = crit_mult_factor ?? 1;
+        this.can_switch_to_unleash = can_switch_to_unleash ?? false;
+        this.can_be_evaded = can_be_evaded ?? false;
+        this.use_diminishing_ratio = use_diminishing_ratio ?? false;
+        this.msg_type = msg_type ?? ability_msg_types.CAST;
+        this.affects_pp = affects_pp ?? false;
+        this.has_animation_variation = has_animation_variation ?? false;
+        this.can_be_mirrored = can_be_mirrored ?? false;
     }
 
     static get_diminishing_ratios(
