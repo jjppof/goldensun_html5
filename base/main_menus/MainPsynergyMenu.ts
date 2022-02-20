@@ -5,7 +5,7 @@ import * as numbers from "../magic_numbers";
 import {GoldenSun} from "../GoldenSun";
 import {CharsMenu, CharsMenuModes} from "../support_menus/CharsMenu";
 import {Ability} from "../Ability";
-import {Button} from "../XGamepad";
+import {AdvanceButton, Button} from "../XGamepad";
 
 const GUIDE_WINDOW_X = 104;
 const GUIDE_WINDOW_Y = 0;
@@ -180,7 +180,7 @@ export class MainPsynergyMenu {
         }
     }
 
-    char_choose() {
+    char_choose(setting_shortcut: boolean = false, shortcut_button?: AdvanceButton.L | AdvanceButton.R) {
         if (this.shortcuts_window.open) this.shortcuts_window.close(undefined, false);
         if (this.psynergy_overview_window.open) this.psynergy_overview_window.close(undefined, false);
 
@@ -189,12 +189,18 @@ export class MainPsynergyMenu {
         this.set_guide_window_text();
 
         if (!this.psynergy_choose_window.window_open) {
-            this.psynergy_choose_window.open(this.chars_menu.selected_index, () => {
-                this.choosing_psynergy = false;
-                this.chars_menu.activate();
-                this.set_guide_window_text();
-                this.set_description_window_text();
-            });
+            this.psynergy_choose_window.open(
+                this.chars_menu.selected_index,
+                () => {
+                    this.choosing_psynergy = false;
+                    this.chars_menu.activate();
+                    this.set_guide_window_text();
+                    this.set_description_window_text();
+                },
+                undefined,
+                undefined,
+                setting_shortcut
+            );
         }
 
         this.psynergy_choose_window.grant_control(
@@ -202,7 +208,7 @@ export class MainPsynergyMenu {
             () => {
                 let psy_win = this.psynergy_choose_window;
                 let selected_psy = psy_win.element_list[psy_win.elements[psy_win.selected_element_index] as string];
-                this.psynergy_choose(selected_psy);
+                this.psynergy_choose(selected_psy, setting_shortcut, shortcut_button);
             },
             this.chars_menu.next_char.bind(this.chars_menu),
             this.chars_menu.previous_char.bind(this.chars_menu)
@@ -213,13 +219,24 @@ export class MainPsynergyMenu {
         this.set_description_window_text(ability.description);
     }
 
-    psynergy_choose(ability: Ability) {
+    psynergy_choose(
+        ability: Ability,
+        setting_shortcut: boolean = false,
+        shortcut_button?: AdvanceButton.L | AdvanceButton.R
+    ) {
         if (ability.key_name in this.data.info.field_abilities_list) {
-            this.close_menu(true);
-            this.data.info.field_abilities_list[ability.key_name].cast(
-                this.data.hero,
-                this.data.info.party_data.members[this.selected_char_index].key_name
-            );
+            const char = this.data.info.party_data.members[this.selected_char_index];
+            if (setting_shortcut) {
+                this.data.info.party_data.psynergies_shortcuts[shortcut_button] = {
+                    main_char: char.key_name,
+                    ability: ability.key_name,
+                };
+                this.set_shortcuts_window_info();
+                this.open_char_select();
+            } else {
+                this.close_menu(true);
+                this.data.info.field_abilities_list[ability.key_name].cast(this.data.hero, char.key_name);
+            }
         } else this.char_choose();
     }
 
@@ -278,7 +295,18 @@ export class MainPsynergyMenu {
         if (!this.chars_menu.is_open) this.chars_menu.open(this.selected_char_index, CharsMenuModes.MENU);
 
         this.chars_menu.select_char(this.selected_char_index);
-        this.chars_menu.grant_control(this.close_menu.bind(this), this.char_choose.bind(this));
+        this.chars_menu.grant_control(this.close_menu.bind(this), this.char_choose.bind(this), undefined, [
+            {
+                buttons: Button.L,
+                on_down: this.char_choose.bind(this, true, Button.L),
+                sfx: {down: "menu/positive"},
+            },
+            {
+                buttons: Button.R,
+                on_down: this.char_choose.bind(this, true, Button.R),
+                sfx: {down: "menu/positive"},
+            },
+        ]);
     }
 
     open_menu(close_callback: Function) {

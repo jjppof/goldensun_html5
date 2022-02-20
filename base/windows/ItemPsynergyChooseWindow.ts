@@ -60,6 +60,7 @@ export class ItemPsynergyChooseWindow {
 
     public window_open: boolean;
     public window_activated: boolean;
+    public setting_shortcut: boolean;
     public close_callback: () => void;
     public char: MainChar;
     public char_select_controls_sprites: (Phaser.Sprite | Phaser.BitmapText)[];
@@ -216,7 +217,7 @@ export class ItemPsynergyChooseWindow {
                     return (
                         elem_key_name in this.element_list &&
                         (this.element_list[elem_key_name].is_field_psynergy ||
-                            this.element_list[elem_key_name].effects_outside_battle)
+                            (!this.setting_shortcut && this.element_list[elem_key_name].effects_outside_battle))
                     );
                 })
                 .slice(this.page_index * ELEM_PER_PAGE, (this.page_index + 1) * ELEM_PER_PAGE);
@@ -427,11 +428,13 @@ export class ItemPsynergyChooseWindow {
         char_index: number,
         close_callback?: () => void,
         open_callback?: () => void,
-        pos?: {page: number; index: number}
+        pos?: {page: number; index: number},
+        setting_shortcut?: boolean
     ) {
         this.update_position();
         this.char_index = char_index;
         this.char = this.data.info.party_data.members[char_index];
+        this.setting_shortcut = setting_shortcut;
 
         this.page_index = pos ? pos.page : 0;
         this.set_page_number();
