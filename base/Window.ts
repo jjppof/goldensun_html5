@@ -74,6 +74,7 @@ export class Window {
         left: Phaser.BitmapData;
         right: Phaser.BitmapData;
     };
+    private _text_tween: Phaser.Tween;
 
     constructor(
         game: Phaser.Game,
@@ -160,6 +161,9 @@ export class Window {
     }
     get real_y() {
         return this.group.y;
+    }
+    get text_tween() {
+        return this._text_tween;
     }
 
     /**
@@ -971,7 +975,7 @@ export class Window {
      */
     tween_text_horizontally(text_obj: TextObj, x: number, duration: number = 3000) {
         const foo = {x: text_obj.text.x};
-        const tween = this.game.add.tween(foo).to(
+        this._text_tween = this.game.add.tween(foo).to(
             {
                 x: [text_obj.text.x, x, x],
             },
@@ -982,13 +986,13 @@ export class Window {
             -1,
             true
         );
-        tween.onUpdateCallback(() => {
+        this.text_tween.onUpdateCallback(() => {
             text_obj.text.x = foo.x;
             if (text_obj.shadow) {
                 text_obj.shadow.x = foo.x + 1;
             }
         });
-        return tween;
+        return this.text_tween;
     }
 
     /**
@@ -1128,6 +1132,17 @@ export class Window {
     }
 
     /**
+     * If text tween was set when using Window.tween_text_horizontally,
+     * this function can stop and destroy it.
+     */
+    clean_text_tween() {
+        if (this.text_tween) {
+            this.text_tween.stop();
+            this._text_tween = null;
+        }
+    }
+
+    /**
      * Destroys this window.
      * @param animate Plays a fading animation if true.
      * @param destroy_callback Callback function.
@@ -1139,6 +1154,7 @@ export class Window {
             }
             this.group.destroy(true);
             this.internal_groups = {};
+            this.clean_text_tween();
             if (destroy_callback !== undefined) {
                 destroy_callback();
             }

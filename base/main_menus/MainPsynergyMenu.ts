@@ -43,6 +43,7 @@ export class MainPsynergyMenu {
     public is_open: boolean;
     public choosing_psynergy: boolean;
     public close_callback: Function;
+    public choosing_target: boolean;
 
     public guide_window_msgs: {choosing_char: string; choosing_psynergy: string};
 
@@ -63,6 +64,7 @@ export class MainPsynergyMenu {
 
     public guide_window_text: TextObj;
     public description_window_text: TextObj;
+    public selected_ability: Ability;
 
     constructor(game: Phaser.Game, data: GoldenSun) {
         this.game = game;
@@ -72,6 +74,7 @@ export class MainPsynergyMenu {
         this.is_open = false;
         this.choosing_psynergy = false;
         this.close_callback = null;
+        this.choosing_target = false;
 
         this.guide_window_msgs = {
             choosing_char: "Whose Psynergy?",
@@ -167,16 +170,24 @@ export class MainPsynergyMenu {
         }
     }
 
-    char_change() {
-        if (this.selected_char_index === this.chars_menu.selected_index) return;
+    char_change(char_key?: string, char_index?: number) {
+        if (char_index !== undefined) {
+            this.selected_char_index = char_index;
+        } else {
+            if (this.selected_char_index === this.chars_menu.selected_index) {
+                return;
+            }
+            this.selected_char_index = this.chars_menu.selected_index;
+        }
 
-        this.selected_char_index = this.chars_menu.selected_index;
-        this.basic_info_window.set_char_basic_stats(this.data.info.party_data.members[this.chars_menu.selected_index]);
+        this.basic_info_window.set_char_basic_stats(this.data.info.party_data.members[this.selected_char_index]);
         this.set_psynergy_icons();
 
-        if (this.psynergy_choose_window.window_open) {
+        if (this.psynergy_choose_window.window_open && !this.choosing_target) {
             this.psynergy_choose_window.close();
-            this.psynergy_choose_window.open(this.chars_menu.selected_index);
+            this.psynergy_choose_window.open(this.selected_char_index);
+        } else if (this.choosing_target && this.selected_ability) {
+            this.set_description_window_text(this.selected_ability.description);
         }
     }
 
@@ -201,13 +212,22 @@ export class MainPsynergyMenu {
                 undefined,
                 setting_shortcut
             );
+        } else {
+            this.psynergy_choose_window.set_cursor_previous_pos();
         }
 
+        this.grant_psynergy_choose_window_control(setting_shortcut, shortcut_button);
+    }
+
+    grant_psynergy_choose_window_control(
+        setting_shortcut: boolean = false,
+        shortcut_button?: AdvanceButton.L | AdvanceButton.R
+    ) {
         this.psynergy_choose_window.grant_control(
             this.open_char_select.bind(this),
             () => {
-                let psy_win = this.psynergy_choose_window;
-                let selected_psy = psy_win.element_list[psy_win.elements[psy_win.selected_element_index] as string];
+                const psy_win = this.psynergy_choose_window;
+                const selected_psy = psy_win.element_list[psy_win.elements[psy_win.selected_element_index] as string];
                 this.psynergy_choose(selected_psy, setting_shortcut, shortcut_button);
             },
             this.chars_menu.next_char.bind(this.chars_menu),
@@ -237,7 +257,60 @@ export class MainPsynergyMenu {
                 this.close_menu(true);
                 this.data.info.field_abilities_list[ability.key_name].cast(this.data.hero, char.key_name);
             }
-        } else this.char_choose();
+        } else if (ability.effects_outside_battle) {
+            const this_char = this.data.info.party_data.members[this.selected_char_index];
+            const current_char_index = this.selected_char_index;
+            const grant_char_menu_control = () => {
+                this.chars_menu.grant_control(
+                    () => {
+                        this.set_description_window_text(ability.description);
+                        this.char_change(undefined, current_char_index);
+                        this.char_choose();
+                    },
+                    () => {
+                        const dest_char = this.chars_menu.lines[this.chars_menu.current_line][
+                            this.chars_menu.selected_index
+                        ];
+                        const ability_used = this.psynergy_choose_window.cast_ability(
+                            this_char,
+                            dest_char,
+                            ability,
+                            this.description_window,
+                            this.description_window_text
+                        );
+                        if (ability_used) {
+                            this_char.current_pp -= ability.pp_cost;
+                            this.data.cursor_manager.hide();
+                            this.data.control_manager.add_controls([
+                                {
+                                    buttons: Button.A,
+                                    on_down: () => {
+                                        this.choosing_psynergy = false;
+                                        this.set_description_window_text();
+                                        this.choosing_psynergy = true;
+                                        this.selected_ability = null;
+                                        this.choosing_target = false;
+                                        this.char_change(undefined, current_char_index);
+                                        this.char_choose();
+                                    },
+                                    sfx: {down: "menu/positive_3"},
+                                },
+                            ]);
+                        } else {
+                            grant_char_menu_control();
+                        }
+                    }
+                );
+            };
+            if (this_char.current_pp >= ability.pp_cost) {
+                this.selected_ability = ability;
+                this.choosing_target = true;
+                this.chars_menu.select_char(this.selected_char_index);
+                grant_char_menu_control();
+            }
+        } else {
+            this.char_choose();
+        }
     }
 
     set_guide_window_text() {
@@ -248,9 +321,18 @@ export class MainPsynergyMenu {
         }
     }
 
-    set_description_window_text(description?: string) {
-        if (this.choosing_psynergy) {
-            this.description_window.update_text(description, this.description_window_text);
+    set_description_window_text(description?: string, force: boolean = false, tween_if_necessary: boolean = false) {
+        if (this.description_window.text_tween) {
+            this.description_window.clean_text_tween();
+            this.description_window.reset_text_position(this.description_window_text);
+        }
+        if (this.choosing_psynergy || force) {
+            this.psynergy_choose_window.set_description_window_text(
+                this.description_window,
+                this.description_window_text,
+                description,
+                tween_if_necessary
+            );
         } else {
             this.description_window.update_text(
                 this.data.info.party_data.coins + "    Coins",
@@ -314,6 +396,7 @@ export class MainPsynergyMenu {
         this.basic_info_window.open(this.data.info.party_data.members[this.selected_char_index]);
 
         this.is_open = true;
+        this.choosing_psynergy = false;
 
         this.set_shortcuts_window_info();
         this.set_psynergy_icons();

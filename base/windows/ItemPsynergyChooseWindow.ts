@@ -4,6 +4,11 @@ import {GoldenSun} from "../GoldenSun";
 import {Button} from "../XGamepad";
 import {ItemSlot, MainChar} from "../MainChar";
 import {CursorManager, PointVariants} from "../utils/CursorManager";
+import {Ability, ability_types} from "../Ability";
+import {BattleFormulas} from "../battle/BattleFormulas";
+import {main_stats, permanent_status} from "../Player";
+import {Effect, effect_types} from "../Effect";
+import * as _ from "lodash";
 
 const PSY_OVERVIEW_WIN_X = 104;
 const PSY_OVERVIEW_WIN_Y = 24;
@@ -308,7 +313,7 @@ export class ItemPsynergyChooseWindow {
         this.highlight_bar.visible = false;
     }
 
-    /*Sets the scaling effect for the selected item*/
+    /** Sets the scaling effect for the selected item. */
     set_element_tween(index: number) {
         this.window.group.bringToTop(this.icon_sprites_in_window[index]);
         this.selected_element_tween = this.game.add
@@ -316,7 +321,7 @@ export class ItemPsynergyChooseWindow {
             .to({x: 1.6, y: 1.6}, Phaser.Timer.QUARTER, Phaser.Easing.Linear.None, true, 0, -1, true);
     }
 
-    /*Stops the scaling effect*/
+    /** Stops the scaling effect. */
     unset_element_tween(index: number) {
         if (this.icon_sprites_in_window[index]) this.icon_sprites_in_window[index].scale.setTo(1, 1);
 
@@ -395,6 +400,149 @@ export class ItemPsynergyChooseWindow {
                 shoulder_time: SHOULDER_LOOP_TIME,
             },
         });
+    }
+
+    set_description_window_text(
+        description_window: Window,
+        description_window_text: TextObj,
+        description: string,
+        tween_if_necessary: boolean = false
+    ) {
+        if (description_window.text_tween) {
+            description_window.clean_text_tween();
+            description_window.reset_text_position(description_window_text);
+        }
+        description_window.update_text(description, description_window_text);
+        const pratical_text_width =
+            ((numbers.TOTAL_BORDER_WIDTH + numbers.WINDOW_PADDING_H) << 1) + description_window_text.text.width + 1;
+        if (tween_if_necessary && pratical_text_width > numbers.GAME_WIDTH) {
+            description_window.bring_border_to_top();
+            const shift = -(
+                description_window_text.text.width -
+                numbers.GAME_WIDTH +
+                numbers.TOTAL_BORDER_WIDTH +
+                numbers.WINDOW_PADDING_H
+            );
+            description_window.tween_text_horizontally(description_window_text, shift);
+        }
+    }
+
+    cast_ability(
+        caster: MainChar,
+        dest_char: MainChar,
+        ability: Ability,
+        description_window: Window,
+        description_window_text: TextObj
+    ) {
+        if (ability.type === ability_types.HEALING) {
+            const value = BattleFormulas.get_damage(ability, caster, dest_char, 1);
+            const current_prop = ability.affects_pp ? main_stats.CURRENT_PP : main_stats.CURRENT_HP;
+            const max_prop = ability.affects_pp ? main_stats.MAX_PP : main_stats.MAX_HP;
+            if (dest_char[max_prop] > dest_char[current_prop]) {
+                dest_char.current_hp = _.clamp(dest_char[current_prop] - value, 0, dest_char[max_prop]);
+                if (dest_char[max_prop] === dest_char[current_prop]) {
+                    this.set_description_window_text(
+                        description_window,
+                        description_window_text,
+                        "You recovered all HP!"
+                    );
+                } else {
+                    this.set_description_window_text(
+                        description_window,
+                        description_window_text,
+                        `You recovered ${-value}HP!`
+                    );
+                }
+                this.data.audio.play_se("battle/heal_1");
+                return true;
+            } else {
+                this.set_description_window_text(
+                    description_window,
+                    description_window_text,
+                    `Your ${ability.affects_pp ? "PP" : "HP"} is maxed out!`
+                );
+                return false;
+            }
+        } else if (ability.type === ability_types.EFFECT_ONLY) {
+            const extra_stat_label_map = {
+                [effect_types.EXTRA_ATTACK]: "ATK",
+                [effect_types.EXTRA_DEFENSE]: "DEF",
+                [effect_types.EXTRA_AGILITY]: "AGI",
+                [effect_types.EXTRA_LUCK]: "LUK",
+                [effect_types.EXTRA_MAX_HP]: "HP",
+                [effect_types.EXTRA_MAX_PP]: "PP",
+            };
+            const status_label_map = {
+                [permanent_status.DOWNED]: "downed",
+                [permanent_status.POISON]: "poisoned",
+                [permanent_status.VENOM]: "poisoned",
+                [permanent_status.EQUIP_CURSE]: "cursed",
+                [permanent_status.HAUNT]: "haunted",
+            };
+            const stats_boosted = [];
+            const status_removed = {removed: [], not_removed: []};
+            for (let i = 0; i < ability.effects.length; ++i) {
+                const effect_obj = ability.effects[i];
+                switch (effect_obj.type) {
+                    case effect_types.EXTRA_ATTACK:
+                    case effect_types.EXTRA_DEFENSE:
+                    case effect_types.EXTRA_AGILITY:
+                    case effect_types.EXTRA_LUCK:
+                    case effect_types.EXTRA_MAX_HP:
+                    case effect_types.EXTRA_MAX_PP:
+                        dest_char.add_effect(effect_obj, ability, true);
+                        dest_char.update_attributes();
+                        stats_boosted.push(extra_stat_label_map[effect_obj.type]);
+                        break;
+                    case effect_types.PERMANENT_STATUS:
+                        if (!effect_obj.add_status) {
+                            if (dest_char.has_permanent_status(effect_obj.status_key_name)) {
+                                Effect.remove_status_from_player(effect_obj, dest_char);
+                                status_removed.removed.push(status_label_map[effect_obj.status_key_name]);
+                            } else {
+                                status_removed.not_removed.push(status_label_map[effect_obj.status_key_name]);
+                            }
+                        }
+                        break;
+                }
+            }
+            let stats_description = "";
+            let status_description = "";
+            if (stats_boosted.length) {
+                stats_description = `Your ${stats_boosted.join("/")} increased!`;
+            }
+            if (status_removed.removed.length || status_removed.not_removed.length) {
+                if (status_removed.removed.length) {
+                    status_description = `${dest_char.name} is not ${_.uniq(status_removed.removed).join(
+                        "/"
+                    )} anymore!`;
+                } else {
+                    if (!stats_boosted.length) {
+                        this.set_description_window_text(
+                            description_window,
+                            description_window_text,
+                            `${dest_char.name} is not ${_.uniq(status_removed.not_removed).join("/")}.`
+                        );
+                        return false;
+                    }
+                }
+            }
+            const description = `${stats_description} ${status_description}`.trim();
+            if (description) {
+                this.set_description_window_text(description_window, description_window_text, description, true);
+                return true;
+            }
+        }
+        this.set_description_window_text(
+            description_window,
+            description_window_text,
+            "This ability can't be used here."
+        );
+        return false;
+    }
+
+    set_cursor_previous_pos() {
+        this.move_cursor(CURSOR_X, CURSOR_Y + this.selected_element_index * CURSOR_GAP);
     }
 
     move_cursor(x_pos: number, y_pos: number, on_complete?: Function) {

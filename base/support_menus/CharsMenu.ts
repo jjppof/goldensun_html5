@@ -60,7 +60,7 @@ const ARROW_TWEEN_TIME = Phaser.Timer.QUARTER >> 1;
 export class CharsMenu {
     public game: Phaser.Game;
     public data: GoldenSun;
-    public on_change: Function;
+    public on_change: (char_key?: string, char_index?: number) => void;
 
     public window: Window;
     public char_group: Phaser.Group;
@@ -77,7 +77,7 @@ export class CharsMenu {
     public is_open: boolean;
     public mode: CharsMenuModes;
 
-    constructor(game: Phaser.Game, data: GoldenSun, on_change: Function) {
+    constructor(game: Phaser.Game, data: GoldenSun, on_change: CharsMenu["on_change"]) {
         this.game = game;
         this.data = data;
         this.on_change = on_change;
@@ -286,7 +286,9 @@ export class CharsMenu {
     }
 
     select_char(index?: number, no_cursor?: boolean, silent?: boolean) {
-        if (index === undefined) index = this.selected_index;
+        if (index === undefined) {
+            index = this.selected_index;
+        }
 
         const on_move = () => {
             this.unset_character(this.selected_index);
@@ -295,12 +297,15 @@ export class CharsMenu {
 
             if (this.on_change && !silent) {
                 const char = this.data.info.party_data.members[this.current_line * MAX_PER_LINE + this.selected_index];
-                this.on_change(char.key_name);
+                this.on_change(char.key_name, this.selected_index);
             }
         };
 
-        if (!no_cursor) this.move_cursor(index, on_move);
-        else on_move();
+        if (!no_cursor) {
+            this.move_cursor(index, on_move);
+        } else {
+            on_move();
+        }
     }
 
     next_char(no_cursor?: boolean) {

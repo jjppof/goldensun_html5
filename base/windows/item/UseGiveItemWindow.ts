@@ -282,7 +282,13 @@ export class UseGiveItemWindow {
 
     init_use(dest_char: MainChar) {
         const ability = this.data.info.abilities_list[this.item.use_ability];
-        const ability_used = this.item_menu.cast_ability(this.char, dest_char, ability);
+        const ability_used = this.item_menu.item_choose_window.cast_ability(
+            this.char,
+            dest_char,
+            ability,
+            this.item_menu.description_window,
+            this.item_menu.description_window_text
+        );
         if (ability_used) {
             this.char.remove_item(this.item_obj, 1);
 
