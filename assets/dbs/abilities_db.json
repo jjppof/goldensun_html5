@@ -171,7 +171,7 @@
         "key_name": "revive",
         "name": "Revive",
         "description": "Revive a downed ally.",
-        "type": "healing",
+        "type": "effect_only",
         "element": "venus",
         "battle_target": "ally",
         "range": 1,
@@ -180,7 +180,21 @@
         "effects_outside_battle": true,
         "is_battle_ability": true,
         "is_field_psynergy": false,
-        "effects": [],
+        "effects": [
+            {
+                "type": "permanent_status",
+                "add_status": false,
+                "status_key_name": "downed",
+                "usage": "on_use"
+            },{
+                "type": "current_hp",
+                "quantity": 1.0,
+                "operator": "times",
+                "usage": "on_use",
+                "relative_to_property": "max_hp",
+                "show_msg": false
+            }
+        ],
         "ability_category": "psynergy",
         "battle_animation_key": "revive",
         "priority_move": false,
