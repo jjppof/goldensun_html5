@@ -12,6 +12,8 @@ const CLASS_Y = NAME_Y + numbers.FONT_SIZE;
 const LV_X = 56;
 const LV_Y = 8;
 const LV_NUMBER_RIGHT_X = 94;
+const L_BUTTON_X = NAME_X;
+const L_BUTTON_Y = CLASS_Y + numbers.FONT_SIZE;
 
 export class CharsQuickInfoDjinnWindow {
     public game: Phaser.Game;
@@ -25,6 +27,11 @@ export class CharsQuickInfoDjinnWindow {
     public char_name: TextObj;
     public char_class: TextObj;
     public level_number: TextObj;
+    public char_status_text: TextObj;
+    public l_button: {
+        shadow: Phaser.Sprite;
+        main: Phaser.Sprite;
+    };
 
     constructor(game) {
         this.game = game;
@@ -39,6 +46,28 @@ export class CharsQuickInfoDjinnWindow {
         this.char_class = this.base_window.set_text_in_position("", NAME_X, CLASS_Y);
         this.base_window.set_text_in_position("Lv", LV_X, LV_Y);
         this.level_number = this.base_window.set_text_in_position("", LV_NUMBER_RIGHT_X, LV_Y, {right_align: true});
+
+        this.l_button = {
+            shadow: this.base_window.create_at_group(L_BUTTON_X + 1, L_BUTTON_Y + 1, "keyboard_buttons", {
+                color: 0x0,
+                frame: "l_button",
+            }),
+            main: this.base_window.create_at_group(L_BUTTON_X, L_BUTTON_Y, "keyboard_buttons", {
+                frame: "l_button",
+            }),
+        };
+        this.char_status_text = this.base_window.set_text_in_position(
+            ": Char. Status",
+            this.l_button.main.x + this.l_button.main.width + 2,
+            this.l_button.main.y
+        );
+    }
+
+    set_l_button_visibility(visible: boolean) {
+        this.l_button.main.visible = visible;
+        this.l_button.shadow.visible = visible;
+        this.char_status_text.text.visible = visible;
+        this.char_status_text.shadow.visible = visible;
     }
 
     update_text() {

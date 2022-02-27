@@ -42,8 +42,8 @@ const CHARS_Y = [34, 34];
 const ARROW_CHANGE_DJINN_X = 64;
 const ARROW_CHANGE_DJINN_Y = 16;
 
-const SPACEBAR_KEY_X = 132;
-const SPACEBAR_KEY_Y = 24;
+const R_BUTTON_X = 132;
+const R_BUTTON_Y = 24;
 
 export class DjinnModeHeaderWindow {
     public game: Phaser.Game;
@@ -61,7 +61,7 @@ export class DjinnModeHeaderWindow {
     public djinn_sprites: Phaser.Sprite[];
     public tweens: Phaser.Tween[];
     public djinn_status_arrow: Phaser.Sprite;
-    public spacebar_key: {
+    public r_button: {
         shadow: Phaser.Sprite;
         text: Phaser.Sprite;
     };
@@ -98,19 +98,19 @@ export class DjinnModeHeaderWindow {
         this.djinn_status_arrow = this.base_window.create_at_group(ARROW_CHANGE_DJINN_X, ARROW_CHANGE_DJINN_Y, "menu", {
             frame: "arrow_change",
         });
-        this.spacebar_key = {
-            shadow: this.base_window.create_at_group(SPACEBAR_KEY_X + 1, SPACEBAR_KEY_Y + 1, "keyboard_buttons", {
+        this.r_button = {
+            shadow: this.base_window.create_at_group(R_BUTTON_X + 1, R_BUTTON_Y + 1, "keyboard_buttons", {
                 color: 0x0,
-                frame: "spacebar",
+                frame: "r_button",
             }),
-            text: this.base_window.create_at_group(SPACEBAR_KEY_X, SPACEBAR_KEY_Y, "keyboard_buttons", {
-                frame: "spacebar",
+            text: this.base_window.create_at_group(R_BUTTON_X, R_BUTTON_Y, "keyboard_buttons", {
+                frame: "r_button",
             }),
         };
         this.action_info_text = this.base_window.set_text_in_position(
             "",
-            this.spacebar_key.text.width + SPACEBAR_KEY_X + 2,
-            SPACEBAR_KEY_Y
+            this.r_button.text.width + R_BUTTON_X + 2,
+            R_BUTTON_Y
         );
         this.init_arrow_blinks();
     }
@@ -140,7 +140,7 @@ export class DjinnModeHeaderWindow {
 
             this.base_window.update_text(status_text, this.djinn_status_text);
             this.base_window.update_text_position({x: DJINN_STATUS_X}, this.djinn_status_text);
-            this.spacebar_key.text.visible = this.spacebar_key.shadow.visible = false;
+            this.r_button.text.visible = this.r_button.shadow.visible = false;
 
             this.base_window.update_text("", this.action_info_text);
             this.base_window.update_text_position({x: OK_MSG_X, y: OK_MSG_Y}, this.ok_msg_text);
@@ -176,7 +176,7 @@ export class DjinnModeHeaderWindow {
             else if (this.action === djinn_actions.TRADE) action_text = "Trade";
             this.base_window.update_text(action_text, this.djinn_status_text);
             this.base_window.update_text_position({x: DJINN_STATUS_X_2}, this.djinn_status_text);
-            this.spacebar_key.text.visible = this.spacebar_key.shadow.visible = true;
+            this.r_button.text.visible = this.r_button.shadow.visible = true;
 
             this.base_window.update_text(`: ${this.chars[0].name}'s Psy`, this.action_info_text);
             this.base_window.update_text_position({x: OK_MSG_X_2, y: OK_MSG_Y_2}, this.ok_msg_text);

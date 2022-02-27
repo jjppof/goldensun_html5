@@ -19,7 +19,7 @@ const DJINN_NAME_Y = 16;
 const SHIFT_KEY_X = 8;
 const SHIFT_KEY_Y = 24;
 
-const DJINN_ACTION_X = SHIFT_KEY_X + 23;
+const DJINN_ACTION_X = SHIFT_KEY_X + 15;
 const DJINN_ACTION_Y = 24;
 
 export class DjinnActionWindow {
@@ -56,9 +56,9 @@ export class DjinnActionWindow {
         this.shift_key = {
             shadow: this.base_window.create_at_group(SHIFT_KEY_X + 1, SHIFT_KEY_Y + 1, "keyboard_buttons", {
                 color: 0x0,
-                frame: "shift",
+                frame: "r_button",
             }),
-            text: this.base_window.create_at_group(SHIFT_KEY_X, SHIFT_KEY_Y, "keyboard_buttons", {frame: "shift"}),
+            text: this.base_window.create_at_group(SHIFT_KEY_X, SHIFT_KEY_Y, "keyboard_buttons", {frame: "r_button"}),
         };
     }
 

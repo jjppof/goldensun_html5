@@ -21,7 +21,7 @@ const STAT_ARROW_X = 80;
 const STAT_ARROW_Y = 15;
 const SHIFT_BUTTON_X = 32;
 const SHIFT_BUTTON_Y = 72;
-const SHIFT_DESCRIPTION_X = 55;
+const SHIFT_DESCRIPTION_X = 47;
 const SHIFT_DESCRIPTION_Y = 72;
 
 export class DjinnStatsWindow {
@@ -88,9 +88,9 @@ export class DjinnStatsWindow {
         arrow_change.rotation = -numbers.degree90;
         this.base_window.create_at_group(SHIFT_BUTTON_X + 1, SHIFT_BUTTON_Y + 1, "keyboard_buttons", {
             color: 0x0,
-            frame: "shift",
+            frame: "r_button",
         });
-        this.base_window.create_at_group(SHIFT_BUTTON_X, SHIFT_BUTTON_Y, "keyboard_buttons", {frame: "shift"});
+        this.base_window.create_at_group(SHIFT_BUTTON_X, SHIFT_BUTTON_Y, "keyboard_buttons", {frame: "r_button"});
         this.base_window.set_text_in_position(": Psy. Gained", SHIFT_DESCRIPTION_X, SHIFT_DESCRIPTION_Y);
         this.window_open = false;
     }

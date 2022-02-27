@@ -497,7 +497,12 @@ export class DjinnListWindow {
      * @param {Function} on_select - Called when A is pressed
      * @param {Function} [on_change_djinn_status] - Called when R is pressed
      */
-    grant_control(on_cancel: Function, on_select: Function, on_change_djinn_status?: Function) {
+    grant_control(
+        on_cancel: Function,
+        on_select: Function,
+        on_change_djinn_status?: Function,
+        view_char_status?: Function
+    ) {
         //Missing check for different states on R Button. Using "Set" sound for all
         const controls = [
             {buttons: Button.LEFT, on_down: this.previous_character.bind(this), sfx: {down: "menu/move"}},
@@ -507,6 +512,7 @@ export class DjinnListWindow {
             {buttons: Button.A, on_down: on_select, sfx: {down: "menu/positive"}},
             {buttons: Button.B, on_down: on_cancel, sfx: {down: "menu/negative"}},
             {buttons: Button.R, on_down: on_change_djinn_status, sfx: {down: "menu/positive_3"}},
+            {buttons: Button.L, on_down: view_char_status, sfx: {down: "menu/positive"}},
         ];
         this.data.control_manager.add_controls(controls, {
             loop_config: {vertical: true, horizontal: true},
@@ -537,14 +543,13 @@ export class DjinnListWindow {
                 next_statuses: djinn_status[],
                 this_djinni: Djinn[],
                 next_djinni: Djinn[];
-            let action_text: string, next_djinn: Djinn, djinn_action: djinn_actions;
+            let next_djinn: Djinn, djinn_action: djinn_actions;
 
             if (this.action_text_selected) {
                 this_statuses = [this_djinn.status === djinn_status.STANDBY ? djinn_status.ANY : djinn_status.STANDBY];
                 next_statuses = [this_djinn.status === djinn_status.STANDBY ? djinn_status.ANY : this_djinn.status];
                 this_djinni = [this_djinn];
                 next_djinni = [this_djinn];
-                action_text = "Give";
                 djinn_action = djinn_actions.GIVE;
             } else {
                 next_djinn = this.data.info.djinni_list[next_char.djinni[this.selected_djinn_index]];
@@ -558,7 +563,6 @@ export class DjinnListWindow {
                 ];
                 this_djinni = [next_djinn, this_djinn];
                 next_djinni = [this_djinn, next_djinn];
-                action_text = "Trade";
                 djinn_action = djinn_actions.TRADE;
             }
 
@@ -732,14 +736,23 @@ export class DjinnListWindow {
         this.setting_djinn_status_djinn_index = -1;
         this.setting_djinn_status = false;
 
+        this.chars_quick_info_window.set_l_button_visibility(true);
+
         this.set_highlight_bar();
         this.set_action_text();
         this.update_djinn_description();
         this.set_djinn_sprite();
 
         this.select_djinn(this.selected_char_index, this.selected_djinn_index);
-        this.grant_control(this.close.bind(this), this.on_choose.bind(this), this.change_djinn_status.bind(this));
+        this.grant_control(
+            this.close.bind(this),
+            this.on_choose.bind(this),
+            this.change_djinn_status.bind(this),
+            this.view_char_status.bind(this)
+        );
     }
+
+    view_char_status() {}
 
     on_choose() {
         const this_char = this.data.info.party_data.members[this.selected_char_index];
@@ -785,6 +798,7 @@ export class DjinnListWindow {
         this.setting_djinn_status_djinn_index = this.selected_djinn_index;
         this.setting_djinn_status = true;
         this.djinn_action_window.set_action_for_specific_djinn(this_char, this_djinn);
+        this.chars_quick_info_window.set_l_button_visibility(false);
 
         this.darken_font_color();
         this.select_action_text();
@@ -823,7 +837,12 @@ export class DjinnListWindow {
         this.changing_djinn_status = false;
         this.close_callback = close_callback;
 
-        this.grant_control(this.close.bind(this), this.on_choose.bind(this), this.change_djinn_status.bind(this));
+        this.grant_control(
+            this.close.bind(this),
+            this.on_choose.bind(this),
+            this.change_djinn_status.bind(this),
+            this.view_char_status.bind(this)
+        );
 
         this.base_window.show(undefined, false);
         if (open_callback) {

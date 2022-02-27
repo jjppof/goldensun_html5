@@ -164,7 +164,8 @@ export class BattleItemWindow {
             const base_y = TOP_PADDING + i * (SPACE_BETWEEN_ITEMS + HIGHLIGHT_BAR_HEIGHT);
             const item_y = base_y - 4;
 
-            this.base_window.define_internal_group(item_slot.key_name);
+            const internal_group_key = `${item_slot.key_name}/${i}`;
+            this.base_window.define_internal_group(internal_group_key);
             this.base_window.make_item_obj(
                 item_slot.key_name,
                 {x: ITEM_ICON_X, y: item_y},
@@ -172,7 +173,7 @@ export class BattleItemWindow {
                     broken: item_slot.broken,
                     equipped: item_slot.equipped,
                     quantity: item.carry_up_to_30 ? item_slot.quantity : undefined,
-                    internal_group: item_slot.key_name,
+                    internal_group: internal_group_key,
                 }
             );
 
@@ -218,8 +219,9 @@ export class BattleItemWindow {
         this.item_names.forEach(text => {
             this.base_window.destroy_text_obj(text);
         });
-        this.items.forEach(item_slot => {
-            this.base_window.destroy_internal_group(item_slot.key_name);
+        this.items.forEach((item_slot, i) => {
+            const internal_group_key = `${item_slot.key_name}/${i}`;
+            this.base_window.destroy_internal_group(internal_group_key);
         });
     }
 
