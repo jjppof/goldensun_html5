@@ -3,7 +3,7 @@ import * as numbers from "../../magic_numbers";
 import {ordered_elements} from "../../utils";
 import {MainChar} from "../../MainChar";
 import {Djinn, djinn_status} from "../../Djinn";
-import {ordered_main_stats} from "../../Player";
+import {current_main_stat_map, ordered_main_stats} from "../../Player";
 import {djinn_actions} from "../../main_menus/MainDjinnMenu";
 
 const BASE_WIN_WIDTH = 116;
@@ -148,33 +148,44 @@ export class DjinnCharStatsWindow {
             this.sprites.push(star_sprite);
         });
 
-        const preview_values = this.char.preview_djinn_change(
-            ordered_main_stats,
-            this.djinni.map(d => d.key_name),
-            this.next_djinni_status,
-            this.action
-        );
-        if (preview_values.class_key_name !== this.char.class.key_name) {
-            this.base_window.update_text(preview_values.class_name, this.new_class_text);
-            this.class_name_arrow_blink_timer.resume();
+        let preview_values: ReturnType<MainChar["preview_djinn_change"]>;
+        if (this.djinni) {
+            preview_values = this.char.preview_djinn_change(
+                ordered_main_stats,
+                this.djinni.map(d => d.key_name),
+                this.next_djinni_status,
+                this.action
+            );
+            if (preview_values.class_key_name !== this.char.class.key_name) {
+                this.base_window.update_text(preview_values.class_name, this.new_class_text);
+                this.class_name_arrow_blink_timer.resume();
+            } else {
+                this.base_window.update_text("", this.new_class_text);
+            }
         } else {
             this.base_window.update_text("", this.new_class_text);
         }
 
         stats.forEach((stat, i) => {
-            const current_stat = this.char[ordered_main_stats[i]];
-            const next_stat = preview_values[ordered_main_stats[i]];
+            let current_stat: number, next_stat: number;
+            current_stat = this.char[ordered_main_stats[i]];
+            next_stat = preview_values ? preview_values[ordered_main_stats[i]] : NaN;
 
-            this.base_window.update_text(current_stat.toString(), this.stats_current_texts[stat]);
-            this.base_window.update_text(next_stat.toString(), this.stats_next_texts[stat]);
-
-            const y = STATS_BASE_Y + i * numbers.FONT_SIZE - 3;
             let shift = 0;
-
-            if (["HP", "PP"].includes(stat)) {
+            const is_hp_pp = ["HP", "PP"].includes(stat);
+            if (is_hp_pp) {
                 shift = -8;
+                if (!preview_values) {
+                    current_stat = this.char[current_main_stat_map[ordered_main_stats[i]]];
+                    next_stat = this.char[ordered_main_stats[i]];
+                }
             }
-            if (current_stat !== next_stat) {
+
+            this.base_window.update_text(current_stat.toString() + (!preview_values && is_hp_pp ? "/" : ""), this.stats_current_texts[stat]);
+            this.base_window.update_text(isNaN(next_stat) ? "" : next_stat.toString(), this.stats_next_texts[stat]);
+
+            if (preview_values && current_stat !== next_stat) {
+                const y = STATS_BASE_Y + i * numbers.FONT_SIZE - 3;
                 const arrow_sprite = this.base_window.create_at_group(STATS_CURRENT_X + shift, y, "menu", {
                     frame: "stat_" + (next_stat > current_stat ? "up" : "down"),
                 });
@@ -196,8 +207,8 @@ export class DjinnCharStatsWindow {
 
     open(
         char: MainChar,
-        djinni: Djinn[],
-        next_djinni_status: djinn_status[],
+        djinni?: Djinn[],
+        next_djinni_status?: djinn_status[],
         action?: djinn_actions,
         callback?: Function
     ) {
@@ -217,6 +228,7 @@ export class DjinnCharStatsWindow {
 
     close(callback?: Function) {
         this.unmount_window();
+        this.djinni = null;
         this.base_window.close(() => {
             this.window_open = false;
             if (callback !== undefined) {

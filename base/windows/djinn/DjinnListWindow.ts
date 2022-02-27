@@ -752,7 +752,10 @@ export class DjinnListWindow {
         );
     }
 
-    view_char_status() {}
+    view_char_status() {
+        const this_char = this.data.info.party_data.members[this.selected_char_index];
+        this.djinn_char_stats_window_left.open(this_char);
+    }
 
     on_choose() {
         const this_char = this.data.info.party_data.members[this.selected_char_index];
