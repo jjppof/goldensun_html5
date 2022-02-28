@@ -11,7 +11,7 @@ const BASE_WIN_HEIGHT = 116;
 const BASE_WIN_X = 120;
 const BASE_WIN_Y = 40;
 
-const ELEM_PER_PAGE = 5;
+const DEFAULT_ELEM_PER_PAGE = 5;
 const ELEM_PADDING_TOP = 12;
 const ELEM_PADDING_LEFT = 8;
 const SPACE_BETWEEN_ITEMS = 2;
@@ -49,6 +49,7 @@ export class DjinnPsynergyWindow {
 
     public page_number: number;
     public page_index: number;
+    public elem_per_page: number;
 
     public all_abilities: string[];
     public abilities: string[];
@@ -106,7 +107,7 @@ export class DjinnPsynergyWindow {
 
     set_page_number() {
         const list_length = this.all_abilities.length;
-        this.page_number = (((list_length - 1) / ELEM_PER_PAGE) | 0) + 1;
+        this.page_number = (((list_length - 1) / this.elem_per_page) | 0) + 1;
         if (this.page_index >= this.page_number) {
             this.page_index = this.page_number - 1;
         }
@@ -127,8 +128,8 @@ export class DjinnPsynergyWindow {
     set_abilities_list() {
         this.clear_sprites();
         this.abilities = this.all_abilities.slice(
-            this.page_index * ELEM_PER_PAGE,
-            (this.page_index + 1) * ELEM_PER_PAGE
+            this.page_index * this.elem_per_page,
+            (this.page_index + 1) * this.elem_per_page
         );
         for (let i = 0; i < this.abilities.length; ++i) {
             const key_name = this.abilities[i];
@@ -206,6 +207,8 @@ export class DjinnPsynergyWindow {
             }
         } else {
             this.all_abilities = this.current_abilities;
+            this.base_window.update_text("", this.psy_info_1_text);
+            this.base_window.update_text("", this.psy_info_2_text);
         }
     }
 
@@ -248,6 +251,7 @@ export class DjinnPsynergyWindow {
     ) {
         this.char = char;
         this.djinni = djinni;
+        this.elem_per_page = this.djinni ? DEFAULT_ELEM_PER_PAGE : DEFAULT_ELEM_PER_PAGE + 1;
         this.next_djinni_status = next_djinni_status;
         this.close_callback = close_callback;
         this.execute_operation = false;
