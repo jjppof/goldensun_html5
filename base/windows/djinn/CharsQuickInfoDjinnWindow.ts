@@ -26,12 +26,23 @@ export class CharsQuickInfoDjinnWindow {
     public base_window: Window;
     public char_name: TextObj;
     public char_class: TextObj;
+    public level_label: TextObj;
     public level_number: TextObj;
     public char_status_text: TextObj;
     public l_button: {
         shadow: Phaser.Sprite;
         main: Phaser.Sprite;
     };
+    public a_button: {
+        shadow: Phaser.Sprite;
+        main: Phaser.Sprite;
+    };
+    public b_button: {
+        shadow: Phaser.Sprite;
+        main: Phaser.Sprite;
+    };
+    public current_status_label: TextObj;
+    public return_label: TextObj;
 
     constructor(game) {
         this.game = game;
@@ -44,7 +55,7 @@ export class CharsQuickInfoDjinnWindow {
         this.base_window = new Window(this.game, this.x, this.y, BASE_WIN_WIDTH, BASE_WIN_HEIGHT);
         this.char_name = this.base_window.set_text_in_position("", NAME_X, NAME_Y);
         this.char_class = this.base_window.set_text_in_position("", NAME_X, CLASS_Y);
-        this.base_window.set_text_in_position("Lv", LV_X, LV_Y);
+        this.level_label = this.base_window.set_text_in_position("Lv", LV_X, LV_Y);
         this.level_number = this.base_window.set_text_in_position("", LV_NUMBER_RIGHT_X, LV_Y, {right_align: true});
 
         this.l_button = {
@@ -61,6 +72,36 @@ export class CharsQuickInfoDjinnWindow {
             this.l_button.main.x + this.l_button.main.width + 2,
             this.l_button.main.y
         );
+
+        this.current_status_label = this.base_window.set_text_in_position("Current status", NAME_X, NAME_Y);
+        this.current_status_label.text.visible = this.current_status_label.shadow.visible = false;
+        this.a_button = {
+            shadow: this.base_window.create_at_group(L_BUTTON_X + 1, L_BUTTON_Y + 1, "keyboard_buttons", {
+                color: 0x0,
+                frame: "a_button",
+            }),
+            main: this.base_window.create_at_group(L_BUTTON_X, L_BUTTON_Y, "keyboard_buttons", {
+                frame: "a_button",
+            }),
+        };
+        this.a_button.main.visible = this.a_button.shadow.visible = false;
+        const b_button_x = this.a_button.main.x + this.a_button.main.width + 2;
+        this.b_button = {
+            shadow: this.base_window.create_at_group(b_button_x + 1, L_BUTTON_Y + 1, "keyboard_buttons", {
+                color: 0x0,
+                frame: "b_button",
+            }),
+            main: this.base_window.create_at_group(b_button_x, L_BUTTON_Y, "keyboard_buttons", {
+                frame: "b_button",
+            }),
+        };
+        this.b_button.main.visible = this.b_button.shadow.visible = false;
+        this.return_label = this.base_window.set_text_in_position(
+            ": Return",
+            this.a_button.main.x + this.a_button.main.width + this.b_button.main.width + 4,
+            this.a_button.main.y
+        );
+        this.return_label.text.visible = this.return_label.shadow.visible = false;
     }
 
     set_l_button_visibility(visible: boolean) {
@@ -70,10 +111,28 @@ export class CharsQuickInfoDjinnWindow {
         this.char_status_text.shadow.visible = visible;
     }
 
+    set_return_info_visibility(visible: boolean) {
+        this.current_status_label.text.visible = this.current_status_label.shadow.visible = visible;
+        this.a_button.main.visible = this.a_button.shadow.visible = visible;
+        this.b_button.main.visible = this.b_button.shadow.visible = visible;
+        this.return_label.text.visible = this.return_label.shadow.visible = visible;
+    }
+
     update_text() {
         this.base_window.update_text(this.char.name, this.char_name);
         this.base_window.update_text(this.char.class.name, this.char_class);
         this.base_window.update_text(this.char.level.toString(), this.level_number);
+    }
+
+    set_char_info_visibililty(visible: boolean) {
+        this.char_name.text.visible = visible;
+        this.char_name.shadow.visible = visible;
+        this.char_class.text.visible = visible;
+        this.char_class.shadow.visible = visible;
+        this.level_number.text.visible = visible;
+        this.level_number.shadow.visible = visible;
+        this.level_label.text.visible = visible;
+        this.level_label.shadow.visible = visible;
     }
 
     set_char(char: MainChar) {

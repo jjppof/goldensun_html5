@@ -44,7 +44,7 @@ export class DjinnPsynergyWindow {
     public psy_info_2_text: TextObj;
 
     public execute_operation: boolean;
-    public close_callback: Function;
+    public close_callback: (execute_operation?: boolean) => void;
     public next_state_callback: Function;
 
     public page_number: number;
@@ -154,12 +154,14 @@ export class DjinnPsynergyWindow {
                 {right_align: true}
             );
             this.text_sprites_in_window.push(psynergy_cost_sprite);
-            if (this.gained_abilities.includes(key_name)) {
-                this.base_window.update_text_color(PSY_GAIN_COLOR, psynergy_name_sprite);
-                this.base_window.update_text_color(PSY_GAIN_COLOR, psynergy_cost_sprite);
-            } else if (this.lost_abilities.includes(key_name)) {
-                this.base_window.update_text_color(PSY_LOST_COLOR, psynergy_name_sprite);
-                this.base_window.update_text_color(PSY_LOST_COLOR, psynergy_cost_sprite);
+            if (this.djinni) {
+                if (this.gained_abilities.includes(key_name)) {
+                    this.base_window.update_text_color(PSY_GAIN_COLOR, psynergy_name_sprite);
+                    this.base_window.update_text_color(PSY_GAIN_COLOR, psynergy_cost_sprite);
+                } else if (this.lost_abilities.includes(key_name)) {
+                    this.base_window.update_text_color(PSY_LOST_COLOR, psynergy_name_sprite);
+                    this.base_window.update_text_color(PSY_LOST_COLOR, psynergy_cost_sprite);
+                }
             }
         }
     }
@@ -168,38 +170,42 @@ export class DjinnPsynergyWindow {
         this.current_abilities = this.char.abilities.filter(key_name => {
             return key_name in this.data.info.abilities_list;
         });
-        const preview_values = this.char.preview_djinn_change(
-            [],
-            this.djinni.map(d => d.key_name),
-            this.next_djinni_status,
-            this.action
-        );
-        this.next_abilities = preview_values.abilities.filter(key_name => {
-            return key_name in this.data.info.abilities_list;
-        });
-        let current_set = new Set(this.current_abilities);
-        let next_set = new Set(this.next_abilities);
-        this.gained_abilities = [...next_set].filter(x => !current_set.has(x));
-        this.lost_abilities = [...current_set].filter(x => !next_set.has(x));
-        this.intersection_abilities = [...current_set].filter(x => next_set.has(x));
-        this.all_abilities = this.gained_abilities.concat(this.intersection_abilities, this.lost_abilities);
-        if (this.gained_abilities.length === 0 && this.lost_abilities.length === 0) {
-            this.base_window.update_text("* No change", this.psy_info_1_text);
-            this.base_window.update_text_color(numbers.DEFAULT_FONT_COLOR, this.psy_info_1_text);
-            this.base_window.update_text("", this.psy_info_2_text);
-        } else if (this.gained_abilities.length && this.lost_abilities.length === 0) {
-            this.base_window.update_text("* Psynergy Gained", this.psy_info_1_text);
-            this.base_window.update_text_color(PSY_GAIN_COLOR, this.psy_info_1_text);
-            this.base_window.update_text("", this.psy_info_2_text);
-        } else if (this.gained_abilities.length === 0 && this.lost_abilities.length) {
-            this.base_window.update_text("* Psynergy Lost", this.psy_info_1_text);
-            this.base_window.update_text_color(PSY_LOST_COLOR, this.psy_info_1_text);
-            this.base_window.update_text("", this.psy_info_2_text);
-        } else if (this.gained_abilities.length && this.lost_abilities.length) {
-            this.base_window.update_text("* Psynergy Gained", this.psy_info_1_text);
-            this.base_window.update_text_color(PSY_GAIN_COLOR, this.psy_info_1_text);
-            this.base_window.update_text("* Psynergy Lost", this.psy_info_2_text);
-            this.base_window.update_text_color(PSY_LOST_COLOR, this.psy_info_2_text);
+        if (this.djinni) {
+            const preview_values = this.char.preview_djinn_change(
+                [],
+                this.djinni.map(d => d.key_name),
+                this.next_djinni_status,
+                this.action
+            );
+            this.next_abilities = preview_values.abilities.filter(key_name => {
+                return key_name in this.data.info.abilities_list;
+            });
+            let current_set = new Set(this.current_abilities);
+            let next_set = new Set(this.next_abilities);
+            this.gained_abilities = [...next_set].filter(x => !current_set.has(x));
+            this.lost_abilities = [...current_set].filter(x => !next_set.has(x));
+            this.intersection_abilities = [...current_set].filter(x => next_set.has(x));
+            this.all_abilities = this.gained_abilities.concat(this.intersection_abilities, this.lost_abilities);
+            if (this.gained_abilities.length === 0 && this.lost_abilities.length === 0) {
+                this.base_window.update_text("* No change", this.psy_info_1_text);
+                this.base_window.update_text_color(numbers.DEFAULT_FONT_COLOR, this.psy_info_1_text);
+                this.base_window.update_text("", this.psy_info_2_text);
+            } else if (this.gained_abilities.length && this.lost_abilities.length === 0) {
+                this.base_window.update_text("* Psynergy Gained", this.psy_info_1_text);
+                this.base_window.update_text_color(PSY_GAIN_COLOR, this.psy_info_1_text);
+                this.base_window.update_text("", this.psy_info_2_text);
+            } else if (this.gained_abilities.length === 0 && this.lost_abilities.length) {
+                this.base_window.update_text("* Psynergy Lost", this.psy_info_1_text);
+                this.base_window.update_text_color(PSY_LOST_COLOR, this.psy_info_1_text);
+                this.base_window.update_text("", this.psy_info_2_text);
+            } else if (this.gained_abilities.length && this.lost_abilities.length) {
+                this.base_window.update_text("* Psynergy Gained", this.psy_info_1_text);
+                this.base_window.update_text_color(PSY_GAIN_COLOR, this.psy_info_1_text);
+                this.base_window.update_text("* Psynergy Lost", this.psy_info_2_text);
+                this.base_window.update_text_color(PSY_LOST_COLOR, this.psy_info_2_text);
+            }
+        } else {
+            this.all_abilities = this.current_abilities;
         }
     }
 
@@ -232,9 +238,9 @@ export class DjinnPsynergyWindow {
 
     open(
         char: MainChar,
-        djinni: Djinn[],
-        next_djinni_status: djinn_status[],
-        close_callback: Function,
+        djinni?: Djinn[],
+        next_djinni_status?: djinn_status[],
+        close_callback?: DjinnPsynergyWindow["close_callback"],
         hidden: boolean = false,
         next_state_callback?: Function,
         action?: djinn_actions,
@@ -259,8 +265,9 @@ export class DjinnPsynergyWindow {
         }, false);
     }
 
-    close(callback?: Function) {
+    close(callback?: DjinnPsynergyWindow["close_callback"]) {
         this.clear_sprites();
+        this.djinni = null;
         this.base_window.page_indicator.terminante();
         this.base_window.close(() => {
             this.window_open = false;

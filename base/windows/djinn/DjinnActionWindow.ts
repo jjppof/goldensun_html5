@@ -16,10 +16,10 @@ const CHAR_NAME_Y = 16;
 const DJINN_NAME_X = 64;
 const DJINN_NAME_Y = 16;
 
-const SHIFT_KEY_X = 8;
-const SHIFT_KEY_Y = 24;
+const R_BUTTON_KEY_X = 8;
+const R_BUTTON_KEY_Y = 24;
 
-const DJINN_ACTION_X = SHIFT_KEY_X + 15;
+const DJINN_ACTION_X = R_BUTTON_KEY_X + 15;
 const DJINN_ACTION_Y = 24;
 
 export class DjinnActionWindow {
@@ -35,7 +35,7 @@ export class DjinnActionWindow {
     public djinn_name_text: TextObj;
     public action_text: TextObj;
 
-    public shift_key: {
+    public r_button_key: {
         shadow: Phaser.Sprite;
         text: Phaser.Sprite;
     };
@@ -53,13 +53,24 @@ export class DjinnActionWindow {
         this.djinn_name_text = this.base_window.set_text_in_position("", DJINN_NAME_X, DJINN_NAME_Y);
         this.action_text = this.base_window.set_text_in_position("", DJINN_ACTION_X, DJINN_ACTION_Y);
 
-        this.shift_key = {
-            shadow: this.base_window.create_at_group(SHIFT_KEY_X + 1, SHIFT_KEY_Y + 1, "keyboard_buttons", {
+        this.r_button_key = {
+            shadow: this.base_window.create_at_group(R_BUTTON_KEY_X + 1, R_BUTTON_KEY_Y + 1, "keyboard_buttons", {
                 color: 0x0,
                 frame: "r_button",
             }),
-            text: this.base_window.create_at_group(SHIFT_KEY_X, SHIFT_KEY_Y, "keyboard_buttons", {frame: "r_button"}),
+            text: this.base_window.create_at_group(R_BUTTON_KEY_X, R_BUTTON_KEY_Y, "keyboard_buttons", {
+                frame: "r_button",
+            }),
         };
+    }
+
+    set_info_visibililty(visible: boolean) {
+        this.r_button_key.text.visible = visible;
+        this.r_button_key.shadow.visible = visible;
+        this.action_text.text.visible = visible;
+        this.action_text.shadow.visible = visible;
+        this.action_description_text.text.visible = visible;
+        this.action_description_text.shadow.visible = visible;
     }
 
     set_action_text(status: string) {
@@ -67,7 +78,7 @@ export class DjinnActionWindow {
         this.base_window.update_text("", this.char_name_text);
         this.base_window.update_text("", this.djinn_name_text);
 
-        this.shift_key.text.visible = this.shift_key.shadow.visible = true;
+        this.r_button_key.text.visible = this.r_button_key.shadow.visible = true;
         if (this.star_sprite) {
             this.star_sprite.destroy();
             this.star_sprite = null;
@@ -93,7 +104,7 @@ export class DjinnActionWindow {
         this.base_window.update_text(this_djinn.name, this.djinn_name_text);
         this.base_window.update_text("", this.action_text);
 
-        this.shift_key.text.visible = this.shift_key.shadow.visible = false;
+        this.r_button_key.text.visible = this.r_button_key.shadow.visible = false;
     }
 
     open(callback?: Function) {

@@ -38,7 +38,7 @@ export enum main_stats {
 export const current_main_stat_map = {
     [main_stats.MAX_HP]: main_stats.CURRENT_HP,
     [main_stats.MAX_PP]: main_stats.CURRENT_PP,
-}
+};
 
 export enum elemental_stats {
     CURRENT_POWER = "current_power",

@@ -181,7 +181,10 @@ export class DjinnCharStatsWindow {
                 }
             }
 
-            this.base_window.update_text(current_stat.toString() + (!preview_values && is_hp_pp ? "/" : ""), this.stats_current_texts[stat]);
+            this.base_window.update_text(
+                current_stat.toString() + (!preview_values && is_hp_pp ? "/" : ""),
+                this.stats_current_texts[stat]
+            );
             this.base_window.update_text(isNaN(next_stat) ? "" : next_stat.toString(), this.stats_next_texts[stat]);
 
             if (preview_values && current_stat !== next_stat) {

@@ -754,7 +754,40 @@ export class DjinnListWindow {
 
     view_char_status() {
         const this_char = this.data.info.party_data.members[this.selected_char_index];
+        this.chars_quick_info_window.set_char_info_visibililty(false);
+        this.chars_quick_info_window.set_l_button_visibility(false);
+        this.chars_sprites_group.visible = false;
+        this.djinn_action_window.set_info_visibililty(false);
+        this.chars_quick_info_window.set_return_info_visibility(true);
+        this.data.cursor_manager.hide();
         this.djinn_char_stats_window_left.open(this_char);
+        this.djinn_psynergy_window.open(
+            this_char,
+            undefined,
+            undefined,
+            () => {
+                this.chars_quick_info_window.set_char_info_visibililty(true);
+                this.chars_quick_info_window.set_l_button_visibility(true);
+                this.chars_sprites_group.visible = true;
+                this.djinn_action_window.set_info_visibililty(true);
+                this.chars_quick_info_window.set_return_info_visibility(false);
+                this.djinn_char_stats_window_left.close(() => {
+                    this.data.cursor_manager.show();
+                    this.grant_control(
+                        this.close.bind(this),
+                        this.on_choose.bind(this),
+                        this.change_djinn_status.bind(this),
+                        this.view_char_status.bind(this)
+                    );
+                });
+            },
+            undefined,
+            undefined,
+            undefined,
+            () => {
+                this.djinn_psynergy_window.grant_control();
+            }
+        );
     }
 
     on_choose() {
