@@ -288,7 +288,7 @@ export class MainItemMenu {
                     item_win.element_list[(item_win.elements[item_win.selected_element_index] as ItemSlot).key_name];
                 const selected_item_obj = item_win.item_objs[item_win.selected_element_index];
 
-                this.item_choose(selected_item, selected_item_obj);
+                this.item_choose(selected_item as Item, selected_item_obj);
             },
             this.chars_menu.next_char.bind(this.chars_menu),
             this.chars_menu.previous_char.bind(this.chars_menu)

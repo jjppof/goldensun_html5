@@ -9,6 +9,7 @@ import {BattleFormulas} from "../battle/BattleFormulas";
 import {main_stats, permanent_status} from "../Player";
 import {Effect, effect_types} from "../Effect";
 import * as _ from "lodash";
+import {Item} from "../Item";
 
 const PSY_OVERVIEW_WIN_X = 104;
 const PSY_OVERVIEW_WIN_Y = 24;
@@ -57,7 +58,7 @@ export class ItemPsynergyChooseWindow {
     public is_psynergy_window: boolean;
     public on_change: Function;
 
-    public element_list: any;
+    public element_list: {[key: string]: Ability | Item};
     public element_sprite_key: string;
 
     public window: Window;
@@ -187,10 +188,9 @@ export class ItemPsynergyChooseWindow {
         let list_length: number;
         if (this.is_psynergy_window) {
             list_length = this.char.abilities.filter(elem_key_name => {
+                const ability = this.element_list[elem_key_name] as Ability;
                 return (
-                    elem_key_name in this.element_list &&
-                    (this.element_list[elem_key_name].is_field_psynergy ||
-                        this.element_list[elem_key_name].effects_outside_battle)
+                    elem_key_name in this.element_list && (ability.is_field_psynergy || ability.effects_outside_battle)
                 );
             }).length;
         } else {
@@ -219,10 +219,10 @@ export class ItemPsynergyChooseWindow {
         if (this.is_psynergy_window) {
             this.elements = this.char.abilities
                 .filter(elem_key_name => {
+                    const ability = this.element_list[elem_key_name] as Ability;
                     return (
                         elem_key_name in this.element_list &&
-                        (this.element_list[elem_key_name].is_field_psynergy ||
-                            (!this.setting_shortcut && this.element_list[elem_key_name].effects_outside_battle))
+                        (ability.is_field_psynergy || (!this.setting_shortcut && ability.effects_outside_battle))
                     );
                 })
                 .slice(this.page_index * ELEM_PER_PAGE, (this.page_index + 1) * ELEM_PER_PAGE);
@@ -247,6 +247,7 @@ export class ItemPsynergyChooseWindow {
         }
         for (let i = 0; i < this.elements.length; ++i) {
             const elem_key_name = this.get_element_key_name(i);
+            const element = this.element_list[elem_key_name as string];
             const x = ELEM_PADDING_LEFT;
             const y = ELEM_PADDING_TOP + i * (numbers.ICON_HEIGHT + SPACE_BETWEEN_ITEMS);
 
@@ -255,11 +256,12 @@ export class ItemPsynergyChooseWindow {
 
             const x_elem_name = ELEM_PADDING_LEFT + numbers.ICON_WIDTH + (this.is_psynergy_window ? 2 : 4);
             this.text_sprites_in_window.push(
-                this.window.set_text_in_position(
-                    this.element_list[elem_key_name as string].name,
-                    x_elem_name,
-                    y + ELEM_NAME_ICON_SHIFT
-                )
+                this.window.set_text_in_position(element.name, x_elem_name, y + ELEM_NAME_ICON_SHIFT, {
+                    color:
+                        this.is_psynergy_window && this.char.current_pp < (element as Ability).pp_cost
+                            ? numbers.RED_FONT_COLOR
+                            : undefined,
+                })
             );
 
             if (this.is_psynergy_window) {
@@ -291,10 +293,16 @@ export class ItemPsynergyChooseWindow {
                 const x_elem_pp_cost = PSY_PP_X;
                 this.text_sprites_in_window.push(
                     this.window.set_text_in_position(
-                        this.element_list[elem_key_name as string].pp_cost,
+                        (element as Ability).pp_cost.toString(),
                         x_elem_pp_cost,
                         y + ELEM_NAME_ICON_SHIFT,
-                        {right_align: true}
+                        {
+                            right_align: true,
+                            color:
+                                this.char.current_pp < (element as Ability).pp_cost
+                                    ? numbers.RED_FONT_COLOR
+                                    : undefined,
+                        }
                     )
                 );
             }

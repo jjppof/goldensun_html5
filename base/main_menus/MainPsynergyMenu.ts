@@ -228,7 +228,7 @@ export class MainPsynergyMenu {
             () => {
                 const psy_win = this.psynergy_choose_window;
                 const selected_psy = psy_win.element_list[psy_win.elements[psy_win.selected_element_index] as string];
-                this.psynergy_choose(selected_psy, setting_shortcut, shortcut_button);
+                this.psynergy_choose(selected_psy as Ability, setting_shortcut, shortcut_button);
             },
             this.chars_menu.next_char.bind(this.chars_menu),
             this.chars_menu.previous_char.bind(this.chars_menu)

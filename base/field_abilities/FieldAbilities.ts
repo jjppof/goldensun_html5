@@ -7,6 +7,8 @@ import {Map} from "../Map";
 import {YesNoMenu} from "../windows/YesNoMenu";
 import {NPC} from "../NPC";
 import * as _ from "lodash";
+import {Button} from "../XGamepad";
+import {DialogManager} from "../utils/DialogManager";
 
 /**
  * Defines and manages the usage of field psynergy.
@@ -240,9 +242,6 @@ export abstract class FieldAbilities {
         this.field_psynergy_window.close();
         const caster = this.data.info.main_char_list[caster_key_name];
         const ability = this.data.info.abilities_list[this.ability_key_name];
-        if (caster.current_pp < ability.pp_cost || !caster.abilities.includes(this.ability_key_name)) {
-            return;
-        }
         caster.current_pp -= ability.pp_cost;
 
         this.field_psynergy_window.open(ability.name);
@@ -310,6 +309,47 @@ export abstract class FieldAbilities {
         );
     }
 
+    no_pp() {
+        this.controllable_char.misc_busy = true;
+        const dialog = new DialogManager(this.game, this.data);
+        let next = false;
+        let kill_dialog = false;
+        const control_key = this.data.control_manager.add_controls(
+            [
+                {
+                    buttons: Button.A,
+                    on_down: () => {
+                        if (next) {
+                            dialog.next_dialog(`Not enough PP.`, () => {
+                                next = false;
+                                kill_dialog = true;
+                            });
+                        } else if (kill_dialog) {
+                            dialog.kill_dialog(
+                                () => {
+                                    this.data.control_manager.detach_bindings(control_key);
+                                    this.controllable_char.misc_busy = false;
+                                },
+                                false,
+                                true
+                            );
+                        }
+                    },
+                },
+            ],
+            {persist: true}
+        );
+        const ability_name = this.data.info.abilities_list[this.ability_key_name].name;
+        dialog.next_dialog(
+            `${ability_name}...`,
+            () => {
+                next = true;
+            },
+            {show_crystal: true}
+        );
+        return false;
+    }
+
     cast(controllable_char: ControllableChar, caster_key_name: string) {
         this.controllable_char = controllable_char;
         if (
@@ -317,6 +357,13 @@ export abstract class FieldAbilities {
             caster_key_name === undefined ||
             !(caster_key_name in this.data.info.main_char_list)
         ) {
+            return;
+        }
+
+        const caster = this.data.info.main_char_list[caster_key_name];
+        const ability = this.data.info.abilities_list[this.ability_key_name];
+        if (caster.current_pp < ability.pp_cost || !caster.abilities.includes(this.ability_key_name)) {
+            this.no_pp();
             return;
         }
 
