@@ -352,17 +352,18 @@ export abstract class FieldAbilities {
 
     cast(controllable_char: ControllableChar, caster_key_name: string) {
         this.controllable_char = controllable_char;
+        const caster = this.data.info.main_char_list[caster_key_name];
         if (
             this.controllable_char.casting_psynergy ||
             caster_key_name === undefined ||
-            !(caster_key_name in this.data.info.main_char_list)
+            !(caster_key_name in this.data.info.main_char_list) ||
+            !caster.abilities.includes(this.ability_key_name)
         ) {
             return;
         }
 
-        const caster = this.data.info.main_char_list[caster_key_name];
         const ability = this.data.info.abilities_list[this.ability_key_name];
-        if (caster.current_pp < ability.pp_cost || !caster.abilities.includes(this.ability_key_name)) {
+        if (caster.current_pp < ability.pp_cost) {
             this.no_pp();
             return;
         }
