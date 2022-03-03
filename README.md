@@ -2,12 +2,12 @@
 
 ![golden sun html5](assets/images/misc/logo.jpg?raw=true)
 
-An online **Golden Sun Engine** entirely built in HTML5 with [PhaserJS CE 2.19.0](http://phaser.io/).
+An **Golden Sun Engine** entirely built in HTML5 with [PhaserJS CE 2.19.0](http://phaser.io/).
 
-**See the [DEMO](https://jjppof.github.io/goldensun_html5/index).** Prefer to use Chrome based browsers.
+**See the [DEMO](https://jjppof.github.io/goldensun_html5/index).** Use Chromium based browsers. Don't use Firefox.
 
-- **This repository is just the engine**. I'm not planning to do many maps, animations, items etc. Content here is just enough to show the functionalities.
 - With this project, **people should be able to make a GS like game without any programming skills**.
+- **This repository is just the engine**. I'm not planning to do many maps, animations, items etc. Content here is just enough to show the functionalities.
 - This project does not aim to do exactly the same engine as GS, but very similar.
 - **WE NEED HELP!** Please, feel free to reach me if you want to do so. Join our [**discord server**](https://discord.gg/fYFSxPMjmS).
 - If you found any bug, please create an [issue](https://github.com/jjppof/goldensun_html5/issues/new) for it.
@@ -15,20 +15,6 @@ An online **Golden Sun Engine** entirely built in HTML5 with [PhaserJS CE 2.19.0
 - Check the [wiki](https://github.com/jjppof/goldensun_html5/wiki) for database configuration, tutorials and project tech information.
 - There's no production environment for now, but I'm planning to deploy a desktop application.
 - Check the [latest updates](https://github.com/jjppof/goldensun_html5/discussions/categories/updates).
-
-## Things that you can do without programming knowledge
-
-- Maps
-- NPCs
-- Battle Animations
-- Shops
-- Djinn
-- Summons
-- Abilities
-- Items
-- Main chars
-- Enemies
-- Djinn
 
 ## Development environment
 
@@ -44,7 +30,7 @@ GS-HTML5 supports both Javascript and Typescript. We use [Webpack](https://webpa
 
 Some useful tools that I use to manage the resources:
 - [Visual Studio Code](https://code.visualstudio.com/download) (for developing the game)
-- [Tiledmap Editor 1.1](https://www.mapeditor.org/) ([Tiledmap version problem fix](https://github.com/bjorn/tiled/issues/2058#issuecomment-458975579) for newer versions) (for building maps)
+- [Tiledmap Editor](https://www.mapeditor.org/)
 - [Golden Sun Editor](http://forum.goldensunhacking.net/index.php?action=downloads;sa=view;down=124) (for game info)
 - [TexturePacker 4.6.1](https://www.codeandweb.com/texturepacker) (for creating spritesheets)
   - [Sprite Sheet Packer](https://www.codeandweb.com/free-sprite-sheet-packer) (free alternative for TexturePacker)
