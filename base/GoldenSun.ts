@@ -19,6 +19,7 @@ import {Gamepad as XGamepad, Button, AdvanceButton} from "./XGamepad";
 import {Audio} from "./Audio";
 import {Storage} from "./Storage";
 import {Camera} from "./Camera";
+import { HealerMenu } from "./main_menus/HealerMEnu";
 
 /**
  * The project has basically two important folders: assets and base. All the source code is located inside base folder.
@@ -43,6 +44,7 @@ export class GoldenSun {
     //main game states
     public menu_open: boolean = false;
     public shop_open: boolean = false;
+    public healer_open: boolean = false;
     public inn_open: boolean = false;
     public in_battle: boolean = false;
     public assets_loaded: boolean = false;
@@ -62,6 +64,9 @@ export class GoldenSun {
 
     /** Class responsible for the shop system */
     public shop_menu: ShopMenu = null;
+
+    /** Class responsible for the healer menu */
+    public healer_menu: HealerMenu = null;
 
     /** Class responsible for the inn system */
     public inn_menu: InnMenu = null;
@@ -254,6 +259,7 @@ export class GoldenSun {
 
         //initializes main menus
         this.shop_menu = new ShopMenu(this.game, this);
+        this.healer_menu = new HealerMenu(this.game, this);
         this.inn_menu = new InnMenu(this.game, this);
         this.main_menu = initialize_menu(this.game, this);
 
@@ -371,6 +377,7 @@ export class GoldenSun {
             this.hero.in_action(allow_climbing) ||
             this.menu_open ||
             this.shop_open ||
+            this.healer_open ||
             this.inn_open ||
             this.in_battle ||
             this.tile_event_manager.on_event ||
@@ -410,6 +417,8 @@ export class GoldenSun {
                 this.main_menu.update_position();
             } else if (this.shop_open && this.shop_menu.horizontal_menu.menu_active) {
                 this.shop_menu.update_position();
+            } else if (this.healer_open && this.healer_menu.horizontal_menu.menu_active) {
+                this.healer_menu.update_position();
             } else if (this.in_battle) {
                 this.battle_instance.update();
             }

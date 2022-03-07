@@ -80,6 +80,7 @@ export class GameEventManager {
                             this.data.menu_open ||
                             this.data.in_battle ||
                             this.data.shop_open ||
+                            this.data.healer_open ||
                             this.data.inn_open ||
                             !this.control_enable
                         )
@@ -139,6 +140,14 @@ export class GameEventManager {
                 if (!this.data.shop_open) {
                     const previous_npc_direction = await this.handle_npc_interaction_start(npc);
                     this.data.shop_menu.open_menu(npc.shop_key, npc.avatar, npc.voice_key, async () => {
+                        await this.handle_npc_interaction_end(npc, previous_npc_direction);
+                    });
+                }
+                break;
+            case npc_types.HEALER:
+                if (!this.data.healer_open) {
+                    const previous_npc_direction = await this.handle_npc_interaction_start(npc);
+                    this.data.healer_menu.open_menu(npc, async () => {
                         await this.handle_npc_interaction_end(npc, previous_npc_direction);
                     });
                 }

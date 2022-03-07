@@ -1726,6 +1726,7 @@
      "npc\/05":"{\n    \"key_name\": \"psynergy_stone\",\n    \"storage_keys\":{\n        \"active\": \"psy_stone_madra_active\"\n    },\n    \"x\": 33,\n    \"y\": 15,\n    \"npc_type\": \"normal\",\n    \"movement_type\": \"idle\",\n    \"animation\": \"normal\",\n    \"base_collision_layer\": 1,\n    \"events\": [\n        {\n            \"type\": \"psynergy_stone\",\n                \"finish_events\": [{\n                    \"type\": \"set_value\",\n                    \"event_value\": {\n                        \"type\": \"storage\",\n                        \"value\": {\n                            \"key_name\": \"psy_stone_madra_active\",\n                            \"value\": false\n                        }\n                    }\n                 }]\n        }]\n}",
      "npc\/06":"{\n    \"key_name\": \"mars_djinn\",\n    \"label\": \"ember_djinn\",\n    \"storage_keys\":{\n        \"active\": \"ember_djinn\"\n    },\n    \"x\": 7,\n    \"y\": 15,\n    \"npc_type\": \"normal\",\n    \"action\": \"idle\",\n    \"movement_type\": \"idle\",\n    \"base_collision_layer\": 2,\n    \"events\": [{\n        \"type\": \"djinn_get\",\n        \"djinn_key\": \"ember\",\n        \"finish_events\": [{\n            \"type\": \"set_value\",\n            \"event_value\": {\n                \"type\": \"storage\",\n                \"value\": {\n                    \"key_name\": \"ember_djinn\",\n                    \"value\": false\n                }\n            }\n        }]\n    }]\n}",
      "npc\/07":"{\n    \"key_name\": \"village_1\",\n    \"x\": 24,\n    \"y\": 7,\n    \"movement_type\": \"idle\",\n    \"message\": \"I'm here just to test some layer features...\",\n    \"thought_message\": \"For sure I will fall from here...\",\n    \"base_collision_layer\": 2\n}",
+     "npc\/08":"{\n    \"key_name\": \"village_1\",\n    \"x\": 30,\n    \"y\": 12,\n    \"movement_type\": \"idle\",\n    \"npc_type\": \"healer\",\n    \"avatar\": \"potion_shopkeeper\",\n    \"base_collision_layer\": 1\n}",
      "tile_event\/01":"{\"type\": \"climb\", \"x\": 33, \"y\": 8, \"activation_directions\": \"down\", \"activation_collision_layers\": 1, \"change_to_collision_layer\": 0}",
      "tile_event\/02":"{\"type\": \"climb\", \"x\": 33, \"y\": 9, \"activation_directions\": \"up\", \"activation_collision_layers\": 0, \"change_to_collision_layer\": 1}",
      "tile_event\/03":"{\"type\": \"climb\", \"x\": 10, \"y\": 13, \"activation_directions\": \"down\", \"activation_collision_layers\": 1, \"change_to_collision_layer\": 0}",
@@ -1806,6 +1807,7 @@
      "npc\/05":"string",
      "npc\/06":"string",
      "npc\/07":"string",
+     "npc\/08":"string",
      "tile_event\/01":"string",
      "tile_event\/02":"string",
      "tile_event\/03":"string",
@@ -1875,7 +1877,7 @@
      "tile_event\/67":"string"
     },
  "renderorder":"right-down",
- "tiledversion":"1.7.2",
+ "tiledversion":"1.8.0",
  "tileheight":16,
  "tilesets":[
         {

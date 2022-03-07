@@ -524,7 +524,7 @@ export class DialogManager {
      * @param dialog_only if true, destroys only the dialog window and keeps the avatar window.
      * @param destroy_crystal if true, destroys the dialog crystal.
      */
-    kill_dialog(callback: () => void, dialog_only = false, destroy_crystal = false) {
+    kill_dialog(callback?: () => void, dialog_only = false, destroy_crystal = false) {
         if (!dialog_only && this.avatar_window) {
             this.avatar_window.destroy(false);
             this.avatar_window = null;
