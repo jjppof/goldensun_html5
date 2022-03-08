@@ -518,6 +518,16 @@ export class DialogManager {
         this.mount_window(callback, options?.custom_pos, options?.custom_avatar_pos);
     }
 
+    close_dialog(callback?: () => void) {
+        if (this.dialog_crystal) {
+            this.dialog_crystal.visible = false;
+        }
+        if (this.avatar_window) {
+            this.avatar_window.close();
+        }
+        this.window.close(callback);
+    }
+
     /**
      * If you started a dialog with next_dialog, calls this function to kill it.
      * @param callback on dialog kill callback.
