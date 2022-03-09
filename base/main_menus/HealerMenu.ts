@@ -11,6 +11,12 @@ enum DialogTypes {
     MORE_AID,
     REVIVE_INIT,
     NO_DOWNED,
+    POISON_INIT,
+    NO_POISON,
+    HAUNT_INIT,
+    NO_HAUNT,
+    CURSE_INIT,
+    NO_CURSE,
     LEAVE,
 };
 
@@ -19,8 +25,29 @@ const dialog_msgs = {
     [DialogTypes.MORE_AID]: "Do you wish for more aid?",
     [DialogTypes.REVIVE_INIT]: "Hmm, you were downed in battle and need reviving, do you?",
     [DialogTypes.NO_DOWNED]: "Fear not, none of your companions is down.",
+    [DialogTypes.POISON_INIT]: "Hmm, so you need an antidote to poison or deadly poison?",
+    [DialogTypes.NO_POISON]: "Fear not! None of your companions has been poisoned!",
+    [DialogTypes.HAUNT_INIT]: "You wish me to drive evil spirits away?",
+    [DialogTypes.NO_HAUNT]: "Fear not! None of your companions is being haunted!",
+    [DialogTypes.CURSE_INIT]: "Hmm, so you wish to have the cursed equipment removed, do you?",
+    [DialogTypes.NO_CURSE]: "Fear not! None of your companions has any cursed gear!",
     [DialogTypes.LEAVE]: "Visit us again anytime you need healing.",
 };
+
+const status_dialogs_map = {
+    init: {
+        [permanent_status.DOWNED]: DialogTypes.REVIVE_INIT,
+        [permanent_status.POISON]: DialogTypes.POISON_INIT,
+        [permanent_status.HAUNT]: DialogTypes.HAUNT_INIT,
+        [permanent_status.EQUIP_CURSE]: DialogTypes.CURSE_INIT,
+    },
+    no_status: {
+        [permanent_status.DOWNED]: DialogTypes.NO_DOWNED,
+        [permanent_status.POISON]: DialogTypes.NO_POISON,
+        [permanent_status.HAUNT]: DialogTypes.NO_HAUNT,
+        [permanent_status.EQUIP_CURSE]: DialogTypes.NO_CURSE,
+    }
+}
 
 export class HealerMenu {
     private static readonly BUTTONS = [
@@ -113,28 +140,31 @@ export class HealerMenu {
         this.horizontal_menu_index = this.horizontal_menu.selected_button_index;
         switch (HealerMenu.BUTTONS[this.horizontal_menu.selected_button_index]) {
             case "revive":
-                this.revive_selected();
+                this.check_party_status(permanent_status.DOWNED);
                 break;
             case "cure_poison":
+                this.check_party_status(permanent_status.POISON);
                 break;
             case "repel_evil":
+                this.check_party_status(permanent_status.HAUNT);
                 break;
             case "remove_curse":
+                this.check_party_status(permanent_status.EQUIP_CURSE);
                 break;
         }
     }
 
-    private revive_selected() {
+    private check_party_status(perm_status: permanent_status) {
         this.horizontal_menu.close();
-        this.set_dialog(DialogTypes.REVIVE_INIT, {
+        this.set_dialog(status_dialogs_map.init[perm_status], {
             ask_for_input: true,
             show_crystal: true,
             callback: () => {
-                const has_downed = this.data.info.party_data.members.some(c => c.has_permanent_status(permanent_status.DOWNED));
+                const has_downed = this.data.info.party_data.members.some(c => c.has_permanent_status(perm_status));
                 if (has_downed) {
-
+                    this.party_has_status(perm_status);
                 } else {
-                    this.set_dialog(DialogTypes.NO_DOWNED, {
+                    this.set_dialog(status_dialogs_map.no_status[perm_status], {
                         ask_for_input: true,
                         show_crystal: false,
                         callback: () => {
@@ -149,6 +179,10 @@ export class HealerMenu {
                 }
             }
         });
+    }
+
+    private party_has_status(perm_stats: permanent_status) {
+
     }
 
     private on_horizontal_menu_cancel() {
