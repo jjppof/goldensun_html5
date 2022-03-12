@@ -18,11 +18,17 @@ const WIN_Y2 = 0;
 const WIN_WIDTH2 = 100;
 const WIN_HEIGHT2 = 36;
 
+const WIN_X3 = 8;
+const WIN_Y3 = 96;
+
 const CHAR_GROUP_X = 16;
 const CHAR_GROUP_Y = 128;
 
 const CHAR_GROUP_X2 = 16;
 const CHAR_GROUP_Y2 = 28;
+
+const CHAR_GROUP_X3 = 24;
+const CHAR_GROUP_Y3 = 112;
 
 const GAP_SIZE = 24;
 const SHIFT_X = 16;
@@ -33,6 +39,9 @@ const CURSOR_Y = 118;
 
 const CURSOR_X2 = 0;
 const CURSOR_Y2 = 22;
+
+const CURSOR_X3 = 8;
+const CURSOR_Y3 = 102;
 
 const ARROW_GROUP_X = 96;
 const ARROW_GROUP_Y = 100;
@@ -45,6 +54,9 @@ const ARROW_Y_DIFF = 8;
 const ARROW_GROUP_X2 = 92;
 const ARROW_GROUP_Y2 = -4;
 
+const ARROW_GROUP_X3 = 104;
+const ARROW_GROUP_Y3 = 84;
+
 const MENU_SELECTED_Y_SHIFT = 4;
 const SEPARATOR_X = 4;
 const SEPARATOR_Y = 27;
@@ -53,6 +65,7 @@ const SEPARATOR_LENGTH = 96;
 export enum CharsMenuModes {
     SHOP,
     MENU,
+    HEALER
 }
 
 const ARROW_TWEEN_TIME = Phaser.Timer.QUARTER >> 1;
@@ -128,6 +141,14 @@ export class CharsMenu {
             this.arrow_group.y = ARROW_GROUP_Y2 + this.game.camera.y;
 
             this.window.draw_separator(SEPARATOR_X, SEPARATOR_Y, SEPARATOR_X + SEPARATOR_LENGTH, SEPARATOR_Y, false);
+        } else if (this.mode === CharsMenuModes.HEALER) {
+            this.window.update_size({width: WIN_WIDTH, height: WIN_HEIGHT});
+            this.window.update_position({x: WIN_X3, y: WIN_Y3});
+
+            this.char_group.x = CHAR_GROUP_X3 - SHIFT_X + this.game.camera.x;
+            this.char_group.y = CHAR_GROUP_Y3 - SHIFT_Y + this.game.camera.y;
+            this.arrow_group.x = ARROW_GROUP_X3 + this.game.camera.x;
+            this.arrow_group.y = ARROW_GROUP_Y3 + this.game.camera.y;
         }
     }
 
@@ -415,6 +436,10 @@ export class CharsMenu {
             cursor_y = CURSOR_Y2;
             tween_config.type = CursorManager.CursorTweens.POINT;
             tween_config.variant = PointVariants.NORMAL;
+        } else if (this.mode === CharsMenuModes.HEALER) {
+            cursor_x = CURSOR_X3 + pos * GAP_SIZE;
+            cursor_y = CURSOR_Y3;
+            tween_config.type = CursorManager.CursorTweens.WIGGLE;
         }
         this.data.cursor_manager.move_to(
             {x: cursor_x, y: cursor_y},
@@ -455,7 +480,7 @@ export class CharsMenu {
         this.window.show(open_callback, false);
     }
 
-    close(callback?: () => void, destroy: boolean = false) {
+    close(callback?: () => void, destroy: boolean = false, hide_cursor: boolean = false) {
         this.is_open = false;
         this.deactivate();
         utils.kill_all_sprites(this.char_group, destroy);
@@ -470,6 +495,10 @@ export class CharsMenu {
         this.mode = null;
 
         this.set_arrows(false, false);
+
+        if (hide_cursor) {
+            this.data.cursor_manager.hide();
+        }
 
         this.window.clear_separators();
         this.window.close(callback, false);

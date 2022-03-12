@@ -1,6 +1,7 @@
 import { GoldenSun } from "../GoldenSun";
 import { NPC } from "../NPC";
 import { permanent_status } from "../Player";
+import { CharsMenu, CharsMenuModes } from "../support_menus/CharsMenu";
 import { HorizontalMenu } from "../support_menus/HorizontalMenu";
 import { DialogManager } from "../utils/DialogManager";
 import { TextObj, Window } from "../Window";
@@ -11,27 +12,39 @@ enum DialogTypes {
     MORE_AID,
     REVIVE_INIT,
     NO_DOWNED,
+    SELECT_REVIVE,
     POISON_INIT,
     NO_POISON,
+    SELECT_POISON,
     HAUNT_INIT,
     NO_HAUNT,
+    SELECT_HAUNT,
     CURSE_INIT,
     NO_CURSE,
+    SELECT_CURSE,
     LEAVE,
 };
 
 const dialog_msgs = {
     [DialogTypes.WELCOME]: "Welcome, weary wanderers. What aid do you seek?",
     [DialogTypes.MORE_AID]: "Do you wish for more aid?",
+    [DialogTypes.LEAVE]: "Visit us again anytime you need healing.",
+
     [DialogTypes.REVIVE_INIT]: "Hmm, you were downed in battle and need reviving, do you?",
     [DialogTypes.NO_DOWNED]: "Fear not, none of your companions is down.",
+    [DialogTypes.SELECT_REVIVE]: "Who shall I revive?",
+
     [DialogTypes.POISON_INIT]: "Hmm, so you need an antidote to poison or deadly poison?",
     [DialogTypes.NO_POISON]: "Fear not! None of your companions has been poisoned!",
+    [DialogTypes.SELECT_POISON]: "Whom shall I cure?",
+
     [DialogTypes.HAUNT_INIT]: "You wish me to drive evil spirits away?",
     [DialogTypes.NO_HAUNT]: "Fear not! None of your companions is being haunted!",
+    [DialogTypes.SELECT_HAUNT]: "From whom shall I drive the spirits away?",
+
     [DialogTypes.CURSE_INIT]: "Hmm, so you wish to have the cursed equipment removed, do you?",
     [DialogTypes.NO_CURSE]: "Fear not! None of your companions has any cursed gear!",
-    [DialogTypes.LEAVE]: "Visit us again anytime you need healing.",
+    [DialogTypes.SELECT_CURSE]: "From whom shall I remove the curse?",
 };
 
 const status_dialogs_map = {
@@ -46,6 +59,12 @@ const status_dialogs_map = {
         [permanent_status.POISON]: DialogTypes.NO_POISON,
         [permanent_status.HAUNT]: DialogTypes.NO_HAUNT,
         [permanent_status.EQUIP_CURSE]: DialogTypes.NO_CURSE,
+    },
+    select: {
+        [permanent_status.DOWNED]: DialogTypes.SELECT_REVIVE,
+        [permanent_status.POISON]: DialogTypes.SELECT_POISON,
+        [permanent_status.HAUNT]: DialogTypes.SELECT_HAUNT,
+        [permanent_status.EQUIP_CURSE]: DialogTypes.SELECT_CURSE,
     }
 }
 
@@ -68,6 +87,8 @@ export class HealerMenu {
     private _horizontal_menu: HorizontalMenu;
     private horizontal_menu_index: number;
 
+    private chars_menu: CharsMenu;
+
     private coins_window: Window;
     private coins_number: TextObj;
 
@@ -88,6 +109,8 @@ export class HealerMenu {
             on_cancel: this.on_horizontal_menu_cancel.bind(this),
         });
         this.horizontal_menu_index = 0;
+
+        this.chars_menu = new CharsMenu(this.game, this.data, this.char_change.bind(this));
 
         this.setup_coins_window();
     }
@@ -181,8 +204,26 @@ export class HealerMenu {
         });
     }
 
-    private party_has_status(perm_stats: permanent_status) {
-
+    private party_has_status(perm_status: permanent_status) {
+        this.horizontal_menu.close();
+        this.set_dialog(status_dialogs_map.select[perm_status], {
+            ask_for_input: false,
+            show_crystal: false,
+            callback: () => {
+                const first_char_index = this.data.info.party_data.members.findIndex(c => c.has_permanent_status(perm_status));
+                this.chars_menu.open(first_char_index, CharsMenuModes.HEALER, () => {
+                    this.chars_menu.grant_control(() => {
+                        this.chars_menu.close(undefined, false, true);
+                        this.set_dialog(DialogTypes.MORE_AID, {
+                            ask_for_input: false,
+                            callback: () => {
+                                this.horizontal_menu.open(undefined, this.horizontal_menu_index);
+                            }
+                        });
+                    }, this.char_select.bind(this));
+                });
+            }
+        });
     }
 
     private on_horizontal_menu_cancel() {
@@ -201,6 +242,14 @@ export class HealerMenu {
                 }
             });
         });
+    }
+
+    private char_change(char_key: string) {
+
+    }
+
+    private char_select() {
+
     }
 
     open_menu(npc: NPC, close_callback: HealerMenu["close_callback"]) {
