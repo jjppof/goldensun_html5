@@ -5,6 +5,7 @@ import {Button} from "../XGamepad";
 import {MainChar} from "../MainChar";
 import {CursorManager, PointVariants} from "../utils/CursorManager";
 import {Control} from "../utils/ControlManager";
+import { permanent_status } from "../Player";
 
 const MAX_PER_LINE = 4;
 
@@ -22,7 +23,7 @@ const WIN_X3 = 8;
 const WIN_Y3 = 96;
 
 const CHAR_GROUP_X = 16;
-const CHAR_GROUP_Y = 128;
+const CHAR_GROUP_Y = 130;
 
 const CHAR_GROUP_X2 = 16;
 const CHAR_GROUP_Y2 = 28;
@@ -31,8 +32,6 @@ const CHAR_GROUP_X3 = 24;
 const CHAR_GROUP_Y3 = 112;
 
 const GAP_SIZE = 24;
-const SHIFT_X = 16;
-const SHIFT_Y = 32;
 
 const CURSOR_X = 0;
 const CURSOR_Y = 118;
@@ -89,6 +88,7 @@ export class CharsMenu {
     public is_active: boolean;
     public is_open: boolean;
     public mode: CharsMenuModes;
+    public selected_status: permanent_status;
 
     constructor(game: Phaser.Game, data: GoldenSun, on_change: CharsMenu["on_change"]) {
         this.game = game;
@@ -97,8 +97,8 @@ export class CharsMenu {
 
         this.window = new Window(this.game, WIN_X, WIN_Y, WIN_WIDTH, WIN_HEIGHT);
         this.char_group = this.game.add.group();
-        this.char_group.x = CHAR_GROUP_X - SHIFT_X;
-        this.char_group.y = CHAR_GROUP_Y - SHIFT_Y;
+        this.char_group.x = CHAR_GROUP_X// - SHIFT_X;
+        this.char_group.y = CHAR_GROUP_Y// - SHIFT_Y;
         this.char_group.visible = true;
 
         this.arrow_group = this.game.add.group();
@@ -127,16 +127,16 @@ export class CharsMenu {
             this.window.update_size({width: WIN_WIDTH, height: WIN_HEIGHT});
             this.window.update_position({x: WIN_X, y: WIN_Y});
 
-            this.char_group.x = CHAR_GROUP_X - SHIFT_X + this.game.camera.x;
-            this.char_group.y = CHAR_GROUP_Y - SHIFT_Y + this.game.camera.y;
+            this.char_group.x = CHAR_GROUP_X + this.game.camera.x;
+            this.char_group.y = CHAR_GROUP_Y + this.game.camera.y;
             this.arrow_group.x = ARROW_GROUP_X + this.game.camera.x;
             this.arrow_group.y = ARROW_GROUP_Y + this.game.camera.y;
         } else if (this.mode === CharsMenuModes.MENU) {
             this.window.update_size({width: WIN_WIDTH2, height: WIN_HEIGHT2});
             this.window.update_position({x: WIN_X2, y: WIN_Y2});
 
-            this.char_group.x = CHAR_GROUP_X2 - SHIFT_X + this.game.camera.x;
-            this.char_group.y = CHAR_GROUP_Y2 - SHIFT_Y + this.game.camera.y;
+            this.char_group.x = CHAR_GROUP_X2 + this.game.camera.x;
+            this.char_group.y = CHAR_GROUP_Y2 + this.game.camera.y;
             this.arrow_group.x = ARROW_GROUP_X2 + this.game.camera.x;
             this.arrow_group.y = ARROW_GROUP_Y2 + this.game.camera.y;
 
@@ -145,8 +145,8 @@ export class CharsMenu {
             this.window.update_size({width: WIN_WIDTH, height: WIN_HEIGHT});
             this.window.update_position({x: WIN_X3, y: WIN_Y3});
 
-            this.char_group.x = CHAR_GROUP_X3 - SHIFT_X + this.game.camera.x;
-            this.char_group.y = CHAR_GROUP_Y3 - SHIFT_Y + this.game.camera.y;
+            this.char_group.x = CHAR_GROUP_X3 + this.game.camera.x;
+            this.char_group.y = CHAR_GROUP_Y3 + this.game.camera.y;
             this.arrow_group.x = ARROW_GROUP_X3 + this.game.camera.x;
             this.arrow_group.y = ARROW_GROUP_Y3 + this.game.camera.y;
         }
@@ -211,20 +211,24 @@ export class CharsMenu {
         this.char_sprites = [];
 
         for (let i = 0; i < this.lines[this.current_line].length; ++i) {
-            let char = this.lines[this.current_line][i];
+            const char = this.lines[this.current_line][i];
             let sprite: Phaser.Sprite = null;
 
-            let dead_idle = this.char_group.children.filter((s: Phaser.Sprite) => {
+            const dead_idle = this.char_group.children.filter((s: Phaser.Sprite) => {
                 return s.alive === false && s.key === char.sprite_base.getSpriteKey(utils.base_actions.IDLE);
             });
 
-            if (dead_idle.length > 0) sprite = (dead_idle[0] as Phaser.Sprite).reset(i * GAP_SIZE, 0);
-            else
+            if (dead_idle.length > 0) {
+                sprite = (dead_idle[0] as Phaser.Sprite).reset(i * GAP_SIZE, 0);
+            } else {
                 sprite = this.char_group.create(
                     i * GAP_SIZE,
                     0,
                     char.sprite_base.getSpriteKey(utils.base_actions.IDLE)
                 );
+            }
+
+            sprite.anchor.setTo(0.5, 1.0);
 
             char.sprite_base.setAnimation(sprite, utils.base_actions.IDLE);
             sprite.animations.play(
@@ -233,6 +237,15 @@ export class CharsMenu {
                     utils.reverse_directions[utils.directions.down]
                 )
             );
+
+            if (this.mode === CharsMenuModes.HEALER) {
+                if (char.has_permanent_status(this.selected_status)) {
+                    sprite.scale.setTo(1, 1);
+                } else {
+                    sprite.scale.setTo(0.75, 0.75);
+                }
+            }
+
             this.char_sprites.push(sprite);
         }
     }
@@ -462,10 +475,12 @@ export class CharsMenu {
         select_index: number = 0,
         mode: CharsMenuModes = CharsMenuModes.SHOP,
         open_callback?: () => void,
-        silent?: boolean
+        silent?: boolean,
+        selected_status?: permanent_status
     ) {
         this.current_line = 0;
         this.mode = mode;
+        this.selected_status = selected_status;
 
         this.make_lines();
         this.check_mode();

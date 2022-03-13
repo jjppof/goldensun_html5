@@ -1,4 +1,5 @@
 import { GoldenSun } from "../GoldenSun";
+import { MainChar } from "../MainChar";
 import { NPC } from "../NPC";
 import { permanent_status } from "../Player";
 import { CharsMenu, CharsMenuModes } from "../support_menus/CharsMenu";
@@ -92,12 +93,18 @@ export class HealerMenu {
     private coins_window: Window;
     private coins_number: TextObj;
 
+    private info_window: Window;
+    private info_text: TextObj;
+
+    private selected_perm_status: permanent_status;
+
     constructor(game: Phaser.Game, data: GoldenSun) {
         this.game = game;
         this.data = data;
 
         this.npc = null;
         this.dialog = new DialogManager(this.game, this.data);
+        this.selected_perm_status = null;
 
         this._horizontal_menu = new HorizontalMenu(this.game, this.data, HealerMenu.BUTTONS, [
             "Revive",
@@ -113,6 +120,7 @@ export class HealerMenu {
         this.chars_menu = new CharsMenu(this.game, this.data, this.char_change.bind(this));
 
         this.setup_coins_window();
+        this.setup_info_window();
     }
 
     get horizontal_menu() {
@@ -125,6 +133,11 @@ export class HealerMenu {
         this.coins_number = this.coins_window.set_text_in_position("", 85, 18, {
             right_align: true,
         });
+    }
+
+    private setup_info_window() {
+        this.info_window = new Window(this.game, 8, 128, 180, 20);
+        this.info_text = this.info_window.set_text_in_position("", 6, 6, {italic: true});
     }
 
     update_position() {
@@ -210,18 +223,13 @@ export class HealerMenu {
             ask_for_input: false,
             show_crystal: false,
             callback: () => {
+                this.selected_perm_status = perm_status;
                 const first_char_index = this.data.info.party_data.members.findIndex(c => c.has_permanent_status(perm_status));
+                this.char_change(this.data.info.party_data.members[first_char_index].key_name);
+                this.info_window.show();
                 this.chars_menu.open(first_char_index, CharsMenuModes.HEALER, () => {
-                    this.chars_menu.grant_control(() => {
-                        this.chars_menu.close(undefined, false, true);
-                        this.set_dialog(DialogTypes.MORE_AID, {
-                            ask_for_input: false,
-                            callback: () => {
-                                this.horizontal_menu.open(undefined, this.horizontal_menu_index);
-                            }
-                        });
-                    }, this.char_select.bind(this));
-                });
+                    this.enable_chars_menu_control();
+                }, undefined, this.selected_perm_status);
             }
         });
     }
@@ -244,12 +252,81 @@ export class HealerMenu {
         });
     }
 
-    private char_change(char_key: string) {
+    private enable_chars_menu_control() {
+        this.chars_menu.grant_control(() => {
+            this.info_window.close();
+            this.chars_menu.close(undefined, false, true);
+            this.set_dialog(DialogTypes.MORE_AID, {
+                ask_for_input: false,
+                callback: () => {
+                    this.horizontal_menu.open(undefined, this.horizontal_menu_index);
+                }
+            });
+        }, this.char_select.bind(this));
+    }
 
+    private char_change(char_key: string) {
+        const char = this.data.info.main_char_list[char_key];
+        if (char.has_permanent_status(this.selected_perm_status)) {
+            const price = this.get_price(char, this.selected_perm_status);
+            let info_msg: string;
+            switch (this.selected_perm_status) {
+                case permanent_status.DOWNED:
+                    info_msg = `Revive for ${price} coins`;
+                    break;
+                case permanent_status.POISON:
+                    info_msg = `Cure for ${price} coins`;
+                    break;
+                case permanent_status.HAUNT:
+                    info_msg = `Remove spirits for ${price} coins`;
+                    break;
+                case permanent_status.EQUIP_CURSE:
+                    info_msg = `Remove curse for ${price} coins`;
+                    break;
+            }
+            this.info_window.update_text(info_msg, this.info_text);
+        } else {
+            let info_msg: string;
+            switch (this.selected_perm_status) {
+                case permanent_status.DOWNED:
+                    info_msg = `This ally needs no healing.`;
+                    break;
+                case permanent_status.POISON:
+                    info_msg = `This ally is not poisoned.`;
+                    break;
+                case permanent_status.HAUNT:
+                    info_msg = `This ally is not haunted.`;
+                    break;
+                case permanent_status.EQUIP_CURSE:
+                    info_msg = `This ally is not cursed.`;
+                    break;
+            }
+            this.info_window.update_text(info_msg, this.info_text);
+        }
     }
 
     private char_select() {
+        const char_index = this.chars_menu.selected_index;
+        const char = this.data.info.party_data.members[char_index];
+        if (char.has_permanent_status(this.selected_perm_status)) {
 
+        } else {
+            this.enable_chars_menu_control();
+        }
+    }
+
+    private get_price(char: MainChar, status: permanent_status) {
+        const level = char.level;
+        switch (status) {
+            case permanent_status.DOWNED:
+                return level * 20;
+            case permanent_status.POISON:
+                return 10;
+            case permanent_status.HAUNT:
+                return 50;
+            case permanent_status.EQUIP_CURSE:
+                return level * 10;
+        }
     }
 
     open_menu(npc: NPC, close_callback: HealerMenu["close_callback"]) {
