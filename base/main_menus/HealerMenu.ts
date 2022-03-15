@@ -6,46 +6,62 @@ import { CharsMenu, CharsMenuModes } from "../support_menus/CharsMenu";
 import { HorizontalMenu } from "../support_menus/HorizontalMenu";
 import { DialogManager } from "../utils/DialogManager";
 import { TextObj, Window } from "../Window";
+import { YesNoMenu } from "../windows/YesNoMenu";
 import { Button } from "../XGamepad";
 
 enum DialogTypes {
     WELCOME,
     MORE_AID,
+    BEGIN,
+    LEAVE,
+
     REVIVE_INIT,
     NO_DOWNED,
     SELECT_REVIVE,
+    DONATION_REVIVE,
+
     POISON_INIT,
     NO_POISON,
     SELECT_POISON,
+    DONATION_POISON,
+
     HAUNT_INIT,
     NO_HAUNT,
     SELECT_HAUNT,
+    DONATION_HAUNT,
+
     CURSE_INIT,
     NO_CURSE,
     SELECT_CURSE,
-    LEAVE,
+    DONATION_CURSE,
+    
 };
 
 const dialog_msgs = {
     [DialogTypes.WELCOME]: "Welcome, weary wanderers. What aid do you seek?",
     [DialogTypes.MORE_AID]: "Do you wish for more aid?",
+    [DialogTypes.BEGIN]: "Shall I begin?",
     [DialogTypes.LEAVE]: "Visit us again anytime you need healing.",
 
     [DialogTypes.REVIVE_INIT]: "Hmm, you were downed in battle and need reviving, do you?",
     [DialogTypes.NO_DOWNED]: "Fear not, none of your companions is down.",
     [DialogTypes.SELECT_REVIVE]: "Who shall I revive?",
+    [DialogTypes.DONATION_REVIVE]: (price, char) => `Reviving ${char} requires a donation of ${price} coins. OK?`,
 
     [DialogTypes.POISON_INIT]: "Hmm, so you need an antidote to poison or deadly poison?",
     [DialogTypes.NO_POISON]: "Fear not! None of your companions has been poisoned!",
     [DialogTypes.SELECT_POISON]: "Whom shall I cure?",
+    [DialogTypes.DONATION_POISON]: (price, char) => `I require a donation of ${price} coins to cure ${char}, OK?`,
 
     [DialogTypes.HAUNT_INIT]: "You wish me to drive evil spirits away?",
     [DialogTypes.NO_HAUNT]: "Fear not! None of your companions is being haunted!",
     [DialogTypes.SELECT_HAUNT]: "From whom shall I drive the spirits away?",
+    [DialogTypes.DONATION_HAUNT]: (price, char) => `A donation of ${price} coins is needed to drive spirits from ${char}.`,
 
     [DialogTypes.CURSE_INIT]: "Hmm, so you wish to have the cursed equipment removed, do you?",
     [DialogTypes.NO_CURSE]: "Fear not! None of your companions has any cursed gear!",
     [DialogTypes.SELECT_CURSE]: "From whom shall I remove the curse?",
+    [DialogTypes.DONATION_CURSE]: (price, char) => `Donate ${price} coins for me to remove ${char}${char.endsWith("s") ? "'" : "'s"} curse.`,
 };
 
 const status_dialogs_map = {
@@ -66,6 +82,12 @@ const status_dialogs_map = {
         [permanent_status.POISON]: DialogTypes.SELECT_POISON,
         [permanent_status.HAUNT]: DialogTypes.SELECT_HAUNT,
         [permanent_status.EQUIP_CURSE]: DialogTypes.SELECT_CURSE,
+    },
+    donation: {
+        [permanent_status.DOWNED]: DialogTypes.DONATION_REVIVE,
+        [permanent_status.POISON]: DialogTypes.DONATION_POISON,
+        [permanent_status.HAUNT]: DialogTypes.DONATION_HAUNT,
+        [permanent_status.EQUIP_CURSE]: DialogTypes.DONATION_CURSE,
     }
 }
 
@@ -98,6 +120,8 @@ export class HealerMenu {
 
     private selected_perm_status: permanent_status;
 
+    private yes_no_menu: YesNoMenu;
+
     constructor(game: Phaser.Game, data: GoldenSun) {
         this.game = game;
         this.data = data;
@@ -118,6 +142,8 @@ export class HealerMenu {
         this.horizontal_menu_index = 0;
 
         this.chars_menu = new CharsMenu(this.game, this.data, this.char_change.bind(this));
+
+        this.yes_no_menu = new YesNoMenu(this.game, this.data);
 
         this.setup_coins_window();
         this.setup_info_window();
@@ -145,12 +171,14 @@ export class HealerMenu {
         this.horizontal_menu.update_position();
     }
 
-    private set_dialog(dialog_type: DialogTypes, options: {
+    private set_dialog(options: {
         ask_for_input: boolean,
+        dialog_type?: DialogTypes,
         callback?: () => void,
-        show_crystal?: boolean
+        show_crystal?: boolean,
+        custom_msg?: string
     }) {
-        const msg = dialog_msgs[dialog_type];
+        const msg = options?.custom_msg ?? dialog_msgs[options?.dialog_type] as string;
         this.dialog.next_dialog(msg, () => {
             if (options?.ask_for_input) {
                 this.data.control_manager.add_controls([{
@@ -192,7 +220,8 @@ export class HealerMenu {
 
     private check_party_status(perm_status: permanent_status) {
         this.horizontal_menu.close();
-        this.set_dialog(status_dialogs_map.init[perm_status], {
+        this.set_dialog({
+            dialog_type: status_dialogs_map.init[perm_status],
             ask_for_input: true,
             show_crystal: true,
             callback: () => {
@@ -200,11 +229,13 @@ export class HealerMenu {
                 if (has_downed) {
                     this.party_has_status(perm_status);
                 } else {
-                    this.set_dialog(status_dialogs_map.no_status[perm_status], {
+                    this.set_dialog({
+                        dialog_type: status_dialogs_map.no_status[perm_status],
                         ask_for_input: true,
                         show_crystal: false,
                         callback: () => {
-                            this.set_dialog(DialogTypes.MORE_AID, {
+                            this.set_dialog({
+                                dialog_type: DialogTypes.MORE_AID,
                                 ask_for_input: false,
                                 callback: () => {
                                     this.horizontal_menu.open(undefined, this.horizontal_menu_index);
@@ -219,7 +250,8 @@ export class HealerMenu {
 
     private party_has_status(perm_status: permanent_status) {
         this.horizontal_menu.close();
-        this.set_dialog(status_dialogs_map.select[perm_status], {
+        this.set_dialog({
+            dialog_type: status_dialogs_map.select[perm_status],
             ask_for_input: false,
             show_crystal: false,
             callback: () => {
@@ -236,7 +268,8 @@ export class HealerMenu {
 
     private on_horizontal_menu_cancel() {
         this.horizontal_menu.close(() => {
-            this.set_dialog(DialogTypes.LEAVE, {
+            this.set_dialog({
+                dialog_type: DialogTypes.LEAVE,
                 ask_for_input: true,
                 callback: () => {
                     this.npc = null;
@@ -256,7 +289,8 @@ export class HealerMenu {
         this.chars_menu.grant_control(() => {
             this.info_window.close();
             this.chars_menu.close(undefined, false, true);
-            this.set_dialog(DialogTypes.MORE_AID, {
+            this.set_dialog({
+                dialog_type: DialogTypes.MORE_AID,
                 ask_for_input: false,
                 callback: () => {
                     this.horizontal_menu.open(undefined, this.horizontal_menu_index);
@@ -309,10 +343,41 @@ export class HealerMenu {
         const char_index = this.chars_menu.selected_index;
         const char = this.data.info.party_data.members[char_index];
         if (char.has_permanent_status(this.selected_perm_status)) {
-
+            const input_and_crystal = [permanent_status.HAUNT, permanent_status.EQUIP_CURSE].includes(this.selected_perm_status);
+            const price = this.get_price(char, this.selected_perm_status);
+            const donation_msg = dialog_msgs[status_dialogs_map.donation[this.selected_perm_status]](price, char.name);
+            this.set_dialog({
+                ask_for_input: input_and_crystal,
+                show_crystal: input_and_crystal,
+                custom_msg: donation_msg,
+                callback: () => {
+                    if (input_and_crystal) {
+                        this.set_dialog({
+                            dialog_type: DialogTypes.BEGIN,
+                            ask_for_input: true,
+                            show_crystal: true,
+                            callback: () => {
+                                this.invoke_yes_no_to_confirm();
+                            }
+                        });
+                    } else {
+                        this.invoke_yes_no_to_confirm();
+                    }
+                }
+            });
         } else {
             this.enable_chars_menu_control();
         }
+    }
+
+    private invoke_yes_no_to_confirm() {
+        this.yes_no_menu.open({
+            yes: () => {},
+            no: () => {}
+        }, {
+            x: 56,
+            y: 56
+        });
     }
 
     private get_price(char: MainChar, status: permanent_status) {
@@ -335,7 +400,8 @@ export class HealerMenu {
         this.close_callback = close_callback;
         this.horizontal_menu_index = 0;
         this.coins_window.update_text(this.data.info.party_data.coins.toString(), this.coins_number);
-        this.set_dialog(DialogTypes.WELCOME, {
+        this.set_dialog({
+            dialog_type: DialogTypes.WELCOME,
             ask_for_input: false,
             callback: () => {
                 this.coins_window.show();
