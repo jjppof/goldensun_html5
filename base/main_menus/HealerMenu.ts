@@ -14,6 +14,7 @@ enum DialogTypes {
     MORE_AID,
     BEGIN,
     LEAVE,
+    RECUSE_DONATION,
 
     REVIVE_INIT,
     NO_DOWNED,
@@ -41,6 +42,7 @@ const dialog_msgs = {
     [DialogTypes.WELCOME]: "Welcome, weary wanderers. What aid do you seek?",
     [DialogTypes.MORE_AID]: "Do you wish for more aid?",
     [DialogTypes.BEGIN]: "Shall I begin?",
+    [DialogTypes.RECUSE_DONATION]: "The donation is too much? Then weary wanderers you shall remain.",
     [DialogTypes.LEAVE]: "Visit us again anytime you need healing.",
 
     [DialogTypes.REVIVE_INIT]: "Hmm, you were downed in battle and need reviving, do you?",
@@ -323,16 +325,16 @@ export class HealerMenu {
             let info_msg: string;
             switch (this.selected_perm_status) {
                 case permanent_status.DOWNED:
-                    info_msg = `This ally needs no healing.`;
+                    info_msg = "This ally needs no healing.";
                     break;
                 case permanent_status.POISON:
-                    info_msg = `This ally is not poisoned.`;
+                    info_msg = "This ally is not poisoned.";
                     break;
                 case permanent_status.HAUNT:
-                    info_msg = `This ally is not haunted.`;
+                    info_msg = "This ally is not haunted.";
                     break;
                 case permanent_status.EQUIP_CURSE:
-                    info_msg = `This ally is not cursed.`;
+                    info_msg = "This ally is not cursed.";
                     break;
             }
             this.info_window.update_text(info_msg, this.info_text);
@@ -373,7 +375,16 @@ export class HealerMenu {
     private invoke_yes_no_to_confirm() {
         this.yes_no_menu.open({
             yes: () => {},
-            no: () => {}
+            no: () => {
+                this.set_dialog({
+                    dialog_type: DialogTypes.RECUSE_DONATION,
+                    ask_for_input: true,
+                    show_crystal: true,
+                    callback: () => {
+                        this.party_has_status(this.selected_perm_status);
+                    }
+                });
+            }
         }, {
             x: 56,
             y: 56

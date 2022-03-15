@@ -266,6 +266,10 @@ export class HorizontalMenu {
     }
 
     close(callback?: Function, animate: boolean = true) {
+        if (!this.menu_open) {
+            return;
+        }
+
         this.reset_button();
         this.data.control_manager.reset();
 
