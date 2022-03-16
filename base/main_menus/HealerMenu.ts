@@ -20,22 +20,33 @@ enum DialogTypes {
     NO_DOWNED,
     SELECT_REVIVE,
     DONATION_REVIVE,
+    NO_COIN_REVIVE,
+    ACCEPT_REVIVE,
+    SUCCESS_REVIVE,
 
     POISON_INIT,
     NO_POISON,
     SELECT_POISON,
     DONATION_POISON,
+    NO_COIN_POISON,
+    ACCEPT_POISON,
+    SUCCESS_POISON,
 
     HAUNT_INIT,
     NO_HAUNT,
     SELECT_HAUNT,
     DONATION_HAUNT,
+    NO_COIN_HAUNT,
+    ACCEPT_HAUNT,
+    SUCCESS_HAUNT,
 
     CURSE_INIT,
     NO_CURSE,
     SELECT_CURSE,
     DONATION_CURSE,
-    
+    NO_COIN_CURSE,
+    ACCEPT_CURSE,
+    SUCCESS_CURSE,
 };
 
 const dialog_msgs = {
@@ -49,21 +60,33 @@ const dialog_msgs = {
     [DialogTypes.NO_DOWNED]: "Fear not, none of your companions is down.",
     [DialogTypes.SELECT_REVIVE]: "Who shall I revive?",
     [DialogTypes.DONATION_REVIVE]: (price, char) => `Reviving ${char} requires a donation of ${price} coins. OK?`,
+    [DialogTypes.NO_COIN_REVIVE]: "I'm sorry, but you must be able to pay the donation.",
+    [DialogTypes.ACCEPT_REVIVE]: "Then I call upon my healing powers.",
+    [DialogTypes.SUCCESS_REVIVE]: char => `${char} has been revived!`,
 
     [DialogTypes.POISON_INIT]: "Hmm, so you need an antidote to poison or deadly poison?",
     [DialogTypes.NO_POISON]: "Fear not! None of your companions has been poisoned!",
     [DialogTypes.SELECT_POISON]: "Whom shall I cure?",
     [DialogTypes.DONATION_POISON]: (price, char) => `I require a donation of ${price} coins to cure ${char}, OK?`,
+    [DialogTypes.NO_COIN_POISON]: "You cannot cover the required donation, so I cannot provide a cure.",
+    [DialogTypes.ACCEPT_POISON]: "I shall apply the cure.",
+    [DialogTypes.SUCCESS_POISON]: char => `The poison has left ${char}.`,
 
     [DialogTypes.HAUNT_INIT]: "You wish me to drive evil spirits away?",
     [DialogTypes.NO_HAUNT]: "Fear not! None of your companions is being haunted!",
     [DialogTypes.SELECT_HAUNT]: "From whom shall I drive the spirits away?",
     [DialogTypes.DONATION_HAUNT]: (price, char) => `A donation of ${price} coins is needed to drive spirits from ${char}.`,
+    [DialogTypes.NO_COIN_HAUNT]: "You cannot cover the required donation, so I cannot aid you.",
+    [DialogTypes.ACCEPT_HAUNT]: "Then I shall drive the spirits away.",
+    [DialogTypes.SUCCESS_HAUNT]: char => `The spirits no longer haunt ${char}.`,
 
     [DialogTypes.CURSE_INIT]: "Hmm, so you wish to have the cursed equipment removed, do you?",
     [DialogTypes.NO_CURSE]: "Fear not! None of your companions has any cursed gear!",
     [DialogTypes.SELECT_CURSE]: "From whom shall I remove the curse?",
     [DialogTypes.DONATION_CURSE]: (price, char) => `Donate ${price} coins for me to remove ${char}${char.endsWith("s") ? "'" : "'s"} curse.`,
+    [DialogTypes.NO_COIN_CURSE]: "You cannot cover the required donation, so I cannot aid you.",
+    [DialogTypes.ACCEPT_CURSE]: "Then I shall remove the curse.",
+    [DialogTypes.SUCCESS_CURSE]: char => `The curse has been removed from ${char}.`,
 };
 
 const status_dialogs_map = {
@@ -90,6 +113,24 @@ const status_dialogs_map = {
         [permanent_status.POISON]: DialogTypes.DONATION_POISON,
         [permanent_status.HAUNT]: DialogTypes.DONATION_HAUNT,
         [permanent_status.EQUIP_CURSE]: DialogTypes.DONATION_CURSE,
+    },
+    no_coin: {
+        [permanent_status.DOWNED]: DialogTypes.NO_COIN_REVIVE,
+        [permanent_status.POISON]: DialogTypes.NO_COIN_POISON,
+        [permanent_status.HAUNT]: DialogTypes.NO_COIN_HAUNT,
+        [permanent_status.EQUIP_CURSE]: DialogTypes.NO_COIN_CURSE,
+    },
+    accept: {
+        [permanent_status.DOWNED]: DialogTypes.ACCEPT_REVIVE,
+        [permanent_status.POISON]: DialogTypes.ACCEPT_POISON,
+        [permanent_status.HAUNT]: DialogTypes.ACCEPT_HAUNT,
+        [permanent_status.EQUIP_CURSE]: DialogTypes.ACCEPT_CURSE,
+    },
+    success: {
+        [permanent_status.DOWNED]: DialogTypes.SUCCESS_REVIVE,
+        [permanent_status.POISON]: DialogTypes.SUCCESS_POISON,
+        [permanent_status.HAUNT]: DialogTypes.SUCCESS_HAUNT,
+        [permanent_status.EQUIP_CURSE]: DialogTypes.SUCCESS_CURSE,
     }
 }
 
@@ -227,8 +268,8 @@ export class HealerMenu {
             ask_for_input: true,
             show_crystal: true,
             callback: () => {
-                const has_downed = this.data.info.party_data.members.some(c => c.has_permanent_status(perm_status));
-                if (has_downed) {
+                const has_status = this.data.info.party_data.members.some(c => c.has_permanent_status(perm_status));
+                if (has_status) {
                     this.party_has_status(perm_status);
                 } else {
                     this.set_dialog({
@@ -290,7 +331,7 @@ export class HealerMenu {
     private enable_chars_menu_control() {
         this.chars_menu.grant_control(() => {
             this.info_window.close();
-            this.chars_menu.close(undefined, false, true);
+            this.chars_menu.close(undefined, true);
             this.set_dialog({
                 dialog_type: DialogTypes.MORE_AID,
                 ask_for_input: false,
@@ -359,11 +400,11 @@ export class HealerMenu {
                             ask_for_input: true,
                             show_crystal: true,
                             callback: () => {
-                                this.invoke_yes_no_to_confirm();
+                                this.invoke_yes_no_to_confirm(price, char);
                             }
                         });
                     } else {
-                        this.invoke_yes_no_to_confirm();
+                        this.invoke_yes_no_to_confirm(price, char);
                     }
                 }
             });
@@ -372,9 +413,30 @@ export class HealerMenu {
         }
     }
 
-    private invoke_yes_no_to_confirm() {
+    private invoke_yes_no_to_confirm(price: number, char: MainChar) {
         this.yes_no_menu.open({
-            yes: () => {},
+            yes: () => {
+                if (price > this.data.info.party_data.coins) {
+                    this.set_dialog({
+                        dialog_type: status_dialogs_map.no_coin[this.selected_perm_status],
+                        ask_for_input: true,
+                        show_crystal: true,
+                        callback: () => {
+                            this.party_has_status(this.selected_perm_status);
+                        }
+                    });
+                } else {
+                    this.data.info.party_data.coins -= price;
+                    this.set_dialog({
+                        dialog_type: status_dialogs_map.accept[this.selected_perm_status],
+                        ask_for_input: true,
+                        show_crystal: true,
+                        callback: () => {
+                            this.remove_status(char);
+                        }
+                    });
+                }
+            },
             no: () => {
                 this.set_dialog({
                     dialog_type: DialogTypes.RECUSE_DONATION,
@@ -388,6 +450,34 @@ export class HealerMenu {
         }, {
             x: 56,
             y: 56
+        });
+    }
+
+    private remove_status(char: MainChar) {
+        //removing anim
+        char.remove_permanent_status(this.selected_perm_status);
+        this.coins_window.update_text(this.data.info.party_data.coins.toString(), this.coins_number);
+        this.set_dialog({
+            ask_for_input: true,
+            show_crystal: false,
+            custom_msg: dialog_msgs[status_dialogs_map.success[this.selected_perm_status]](char.name),
+            callback: () => {
+                const has_status = this.data.info.party_data.members.some(c => c.has_permanent_status(this.selected_perm_status));
+                if (has_status) {
+                    this.party_has_status(this.selected_perm_status);
+                } else {
+                    this.selected_perm_status = null;
+                    this.info_window.close();
+                    this.chars_menu.close(undefined, true);
+                    this.set_dialog({
+                        dialog_type: DialogTypes.MORE_AID,
+                        ask_for_input: false,
+                        callback: () => {
+                            this.horizontal_menu.open(undefined, this.horizontal_menu_index);
+                        }
+                    });
+                }
+            }
         });
     }
 

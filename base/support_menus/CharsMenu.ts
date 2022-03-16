@@ -208,26 +208,17 @@ export class CharsMenu {
     }
 
     set_chars() {
+        this.char_group.removeAll(true);
         this.char_sprites = [];
 
         for (let i = 0; i < this.lines[this.current_line].length; ++i) {
             const char = this.lines[this.current_line][i];
-            let sprite: Phaser.Sprite = null;
 
-            const dead_idle = this.char_group.children.filter((s: Phaser.Sprite) => {
-                return s.alive === false && s.key === char.sprite_base.getSpriteKey(utils.base_actions.IDLE);
-            });
-
-            if (dead_idle.length > 0) {
-                sprite = (dead_idle[0] as Phaser.Sprite).reset(i * GAP_SIZE, 0);
-            } else {
-                sprite = this.char_group.create(
-                    i * GAP_SIZE,
-                    0,
-                    char.sprite_base.getSpriteKey(utils.base_actions.IDLE)
-                );
-            }
-
+            const sprite = this.char_group.create(
+                i * GAP_SIZE,
+                0,
+                char.sprite_base.getSpriteKey(utils.base_actions.IDLE)
+            );
             sprite.anchor.setTo(0.5, 1.0);
 
             char.sprite_base.setAnimation(sprite, utils.base_actions.IDLE);
@@ -495,10 +486,10 @@ export class CharsMenu {
         this.window.show(open_callback, false);
     }
 
-    close(callback?: () => void, destroy: boolean = false, hide_cursor: boolean = false) {
+    close(callback?: () => void, hide_cursor: boolean = false) {
         this.is_open = false;
         this.deactivate();
-        utils.kill_all_sprites(this.char_group, destroy);
+        this.char_group.removeAll(true);
 
         this.lines = [];
         this.char_sprites = [];
