@@ -122,6 +122,10 @@ export class CharsMenu {
         this.mode = null;
     }
 
+    get selected_char_sprite() {
+        return this.char_sprites[this.selected_index];
+    }
+
     check_mode() {
         if (this.mode === CharsMenuModes.SHOP) {
             this.window.update_size({width: WIN_WIDTH, height: WIN_HEIGHT});

@@ -1,13 +1,16 @@
 import { GoldenSun } from "../GoldenSun";
+import { degree360 } from "../magic_numbers";
 import { MainChar } from "../MainChar";
 import { NPC } from "../NPC";
 import { permanent_status } from "../Player";
 import { CharsMenu, CharsMenuModes } from "../support_menus/CharsMenu";
 import { HorizontalMenu } from "../support_menus/HorizontalMenu";
+import { promised_wait } from "../utils";
 import { DialogManager } from "../utils/DialogManager";
 import { TextObj, Window } from "../Window";
 import { YesNoMenu } from "../windows/YesNoMenu";
 import { Button } from "../XGamepad";
+import * as _ from "lodash";
 
 enum DialogTypes {
     WELCOME,
@@ -141,6 +144,7 @@ export class HealerMenu {
         "repel_evil",
         "remove_curse"
     ];
+    private static readonly EMITTER_NAME = "cure_emitter";
 
     private game: Phaser.Game;
     private data: GoldenSun;
@@ -205,7 +209,7 @@ export class HealerMenu {
     }
 
     private setup_info_window() {
-        this.info_window = new Window(this.game, 8, 128, 180, 20);
+        this.info_window = new Window(this.game, 8, 128, 200, 20);
         this.info_text = this.info_window.set_text_in_position("", 6, 6, {italic: true});
     }
 
@@ -397,8 +401,8 @@ export class HealerMenu {
                     if (input_and_crystal) {
                         this.set_dialog({
                             dialog_type: DialogTypes.BEGIN,
-                            ask_for_input: true,
-                            show_crystal: true,
+                            ask_for_input: false,
+                            show_crystal: false,
                             callback: () => {
                                 this.invoke_yes_no_to_confirm(price, char);
                             }
@@ -453,8 +457,10 @@ export class HealerMenu {
         });
     }
 
-    private remove_status(char: MainChar) {
-        //removing anim
+    private async remove_status(char: MainChar) {
+        this.data.cursor_manager.hide();
+        await this.cure_animation();
+        this.data.cursor_manager.show();
         char.remove_permanent_status(this.selected_perm_status);
         this.coins_window.update_text(this.data.info.party_data.coins.toString(), this.coins_number);
         this.set_dialog({
@@ -479,6 +485,70 @@ export class HealerMenu {
                 }
             }
         });
+    }
+
+    private async cure_animation() {
+        const char_sprite = this.chars_menu.selected_char_sprite;
+        char_sprite.animations.stop(char_sprite.animations.currentAnim.name, false);
+        const color_filter = this.game.add.filter("ColorFilters") as any;
+        char_sprite.filters = [color_filter];
+        const hueshift_timer = this.game.time.create(false);
+        hueshift_timer.loop(10, () => {
+            color_filter.hue_adjust = Math.random() * degree360;
+        });
+        hueshift_timer.start();
+        const emitter = this.start_particles_emitter(char_sprite);
+
+        await promised_wait(this.game, 3000);
+
+        char_sprite.animations.currentAnim.play();
+
+        char_sprite.filters = undefined;
+        hueshift_timer.stop();
+
+        this.data.particle_manager.removeEmitter(emitter);
+        emitter.destroy();
+        this.data.particle_manager.clearData(HealerMenu.EMITTER_NAME);
+    }
+
+    private start_particles_emitter(char_sprite: Phaser.Sprite) {
+        const out_data = {
+            image: "psynergy_ball",
+            alpha: 0.9,
+            lifespan: 500,
+            frame: "ball/03",
+            scale: {min: 0.3, max: 0.4},
+            target: {
+                x: char_sprite.centerX,
+                y: char_sprite.centerY
+            }
+        };
+        this.data.particle_manager.addData(HealerMenu.EMITTER_NAME, out_data);
+        const circle_zone = this.data.particle_manager.createCircleZone(char_sprite.height << 1);
+        const emitter = this.data.particle_manager.createEmitter(Phaser.ParticleStorm.SPRITE);
+        const displays = emitter.addToWorld(this.chars_menu.char_group);
+        displays.forEach(display => {
+            if (display) {
+                this.chars_menu.char_group.sendToBack(display);
+            }
+        });
+        emitter.emit(
+            HealerMenu.EMITTER_NAME,
+            char_sprite.centerX,
+            char_sprite.centerY,
+            {
+                zone: circle_zone,
+                total: 3,
+                repeat: 32,
+                frequency: 60,
+                random: true,
+            }
+        );
+        emitter.onEmit = new Phaser.Signal();
+        emitter.onEmit.add((emitter: Phaser.ParticleStorm.Emitter, particle: Phaser.ParticleStorm.Particle) => {
+            particle.sprite.tint = _.sample([16776470, 190960, 16777215, 5700990]);
+        });
+        return emitter;
     }
 
     private get_price(char: MainChar, status: permanent_status) {
