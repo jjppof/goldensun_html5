@@ -248,7 +248,7 @@ export class Map {
         if (this.sprites_sort_paused) {
             return;
         }
-        //these array initializations need a better performative approach...
+        //these arrays initializations need a better performative approach...
         const send_to_back_list = new Array(this.data.middlelayer_group.children.length);
         const send_to_front_list = new Array(this.data.middlelayer_group.children.length);
         const has_sort_function = new Array(this.data.middlelayer_group.children.length);
@@ -914,7 +914,7 @@ export class Map {
             }
             return npc;
         } catch {
-            console.warn(`NPC "${property_key}" is not a valid JSON.`);
+            console.warn(`NPC "${property_key}" is not a valid JSON or does not exist in db file.`);
             return null;
         }
     }
@@ -1021,7 +1021,7 @@ export class Map {
                 }
             }
         } catch {
-            console.warn(`Interactable Object "${property_key}" is not a valid JSON.`);
+            console.warn(`Interactable Object "${property_key}" is not a valid JSON or does not exist in db file.`);
         }
     }
 

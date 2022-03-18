@@ -35,6 +35,11 @@ export enum main_stats {
     LUCK = "luk",
 }
 
+export enum recovery_stats {
+    HP_RECOVERY = "hp_recovery",
+    PP_RECOVERY = "pp_recovery",
+}
+
 export const current_main_stat_map = {
     [main_stats.MAX_HP]: main_stats.CURRENT_HP,
     [main_stats.MAX_PP]: main_stats.CURRENT_PP,

@@ -7,6 +7,7 @@ import {
     main_stats,
     permanent_status,
     Player,
+    recovery_stats,
     temporary_status,
 } from "./Player";
 import {variation, elements, ordered_elements} from "./utils";
@@ -347,9 +348,9 @@ export class Effect {
             case effect_types.MAX_PP:
                 return this.apply_general_value(effect_type_stat[this.type]);
             case effect_types.HP_RECOVERY:
-                return this.apply_general_value("hp_recovery");
+                return this.apply_general_value(recovery_stats.HP_RECOVERY);
             case effect_types.PP_RECOVERY:
-                return this.apply_general_value("pp_recovery");
+                return this.apply_general_value(recovery_stats.PP_RECOVERY);
             case effect_types.CURRENT_HP:
                 const result_current_hp = this.apply_general_value(main_stats.CURRENT_HP);
                 this.check_caps(main_stats.CURRENT_HP, main_stats.MAX_HP, 0, result_current_hp);
