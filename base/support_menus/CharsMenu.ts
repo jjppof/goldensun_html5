@@ -5,7 +5,7 @@ import {Button} from "../XGamepad";
 import {MainChar} from "../MainChar";
 import {CursorManager, PointVariants} from "../utils/CursorManager";
 import {Control} from "../utils/ControlManager";
-import { permanent_status } from "../Player";
+import {permanent_status} from "../Player";
 
 const MAX_PER_LINE = 4;
 
@@ -64,7 +64,7 @@ const SEPARATOR_LENGTH = 96;
 export enum CharsMenuModes {
     SHOP,
     MENU,
-    HEALER
+    HEALER,
 }
 
 const ARROW_TWEEN_TIME = Phaser.Timer.QUARTER >> 1;
@@ -97,8 +97,8 @@ export class CharsMenu {
 
         this.window = new Window(this.game, WIN_X, WIN_Y, WIN_WIDTH, WIN_HEIGHT);
         this.char_group = this.game.add.group();
-        this.char_group.x = CHAR_GROUP_X// - SHIFT_X;
-        this.char_group.y = CHAR_GROUP_Y// - SHIFT_Y;
+        this.char_group.x = CHAR_GROUP_X;
+        this.char_group.y = CHAR_GROUP_Y;
         this.char_group.visible = true;
 
         this.arrow_group = this.game.add.group();

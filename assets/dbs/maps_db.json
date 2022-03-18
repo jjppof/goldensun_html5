@@ -70,6 +70,19 @@
         "collision_embedded": false
     },{
         "name":"Madra",
+        "key_name":"madra_church",
+        "bgm": {
+            "key": "madra_bgm",
+            "path": "assets/sounds/bgm/little_madra.ogg"
+        },
+        "tileset_files": {
+            "image":"assets/images/maps/madra/Inside_town_00.png",
+            "json":"assets/images/maps/madra/church.json"
+        },
+        "lazy_load": true,
+        "collision_embedded": true
+    },{
+        "name":"Madra",
         "key_name":"madra_side",
         "bgm": {
             "key": "madra_bgm",

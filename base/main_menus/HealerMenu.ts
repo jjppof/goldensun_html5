@@ -1,15 +1,15 @@
-import { GoldenSun } from "../GoldenSun";
-import { degree360 } from "../magic_numbers";
-import { MainChar } from "../MainChar";
-import { NPC } from "../NPC";
-import { permanent_status } from "../Player";
-import { CharsMenu, CharsMenuModes } from "../support_menus/CharsMenu";
-import { HorizontalMenu } from "../support_menus/HorizontalMenu";
-import { promised_wait } from "../utils";
-import { DialogManager } from "../utils/DialogManager";
-import { TextObj, Window } from "../Window";
-import { YesNoMenu } from "../windows/YesNoMenu";
-import { Button } from "../XGamepad";
+import {GoldenSun} from "../GoldenSun";
+import {degree360} from "../magic_numbers";
+import {MainChar} from "../MainChar";
+import {NPC} from "../NPC";
+import {permanent_status} from "../Player";
+import {CharsMenu, CharsMenuModes} from "../support_menus/CharsMenu";
+import {HorizontalMenu} from "../support_menus/HorizontalMenu";
+import {promised_wait} from "../utils";
+import {DialogManager} from "../utils/DialogManager";
+import {TextObj, Window} from "../Window";
+import {YesNoMenu} from "../windows/YesNoMenu";
+import {Button} from "../XGamepad";
 import * as _ from "lodash";
 
 enum DialogTypes {
@@ -50,7 +50,7 @@ enum DialogTypes {
     NO_COIN_CURSE,
     ACCEPT_CURSE,
     SUCCESS_CURSE,
-};
+}
 
 const dialog_msgs = {
     [DialogTypes.WELCOME]: "Welcome, weary wanderers. What aid do you seek?",
@@ -78,7 +78,8 @@ const dialog_msgs = {
     [DialogTypes.HAUNT_INIT]: "You wish me to drive evil spirits away?",
     [DialogTypes.NO_HAUNT]: "Fear not! None of your companions is being haunted!",
     [DialogTypes.SELECT_HAUNT]: "From whom shall I drive the spirits away?",
-    [DialogTypes.DONATION_HAUNT]: (price, char) => `A donation of ${price} coins is needed to drive spirits from ${char}.`,
+    [DialogTypes.DONATION_HAUNT]: (price, char) =>
+        `A donation of ${price} coins is needed to drive spirits from ${char}.`,
     [DialogTypes.NO_COIN_HAUNT]: "You cannot cover the required donation, so I cannot aid you.",
     [DialogTypes.ACCEPT_HAUNT]: "Then I shall drive the spirits away.",
     [DialogTypes.SUCCESS_HAUNT]: char => `The spirits no longer haunt ${char}.`,
@@ -86,7 +87,8 @@ const dialog_msgs = {
     [DialogTypes.CURSE_INIT]: "Hmm, so you wish to have the cursed equipment removed, do you?",
     [DialogTypes.NO_CURSE]: "Fear not! None of your companions has any cursed gear!",
     [DialogTypes.SELECT_CURSE]: "From whom shall I remove the curse?",
-    [DialogTypes.DONATION_CURSE]: (price, char) => `Donate ${price} coins for me to remove ${char}${char.endsWith("s") ? "'" : "'s"} curse.`,
+    [DialogTypes.DONATION_CURSE]: (price, char) =>
+        `Donate ${price} coins for me to remove ${char}${char.endsWith("s") ? "'" : "'s"} curse.`,
     [DialogTypes.NO_COIN_CURSE]: "You cannot cover the required donation, so I cannot aid you.",
     [DialogTypes.ACCEPT_CURSE]: "Then I shall remove the curse.",
     [DialogTypes.SUCCESS_CURSE]: char => `The curse has been removed from ${char}.`,
@@ -134,16 +136,11 @@ const status_dialogs_map = {
         [permanent_status.POISON]: DialogTypes.SUCCESS_POISON,
         [permanent_status.HAUNT]: DialogTypes.SUCCESS_HAUNT,
         [permanent_status.EQUIP_CURSE]: DialogTypes.SUCCESS_CURSE,
-    }
-}
+    },
+};
 
 export class HealerMenu {
-    private static readonly BUTTONS = [
-        "revive",
-        "cure_poison",
-        "repel_evil",
-        "remove_curse"
-    ];
+    private static readonly BUTTONS = ["revive", "cure_poison", "repel_evil", "remove_curse"];
     private static readonly EMITTER_NAME = "cure_emitter";
 
     private game: Phaser.Game;
@@ -177,15 +174,16 @@ export class HealerMenu {
         this.dialog = new DialogManager(this.game, this.data);
         this.selected_perm_status = null;
 
-        this._horizontal_menu = new HorizontalMenu(this.game, this.data, HealerMenu.BUTTONS, [
-            "Revive",
-            "Cure Poison",
-            "Repel Evil",
-            "Remove Curse"
-        ], {
-            on_press: this.on_horizontal_menu_chose.bind(this),
-            on_cancel: this.on_horizontal_menu_cancel.bind(this),
-        });
+        this._horizontal_menu = new HorizontalMenu(
+            this.game,
+            this.data,
+            HealerMenu.BUTTONS,
+            ["Revive", "Cure Poison", "Repel Evil", "Remove Curse"],
+            {
+                on_press: this.on_horizontal_menu_chose.bind(this),
+                on_cancel: this.on_horizontal_menu_cancel.bind(this),
+            }
+        );
         this.horizontal_menu_index = 0;
 
         this.chars_menu = new CharsMenu(this.game, this.data, this.char_change.bind(this));
@@ -219,32 +217,41 @@ export class HealerMenu {
     }
 
     private set_dialog(options: {
-        ask_for_input: boolean,
-        dialog_type?: DialogTypes,
-        callback?: () => void,
-        show_crystal?: boolean,
-        custom_msg?: string
+        ask_for_input: boolean;
+        dialog_type?: DialogTypes;
+        callback?: () => void;
+        show_crystal?: boolean;
+        custom_msg?: string;
     }) {
-        const msg = options?.custom_msg ?? dialog_msgs[options?.dialog_type] as string;
-        this.dialog.next_dialog(msg, () => {
-            if (options?.ask_for_input) {
-                this.data.control_manager.add_controls([{
-                    buttons: Button.A,
-                    on_down: options?.callback,
-                    params: {
-                        reset_controls: true
-                    }
-                }], {persist: false});
-            } else {
-                options?.callback();
+        const msg = options?.custom_msg ?? (dialog_msgs[options?.dialog_type] as string);
+        this.dialog.next_dialog(
+            msg,
+            () => {
+                if (options?.ask_for_input) {
+                    this.data.control_manager.add_controls(
+                        [
+                            {
+                                buttons: Button.A,
+                                on_down: options?.callback,
+                                params: {
+                                    reset_controls: true,
+                                },
+                            },
+                        ],
+                        {persist: false}
+                    );
+                } else {
+                    options?.callback();
+                }
+            },
+            {
+                avatar: this.npc.avatar,
+                voice_key: this.npc.voice_key,
+                custom_pos: {x: 40, y: 0},
+                custom_avatar_pos: {x: 0, y: 0},
+                show_crystal: options?.show_crystal,
             }
-        }, {
-            avatar: this.npc.avatar,
-            voice_key: this.npc.voice_key,
-            custom_pos: {x: 40, y: 0},
-            custom_avatar_pos: {x: 0, y: 0},
-            show_crystal: options?.show_crystal
-        });
+        );
     }
 
     private on_horizontal_menu_chose() {
@@ -286,12 +293,12 @@ export class HealerMenu {
                                 ask_for_input: false,
                                 callback: () => {
                                     this.horizontal_menu.open(undefined, this.horizontal_menu_index);
-                                }
+                                },
                             });
-                        }
+                        },
                     });
                 }
-            }
+            },
         });
     }
 
@@ -303,13 +310,21 @@ export class HealerMenu {
             show_crystal: false,
             callback: () => {
                 this.selected_perm_status = perm_status;
-                const first_char_index = this.data.info.party_data.members.findIndex(c => c.has_permanent_status(perm_status));
+                const first_char_index = this.data.info.party_data.members.findIndex(c =>
+                    c.has_permanent_status(perm_status)
+                );
                 this.char_change(this.data.info.party_data.members[first_char_index].key_name);
                 this.info_window.show();
-                this.chars_menu.open(first_char_index, CharsMenuModes.HEALER, () => {
-                    this.enable_chars_menu_control();
-                }, undefined, this.selected_perm_status);
-            }
+                this.chars_menu.open(
+                    first_char_index,
+                    CharsMenuModes.HEALER,
+                    () => {
+                        this.enable_chars_menu_control();
+                    },
+                    undefined,
+                    this.selected_perm_status
+                );
+            },
         });
     }
 
@@ -327,7 +342,7 @@ export class HealerMenu {
                             this.close_callback();
                         }
                     });
-                }
+                },
             });
         });
     }
@@ -341,7 +356,7 @@ export class HealerMenu {
                 ask_for_input: false,
                 callback: () => {
                     this.horizontal_menu.open(undefined, this.horizontal_menu_index);
-                }
+                },
             });
         }, this.char_select.bind(this));
     }
@@ -390,7 +405,9 @@ export class HealerMenu {
         const char_index = this.chars_menu.selected_index;
         const char = this.data.info.party_data.members[char_index];
         if (char.has_permanent_status(this.selected_perm_status)) {
-            const input_and_crystal = [permanent_status.HAUNT, permanent_status.EQUIP_CURSE].includes(this.selected_perm_status);
+            const input_and_crystal = [permanent_status.HAUNT, permanent_status.EQUIP_CURSE].includes(
+                this.selected_perm_status
+            );
             const price = this.get_price(char, this.selected_perm_status);
             const donation_msg = dialog_msgs[status_dialogs_map.donation[this.selected_perm_status]](price, char.name);
             this.set_dialog({
@@ -405,12 +422,12 @@ export class HealerMenu {
                             show_crystal: false,
                             callback: () => {
                                 this.invoke_yes_no_to_confirm(price, char);
-                            }
+                            },
                         });
                     } else {
                         this.invoke_yes_no_to_confirm(price, char);
                     }
-                }
+                },
             });
         } else {
             this.enable_chars_menu_control();
@@ -418,43 +435,46 @@ export class HealerMenu {
     }
 
     private invoke_yes_no_to_confirm(price: number, char: MainChar) {
-        this.yes_no_menu.open({
-            yes: () => {
-                if (price > this.data.info.party_data.coins) {
+        this.yes_no_menu.open(
+            {
+                yes: () => {
+                    if (price > this.data.info.party_data.coins) {
+                        this.set_dialog({
+                            dialog_type: status_dialogs_map.no_coin[this.selected_perm_status],
+                            ask_for_input: true,
+                            show_crystal: true,
+                            callback: () => {
+                                this.party_has_status(this.selected_perm_status);
+                            },
+                        });
+                    } else {
+                        this.data.info.party_data.coins -= price;
+                        this.set_dialog({
+                            dialog_type: status_dialogs_map.accept[this.selected_perm_status],
+                            ask_for_input: true,
+                            show_crystal: true,
+                            callback: () => {
+                                this.remove_status(char);
+                            },
+                        });
+                    }
+                },
+                no: () => {
                     this.set_dialog({
-                        dialog_type: status_dialogs_map.no_coin[this.selected_perm_status],
+                        dialog_type: DialogTypes.RECUSE_DONATION,
                         ask_for_input: true,
                         show_crystal: true,
                         callback: () => {
                             this.party_has_status(this.selected_perm_status);
-                        }
+                        },
                     });
-                } else {
-                    this.data.info.party_data.coins -= price;
-                    this.set_dialog({
-                        dialog_type: status_dialogs_map.accept[this.selected_perm_status],
-                        ask_for_input: true,
-                        show_crystal: true,
-                        callback: () => {
-                            this.remove_status(char);
-                        }
-                    });
-                }
+                },
             },
-            no: () => {
-                this.set_dialog({
-                    dialog_type: DialogTypes.RECUSE_DONATION,
-                    ask_for_input: true,
-                    show_crystal: true,
-                    callback: () => {
-                        this.party_has_status(this.selected_perm_status);
-                    }
-                });
+            {
+                x: 56,
+                y: 56,
             }
-        }, {
-            x: 56,
-            y: 56
-        });
+        );
     }
 
     private async remove_status(char: MainChar) {
@@ -468,7 +488,9 @@ export class HealerMenu {
             show_crystal: false,
             custom_msg: dialog_msgs[status_dialogs_map.success[this.selected_perm_status]](char.name),
             callback: () => {
-                const has_status = this.data.info.party_data.members.some(c => c.has_permanent_status(this.selected_perm_status));
+                const has_status = this.data.info.party_data.members.some(c =>
+                    c.has_permanent_status(this.selected_perm_status)
+                );
                 if (has_status) {
                     this.party_has_status(this.selected_perm_status);
                 } else {
@@ -480,10 +502,10 @@ export class HealerMenu {
                         ask_for_input: false,
                         callback: () => {
                             this.horizontal_menu.open(undefined, this.horizontal_menu_index);
-                        }
+                        },
                     });
                 }
-            }
+            },
         });
     }
 
@@ -520,8 +542,8 @@ export class HealerMenu {
             scale: {min: 0.3, max: 0.4},
             target: {
                 x: char_sprite.centerX,
-                y: char_sprite.centerY
-            }
+                y: char_sprite.centerY,
+            },
         };
         this.data.particle_manager.addData(HealerMenu.EMITTER_NAME, out_data);
         const circle_zone = this.data.particle_manager.createCircleZone(char_sprite.height << 1);
@@ -532,18 +554,13 @@ export class HealerMenu {
                 this.chars_menu.char_group.sendToBack(display);
             }
         });
-        emitter.emit(
-            HealerMenu.EMITTER_NAME,
-            char_sprite.centerX,
-            char_sprite.centerY,
-            {
-                zone: circle_zone,
-                total: 3,
-                repeat: 32,
-                frequency: 60,
-                random: true,
-            }
-        );
+        emitter.emit(HealerMenu.EMITTER_NAME, char_sprite.centerX, char_sprite.centerY, {
+            zone: circle_zone,
+            total: 3,
+            repeat: 32,
+            frequency: 60,
+            random: true,
+        });
         emitter.onEmit = new Phaser.Signal();
         emitter.onEmit.add((emitter: Phaser.ParticleStorm.Emitter, particle: Phaser.ParticleStorm.Particle) => {
             particle.sprite.tint = _.sample([16776470, 190960, 16777215, 5700990]);
@@ -577,7 +594,7 @@ export class HealerMenu {
             callback: () => {
                 this.coins_window.show();
                 this.horizontal_menu.open(undefined, this.horizontal_menu_index);
-            }
+            },
         });
     }
 }

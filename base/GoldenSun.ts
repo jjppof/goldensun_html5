@@ -19,7 +19,7 @@ import {Gamepad as XGamepad, Button, AdvanceButton} from "./XGamepad";
 import {Audio} from "./Audio";
 import {Storage} from "./Storage";
 import {Camera} from "./Camera";
-import { HealerMenu } from "./main_menus/HealerMEnu";
+import {HealerMenu} from "./main_menus/HealerMEnu";
 
 /**
  * The project has basically two important folders: assets and base. All the source code is located inside base folder.

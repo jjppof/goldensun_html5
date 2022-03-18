@@ -77,6 +77,27 @@
             }
         }
     },{
+        "key_name": "healer_1",
+        "anchor_y": 0.8,
+        "initial_action": "idle",
+        "collision_body_bevel": 3,
+        "interaction_pattern": "cross",
+        "body_radius": 7.0,
+        "voice_key": "adult_male_2",
+        "actions": {
+            "idle": {
+                "frame_rate": [[0.2,3,1,0.7,1,0.6,0.6]],
+                "animations": ["down", "up", "left", "right"],
+                "frames_count": 6,
+                "initial_animation": "down",
+                "spritesheet": {
+                    "image": "assets/images/spritesheets/npc/healer_idle.png",
+                    "json": "assets/images/spritesheets/npc/healer_idle.json"
+                },
+                "loop": true
+            }
+        }
+    },{
         "key_name": "briggs",
         "anchor_y": 0.8,
         "initial_action": "idle",
