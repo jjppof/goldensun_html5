@@ -14,7 +14,7 @@ import {ChestEvent} from "./ChestEvent";
 import {PsynergyStoneEvent} from "./PsynergyStoneEvent";
 import {TimerEvent} from "./TimerEvent";
 import {PartyJoinEvent} from "./PartyJoinEvent";
-import {storage_types} from "../Storage";
+import {StoragePosition, storage_types} from "../Storage";
 import {TileEvent} from "../tile_events/TileEvent";
 import * as _ from "lodash";
 import {SummonEvent} from "./SummonEvent";
@@ -560,7 +560,7 @@ export class GameEventManager {
             case event_value_types.STORAGE:
                 const storage = this.data.storage.get_object(event_value.value.key_name);
                 return storage.type === storage_types.POSITION
-                    ? `${storage.value.x}/${storage.value.y}`
+                    ? `${(storage.value as StoragePosition).x}/${(storage.value as StoragePosition).y}`
                     : storage.value;
             case event_value_types.GAME_INFO:
                 switch (event_value.value.type) {

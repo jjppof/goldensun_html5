@@ -255,25 +255,25 @@ export class NPC extends ControllableChar {
         if (this.storage_keys.base_collision_layer !== undefined) {
             const storage_value = this.data.storage.get(this.storage_keys.base_collision_layer);
             if (this.base_collision_layer !== storage_value) {
-                this._base_collision_layer = storage_value;
+                this._base_collision_layer = storage_value as number;
             }
         }
         if (this.storage_keys.affected_by_reveal !== undefined) {
             const storage_value = this.data.storage.get(this.storage_keys.affected_by_reveal);
             if (this.affected_by_reveal !== storage_value) {
-                this._affected_by_reveal = storage_value;
+                this._affected_by_reveal = storage_value as boolean;
             }
         }
         if (this.storage_keys.visible !== undefined) {
             const storage_value = this.data.storage.get(this.storage_keys.visible);
             if (this.visible !== storage_value) {
-                this.visible = storage_value;
+                this.visible = storage_value as boolean;
             }
         }
         if (this.storage_keys.movement_type !== undefined) {
             const storage_value = this.data.storage.get(this.storage_keys.movement_type);
             if (this.movement_type !== storage_value) {
-                this.movement_type = storage_value;
+                this.movement_type = storage_value as npc_movement_types;
             }
         }
     }

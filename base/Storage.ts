@@ -12,10 +12,18 @@ export enum callback_call_type {
     MULTIPLE = "multiple",
 }
 
-type StorageRecord = {
+export type StoragePosition = {
+    x: number,
+    y: number
+}
+
+export type RawStorageRecord = {
     key_name: string;
     type: storage_types;
-    value: any;
+    value: boolean | number | string | StoragePosition;
+}
+
+type StorageRecord = RawStorageRecord & {
     callbacks?: {
         [id: number]: {
             callback: () => void;
@@ -69,7 +77,7 @@ export class Storage {
      * @param type the type of the this state value.
      * @param initial_value the initial value of the state.
      */
-    add(key_name: string, type: storage_types, initial_value: any = null) {
+    add(key_name: string, type: storage_types, initial_value: RawStorageRecord["value"] = null) {
         this.internal_storage[key_name] = {
             key_name: key_name,
             type: type,

@@ -16,6 +16,7 @@ import {Map} from "./Map";
 import {Camera} from "./Camera";
 import {Pushable} from "./interactable_objects/Pushable";
 import {RollablePillar} from "./interactable_objects/RollingPillar";
+import { StoragePosition } from "./Storage";
 
 /**
  * All chars that can be controlled by human (Hero) or code/event procedures (NPC)
@@ -200,20 +201,20 @@ export abstract class ControllableChar {
         this.storage_keys = storage_keys ?? {};
         this._active = active ?? true;
         if (this.storage_keys.active !== undefined) {
-            this._active = this.data.storage.get(this.storage_keys.active);
+            this._active = this.data.storage.get(this.storage_keys.active) as boolean;
         }
         if (this.storage_keys.position !== undefined) {
-            const position = this.data.storage.get(this.storage_keys.position);
+            const position = this.data.storage.get(this.storage_keys.position) as StoragePosition;
             initial_x = position.x;
             initial_y = position.y;
         }
         this._tile_x_pos = initial_x;
         this._tile_y_pos = initial_y;
         this._current_action =
-            this.storage_keys.action !== undefined ? this.data.storage.get(this.storage_keys.action) : initial_action;
+            this.storage_keys.action !== undefined ? this.data.storage.get(this.storage_keys.action) as string : initial_action;
         initial_animation =
             this.storage_keys.animation !== undefined
-                ? this.data.storage.get(this.storage_keys.animation)
+                ? this.data.storage.get(this.storage_keys.animation) as string
                 : initial_animation;
         this._current_direction = initial_animation in directions ? directions[initial_animation] : null;
         this._current_animation = initial_animation;

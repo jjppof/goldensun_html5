@@ -18,6 +18,7 @@ import {Map} from "../Map";
 import {RopeEvent} from "../tile_events/RopeEvent";
 import {GameEvent} from "../game_events/GameEvent";
 import {LiftFieldPsynergy} from "../field_abilities/LiftFieldPsynergy";
+import { StoragePosition } from "../Storage";
 
 export enum interactable_object_interaction_types {
     ONCE = "once",
@@ -153,7 +154,7 @@ export class InteractableObjects {
         this._key_name = key_name;
         this.storage_keys = storage_keys ?? {};
         if (this.storage_keys.position !== undefined) {
-            const position = this.data.storage.get(this.storage_keys.position);
+            const position = this.data.storage.get(this.storage_keys.position) as StoragePosition;
             x = position.x;
             y = position.y;
         }
