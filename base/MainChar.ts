@@ -57,6 +57,7 @@ export class MainChar extends Player {
     private class_table: any;
     private main_stats_curve: {[main_stat in main_stats]?: number[]};
     private equipped_abilities: string[];
+    private learnt_abilities: string[];
     private innate_abilities: string[];
 
     private _class: Classes;
@@ -138,6 +139,7 @@ export class MainChar extends Player {
         this.pp_recovery = 0;
         this._items = items;
         this.equipped_abilities = [];
+        this.learnt_abilities = [];
         this.innate_abilities = innate_abilities;
         this.init_items();
         this.update_attributes();
@@ -578,7 +580,8 @@ export class MainChar extends Player {
                     return pair.level <= this.level && !this.innate_abilities.includes(pair.ability);
                 })
                 .map(pair => pair.ability),
-            this.equipped_abilities
+            this.equipped_abilities,
+            this.learnt_abilities
         );
         djinni_next_status = djinni_next_status.map(status =>
             status === djinn_status.ANY ? djinn_status.STANDBY : status
@@ -811,7 +814,8 @@ export class MainChar extends Player {
                     return pair.level <= this.level && !this.innate_abilities.includes(pair.ability);
                 })
                 .map(pair => pair.ability),
-            this.equipped_abilities
+            this.equipped_abilities,
+            this.learnt_abilities
         );
     }
 

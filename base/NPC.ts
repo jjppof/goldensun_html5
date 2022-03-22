@@ -61,7 +61,7 @@ export class NPC extends ControllableChar {
         base_collision_layer?: string;
         affected_by_reveal?: string;
         visible?: string;
-        movement_type?: npc_movement_types;
+        movement_type?: string;
     };
     private sprite_misc_db_key: string;
     private ignore_physics: boolean;

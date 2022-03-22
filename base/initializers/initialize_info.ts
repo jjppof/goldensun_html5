@@ -44,6 +44,13 @@ export type PartyData = {
 
 export type GameInfo = {
     artifacts_global_list: ShopItem[];
+    last_visited_town_with_sanctum: {
+        map_key: string,
+        tile_position: {
+            x: number,
+            y: number
+        }
+    },
     maps_list: {[map_key: string]: Map};
     classes_list: {[class_key: string]: Classes};
     enemies_list: {
