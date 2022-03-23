@@ -927,24 +927,28 @@ export class InteractableObjects {
 
     toggle_active(active: boolean) {
         if (active) {
-            this.sprite.body?.collides(this.data.collision.hero_collision_group);
+            this.sprite?.body?.collides(this.data.collision.hero_collision_group);
             this._collision_tiles_bodies.forEach(body => {
                 body.collides(this.data.collision.hero_collision_group);
             });
             if (this._blocking_stair_block) {
                 this._blocking_stair_block.collides(this.data.collision.hero_collision_group);
             }
-            this.sprite.visible = true;
+            if (this.sprite) {
+                this.sprite.visible = true;
+            }
             this._active = true;
         } else {
-            this.sprite.body?.removeCollisionGroup(this.data.collision.hero_collision_group);
+            this.sprite?.body?.removeCollisionGroup(this.data.collision.hero_collision_group);
             this._collision_tiles_bodies.forEach(body => {
                 body.removeCollisionGroup(this.data.collision.hero_collision_group);
             });
             if (this._blocking_stair_block) {
                 this._blocking_stair_block.removeCollisionGroup(this.data.collision.hero_collision_group);
             }
-            this.sprite.visible = false;
+            if (this.sprite) {
+                this.sprite.visible = false;
+            }
             this._active = false;
         }
     }
