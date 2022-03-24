@@ -167,8 +167,8 @@ export class ChestEvent extends GameEvent {
         this.next();
         await this.promise;
 
-        if (this.hide_on_finish) {
-            this.origin_npc.visible = false;
+        if (this.hide_on_finish && this.origin_npc.sprite) {
+            this.origin_npc.sprite.visible = false;
         }
         item_sprite.destroy();
         emitter.destroy();

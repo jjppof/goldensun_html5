@@ -53,7 +53,6 @@ export class NPC extends ControllableChar {
     private _interaction_pattern: interaction_patterns;
     private _affected_by_reveal: boolean;
     private _label: string;
-    public visible: boolean;
     protected storage_keys: {
         position?: string;
         action?: string;
@@ -76,6 +75,8 @@ export class NPC extends ControllableChar {
     private _base_step: number;
     private _step_max_variation: number;
     private _step_destination: {x: number; y: number};
+    private initially_visible: boolean;
+    private previous_visible_state: boolean;
 
     constructor(
         game,
@@ -168,7 +169,7 @@ export class NPC extends ControllableChar {
         if (this.storage_keys.visible !== undefined) {
             visible = this.data.storage.get(this.storage_keys.visible);
         }
-        this.visible = visible ?? true;
+        this.initially_visible = visible ?? true;
         this.ignore_physics = ignore_physics ?? false;
         this._events = [];
         this.set_events(events_info ?? []);
@@ -266,8 +267,8 @@ export class NPC extends ControllableChar {
         }
         if (this.storage_keys.visible !== undefined) {
             const storage_value = this.data.storage.get(this.storage_keys.visible);
-            if (this.visible !== storage_value) {
-                this.visible = storage_value as boolean;
+            if (this.sprite?.visible !== storage_value) {
+                this.sprite.visible = storage_value as boolean;
             }
         }
         if (this.storage_keys.movement_type !== undefined) {
@@ -513,9 +514,9 @@ export class NPC extends ControllableChar {
             this.sprite?.body?.collides(this.data.collision.hero_collision_group);
             if (this.sprite) {
                 if (this.storage_keys.visible !== undefined) {
-                    this.visible = this.data.storage.get(this.storage_keys.visible);
+                    this.sprite.visible = this.data.storage.get(this.storage_keys.visible) as boolean;
                 } else {
-                    this.sprite.visible = true;
+                    this.sprite.visible = this.previous_visible_state;
                 }
             }
             if (this.shadow) {
@@ -525,11 +526,8 @@ export class NPC extends ControllableChar {
         } else {
             this.sprite?.body?.removeCollisionGroup(this.data.collision.hero_collision_group);
             if (this.sprite) {
-                if (this.storage_keys.visible !== undefined) {
-                    this.visible = this.data.storage.get(this.storage_keys.visible);
-                } else {
-                    this.sprite.visible = false;
-                }
+                this.previous_visible_state = this.sprite.visible;
+                this.sprite.visible = false;
             }
             if (this.shadow) {
                 this.shadow.visible = false;
@@ -574,8 +572,9 @@ export class NPC extends ControllableChar {
                 this.shadow.scale.setTo(1, 1);
             }
         }
-        if (this.affected_by_reveal || !this.visible) {
+        if (this.affected_by_reveal || !this.initially_visible) {
             this.sprite.visible = false;
+            this.previous_visible_state = this.sprite.visible;
         }
         this.sprite.is_npc = true;
         this.play(this.current_action, this.current_animation);
