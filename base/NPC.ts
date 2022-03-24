@@ -510,15 +510,27 @@ export class NPC extends ControllableChar {
      */
     toggle_active(active: boolean) {
         if (active) {
-            this.sprite.body?.collides(this.data.collision.hero_collision_group);
-            this.sprite.visible = true;
+            this.sprite?.body?.collides(this.data.collision.hero_collision_group);
+            if (this.sprite) {
+                if (this.storage_keys.visible !== undefined) {
+                    this.visible = this.data.storage.get(this.storage_keys.visible);
+                } else {
+                    this.sprite.visible = true;
+                }
+            }
             if (this.shadow) {
                 this.shadow.visible = true;
             }
             this._active = true;
         } else {
-            this.sprite.body?.removeCollisionGroup(this.data.collision.hero_collision_group);
-            this.sprite.visible = false;
+            this.sprite?.body?.removeCollisionGroup(this.data.collision.hero_collision_group);
+            if (this.sprite) {
+                if (this.storage_keys.visible !== undefined) {
+                    this.visible = this.data.storage.get(this.storage_keys.visible);
+                } else {
+                    this.sprite.visible = false;
+                }
+            }
             if (this.shadow) {
                 this.shadow.visible = false;
             }
