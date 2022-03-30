@@ -40,10 +40,14 @@ type StorageRecord = RawStorageRecord & {
  */
 export class Storage {
     private data: GoldenSun;
-    private internal_storage: {[key_name: string]: StorageRecord} = {};
+    private _internal_storage: {[key_name: string]: StorageRecord} = {};
 
     constructor(data) {
         this.data = data;
+    }
+
+    get internal_storage() {
+        return this._internal_storage;
     }
 
     /**
