@@ -9,6 +9,7 @@ import { RawStorageRecord } from "./Storage";
 import { TileEvent } from "./tile_events/TileEvent";
 import * as _ from "lodash";
 import { Button } from "./XGamepad";
+import { reverse_directions } from "./utils";
 
 type SnapshotData = {
     storage_data: {[key_name: string]: RawStorageRecord["value"]},
@@ -49,7 +50,9 @@ type SnapshotData = {
                 y: number
             }
         },
-        npcs: [{
+        npcs: {
+            key_name: string,
+            index: number,
             position: {
                 x: number,
                 y: number
@@ -60,8 +63,10 @@ type SnapshotData = {
             visible: boolean,
             movement_type: npc_movement_types,
             body_in_map: boolean
-        }],
-        ios: [{
+        }[],
+        interactable_objects: {
+            key_name: string,
+            index: number,
             position: {
                 x: number,
                 y: number
@@ -75,8 +80,9 @@ type SnapshotData = {
             allow_jumping_over_it: boolean,
             allow_jumping_through_it: boolean,
             body_in_map: boolean
-        }],
-        tile_events: [{
+        }[],
+        tile_events: {
+            id: number,
             position: {
                 x: number,
                 y: number
@@ -85,10 +91,11 @@ type SnapshotData = {
             activation_directions: TileEvent["activation_directions"],
             activation_collision_layers: TileEvent["activation_collision_layers"],
             in_map: boolean
-        }]
+        }[]
     }
 };
 
+/** Class responsible for generating and restoring save files. */
 export class Snapshot {
     private data: GoldenSun;
 
@@ -138,7 +145,82 @@ export class Snapshot {
                 }
             }),
             artifacts_global_list: this.data.info.artifacts_global_list,
-            last_visited_town_with_sanctum: this.data.info.last_visited_town_with_sanctum
+            last_visited_town_with_sanctum: this.data.info.last_visited_town_with_sanctum,
+            map_data: {
+                key_name: this.data.map.key_name,
+                collision_layer: this.data.map.collision_layer,
+                encounter_cumulator: this.data.map.encounter_cumulator,
+                pc: {
+                    position: {
+                        x: this.data.hero.tile_x_pos,
+                        y: this.data.hero.tile_y_pos,
+                    },
+                    direction: reverse_directions[this.data.hero.current_direction]
+                },
+                npcs: this.data.map.npcs.map((npc, index) => {
+                    return {
+                        key_name: npc.key_name,
+                        index: index,
+                        position: {
+                            x: npc.tile_x_pos,
+                            y: npc.tile_y_pos
+                        },
+                        action: npc.current_action,
+                        animation: npc.current_animation,
+                        base_collision_layer: npc.base_collision_layer,
+                        visible: npc.sprite.visible,
+                        movement_type: npc.movement_type,
+                        body_in_map: this.data.map.body_in_map(npc)
+                    };
+                }),
+                interactable_objects: this.data.map.interactable_objects.map((io, index) => {
+                    return {
+                        key_name: io.key_name,
+                        index: index,
+                        position: {
+                            x: io.tile_x_pos,
+                            y: io.tile_y_pos
+                        },
+                        action: io.current_action,
+                        animation: io.current_animation,
+                        base_collision_layer: io.base_collision_layer,
+                        enable: io.enable,
+                        entangled_by_bush: io.entangled_by_bush,
+                        psynergy_casted: io.psynergy_casted,
+                        allow_jumping_over_it: io.allow_jumping_over_it,
+                        allow_jumping_through_it: io.allow_jumping_through_it,
+                        body_in_map: this.data.map.body_in_map(io)
+                    };
+                }),
+                tile_events: _.map(TileEvent.events, event => {
+                    return {
+                        id: event.id,
+                        position: {
+                            x: event.x,
+                            y: event.y
+                        },
+                        active: event.active,
+                        activation_directions: event.activation_directions,
+                        activation_collision_layers: event.activation_collision_layers,
+                        in_map: this.data.map.has_event(event.id)
+                    };
+                })
+            }
         };
+        Snapshot.download_json(snapshot, "save.json");
+    }
+
+    /**
+     * Downloads a json into a file.
+     * @param json the js object object.
+     * @param filename the destination file name.
+     */
+    private static download_json(json: Object, filename: string) {
+        const a = document.createElement("a");
+        const file = new Blob([JSON.stringify(json, null, 4)], {type: "application/json"});
+        a.href = URL.createObjectURL(file);
+        a.download = filename;
+        a.click();
+        URL.revokeObjectURL(a.href);
     }
 }

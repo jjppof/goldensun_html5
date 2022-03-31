@@ -717,6 +717,20 @@ export class Map {
     }
 
     /**
+     * Checks whether a NPC or Interactable object has its body on map.
+     * @param instance the NPC or Interactable Object instance.
+     * @returns whether the body is in the map or not.
+     */
+    body_in_map(instance: NPC | InteractableObjects) {
+        if (!instance.body) {
+            return false;
+        }
+        const location_key = LocationKey.get_key(instance.tile_x_pos, instance.tile_y_pos);
+        const instances = this._bodies_positions[instance.base_collision_layer][location_key];
+        return instances.includes(instance);
+    }
+
+    /**
      * Updates the new position of an IO or NPC in this map structure.
      * @param old_x the old x tile position.
      * @param old_y the old y tile position.
@@ -1391,6 +1405,16 @@ export class Map {
      */
     fire_game_events() {
         this.game_events.forEach(event => event.fire());
+    }
+
+    /**
+     * Checks whether this map has the given tile event placed somewhere.
+     * @param event_id the id of the tile event.
+     * @returns whether the given tile event is on the map.
+     */
+    has_event(event_id: number) {
+        const event = TileEvent.get_event(event_id);
+        return this.data.map.events[event.location_key]?.includes(event);
     }
 
     /**

@@ -32,7 +32,7 @@ export class NPC extends ControllableChar {
     private static readonly MAX_DIR_GET_TRIES = 7;
     private static readonly STOP_MINIMAL_DISTANCE_SQR = 2 * 2;
 
-    private movement_type: npc_movement_types;
+    private _movement_type: npc_movement_types;
     private _npc_type: npc_types;
     private _message: string;
     private _thought_message: string;
@@ -142,7 +142,7 @@ export class NPC extends ControllableChar {
         if (this.storage_keys.movement_type !== undefined) {
             movement_type = this.data.storage.get(this.storage_keys.movement_type);
         }
-        this.movement_type = movement_type ?? npc_movement_types.IDLE;
+        this._movement_type = movement_type ?? npc_movement_types.IDLE;
         this._message = message ?? "";
         this._thought_message = thought_message ?? "";
         this._avatar = avatar ?? null;
@@ -248,6 +248,10 @@ export class NPC extends ControllableChar {
     get healer_key() {
         return this._healer_key;
     }
+    /** The type of movement of this NPC. Idle or random walk. */
+    get movement_type() {
+        return this._movement_type;
+    }
 
     /**
      * Updates this NPC properties according to current storage values.
@@ -274,7 +278,7 @@ export class NPC extends ControllableChar {
         if (this.storage_keys.movement_type !== undefined) {
             const storage_value = this.data.storage.get(this.storage_keys.movement_type);
             if (this.movement_type !== storage_value) {
-                this.movement_type = storage_value as npc_movement_types;
+                this._movement_type = storage_value as npc_movement_types;
             }
         }
     }

@@ -56,7 +56,7 @@ export abstract class TileEvent {
     private active_storage_key: string;
 
     protected static id_incrementer: number;
-    protected static events: {[id: number]: TileEvent};
+    protected static _events: {[id: number]: TileEvent};
     protected static labeled_events: {[key_name: number]: TileEvent};
 
     constructor(
@@ -270,6 +270,11 @@ export abstract class TileEvent {
         return input.map(key => directions[key]);
     }
 
+    /** Gets all active/available events. */
+    static get events() {
+        return TileEvent._events;
+    }
+
     /**
      * Gets an event by its id number.
      * @param id the event id.
@@ -296,7 +301,7 @@ export abstract class TileEvent {
         for (let id in TileEvent.events) {
             TileEvent.events[id].destroy();
         }
-        TileEvent.events = {};
+        TileEvent._events = {};
         TileEvent.labeled_events = {};
     }
 }

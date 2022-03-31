@@ -20,6 +20,7 @@ import {Audio} from "./Audio";
 import {Storage} from "./Storage";
 import {Camera} from "./Camera";
 import {HealerMenu} from "./main_menus/HealerMenu";
+import { Snapshot } from "./Snapshot";
 
 /**
  * The project has basically two important folders: assets and base. All the source code is located inside base folder.
@@ -91,6 +92,9 @@ export class GoldenSun {
 
     /** Class responsible for some specific camera features for this engine */
     public camera: Camera = null;
+
+    /** Class responsible for generating and restoring save files. */
+    public snapshot_manager: Snapshot = null;
 
     //managers
     public control_manager: ControlManager = null;
@@ -184,6 +188,9 @@ export class GoldenSun {
      * Initializes the game main classes like Hero, Map, Audio, ControlManager, Storage etc.
      */
     private async create() {
+        //initializes the snapshot manager
+        this.snapshot_manager = new Snapshot(this);
+
         //load some json files from assets folder
         load_databases(this.game, this.dbs);
 
