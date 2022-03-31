@@ -307,7 +307,7 @@
         "use_type": "single_use",
         "curses_when_equipped": false,
         "cant_be_removed": false,
-        "rare_item": true,
+        "rare_item": false,
         "important_item": false,
         "carry_up_to_30": true,
         "effects": [],
