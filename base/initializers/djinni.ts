@@ -1,7 +1,4 @@
 import {Djinn} from "../Djinn";
-import {GoldenSun} from "../GoldenSun";
-import {SpriteBase} from "../SpriteBase";
-import {elements} from "../utils";
 
 export function initialize_djinni(djinni_db) {
     let djinni_list = {};

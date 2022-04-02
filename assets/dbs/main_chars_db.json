@@ -34,7 +34,7 @@
         "battle_shadow_key": "00",
         "status_sprite_shift": 15,
         "weapon_sprite_shift": 4,
-        "djinni": ["flint", "granite", "quartz", "vine", "sap"],
+        "djinn": ["flint", "granite", "quartz", "vine", "sap"],
         "items": [
             {
                 "key_name": "gaia_blade",
@@ -124,7 +124,7 @@
         "battle_shadow_key": "00",
         "status_sprite_shift": 15,
         "weapon_sprite_shift": 4,
-        "djinni": ["forge", "fever", "corona", "scorch"],
+        "djinn": ["forge", "fever", "corona", "scorch"],
         "items": [
             {
                 "key_name": "great_sword",
@@ -192,7 +192,7 @@
         "battle_shadow_key": "00",
         "status_sprite_shift": 15,
         "weapon_sprite_shift": 4,
-        "djinni": ["gust", "breeze", "zephyr", "smog"],
+        "djinn": ["gust", "breeze", "zephyr", "smog"],
         "items": [
             {
                 "key_name": "wooden_stick",
@@ -252,7 +252,7 @@
         "status_sprite_shift": 15,
         "weapon_sprite_shift": 4,
         "special_class_type": 14,
-        "djinni": ["fog", "sour", "spring", "shade"],
+        "djinn": ["fog", "sour", "spring", "shade"],
         "items": [
             {
                 "key_name": "battle_mace",

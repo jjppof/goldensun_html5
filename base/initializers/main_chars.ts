@@ -1,6 +1,7 @@
 import {Classes} from "../Classes";
 import {GoldenSun} from "../GoldenSun";
 import {MainChar} from "../MainChar";
+import { main_stats } from "../Player";
 import {SpriteBase} from "../SpriteBase";
 import {base_actions} from "../utils";
 import {GameInfo} from "./initialize_info";
@@ -35,16 +36,19 @@ export function initialize_main_chars(
     npc_db,
     load_promise_resolve: () => void
 ) {
+    const snapshot = data.snapshot_manager.snapshot;
     const main_char_list: GameInfo["main_char_list"] = {};
     for (let i = 0; i < main_chars_db.length; ++i) {
         const char_data = main_chars_db[i];
+        const char_snapshot_data = snapshot?.main_chars.find(member_info => member_info.key_name === char_data.key_name);
         const char_db = npc_db[char_data.key_name];
         const sprite_base = new SpriteBase(char_data.key_name, Object.keys(char_db.actions));
         const weapons_sprite_base = new SpriteBase(
             `${char_data.key_name}_weapons`,
             Object.keys(char_data.weapons_sprites)
         );
-        main_char_list[char_data.key_name] = new MainChar(
+        const snapshot_djinn = char_snapshot_data?.djinn?.map(d => d.key_name);
+        const main_char = new MainChar(
             char_data.key_name,
             data.info,
             sprite_base,
@@ -65,16 +69,40 @@ export function initialize_main_chars(
             char_data.base_resist,
             char_data.innate_abilities,
             char_data.in_party,
-            char_data.djinni,
-            char_data.items,
+            snapshot_djinn ?? char_data.djinn,
+            char_snapshot_data?.items ?? char_data.items,
             char_data.battle_animations_variations,
             char_data.battle_shadow_key,
             char_data.status_sprite_shift,
             char_data.special_class_type,
             char_data.weapon_sprite_shift
         );
-        if (char_data.in_party) {
-            MainChar.add_member_to_party(data.info.party_data, main_char_list[char_data.key_name]);
+        main_char_list[char_data.key_name] = main_char;
+        if (char_snapshot_data?.in_party ?? char_data.in_party) {
+            MainChar.add_member_to_party(data.info.party_data, main_char);
+        }
+
+        if (char_snapshot_data?.extra_stats) {
+            for (let stat in char_snapshot_data.extra_stats) {
+                const stat_value = char_snapshot_data.extra_stats[stat];
+                main_char.add_extra_stat(stat as main_stats, stat_value, false);
+            }
+            main_char.update_attributes();
+        }
+
+        char_snapshot_data?.permanent_status?.forEach(status => main_char.add_permanent_status(status));
+
+        if (char_snapshot_data?.learnt_abilities) {
+            char_snapshot_data.learnt_abilities.forEach(ability => main_char.learn_ability(ability, false));
+            main_char.update_abilities();
+        }
+
+        if (char_snapshot_data?.djinn) {
+            char_snapshot_data.djinn.forEach(djinni_info => {
+                const djinn = data.info.djinni_list[djinni_info.key_name];
+                djinn.set_status(djinni_info.status, main_char);
+                djinn.recovery_turn = djinni_info.recovery_turn;
+            });
         }
 
         for (let action_key in char_db.actions) {

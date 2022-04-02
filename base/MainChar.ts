@@ -827,6 +827,20 @@ export class MainChar extends Player {
     }
 
     /**
+     * Adds a new ability to this char.
+     * @param ability_key the ability key
+     * @param update whether it should update the final abilities list of this char.
+     */
+    learn_ability(ability_key: string, update: boolean) {
+        if (!this.learnt_abilities.includes(ability_key)) {
+            this.learnt_abilities.push(ability_key);
+            if (update) {
+                this.update_abilities();
+            }
+        }
+    }
+
+    /**
      * Updates all important attributes of this char like stats, class, abilities etc.
      */
     update_all() {

@@ -11,10 +11,11 @@ import * as _ from "lodash";
 import { Button } from "./XGamepad";
 import { reverse_directions } from "./utils";
 
-type SnapshotData = {
+export type SnapshotData = {
     storage_data: {[key_name: string]: RawStorageRecord["value"]},
-    members: {
+    main_chars: {
         key_name: string,
+        in_party: boolean,
         extra_stats: Player["extra_stats"],
         permanent_status: permanent_status[],
         learnt_abilities: string[],
@@ -33,10 +34,7 @@ type SnapshotData = {
         L: {main_char: string; ability: string};
         R: {main_char: string; ability: string};
     };
-    summons: {
-        key_name: string,
-        available: boolean
-    }[],
+    summons_availability: {[key_name: string]: boolean},
     artifacts_global_list: GameInfo["artifacts_global_list"],
     last_visited_town_with_sanctum: GameInfo["last_visited_town_with_sanctum"]
     map_data: {
@@ -92,23 +90,34 @@ type SnapshotData = {
             activation_collision_layers: TileEvent["activation_collision_layers"],
             in_map: boolean
         }[]
-    }
+    },
+    scale_factor: number,
+    full_screen: boolean
 };
 
 /** Class responsible for generating and restoring save files. */
 export class Snapshot {
+    private static readonly SNAPSHOT_FILENAME = "save.json";
     private data: GoldenSun;
+    private _snapshot: SnapshotData;
 
-    constructor(data: GoldenSun) {
+    constructor(data: GoldenSun, snapshot: SnapshotData) {
         this.data = data;
+        this._snapshot = snapshot ?? null;
+    }
+
+    /** The snapshot info retrieved by a file when the game starts. */
+    get snapshot() {
+        return this._snapshot;
     }
 
     generate_snapshot() {
         const snapshot: SnapshotData = {
             storage_data: _.mapValues(this.data.storage.internal_storage, record => record.value),
-            members: this.data.info.party_data.members.map(member => {
+            main_chars: _.map(this.data.info.main_char_list, member => {
                 return {
                     key_name: member.key_name,
+                    in_party: member.in_party,
                     extra_stats: {
                         [main_stats.MAX_HP]: member.extra_stats[main_stats.MAX_HP],
                         [main_stats.MAX_PP]: member.extra_stats[main_stats.MAX_PP],
@@ -138,12 +147,7 @@ export class Snapshot {
                 L: this.data.info.party_data.psynergies_shortcuts[Button.L],
                 R: this.data.info.party_data.psynergies_shortcuts[Button.R],
             },
-            summons: _.map(this.data.info.summons_list, summon => {
-                return {
-                    key_name: summon.key_name,
-                    available: summon.available
-                }
-            }),
+            summons_availability: _.mapValues(this.data.info.summons_list, summon => summon.available),
             artifacts_global_list: this.data.info.artifacts_global_list,
             last_visited_town_with_sanctum: this.data.info.last_visited_town_with_sanctum,
             map_data: {
@@ -205,9 +209,11 @@ export class Snapshot {
                         in_map: this.data.map.has_event(event.id)
                     };
                 })
-            }
+            },
+            scale_factor: this.data.scale_factor,
+            full_screen: this.data.fullscreen
         };
-        Snapshot.download_json(snapshot, "save.json");
+        Snapshot.download_json(snapshot, Snapshot.SNAPSHOT_FILENAME);
     }
 
     /**

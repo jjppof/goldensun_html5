@@ -54,8 +54,14 @@ export class Storage {
      * Initializes the storage system.
      */
     init() {
+        const snapshot = this.data.snapshot_manager.snapshot;
         for (let key in this.data.dbs.storage_db) {
-            const value = this.data.dbs.storage_db[key];
+            let value;
+            if (snapshot?.storage_data.hasOwnProperty(key)) {
+                value = snapshot.storage_data[key];
+            } else {
+                value = this.data.dbs.storage_db[key];
+            }
             let type: storage_types;
             switch (typeof value) {
                 case "boolean":
