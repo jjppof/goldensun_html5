@@ -1380,6 +1380,7 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                     return (info.instance as Enemy).coins_reward;
                 })
                 .reduce((a, b) => a + b, 0);
+            this.data.info.party_data.coins += total_coins;
             this.battle_log.add(`You got ${total_coins.toString()} coins.`);
             await this.wait_for_key();
 
