@@ -55,6 +55,14 @@ export type SnapshotData = {
                 x: number,
                 y: number
             },
+            scale: {
+                x: number,
+                y: number
+            },
+            anchor: {
+                x: number,
+                y: number
+            },
             action: string,
             animation: string,
             base_collision_layer: number,
@@ -69,6 +77,14 @@ export type SnapshotData = {
                 x: number,
                 y: number
             },
+            scale: {
+                x: number,
+                y: number
+            },
+            anchor: {
+                x: number,
+                y: number
+            },
             action: string,
             animation: string,
             base_collision_layer: number;
@@ -80,16 +96,17 @@ export type SnapshotData = {
             body_in_map: boolean
         }[],
         tile_events: {
-            id: number,
-            position: {
-                x: number,
-                y: number
-            },
-            active: TileEvent["active"],
-            activation_directions: TileEvent["activation_directions"],
-            activation_collision_layers: TileEvent["activation_collision_layers"],
-            in_map: boolean
-        }[]
+            [id: number] : {
+                position: {
+                    x: number,
+                    y: number
+                },
+                active: TileEvent["active"],
+                activation_directions: string[],
+                activation_collision_layers: TileEvent["activation_collision_layers"],
+                in_map: boolean
+            }
+        }
     },
     scale_factor: number,
     full_screen: boolean
@@ -169,6 +186,14 @@ export class Snapshot {
                             x: npc.tile_x_pos,
                             y: npc.tile_y_pos
                         },
+                        scale: {
+                            x: npc.sprite?.scale.x ?? null,
+                            y: npc.sprite?.scale.y ?? null
+                        },
+                        anchor: {
+                            x: npc.sprite?.anchor.x ?? null,
+                            y: npc.sprite?.anchor.y ?? null
+                        },
                         action: npc.current_action,
                         animation: npc.current_animation,
                         base_collision_layer: npc.base_collision_layer,
@@ -185,6 +210,14 @@ export class Snapshot {
                             x: io.tile_x_pos,
                             y: io.tile_y_pos
                         },
+                        scale: {
+                            x: io.sprite?.scale.x ?? null,
+                            y: io.sprite?.scale.y ?? null
+                        },
+                        anchor: {
+                            x: io.sprite?.anchor.x ?? null,
+                            y: io.sprite?.anchor.y ?? null
+                        },
                         action: io.current_action,
                         animation: io.current_animation,
                         base_collision_layer: io.base_collision_layer,
@@ -196,17 +229,16 @@ export class Snapshot {
                         body_in_map: this.data.map.body_in_map(io)
                     };
                 }),
-                tile_events: _.map(TileEvent.events, event => {
+                tile_events: _.mapValues(TileEvent.events, event => {
                     return {
-                        id: event.id,
                         position: {
                             x: event.x,
                             y: event.y
                         },
                         active: event.active,
-                        activation_directions: event.activation_directions,
+                        activation_directions: event.activation_directions.map(dir => reverse_directions[dir]),
                         activation_collision_layers: event.activation_collision_layers,
-                        in_map: this.data.map.has_event(event.id)
+                        in_map: event.in_map
                     };
                 })
             },

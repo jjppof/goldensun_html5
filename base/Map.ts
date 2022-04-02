@@ -827,12 +827,14 @@ export class Map {
     private create_tile_event(property_key: string, raw_property: string) {
         try {
             const property_info = JSON.parse(raw_property);
-            const this_event_location_key = LocationKey.get_key(property_info.x, property_info.y);
-            if (!(this_event_location_key in this.events)) {
-                this.events[this_event_location_key] = [];
-            }
             const event = this.data.tile_event_manager.get_event_instance(property_info);
-            this.events[this_event_location_key].push(event);
+            const this_event_location_key = LocationKey.get_key(event.x, event.y);
+            if (event.in_map) {
+                if (!(this_event_location_key in this.events)) {
+                    this.events[this_event_location_key] = [];
+                }
+                this.events[this_event_location_key].push(event);
+            }
         } catch {
             console.warn(`Tile Event "${property_key}" is not a valid JSON.`);
         }
@@ -847,14 +849,18 @@ export class Map {
      */
     private create_npc(property_key: string, properties: any, not_parsed: boolean = true) {
         try {
+            const npc_index = this.npcs.length;
+            const snapshot_info = this.data.snapshot_manager.snapshot?.map_data.npcs[npc_index];
             const property_info = not_parsed ? JSON.parse(properties) : properties;
             const npc_db = this.data.dbs.npc_db[property_info.key_name];
-            const initial_action = property_info.action ?? npc_db.initial_action;
+            let initial_action = property_info.action ?? npc_db.initial_action;
             const actual_action =
                 (npc_db.actions && initial_action in npc_db.actions) || !npc_db.action_aliases
                     ? initial_action
                     : npc_db.action_aliases[initial_action];
-            const initial_animation = property_info.animation ?? npc_db.actions[actual_action].initial_animation;
+            initial_action = snapshot_info?.action ?? initial_action;
+            let initial_animation = property_info.animation ?? npc_db.actions[actual_action].initial_animation;
+            initial_animation = snapshot_info?.animation ?? initial_animation;
             const interaction_pattern = property_info.interaction_pattern ?? npc_db.interaction_pattern;
             const ignore_physics = property_info.ignore_physics ?? npc_db.ignore_physics;
             const voice_key = property_info.voice_key ?? npc_db.voice_key;
@@ -870,18 +876,23 @@ export class Map {
             const climb_speed = property_info.climb_speed ?? npc_db.climb_speed;
             const avatar = property_info.avatar ?? npc_db.avatar;
             const talk_range = property_info.talk_range ?? npc_db.talk_range;
-            const anchor_x = property_info.anchor_x ?? npc_db.anchor_x;
-            const anchor_y = property_info.anchor_y ?? npc_db.anchor_y;
-            const scale_x = property_info.scale_x ?? npc_db.scale_x;
-            const scale_y = property_info.scale_y ?? npc_db.scale_y;
+            const anchor_x = snapshot_info?.anchor.x ?? (property_info.anchor_x ?? npc_db.anchor_x);
+            const anchor_y = snapshot_info?.anchor.y ?? (property_info.anchor_y ?? npc_db.anchor_y);
+            const scale_x = snapshot_info?.scale.x ?? (property_info.scale_x ?? npc_db.scale_x);
+            const scale_y = snapshot_info?.scale.y ?? (property_info.scale_y ?? npc_db.scale_y);
+            const base_collision_layer = snapshot_info?.base_collision_layer ?? property_info.base_collision_layer;
+            const visible = snapshot_info?.visible ?? property_info.visible;
+            const movement_type = snapshot_info?.movement_type ?? property_info.movement_type;
+            const x = snapshot_info?.position.x ?? property_info.x;
+            const y = snapshot_info?.position.y ?? property_info.y;
             const npc = new NPC(
                 this.game,
                 this.data,
                 property_info.key_name,
                 property_info.label,
                 property_info.active,
-                property_info.x,
-                property_info.y,
+                x,
+                y,
                 property_info.storage_keys,
                 initial_action,
                 initial_animation,
@@ -890,14 +901,14 @@ export class Map {
                 dash_speed,
                 climb_speed,
                 property_info.npc_type,
-                property_info.movement_type,
+                movement_type,
                 property_info.message,
                 property_info.thought_message,
                 avatar,
                 property_info.shop_key,
                 property_info.inn_key,
                 property_info.healer_key,
-                property_info.base_collision_layer,
+                base_collision_layer,
                 talk_range,
                 property_info.events,
                 npc_db.no_shadow,
@@ -910,7 +921,7 @@ export class Map {
                 property_info.affected_by_reveal,
                 property_info.sprite_misc_db_key,
                 ignore_physics,
-                property_info.visible,
+                visible,
                 voice_key,
                 max_distance,
                 step_duration,
@@ -1072,7 +1083,8 @@ export class Map {
         for (let i = 0; i < this.npcs.length; ++i) {
             const npc = this.npcs[i];
             npc.init_npc(this);
-            if (npc.base_collision_layer in this._bodies_positions) {
+            const snapshot_info = this.data.snapshot_manager.snapshot?.map_data.npcs[i];
+            if ((!snapshot_info && npc.base_collision_layer in this._bodies_positions) || snapshot_info?.body_in_map) {
                 const bodies_positions = this._bodies_positions[npc.base_collision_layer];
                 const location_key = LocationKey.get_key(npc.tile_x_pos, npc.tile_y_pos);
                 if (location_key in bodies_positions) {
@@ -1371,6 +1383,7 @@ export class Map {
             return () => {
                 const event = npc.events[0] as DjinnGetEvent;
                 event.set_on_event_finish(() => {
+                    this._npcs = this.npcs.filter(n => n !== npc);
                     npc.unset();
                 });
                 event.fire(npc);
@@ -1414,7 +1427,7 @@ export class Map {
      */
     has_event(event_id: number) {
         const event = TileEvent.get_event(event_id);
-        return this.data.map.events[event.location_key]?.includes(event);
+        return event.in_map;
     }
 
     /**
@@ -1427,6 +1440,7 @@ export class Map {
         if (!this.events[location_key].length) {
             delete this.events[location_key];
         }
+        TileEvent.get_event(event_id).in_map = false;
     }
 
     /**

@@ -52,7 +52,13 @@ export abstract class TileEvent {
     protected _active: boolean[];
     protected _affected_by_reveal: boolean[];
     protected _origin_interactable_object: InteractableObjects;
+
+    /** The collision layer shift value from origin Inter. Obj. base collision layer that will be
+     * summed up to it which will form the activation collision layer of this event. */
     public collision_layer_shift_from_source: number;
+    /** Whether this event is in the map. */
+    public in_map: boolean;
+
     private active_storage_key: string;
 
     protected static id_incrementer: number;
@@ -76,24 +82,35 @@ export abstract class TileEvent {
         this.game = game;
         this.data = data;
         this._type = type;
-        this._x = x;
-        this._y = y;
-        this._location_key = LocationKey.get_key(this.x, this.y);
         this._id = TileEvent.id_incrementer++;
+        const snapshot_info = this.data.snapshot_manager.snapshot?.map_data.tile_events[this._id];
+        this._x = snapshot_info?.position.x ?? x;
+        this._y = snapshot_info?.position.y ?? y;
+        this._location_key = LocationKey.get_key(this.x, this.y);
+        this.in_map = snapshot_info?.in_map ?? true;
+
+        activation_collision_layers = snapshot_info?.activation_collision_layers ?? activation_collision_layers;
         this._activation_collision_layers = Array.isArray(activation_collision_layers)
             ? activation_collision_layers
             : [activation_collision_layers ?? 0];
+
+        activation_directions = snapshot_info?.activation_directions ?? activation_directions;
         this._activation_directions = TileEvent.format_activation_directions(activation_directions);
+
+        active = snapshot_info?.active ?? active;
         this._active = Array.isArray(active)
             ? active
             : new Array(this._activation_directions.length).fill(active ?? true);
+
         this.active_storage_key = active_storage_key;
         if (this.active_storage_key !== undefined && !this.data.storage.get(this.active_storage_key)) {
             this._active = new Array(this._activation_directions.length).fill(active ?? false);
         }
+
         this._affected_by_reveal = Array.isArray(affected_by_reveal)
             ? affected_by_reveal
             : new Array(this._activation_directions.length).fill(affected_by_reveal ?? false);
+
         this._origin_interactable_object = origin_interactable_object ?? null;
         this.collision_layer_shift_from_source = 0;
         TileEvent.events[this.id] = this;

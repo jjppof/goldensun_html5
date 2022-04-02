@@ -323,6 +323,9 @@ export class NPC extends ControllableChar {
     update_tile_position(update_on_map: boolean = true) {
         const new_x_pos = get_tile_position(this.x, this.data.map.tile_width);
         const new_y_pos = get_tile_position(this.y, this.data.map.tile_height);
+        if (this.tile_x_pos === new_x_pos && this.tile_y_pos === new_y_pos) {
+            return;
+        }
         if (update_on_map) {
             this.data.map.update_body_tile(
                 this.tile_x_pos,
