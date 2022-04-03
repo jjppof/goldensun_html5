@@ -105,6 +105,9 @@ export function initialize_main_chars(
             });
         }
 
+        main_char.current_hp = char_snapshot_data?.current_hp ?? main_char.current_hp;
+        main_char.current_pp = char_snapshot_data?.current_pp ?? main_char.current_pp;
+
         for (let action_key in char_db.actions) {
             const action = char_db.actions[action_key];
             sprite_base.setActionSpritesheet(action_key, action.spritesheet.image, action.spritesheet.json);

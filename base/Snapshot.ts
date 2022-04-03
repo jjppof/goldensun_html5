@@ -16,6 +16,8 @@ export type SnapshotData = {
     main_chars: {
         key_name: string,
         in_party: boolean,
+        current_hp: number,
+        current_pp: number,
         extra_stats: Player["extra_stats"],
         permanent_status: permanent_status[],
         learnt_abilities: string[],
@@ -135,6 +137,8 @@ export class Snapshot {
                 return {
                     key_name: member.key_name,
                     in_party: member.in_party,
+                    current_hp: member.current_hp,
+                    current_pp: member.current_pp,
                     extra_stats: {
                         [main_stats.MAX_HP]: member.extra_stats[main_stats.MAX_HP],
                         [main_stats.MAX_PP]: member.extra_stats[main_stats.MAX_PP],

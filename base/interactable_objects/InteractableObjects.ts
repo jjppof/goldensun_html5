@@ -474,13 +474,14 @@ export class InteractableObjects {
         this._blocking_stair_block = body;
     }
 
-    initial_config(map: Map) {
+    initial_config(map: Map, index_in_map: number) {
         this._sprite_info = this.data.info.iter_objs_sprite_base_list[this.key_name];
         if (this.psynergies_info) {
+            const snapshot_info = this.data.snapshot_manager.snapshot?.map_data.interactable_objects[index_in_map];
             for (let psynergy_key in this.psynergies_info) {
                 const psynergy_properties = this.psynergies_info[psynergy_key];
                 if (psynergy_properties.interaction_type === interactable_object_interaction_types.ONCE) {
-                    this.psynergy_casted[psynergy_key] = false;
+                    this.psynergy_casted[psynergy_key] = snapshot_info?.psynergy_casted[psynergy_key] ?? false;
                 }
                 if (psynergy_properties.after_psynergy_cast_events) {
                     if (!this.after_psynergy_cast_events.hasOwnProperty(psynergy_key)) {

@@ -953,6 +953,8 @@ export class Map {
     private create_interactable_object(property_key: string, raw_property: string) {
         try {
             const property_info = JSON.parse(raw_property);
+            const io_index = this.interactable_objects.length;
+            const snapshot_info = this.data.snapshot_manager.snapshot?.map_data.interactable_objects[io_index];
             const interactable_object_db = this.data.dbs.interactable_objects_db[property_info.key_name];
             let io_class: typeof InteractableObjects = InteractableObjects;
             if (interactable_object_db.pushable) {
@@ -964,20 +966,18 @@ export class Map {
             } else if (interactable_object_db.breakable) {
                 io_class = Breakable;
             }
-            const allow_jumping_over_it =
-                property_info.allow_jumping_over_it ?? interactable_object_db.allow_jumping_over_it;
-            const allow_jumping_through_it =
-                property_info.allow_jumping_through_it ?? interactable_object_db.allow_jumping_through_it;
-            const anchor_x = property_info.anchor_x ?? interactable_object_db.anchor_x;
-            const anchor_y = property_info.anchor_y ?? interactable_object_db.anchor_y;
-            const scale_x = property_info.scale_x ?? interactable_object_db.scale_x;
-            const scale_y = property_info.scale_y ?? interactable_object_db.scale_y;
+            const allow_jumping_over_it = snapshot_info?.allow_jumping_over_it ?? (property_info.allow_jumping_over_it ?? interactable_object_db.allow_jumping_over_it);
+            const allow_jumping_through_it = snapshot_info?.allow_jumping_through_it ?? (property_info.allow_jumping_through_it ?? interactable_object_db.allow_jumping_through_it);
+            const anchor_x = snapshot_info?.anchor?.x ?? (property_info.anchor_x ?? interactable_object_db.anchor_x);
+            const anchor_y = snapshot_info?.anchor?.y ?? (property_info.anchor_y ?? interactable_object_db.anchor_y);
+            const scale_x = snapshot_info?.scale?.x ?? (property_info.scale_x ?? interactable_object_db.scale_x);
+            const scale_y = snapshot_info?.scale?.y ?? (property_info.scale_y ?? interactable_object_db.scale_y);
             const has_shadow = property_info.has_shadow ?? interactable_object_db.has_shadow;
             const psynergies_info = _.merge(
                 interactable_object_db.psynergies_info ?? {},
                 property_info.psynergies_info ?? {}
             );
-            const action = property_info.action ?? interactable_object_db.initial_action;
+            const action = snapshot_info?.action ?? (property_info.action ?? interactable_object_db.initial_action);
             let animation;
             if (interactable_object_db.actions) {
                 if (property_info.animation) {
@@ -991,15 +991,21 @@ export class Map {
                     }
                 }
             }
+            animation = snapshot_info?.animation ?? animation;
+            const x = snapshot_info?.position.x ?? property_info.x;
+            const y = snapshot_info?.position.y ?? property_info.y;
+            const base_collision_layer = snapshot_info?.base_collision_layer ?? property_info.base_collision_layer;
+            const enable = snapshot_info?.enable ?? property_info.enable;
+            const entangled_by_bush = snapshot_info?.entangled_by_bush ?? property_info.entangled_by_bush;
             const interactable_object = new io_class(
                 this.game,
                 this.data,
                 property_info.key_name,
-                property_info.x,
-                property_info.y,
+                x,
+                y,
                 property_info.storage_keys,
                 property_info.allowed_tiles,
-                property_info.base_collision_layer,
+                base_collision_layer,
                 property_info.not_allowed_tiles,
                 property_info.object_drop_tiles,
                 anchor_x,
@@ -1008,8 +1014,8 @@ export class Map {
                 scale_y,
                 property_info.block_climb_collision_layer_shift,
                 property_info.events_info,
-                property_info.enable,
-                property_info.entangled_by_bush,
+                enable,
+                entangled_by_bush,
                 property_info.toggle_enable_events,
                 property_info.label,
                 allow_jumping_over_it,
@@ -1056,12 +1062,13 @@ export class Map {
     private config_interactable_object() {
         for (let i = 0; i < this.interactable_objects.length; ++i) {
             const interactable_object = this.interactable_objects[i];
-            interactable_object.initial_config(this);
+            interactable_object.initial_config(this, i);
             interactable_object.initialize_related_events(this);
             if (interactable_object.is_rope_dock) {
                 (interactable_object as RopeDock).initialize_rope(this);
             }
-            if (interactable_object.base_collision_layer in this._bodies_positions) {
+            const snapshot_info = this.data.snapshot_manager.snapshot?.map_data.interactable_objects[i];
+            if ((!snapshot_info && interactable_object.base_collision_layer in this._bodies_positions) || snapshot_info?.body_in_map) {
                 const bodies_positions = this._bodies_positions[interactable_object.base_collision_layer];
                 const location_key = LocationKey.get_key(
                     interactable_object.tile_x_pos,
