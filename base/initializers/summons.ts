@@ -1,4 +1,4 @@
-import { SnapshotData } from "../Snapshot";
+import {SnapshotData} from "../Snapshot";
 import {Summon} from "../Summon";
 
 export function initialize_summons(summons_db, snapshot: SnapshotData) {

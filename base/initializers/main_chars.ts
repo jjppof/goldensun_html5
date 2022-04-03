@@ -1,7 +1,7 @@
 import {Classes} from "../Classes";
 import {GoldenSun} from "../GoldenSun";
 import {MainChar} from "../MainChar";
-import { main_stats } from "../Player";
+import {main_stats} from "../Player";
 import {SpriteBase} from "../SpriteBase";
 import {base_actions} from "../utils";
 import {GameInfo} from "./initialize_info";
@@ -40,7 +40,9 @@ export function initialize_main_chars(
     const main_char_list: GameInfo["main_char_list"] = {};
     for (let i = 0; i < main_chars_db.length; ++i) {
         const char_data = main_chars_db[i];
-        const char_snapshot_data = snapshot?.main_chars.find(member_info => member_info.key_name === char_data.key_name);
+        const char_snapshot_data = snapshot?.main_chars.find(
+            member_info => member_info.key_name === char_data.key_name
+        );
         const char_db = npc_db[char_data.key_name];
         const sprite_base = new SpriteBase(char_data.key_name, Object.keys(char_db.actions));
         const weapons_sprite_base = new SpriteBase(

@@ -29,6 +29,7 @@ function load_db_files(game) {
 }
 
 function load_misc(game) {
+    game.load.image("start_screen", "assets/images/misc/start_screen.png");
     game.load.image("shadow", "assets/images/misc/shadow.jpg");
     game.load.image("psynergy_aura", "assets/images/psynergies/psynergy_aura.png");
     game.load.atlasJSONHash("menu", "assets/images/misc/menu.png", "assets/images/misc/menu.json");

@@ -20,8 +20,9 @@ import {Audio} from "./Audio";
 import {Storage} from "./Storage";
 import {Camera} from "./Camera";
 import {HealerMenu} from "./main_menus/HealerMenu";
-import { Snapshot } from "./Snapshot";
-import { base_actions } from "./utils";
+import {Snapshot} from "./Snapshot";
+import {base_actions} from "./utils";
+import {StartMenu} from "./main_menus/StartMenu";
 
 /**
  * The project has basically two important folders: assets and base. All the source code is located inside base folder.
@@ -60,6 +61,9 @@ export class GoldenSun {
 
     /** Class responsible for the debug systems */
     public debug: Debug = null;
+
+    /** Class responbible for the start menu */
+    public start_menu: StartMenu = null;
 
     /** Class responbible for the main menu */
     public main_menu: MainMenu = null;
@@ -178,6 +182,9 @@ export class GoldenSun {
      * Renders loading info.
      */
     private render_loading() {
+        if (!this.loading_what) {
+            return;
+        }
         if (this.game.time.frames % 4 === 0) {
             this.loading_progress = this.game.load.progress.toLocaleString("en-US", {
                 minimumIntegerDigits: 2,
@@ -195,28 +202,20 @@ export class GoldenSun {
      * Initializes the game main classes like Hero, Map, Audio, ControlManager, Storage etc.
      */
     private async create() {
-        //initializes the snapshot manager
-        this.snapshot_manager = new Snapshot(this, null);
-
         //load some json files from assets folder
         load_databases(this.game, this.dbs);
 
         //init audio engine
         this.audio = new Audio(this.game, this);
+        await this.audio.init_se();
 
         //init camera custom features
         this.camera = new Camera(this.game);
-
-        //init storage
-        this.storage = new Storage(this);
-        this.storage.init();
 
         //initialize managers
         this.gamepad = new XGamepad(this);
         this.cursor_manager = new CursorManager(this.game);
         this.control_manager = new ControlManager(this.game, this.gamepad, this.audio);
-
-        this.scale_factor = this.snapshot_manager.snapshot?.scale_factor ?? this.dbs.init_db.initial_scale_factor;
 
         //advanced particle system
         this.particle_manager = this.game.plugins.add(Phaser.ParticleStorm);
@@ -226,6 +225,39 @@ export class GoldenSun {
             this.debug = new Debug(this.game, this);
             this.debug.initialize_controls();
         }
+
+        this.audio.initialize_controls();
+        this.initialize_utils_controls();
+
+        this.scale_factor = this.dbs.init_db.initial_scale_factor;
+        this.game.scale.setupScale(this.scale_factor * numbers.GAME_WIDTH, this.scale_factor * numbers.GAME_HEIGHT);
+        window.dispatchEvent(new Event("resize"));
+
+        this.game.stage.disableVisibilityChange = false;
+
+        this.game.camera.resetFX();
+        this.loading_what = "";
+
+        //initializes start menu
+        this.start_menu = new StartMenu(this.game, this);
+        this.start_menu.open(snapshot => {
+            //initializes the snapshot manager
+            this.snapshot_manager = new Snapshot(this, snapshot);
+
+            //initializes the game
+            this.initialize_game();
+        });
+    }
+
+    /**
+     * Initializes the game. It can be a new one or a restored one from snapshot.
+     */
+    private async initialize_game() {
+        this.game.camera.fade(0x0, 1);
+
+        //init storage
+        this.storage = new Storage(this);
+        this.storage.init();
 
         //creating groups. Order here is important
         this.underlayer_group = this.game.add.group();
@@ -244,11 +276,19 @@ export class GoldenSun {
         this.game_event_manager = new GameEventManager(this.game, this);
 
         //configs map layers: creates sprites, interactable objects and npcs, lists events and sets the map layers
-        const map = this.info.maps_list[this.snapshot_manager.snapshot?.map_data.key_name ?? this.dbs.init_db.map_key_name];
-        const initial_collision_layer = this.snapshot_manager.snapshot?.map_data.collision_layer ?? this.dbs.init_db.collision_layer;
-        this.map = await map.mount_map(initial_collision_layer, this.snapshot_manager.snapshot?.map_data.encounter_cumulator);
-        const hero_initial_x = this.snapshot_manager.snapshot?.map_data.pc.position.x ?? this.dbs.init_db.x_tile_position;
-        const hero_initial_y = this.snapshot_manager.snapshot?.map_data.pc.position.y ?? this.dbs.init_db.y_tile_position;
+        const map = this.info.maps_list[
+            this.snapshot_manager.snapshot?.map_data.key_name ?? this.dbs.init_db.map_key_name
+        ];
+        const initial_collision_layer =
+            this.snapshot_manager.snapshot?.map_data.collision_layer ?? this.dbs.init_db.collision_layer;
+        this.map = await map.mount_map(
+            initial_collision_layer,
+            this.snapshot_manager.snapshot?.map_data.encounter_cumulator
+        );
+        const hero_initial_x =
+            this.snapshot_manager.snapshot?.map_data.pc.position.x ?? this.dbs.init_db.x_tile_position;
+        const hero_initial_y =
+            this.snapshot_manager.snapshot?.map_data.pc.position.y ?? this.dbs.init_db.y_tile_position;
         this.map.set_map_bounds(hero_initial_x, hero_initial_y);
 
         //initializes the controllable hero
@@ -281,17 +321,21 @@ export class GoldenSun {
         this.inn_menu = new InnMenu(this.game, this);
         this.main_menu = initialize_menu(this.game, this);
 
-        this.game.stage.disableVisibilityChange = false;
-        this.assets_loaded = true;
-        this.game.camera.resetFX();
-
-        this.audio.initialize_controls();
-        this.initialize_utils_controls();
+        //set initial zoom
+        this.scale_factor = this.snapshot_manager.snapshot?.scale_factor ?? this.scale_factor;
+        this.game.scale.setupScale(this.scale_factor * numbers.GAME_WIDTH, this.scale_factor * numbers.GAME_HEIGHT);
+        window.dispatchEvent(new Event("resize"));
 
         this.fullscreen = this.snapshot_manager.snapshot?.full_screen ?? false;
         if (this.fullscreen) {
             this.set_fullscreen_mode(false);
         }
+
+        this.assets_loaded = true;
+
+        this.game.camera.resetFX();
+
+        this.initialize_psynergy_controls();
 
         this.map.fire_game_events();
     }
@@ -316,10 +360,6 @@ export class GoldenSun {
      * Initializes some utils controls like canvas scale control, fullscreen etc.
      */
     private initialize_utils_controls() {
-        //set initial zoom
-        this.game.scale.setupScale(this.scale_factor * numbers.GAME_WIDTH, this.scale_factor * numbers.GAME_HEIGHT);
-        window.dispatchEvent(new Event("resize"));
-
         //enable full screen
         this.game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
         this.game.input.onTap.add((pointer, is_double_click) => {
@@ -342,6 +382,31 @@ export class GoldenSun {
             }
         };
 
+        const controls = [
+            {
+                buttons: Button.ZOOM1,
+                on_down: () => setup_scale(1),
+            },
+            {
+                buttons: Button.ZOOM2,
+                on_down: () => setup_scale(2),
+            },
+            {
+                buttons: Button.ZOOM3,
+                on_down: () => setup_scale(3),
+            },
+            {
+                buttons: Button.ZOOM4,
+                on_down: () => setup_scale(4),
+            },
+        ];
+        this.control_manager.add_controls(controls, {persist: true});
+    }
+
+    /**
+     * Initializes controls related to psynergy casting. Psynergy shortcuts.
+     */
+    private initialize_psynergy_controls() {
         const quick_ability = (index: number) => {
             if (!this.hero_movement_allowed(false)) return;
             const shortcut = this.dbs.init_db.initial_shortcuts[index];
@@ -366,22 +431,6 @@ export class GoldenSun {
             {
                 buttons: Button.R,
                 on_down: () => fire_psynergy_shortcut(Button.R),
-            },
-            {
-                buttons: Button.ZOOM1,
-                on_down: () => setup_scale(1),
-            },
-            {
-                buttons: Button.ZOOM2,
-                on_down: () => setup_scale(2),
-            },
-            {
-                buttons: Button.ZOOM3,
-                on_down: () => setup_scale(3),
-            },
-            {
-                buttons: Button.ZOOM4,
-                on_down: () => setup_scale(4),
             },
             {
                 buttons: Button.PSY1,
@@ -485,7 +534,7 @@ export class GoldenSun {
      * Renders some debug info.
      */
     private render() {
-        if (!this.electron_app) {
+        if (!this.electron_app && this.assets_loaded) {
             this.debug.set_debug_info();
             if (this.game.time.frames % 8 === 0) {
                 this.debug.fill_key_debug_table();

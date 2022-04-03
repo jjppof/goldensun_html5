@@ -1,32 +1,32 @@
-import { djinn_status } from "./Djinn";
-import { GoldenSun } from "./GoldenSun";
-import { GameInfo } from "./initializers/initialize_info";
-import { InteractableObjects } from "./interactable_objects/InteractableObjects";
-import { ItemSlot } from "./MainChar";
-import { npc_movement_types } from "./NPC";
-import { main_stats, permanent_status, Player } from "./Player";
-import { RawStorageRecord } from "./Storage";
-import { TileEvent } from "./tile_events/TileEvent";
+import {djinn_status} from "./Djinn";
+import {GoldenSun} from "./GoldenSun";
+import {GameInfo} from "./initializers/initialize_info";
+import {InteractableObjects} from "./interactable_objects/InteractableObjects";
+import {ItemSlot} from "./MainChar";
+import {npc_movement_types} from "./NPC";
+import {main_stats, permanent_status, Player} from "./Player";
+import {RawStorageRecord} from "./Storage";
+import {TileEvent} from "./tile_events/TileEvent";
 import * as _ from "lodash";
-import { Button } from "./XGamepad";
-import { reverse_directions } from "./utils";
+import {Button} from "./XGamepad";
+import {reverse_directions} from "./utils";
 
 export type SnapshotData = {
-    storage_data: {[key_name: string]: RawStorageRecord["value"]},
+    storage_data: {[key_name: string]: RawStorageRecord["value"]};
     main_chars: {
-        key_name: string,
-        in_party: boolean,
-        current_hp: number,
-        current_pp: number,
-        extra_stats: Player["extra_stats"],
-        permanent_status: permanent_status[],
-        learnt_abilities: string[],
-        items: ItemSlot[],
+        key_name: string;
+        in_party: boolean;
+        current_hp: number;
+        current_pp: number;
+        extra_stats: Player["extra_stats"];
+        permanent_status: permanent_status[];
+        learnt_abilities: string[];
+        items: ItemSlot[];
         djinn: {
-            key_name: string,
-            status: djinn_status,
-            recovery_turn: number
-        }[]
+            key_name: string;
+            status: djinn_status;
+            recovery_turn: number;
+        }[];
     }[];
     coins: number;
     random_battle_extra_rate: number;
@@ -36,82 +36,82 @@ export type SnapshotData = {
         L: {main_char: string; ability: string};
         R: {main_char: string; ability: string};
     };
-    summons_availability: {[key_name: string]: boolean},
-    artifacts_global_list: GameInfo["artifacts_global_list"],
-    last_visited_town_with_sanctum: GameInfo["last_visited_town_with_sanctum"]
+    summons_availability: {[key_name: string]: boolean};
+    artifacts_global_list: GameInfo["artifacts_global_list"];
+    last_visited_town_with_sanctum: GameInfo["last_visited_town_with_sanctum"];
     map_data: {
-        key_name: string,
-        collision_layer: number,
-        encounter_cumulator: number,
+        key_name: string;
+        collision_layer: number;
+        encounter_cumulator: number;
         pc: {
-            direction: string,
+            direction: string;
             position: {
-                x: number,
-                y: number
-            }
-        },
+                x: number;
+                y: number;
+            };
+        };
         npcs: {
-            key_name: string,
-            index: number,
+            key_name: string;
+            index: number;
             position: {
-                x: number,
-                y: number
-            },
+                x: number;
+                y: number;
+            };
             scale: {
-                x: number,
-                y: number
-            },
+                x: number;
+                y: number;
+            };
             anchor: {
-                x: number,
-                y: number
-            },
-            action: string,
-            animation: string,
-            base_collision_layer: number,
-            visible: boolean,
-            movement_type: npc_movement_types,
-            body_in_map: boolean
-        }[],
+                x: number;
+                y: number;
+            };
+            action: string;
+            animation: string;
+            base_collision_layer: number;
+            visible: boolean;
+            movement_type: npc_movement_types;
+            body_in_map: boolean;
+        }[];
         interactable_objects: {
-            key_name: string,
-            index: number,
+            key_name: string;
+            index: number;
             position: {
-                x: number,
-                y: number
-            },
+                x: number;
+                y: number;
+            };
             scale: {
-                x: number,
-                y: number
-            },
+                x: number;
+                y: number;
+            };
             anchor: {
-                x: number,
-                y: number
-            },
-            action: string,
-            animation: string,
+                x: number;
+                y: number;
+            };
+            action: string;
+            animation: string;
             base_collision_layer: number;
             enable: boolean;
             entangled_by_bush: boolean;
-            psynergy_casted: InteractableObjects["psynergy_casted"],
-            allow_jumping_over_it: boolean,
-            allow_jumping_through_it: boolean,
-            body_in_map: boolean
-        }[],
+            psynergy_casted: InteractableObjects["psynergy_casted"];
+            allow_jumping_over_it: boolean;
+            allow_jumping_through_it: boolean;
+            body_in_map: boolean;
+        }[];
         tile_events: {
-            [id: number] : {
+            [id: number]: {
                 position: {
-                    x: number,
-                    y: number
-                },
-                active: TileEvent["active"],
-                activation_directions: string[],
-                activation_collision_layers: TileEvent["activation_collision_layers"],
-                in_map: boolean
-            }
-        }
-    },
-    scale_factor: number,
-    full_screen: boolean
+                    x: number;
+                    y: number;
+                };
+                active: TileEvent["active"];
+                activation_directions: string[];
+                activation_collision_layers: TileEvent["activation_collision_layers"];
+                in_map: boolean;
+            };
+        };
+    };
+    scale_factor: number;
+    full_screen: boolean;
 };
 
 /** Class responsible for generating and restoring save files. */
@@ -155,10 +155,10 @@ export class Snapshot {
                         return {
                             key_name: djinn.key_name,
                             status: djinn.status,
-                            recovery_turn: djinn.recovery_turn
-                        }
-                    })
-                }
+                            recovery_turn: djinn.recovery_turn,
+                        };
+                    }),
+                };
             }),
             coins: this.data.info.party_data.coins,
             random_battle_extra_rate: this.data.info.party_data.random_battle_extra_rate,
@@ -180,7 +180,7 @@ export class Snapshot {
                         x: this.data.hero.tile_x_pos,
                         y: this.data.hero.tile_y_pos,
                     },
-                    direction: reverse_directions[this.data.hero.current_direction]
+                    direction: reverse_directions[this.data.hero.current_direction],
                 },
                 npcs: this.data.map.npcs.map((npc, index) => {
                     return {
@@ -188,22 +188,22 @@ export class Snapshot {
                         index: index,
                         position: {
                             x: npc.tile_x_pos,
-                            y: npc.tile_y_pos
+                            y: npc.tile_y_pos,
                         },
                         scale: {
                             x: npc.sprite?.scale.x ?? null,
-                            y: npc.sprite?.scale.y ?? null
+                            y: npc.sprite?.scale.y ?? null,
                         },
                         anchor: {
                             x: npc.sprite?.anchor.x ?? null,
-                            y: npc.sprite?.anchor.y ?? null
+                            y: npc.sprite?.anchor.y ?? null,
                         },
                         action: npc.current_action,
                         animation: npc.current_animation,
                         base_collision_layer: npc.base_collision_layer,
                         visible: npc.sprite.visible,
                         movement_type: npc.movement_type,
-                        body_in_map: this.data.map.body_in_map(npc)
+                        body_in_map: this.data.map.body_in_map(npc),
                     };
                 }),
                 interactable_objects: this.data.map.interactable_objects.map((io, index) => {
@@ -212,15 +212,15 @@ export class Snapshot {
                         index: index,
                         position: {
                             x: io.tile_x_pos,
-                            y: io.tile_y_pos
+                            y: io.tile_y_pos,
                         },
                         scale: {
                             x: io.sprite?.scale.x ?? null,
-                            y: io.sprite?.scale.y ?? null
+                            y: io.sprite?.scale.y ?? null,
                         },
                         anchor: {
                             x: io.sprite?.anchor.x ?? null,
-                            y: io.sprite?.anchor.y ?? null
+                            y: io.sprite?.anchor.y ?? null,
                         },
                         action: io.current_action,
                         animation: io.current_animation,
@@ -230,24 +230,24 @@ export class Snapshot {
                         psynergy_casted: io.psynergy_casted,
                         allow_jumping_over_it: io.allow_jumping_over_it,
                         allow_jumping_through_it: io.allow_jumping_through_it,
-                        body_in_map: this.data.map.body_in_map(io)
+                        body_in_map: this.data.map.body_in_map(io),
                     };
                 }),
                 tile_events: _.mapValues(TileEvent.events, event => {
                     return {
                         position: {
                             x: event.x,
-                            y: event.y
+                            y: event.y,
                         },
                         active: event.active,
                         activation_directions: event.activation_directions.map(dir => reverse_directions[dir]),
                         activation_collision_layers: event.activation_collision_layers,
-                        in_map: event.in_map
+                        in_map: event.in_map,
                     };
-                })
+                }),
             },
             scale_factor: this.data.scale_factor,
-            full_screen: this.data.fullscreen
+            full_screen: this.data.fullscreen,
         };
         Snapshot.download_json(snapshot, Snapshot.SNAPSHOT_FILENAME);
     }

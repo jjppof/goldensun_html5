@@ -876,10 +876,10 @@ export class Map {
             const climb_speed = property_info.climb_speed ?? npc_db.climb_speed;
             const avatar = property_info.avatar ?? npc_db.avatar;
             const talk_range = property_info.talk_range ?? npc_db.talk_range;
-            const anchor_x = snapshot_info?.anchor.x ?? (property_info.anchor_x ?? npc_db.anchor_x);
-            const anchor_y = snapshot_info?.anchor.y ?? (property_info.anchor_y ?? npc_db.anchor_y);
-            const scale_x = snapshot_info?.scale.x ?? (property_info.scale_x ?? npc_db.scale_x);
-            const scale_y = snapshot_info?.scale.y ?? (property_info.scale_y ?? npc_db.scale_y);
+            const anchor_x = snapshot_info?.anchor.x ?? property_info.anchor_x ?? npc_db.anchor_x;
+            const anchor_y = snapshot_info?.anchor.y ?? property_info.anchor_y ?? npc_db.anchor_y;
+            const scale_x = snapshot_info?.scale.x ?? property_info.scale_x ?? npc_db.scale_x;
+            const scale_y = snapshot_info?.scale.y ?? property_info.scale_y ?? npc_db.scale_y;
             const base_collision_layer = snapshot_info?.base_collision_layer ?? property_info.base_collision_layer;
             const visible = snapshot_info?.visible ?? property_info.visible;
             const movement_type = snapshot_info?.movement_type ?? property_info.movement_type;
@@ -966,18 +966,24 @@ export class Map {
             } else if (interactable_object_db.breakable) {
                 io_class = Breakable;
             }
-            const allow_jumping_over_it = snapshot_info?.allow_jumping_over_it ?? (property_info.allow_jumping_over_it ?? interactable_object_db.allow_jumping_over_it);
-            const allow_jumping_through_it = snapshot_info?.allow_jumping_through_it ?? (property_info.allow_jumping_through_it ?? interactable_object_db.allow_jumping_through_it);
-            const anchor_x = snapshot_info?.anchor?.x ?? (property_info.anchor_x ?? interactable_object_db.anchor_x);
-            const anchor_y = snapshot_info?.anchor?.y ?? (property_info.anchor_y ?? interactable_object_db.anchor_y);
-            const scale_x = snapshot_info?.scale?.x ?? (property_info.scale_x ?? interactable_object_db.scale_x);
-            const scale_y = snapshot_info?.scale?.y ?? (property_info.scale_y ?? interactable_object_db.scale_y);
+            const allow_jumping_over_it =
+                snapshot_info?.allow_jumping_over_it ??
+                property_info.allow_jumping_over_it ??
+                interactable_object_db.allow_jumping_over_it;
+            const allow_jumping_through_it =
+                snapshot_info?.allow_jumping_through_it ??
+                property_info.allow_jumping_through_it ??
+                interactable_object_db.allow_jumping_through_it;
+            const anchor_x = snapshot_info?.anchor?.x ?? property_info.anchor_x ?? interactable_object_db.anchor_x;
+            const anchor_y = snapshot_info?.anchor?.y ?? property_info.anchor_y ?? interactable_object_db.anchor_y;
+            const scale_x = snapshot_info?.scale?.x ?? property_info.scale_x ?? interactable_object_db.scale_x;
+            const scale_y = snapshot_info?.scale?.y ?? property_info.scale_y ?? interactable_object_db.scale_y;
             const has_shadow = property_info.has_shadow ?? interactable_object_db.has_shadow;
             const psynergies_info = _.merge(
                 interactable_object_db.psynergies_info ?? {},
                 property_info.psynergies_info ?? {}
             );
-            const action = snapshot_info?.action ?? (property_info.action ?? interactable_object_db.initial_action);
+            const action = snapshot_info?.action ?? property_info.action ?? interactable_object_db.initial_action;
             let animation;
             if (interactable_object_db.actions) {
                 if (property_info.animation) {
@@ -1068,7 +1074,10 @@ export class Map {
                 (interactable_object as RopeDock).initialize_rope(this);
             }
             const snapshot_info = this.data.snapshot_manager.snapshot?.map_data.interactable_objects[i];
-            if ((!snapshot_info && interactable_object.base_collision_layer in this._bodies_positions) || snapshot_info?.body_in_map) {
+            if (
+                (!snapshot_info && interactable_object.base_collision_layer in this._bodies_positions) ||
+                snapshot_info?.body_in_map
+            ) {
                 const bodies_positions = this._bodies_positions[interactable_object.base_collision_layer];
                 const location_key = LocationKey.get_key(
                     interactable_object.tile_x_pos,

@@ -1,5 +1,6 @@
 import * as _ from "lodash";
 import {GoldenSun} from "./GoldenSun";
+import {initialize_se} from "./initializers/sound_effects";
 import {Button} from "./XGamepad";
 
 /**
@@ -32,6 +33,17 @@ export class Audio {
      */
     private alter_volume(delta: number) {
         return (this.game.sound.volume = _.clamp(this.game.sound.volume + delta, 0, 1));
+    }
+
+    /**
+     * Initializes the game sound effects.
+     */
+    async init_se() {
+        let load_se_promise_resolve;
+        const load_se_promise = new Promise(resolve => (load_se_promise_resolve = resolve));
+        const se_data = this.game.cache.getJSON("se_data");
+        initialize_se(this.game, this.data, se_data, load_se_promise_resolve);
+        await load_se_promise;
     }
 
     /**

@@ -13,15 +13,15 @@ export enum callback_call_type {
 }
 
 export type StoragePosition = {
-    x: number,
-    y: number
-}
+    x: number;
+    y: number;
+};
 
 export type RawStorageRecord = {
     key_name: string;
     type: storage_types;
     value: boolean | number | string | StoragePosition;
-}
+};
 
 type StorageRecord = RawStorageRecord & {
     callbacks?: {

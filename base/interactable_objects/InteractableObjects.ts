@@ -18,7 +18,7 @@ import {Map} from "../Map";
 import {RopeEvent} from "../tile_events/RopeEvent";
 import {GameEvent} from "../game_events/GameEvent";
 import {LiftFieldPsynergy} from "../field_abilities/LiftFieldPsynergy";
-import { StoragePosition } from "../Storage";
+import {StoragePosition} from "../Storage";
 
 export enum interactable_object_interaction_types {
     ONCE = "once",
