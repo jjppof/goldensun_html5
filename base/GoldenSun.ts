@@ -241,6 +241,8 @@ export class GoldenSun {
         //initializes start menu
         this.start_menu = new StartMenu(this.game, this);
         this.start_menu.open(snapshot => {
+            this.audio.stop_bgm();
+
             //initializes the snapshot manager
             this.snapshot_manager = new Snapshot(this, snapshot);
 
