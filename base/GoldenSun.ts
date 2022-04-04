@@ -23,6 +23,7 @@ import {HealerMenu} from "./main_menus/HealerMenu";
 import {Snapshot} from "./Snapshot";
 import {base_actions} from "./utils";
 import {StartMenu} from "./main_menus/StartMenu";
+import {initialize_save_menu, SaveMenu} from "./main_menus/SaveMenu";
 
 /**
  * The project has basically two important folders: assets and base. All the source code is located inside base folder.
@@ -46,6 +47,7 @@ export class GoldenSun {
 
     //main game states
     public menu_open: boolean = false;
+    public save_open: boolean = false;
     public shop_open: boolean = false;
     public healer_open: boolean = false;
     public inn_open: boolean = false;
@@ -67,6 +69,9 @@ export class GoldenSun {
 
     /** Class responbible for the main menu */
     public main_menu: MainMenu = null;
+
+    /** Class responbible for saving a snapshot of the game. */
+    public save_menu: SaveMenu = null;
 
     /** Class responsible for the shop system */
     public shop_menu: ShopMenu = null;
@@ -321,6 +326,7 @@ export class GoldenSun {
         this.shop_menu = new ShopMenu(this.game, this);
         this.healer_menu = new HealerMenu(this.game, this);
         this.inn_menu = new InnMenu(this.game, this);
+        this.save_menu = initialize_save_menu(this.game, this);
         this.main_menu = initialize_menu(this.game, this);
 
         //set initial zoom
@@ -463,6 +469,7 @@ export class GoldenSun {
         return !(
             this.hero.in_action(allow_climbing) ||
             this.menu_open ||
+            this.save_open ||
             this.shop_open ||
             this.healer_open ||
             this.inn_open ||

@@ -123,6 +123,9 @@ export function initialize_menu(game: Phaser.Game, data: GoldenSun) {
             data.hero.in_action() ||
             data.in_battle ||
             !data.assets_loaded ||
+            data.shop_open ||
+            data.healer_open ||
+            data.save_open ||
             data.game_event_manager.on_event ||
             data.tile_event_manager.timers_running ||
             data.tile_event_manager.on_event

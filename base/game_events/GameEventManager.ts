@@ -78,6 +78,7 @@ export class GameEventManager {
                         if (
                             this.data.hero.in_action() ||
                             this.data.menu_open ||
+                            this.data.save_open ||
                             this.data.in_battle ||
                             this.data.shop_open ||
                             this.data.healer_open ||
