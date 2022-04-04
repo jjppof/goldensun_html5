@@ -44,6 +44,7 @@ export class SaveMenu {
     }
 
     close_menu() {
+        this.data.cursor_manager.hide();
         this.data.control_manager.reset();
         this.button_tween.stop();
         this.button_tween = null;
@@ -54,6 +55,8 @@ export class SaveMenu {
 
     open_menu() {
         this.window.show(() => {
+            this.data.cursor_manager.move_to({x: 38, y: 55}, {animate: false});
+            this.data.cursor_manager.show();
             this.set_button_tween();
             this.set_controls();
         });
