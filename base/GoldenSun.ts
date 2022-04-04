@@ -249,7 +249,7 @@ export class GoldenSun {
             this.audio.stop_bgm();
 
             //initializes the snapshot manager
-            this.snapshot_manager = new Snapshot(this, snapshot);
+            this.snapshot_manager = new Snapshot(this.game, this, snapshot);
 
             //initializes the game
             this.initialize_game();
@@ -261,6 +261,8 @@ export class GoldenSun {
      */
     private async initialize_game() {
         this.game.camera.fade(0x0, 1);
+
+        this.game.sound.mute = this.snapshot_manager.snapshot?.mute ?? this.game.sound.mute;
 
         //init storage
         this.storage = new Storage(this);

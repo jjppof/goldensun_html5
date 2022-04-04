@@ -112,15 +112,19 @@ export type SnapshotData = {
     };
     scale_factor: number;
     full_screen: boolean;
+    mute: boolean;
 };
 
 /** Class responsible for generating and restoring save files. */
 export class Snapshot {
     private static readonly SNAPSHOT_FILENAME = "save.json";
+
+    private game: Phaser.Game;
     private data: GoldenSun;
     private _snapshot: SnapshotData;
 
-    constructor(data: GoldenSun, snapshot: SnapshotData) {
+    constructor(game: Phaser.Game, data: GoldenSun, snapshot: SnapshotData) {
+        this.game = game;
         this.data = data;
         this._snapshot = snapshot ?? null;
     }
@@ -248,6 +252,7 @@ export class Snapshot {
             },
             scale_factor: this.data.scale_factor,
             full_screen: this.data.fullscreen,
+            mute: this.game.sound.mute,
         };
         Snapshot.download_json(snapshot, Snapshot.SNAPSHOT_FILENAME);
     }
