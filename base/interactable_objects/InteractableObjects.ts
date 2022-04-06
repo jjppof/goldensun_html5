@@ -19,6 +19,7 @@ import {RopeEvent} from "../tile_events/RopeEvent";
 import {GameEvent} from "../game_events/GameEvent";
 import {LiftFieldPsynergy} from "../field_abilities/LiftFieldPsynergy";
 import {StoragePosition} from "../Storage";
+import {SnapshotData} from "../Snapshot";
 
 export enum interactable_object_interaction_types {
     ONCE = "once",
@@ -120,6 +121,7 @@ export class InteractableObjects {
     };
     private _current_animation: string;
     private _current_action: string;
+    private _snapshot_info: SnapshotData["map_data"]["interactable_objects"][0];
 
     constructor(
         game,
@@ -147,12 +149,14 @@ export class InteractableObjects {
         psynergies_info,
         has_shadow,
         animation,
-        action
+        action,
+        snapshot_info
     ) {
         this.game = game;
         this.data = data;
         this._key_name = key_name;
         this.storage_keys = storage_keys ?? {};
+        this._snapshot_info = snapshot_info ?? null;
         if (this.storage_keys.position !== undefined) {
             const position = this.data.storage.get(this.storage_keys.position) as StoragePosition;
             x = position.x;
@@ -325,6 +329,9 @@ export class InteractableObjects {
     }
     get current_action() {
         return this._current_action;
+    }
+    get snapshot_info() {
+        return this._snapshot_info;
     }
 
     position_allowed(x: number, y: number) {
@@ -957,7 +964,13 @@ export class InteractableObjects {
 
     config_body() {
         const db = this.data.dbs.interactable_objects_db[this.key_name];
-        if (db.body_radius === 0 || this.base_collision_layer < 0) return;
+        if (
+            db.body_radius === 0 ||
+            this.base_collision_layer < 0 ||
+            (this.snapshot_info && !this.snapshot_info.body_in_map)
+        ) {
+            return;
+        }
         const collision_groups = this.data.collision.interactable_objs_collision_groups;
         this.game.physics.p2.enable(this.sprite, false);
         this.sprite.anchor.setTo(this.anchor_x ?? 0.0, this.anchor_y ?? 0.0); //Important to be after enabling physics

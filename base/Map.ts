@@ -1029,7 +1029,8 @@ export class Map {
                 psynergies_info,
                 has_shadow,
                 animation,
-                action
+                action,
+                snapshot_info
             );
             if (interactable_object.is_rope_dock) {
                 (interactable_object as RopeDock).intialize_dock_info(
@@ -1072,6 +1073,8 @@ export class Map {
             interactable_object.initialize_related_events(this);
             if (interactable_object.is_rope_dock) {
                 (interactable_object as RopeDock).initialize_rope(this);
+            } else if (interactable_object.breakable) {
+                (interactable_object as Breakable).intialize_breakable();
             }
             const snapshot_info = this.data.snapshot_manager.snapshot?.map_data.interactable_objects[i];
             if (

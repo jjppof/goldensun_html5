@@ -10,6 +10,7 @@ import {TileEvent} from "./tile_events/TileEvent";
 import * as _ from "lodash";
 import {Button} from "./XGamepad";
 import {reverse_directions} from "./utils";
+import {Breakable} from "./interactable_objects/Breakable";
 
 export type SnapshotData = {
     storage_data: {[key_name: string]: RawStorageRecord["value"]};
@@ -86,6 +87,17 @@ export type SnapshotData = {
             anchor: {
                 x: number;
                 y: number;
+            };
+            type: {
+                is_rope_dock: boolean;
+                rollable: boolean;
+                breakable: boolean;
+            };
+            state_by_type: {
+                breakable: {
+                    one_level_broken: boolean;
+                    two_level_broken: boolean;
+                };
             };
             action: string;
             animation: string;
@@ -225,6 +237,17 @@ export class Snapshot {
                         anchor: {
                             x: io.sprite?.anchor.x ?? null,
                             y: io.sprite?.anchor.y ?? null,
+                        },
+                        type: {
+                            is_rope_dock: io.is_rope_dock,
+                            rollable: io.rollable,
+                            breakable: io.breakable,
+                        },
+                        state_by_type: {
+                            breakable: {
+                                one_level_broken: io.breakable ? (io as Breakable).one_level_broken : null,
+                                two_level_broken: io.breakable ? (io as Breakable).two_level_broken : null,
+                            },
                         },
                         action: io.current_action,
                         animation: io.current_animation,

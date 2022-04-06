@@ -81,7 +81,8 @@ export class RopeDock extends InteractableObjects {
         psynergies_info,
         has_shadow,
         animation,
-        action
+        action,
+        snapshot_info
     ) {
         super(
             game,
@@ -109,7 +110,8 @@ export class RopeDock extends InteractableObjects {
             psynergies_info,
             has_shadow,
             animation,
-            action
+            action,
+            snapshot_info
         );
         this._is_rope_dock = true;
         this._dest_rope_dock = null;

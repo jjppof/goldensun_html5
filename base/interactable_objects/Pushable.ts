@@ -40,7 +40,8 @@ export class Pushable extends InteractableObjects {
         psynergies_info,
         has_shadow,
         animation,
-        action
+        action,
+        snapshot_info
     ) {
         super(
             game,
@@ -68,7 +69,8 @@ export class Pushable extends InteractableObjects {
             psynergies_info,
             has_shadow,
             animation,
-            action
+            action,
+            snapshot_info
         );
         this._pushable = true;
     }

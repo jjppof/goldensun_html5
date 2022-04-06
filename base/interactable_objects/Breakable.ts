@@ -14,7 +14,8 @@ export class Breakable extends InteractableObjects {
     private static readonly BROKEN_DUST_RADIUS = 18;
     private static readonly DUST_KEY = "dust";
 
-    private one_level_broken: boolean;
+    private _one_level_broken: boolean;
+    private _two_level_broken: boolean;
 
     constructor(
         game,
@@ -42,7 +43,8 @@ export class Breakable extends InteractableObjects {
         psynergies_info,
         has_shadow,
         animation,
-        action
+        action,
+        snapshot_info
     ) {
         super(
             game,
@@ -70,10 +72,26 @@ export class Breakable extends InteractableObjects {
             psynergies_info,
             has_shadow,
             animation,
-            action
+            action,
+            snapshot_info
         );
         this._breakable = true;
-        this.one_level_broken = false;
+        this._one_level_broken = this.snapshot_info?.state_by_type.breakable.one_level_broken ?? false;
+        this._two_level_broken = this.snapshot_info?.state_by_type.breakable.two_level_broken ?? false;
+    }
+
+    get one_level_broken() {
+        return this._one_level_broken;
+    }
+
+    get two_level_broken() {
+        return this._two_level_broken;
+    }
+
+    intialize_breakable() {
+        if (this.two_level_broken) {
+            this.sprite.visible = false;
+        }
     }
 
     break(char: ControllableChar) {
@@ -86,7 +104,7 @@ export class Breakable extends InteractableObjects {
 
     private first_level_break(char: ControllableChar) {
         char.misc_busy = true;
-        this.one_level_broken = true;
+        this._one_level_broken = true;
 
         char.play(base_actions.IDLE);
         this.play("to_break", Breakable.ACTION_KEY);
@@ -135,6 +153,7 @@ export class Breakable extends InteractableObjects {
         const dust_promise = new Promise(resolve => (resolve_dust = resolve));
         const timer = this.game.time.events.add(300, async () => {
             this.sprite.visible = false;
+            this._two_level_broken = true;
             this.data.camera.enable_shake();
             await this.broken_dust_animation();
             this.data.camera.disable_shake();
