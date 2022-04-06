@@ -68,6 +68,7 @@ export type SnapshotData = {
             };
             action: string;
             animation: string;
+            frame: string;
             base_collision_layer: number;
             visible: boolean;
             movement_type: npc_movement_types;
@@ -94,14 +95,16 @@ export type SnapshotData = {
                 breakable: boolean;
             };
             state_by_type: {
-                breakable: {
+                breakable?: {
                     one_level_broken: boolean;
                     two_level_broken: boolean;
                 };
             };
             action: string;
             animation: string;
+            frame: string;
             base_collision_layer: number;
+            visible: boolean;
             enable: boolean;
             entangled_by_bush: boolean;
             psynergy_casted: InteractableObjects["psynergy_casted"];
@@ -216,6 +219,7 @@ export class Snapshot {
                         },
                         action: npc.current_action,
                         animation: npc.current_animation,
+                        frame: npc.sprite?.frameName ?? null,
                         base_collision_layer: npc.base_collision_layer,
                         visible: npc.sprite.visible,
                         movement_type: npc.movement_type,
@@ -244,14 +248,18 @@ export class Snapshot {
                             breakable: io.breakable,
                         },
                         state_by_type: {
-                            breakable: {
-                                one_level_broken: io.breakable ? (io as Breakable).one_level_broken : null,
-                                two_level_broken: io.breakable ? (io as Breakable).two_level_broken : null,
-                            },
+                            ...(io.breakable && {
+                                breakable: {
+                                    one_level_broken: io.breakable ? (io as Breakable).one_level_broken : null,
+                                    two_level_broken: io.breakable ? (io as Breakable).two_level_broken : null,
+                                },
+                            }),
                         },
                         action: io.current_action,
                         animation: io.current_animation,
+                        frame: io.sprite?.frameName ?? null,
                         base_collision_layer: io.base_collision_layer,
+                        visible: io.sprite?.visible ?? null,
                         enable: io.enable,
                         entangled_by_bush: io.entangled_by_bush,
                         psynergy_casted: io.psynergy_casted,
@@ -278,6 +286,15 @@ export class Snapshot {
             mute: this.game.sound.mute,
         };
         Snapshot.download_json(snapshot, Snapshot.SNAPSHOT_FILENAME);
+    }
+
+    /**
+     * Remove all snapshot references so they can't be accessible anymore.
+     */
+    clear_snapshot() {
+        this.data.map.npcs.forEach(npc => npc.clear_snapshot());
+        this.data.map.interactable_objects.forEach(io => io.clear_snapshot());
+        this._snapshot = null;
     }
 
     /**

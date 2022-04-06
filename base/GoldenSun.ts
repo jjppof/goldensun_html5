@@ -348,6 +348,8 @@ export class GoldenSun {
         this.initialize_psynergy_controls();
 
         this.map.fire_game_events();
+
+        this.snapshot_manager.clear_snapshot();
     }
 
     /**

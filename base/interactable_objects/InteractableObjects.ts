@@ -528,11 +528,17 @@ export class InteractableObjects {
             this.sprite.x = get_centered_pos_in_px(this.tile_x_pos, map.tile_width);
             this.sprite.y = get_centered_pos_in_px(this.tile_y_pos, map.tile_height);
             this.sprite_info.setAnimation(this.sprite, this.current_action);
+            if (this.snapshot_info?.frame) {
+                this.sprite.frameName = this.snapshot_info.frame;
+            }
             const anim_key = this.sprite_info.getAnimationKey(this.current_action, this.current_animation);
             this.sprite.animations.play(anim_key);
             if (interactable_object_db.stop_animation_on_start) {
                 //yes, it's necessary to play before stopping it.
                 this.sprite.animations.stop();
+            }
+            if (this.snapshot_info && this.snapshot_info.visible !== null) {
+                this.sprite.visible = this.snapshot_info.visible;
             }
         }
         if (this.entangled_by_bush) {
@@ -1056,6 +1062,13 @@ export class InteractableObjects {
         this.on_unset_callbacks.push(callback);
     }
 
+    /**
+     * Removes this IO snapshot reference.
+     */
+    clear_snapshot() {
+        this._snapshot_info = null;
+    }
+
     unset(remove_from_middlelayer_group: boolean = true) {
         if (this.sprite) {
             this.sprite.destroy();
@@ -1086,6 +1099,7 @@ export class InteractableObjects {
             this.before_psynergy_cast_events[psynergy_key].forEach(e => e.destroy());
         }
         this._before_psynergy_cast_events = null;
+        this.clear_snapshot();
         this.custom_unset();
     }
 }

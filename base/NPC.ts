@@ -12,6 +12,7 @@ import {interaction_patterns} from "./game_events/GameEventManager";
 import {Map} from "./Map";
 import * as numbers from "./magic_numbers";
 import * as _ from "lodash";
+import {SnapshotData} from "./Snapshot";
 
 export enum npc_movement_types {
     IDLE = "idle",
@@ -77,6 +78,7 @@ export class NPC extends ControllableChar {
     private _step_destination: {x: number; y: number};
     private initially_visible: boolean;
     private previous_visible_state: boolean;
+    private _snapshot_info: SnapshotData["map_data"]["npcs"][0];
 
     constructor(
         game,
@@ -251,6 +253,10 @@ export class NPC extends ControllableChar {
     /** The type of movement of this NPC. Idle or random walk. */
     get movement_type() {
         return this._movement_type;
+    }
+    /** Returns the snapshot info of this NPC when the game is restored. */
+    get snapshot_info() {
+        return this._snapshot_info;
     }
 
     /**
@@ -584,6 +590,9 @@ export class NPC extends ControllableChar {
             this.previous_visible_state = this.sprite.visible;
         }
         this.sprite.is_npc = true;
+        if (this.snapshot_info?.frame) {
+            this.sprite.frameName = this.snapshot_info.frame;
+        }
         this.play(this.current_action, this.current_animation);
     }
 
@@ -591,7 +600,9 @@ export class NPC extends ControllableChar {
      * Initializes the collision body of this NPC.
      */
     config_body() {
-        if (this.ignore_physics) return;
+        if (this.ignore_physics || (this.snapshot_info && !this.snapshot_info.body_in_map)) {
+            return;
+        }
         this.game.physics.p2.enable(this.sprite, false);
         //Important to be after the previous command
         if (this.data.dbs.npc_db[this.key_name].anchor_x !== undefined) {
@@ -634,6 +645,13 @@ export class NPC extends ControllableChar {
     }
 
     /**
+     * Removes this NPC snapshot reference.
+     */
+    clear_snapshot() {
+        this._snapshot_info = null;
+    }
+
+    /**
      * Unsets this NPC.
      */
     unset() {
@@ -651,5 +669,6 @@ export class NPC extends ControllableChar {
         this.unset_push_timer();
         this._events.forEach(event => event.destroy());
         this.look_target = null;
+        this.clear_snapshot();
     }
 }
