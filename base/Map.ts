@@ -1075,6 +1075,8 @@ export class Map {
                 (interactable_object as RopeDock).initialize_rope(this);
             } else if (interactable_object.breakable) {
                 (interactable_object as Breakable).intialize_breakable();
+            } else if (interactable_object.rollable) {
+                (interactable_object as RollablePillar).config_rolling_pillar(this);
             }
             const snapshot_info = this.data.snapshot_manager.snapshot?.map_data.interactable_objects[i];
             if (

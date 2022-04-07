@@ -590,10 +590,18 @@ export class NPC extends ControllableChar {
             this.previous_visible_state = this.sprite.visible;
         }
         this.sprite.is_npc = true;
+        if (this.snapshot_info && this.snapshot_info.send_to_back !== null) {
+            this.sprite.send_to_back = this.snapshot_info.send_to_back;
+        }
+        if (this.snapshot_info && this.snapshot_info.send_to_front !== null) {
+            this.sprite.send_to_front = this.snapshot_info.send_to_front;
+        }
         if (this.snapshot_info?.frame) {
             this.sprite.frameName = this.snapshot_info.frame;
         }
-        this.play(this.current_action, this.current_animation);
+        if (!this.snapshot_info || this.snapshot_info.anim_is_playing) {
+            this.play(this.current_action, this.current_animation);
+        }
     }
 
     /**

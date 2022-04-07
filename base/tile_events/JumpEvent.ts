@@ -1,6 +1,7 @@
 import {event_types, LocationKey, TileEvent} from "./TileEvent";
 import {get_opposite_direction, directions, get_front_position} from "../utils";
 import {Breakable} from "../interactable_objects/Breakable";
+import {InteractableObjects} from "../interactable_objects/InteractableObjects";
 
 export class JumpEvent extends TileEvent {
     private static readonly JUMP_OFFSET = 30;
@@ -63,7 +64,16 @@ export class JumpEvent extends TileEvent {
             this.data.map.is_tile_blocked(next_position.x, next_position.y) ||
             this.data.map.get_tile_bodies(next_position.x, next_position.y).length
         ) {
-            return;
+            const objs = this.data.map.get_tile_bodies(next_position.x, next_position.y);
+            const can_jump_over_it = objs
+                .filter(o => o.is_interactable_object)
+                .every((io: InteractableObjects) => {
+                    return io.allow_jumping_through_it || !io.shapes_collision_active;
+                });
+            const has_npc = Boolean(objs.find(o => !o.is_interactable_object));
+            if (has_npc || !can_jump_over_it) {
+                return;
+            }
         }
 
         for (let i = 0; i < this.data.map.interactable_objects.length; ++i) {

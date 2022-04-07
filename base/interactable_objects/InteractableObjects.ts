@@ -122,6 +122,7 @@ export class InteractableObjects {
     private _current_animation: string;
     private _current_action: string;
     private _snapshot_info: SnapshotData["map_data"]["interactable_objects"][0];
+    private _shapes_collision_active: boolean;
 
     constructor(
         game,
@@ -221,6 +222,7 @@ export class InteractableObjects {
         this._after_psynergy_cast_events = {};
         this._current_animation = animation;
         this._current_action = action;
+        this._shapes_collision_active = false;
     }
 
     get key_name() {
@@ -332,6 +334,9 @@ export class InteractableObjects {
     }
     get snapshot_info() {
         return this._snapshot_info;
+    }
+    get shapes_collision_active() {
+        return this._shapes_collision_active;
     }
 
     position_allowed(x: number, y: number) {
@@ -522,6 +527,11 @@ export class InteractableObjects {
             this.sprite.base_collision_layer = this.base_collision_layer;
             if (interactable_object_db.send_to_back !== undefined) {
                 this.sprite.send_to_back = interactable_object_db.send_to_back;
+            } else if (this.snapshot_info && this.snapshot_info.send_to_back !== null) {
+                this.sprite.send_to_back = this.snapshot_info.send_to_back;
+            }
+            if (this.snapshot_info && this.snapshot_info.send_to_front !== null) {
+                this.sprite.send_to_front = this.snapshot_info.send_to_front;
             }
             this.sprite.anchor.setTo(this.anchor_x ?? 0.0, this.anchor_y ?? 0.0);
             this.sprite.scale.setTo(this.scale_x ?? 1.0, this.scale_y ?? 1.0);
@@ -531,11 +541,14 @@ export class InteractableObjects {
             if (this.snapshot_info?.frame) {
                 this.sprite.frameName = this.snapshot_info.frame;
             }
-            const anim_key = this.sprite_info.getAnimationKey(this.current_action, this.current_animation);
-            this.sprite.animations.play(anim_key);
+            if (!this.snapshot_info || this.snapshot_info.anim_is_playing) {
+                this.play(this.current_animation, this.current_action);
+            }
             if (interactable_object_db.stop_animation_on_start) {
-                //yes, it's necessary to play before stopping it.
-                this.sprite.animations.stop();
+                if (!this.snapshot_info || !this.snapshot_info.anim_is_playing) {
+                    //yes, it's necessary to play before stopping it.
+                    this.sprite.animations.stop();
+                }
             }
             if (this.snapshot_info && this.snapshot_info.visible !== null) {
                 this.sprite.visible = this.snapshot_info.visible;
@@ -629,6 +642,7 @@ export class InteractableObjects {
 
     toggle_collision(enable: boolean) {
         this.sprite.body.data.shapes.forEach(shape => (shape.sensor = !enable));
+        this._shapes_collision_active = enable;
     }
 
     initialize_related_events(map: Map) {
@@ -1019,6 +1033,10 @@ export class InteractableObjects {
             this.creating_blocking_stair_block();
         }
         this.sprite.body.collides(this.data.collision.hero_collision_group);
+        this._shapes_collision_active = this.snapshot_info?.shapes_collision_active ?? true;
+        if (!this._shapes_collision_active) {
+            this.toggle_collision(false);
+        }
     }
 
     /**

@@ -1,5 +1,5 @@
 import {ControllableChar} from "../ControllableChar";
-import {JumpEvent} from "../tile_events/JumpEvent";
+import {Map} from "../Map";
 import {
     base_actions,
     directions,
@@ -84,7 +84,11 @@ export class RollablePillar extends InteractableObjects {
             snapshot_info
         );
         this._rollable = true;
-        this._pillar_is_stuck = false;
+        this._pillar_is_stuck = this.snapshot_info?.state_by_type.rollable.pillar_is_stuck ?? false;
+    }
+
+    get pillar_is_stuck() {
+        return this._pillar_is_stuck;
     }
 
     initialize_rolling_pillar(
@@ -99,6 +103,16 @@ export class RollablePillar extends InteractableObjects {
         this._pillar_direction = pillar_direction;
         this._dest_pos_after_fall = dest_pos_after_fall;
         this._dest_collision_layer = dest_collision_layer ?? this.base_collision_layer;
+    }
+
+    config_rolling_pillar(map: Map) {
+        if (this._pillar_is_stuck) {
+            const object_events = this.get_events();
+            for (let i = 0; i < object_events.length; ++i) {
+                const event = object_events[i];
+                map.set_collision_in_tile(event.x, event.y, false, this._dest_collision_layer);
+            }
+        }
     }
 
     check_and_start_rolling(char: ControllableChar) {
@@ -172,9 +186,7 @@ export class RollablePillar extends InteractableObjects {
         next_contact: RollablePillar["_contact_points"][0],
         rolling_pillar_will_fall: boolean
     ) {
-        const action_name = this.sprite_info.getSpriteAction(this.sprite);
-        const anim_key = this.sprite_info.getAnimationKey(action_name, "rolling");
-        this.sprite.animations.play(anim_key);
+        this.play("rolling");
 
         char.change_action(base_actions.PUSH, true);
 
@@ -227,7 +239,7 @@ export class RollablePillar extends InteractableObjects {
         await promise;
 
         if (rolling_pillar_will_fall) {
-            await this.fall_pillar(next_contact, action_name);
+            await this.fall_pillar(next_contact);
             this.toggle_collision(false);
             this.sprite.send_to_back = true;
             this.allow_jumping_over_it = true;
@@ -245,7 +257,7 @@ export class RollablePillar extends InteractableObjects {
         if (rolling_pillar_will_fall) {
             const object_events = this.get_events();
             for (let i = 0; i < object_events.length; ++i) {
-                const event = object_events[i] as JumpEvent;
+                const event = object_events[i];
                 event.activate_at("all");
                 this.data.map.set_collision_in_tile(event.x, event.y, false, this._dest_collision_layer);
             }
@@ -255,7 +267,7 @@ export class RollablePillar extends InteractableObjects {
         char.pushing = false;
     }
 
-    async fall_pillar(next_contact: RollablePillar["_contact_points"][0], action_name: string) {
+    async fall_pillar(next_contact: RollablePillar["_contact_points"][0]) {
         let extra_shift_x = 0;
         let extra_shift_y = 0;
         let fall_speed_multiplier = 1;
@@ -286,8 +298,7 @@ export class RollablePillar extends InteractableObjects {
         const fall_anim_timer = this.game.time.create(true);
         const anim_start_delay = RollablePillar.ROLLING_SPEED_PER_TILE * fall_speed_multiplier;
         fall_anim_timer.add(anim_start_delay, () => {
-            const falling_anim_key = this.sprite_info.getAnimationKey(action_name, "falling");
-            const anim = this.sprite.animations.play(falling_anim_key);
+            const anim = this.play("falling");
             anim.onComplete.addOnce(promise_resolve_anim);
         });
         fall_anim_timer.start();
@@ -309,8 +320,7 @@ export class RollablePillar extends InteractableObjects {
 
         await Promise.all([promise_tween, promise_anim]);
 
-        const floating_anim_key = this.sprite_info.getAnimationKey(action_name, "floating");
-        this.sprite.animations.play(floating_anim_key);
+        this.play("floating");
 
         this._pillar_is_stuck = true;
     }

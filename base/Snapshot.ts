@@ -11,6 +11,7 @@ import * as _ from "lodash";
 import {Button} from "./XGamepad";
 import {reverse_directions} from "./utils";
 import {Breakable} from "./interactable_objects/Breakable";
+import {RollablePillar} from "./interactable_objects/RollingPillar";
 
 export type SnapshotData = {
     storage_data: {[key_name: string]: RawStorageRecord["value"]};
@@ -69,7 +70,10 @@ export type SnapshotData = {
             action: string;
             animation: string;
             frame: string;
+            anim_is_playing: boolean;
             base_collision_layer: number;
+            send_to_back: boolean;
+            send_to_front: boolean;
             visible: boolean;
             movement_type: npc_movement_types;
             body_in_map: boolean;
@@ -99,11 +103,17 @@ export type SnapshotData = {
                     one_level_broken: boolean;
                     two_level_broken: boolean;
                 };
+                rollable?: {
+                    pillar_is_stuck: boolean;
+                };
             };
             action: string;
             animation: string;
             frame: string;
+            anim_is_playing: boolean;
             base_collision_layer: number;
+            send_to_back: boolean;
+            send_to_front: boolean;
             visible: boolean;
             enable: boolean;
             entangled_by_bush: boolean;
@@ -111,6 +121,7 @@ export type SnapshotData = {
             allow_jumping_over_it: boolean;
             allow_jumping_through_it: boolean;
             body_in_map: boolean;
+            shapes_collision_active: boolean;
         }[];
         tile_events: {
             [id: number]: {
@@ -220,7 +231,10 @@ export class Snapshot {
                         action: npc.current_action,
                         animation: npc.current_animation,
                         frame: npc.sprite?.frameName ?? null,
+                        anim_is_playing: npc.sprite?.animations.currentAnim.isPlaying ?? null,
                         base_collision_layer: npc.base_collision_layer,
+                        send_to_back: npc.sprite?.send_to_back ?? null,
+                        send_to_front: npc.sprite?.send_to_front ?? null,
                         visible: npc.sprite.visible,
                         movement_type: npc.movement_type,
                         body_in_map: this.data.map.body_in_map(npc),
@@ -250,15 +264,23 @@ export class Snapshot {
                         state_by_type: {
                             ...(io.breakable && {
                                 breakable: {
-                                    one_level_broken: io.breakable ? (io as Breakable).one_level_broken : null,
-                                    two_level_broken: io.breakable ? (io as Breakable).two_level_broken : null,
+                                    one_level_broken: (io as Breakable).one_level_broken,
+                                    two_level_broken: (io as Breakable).two_level_broken,
+                                },
+                            }),
+                            ...(io.rollable && {
+                                rollable: {
+                                    pillar_is_stuck: (io as RollablePillar).pillar_is_stuck,
                                 },
                             }),
                         },
                         action: io.current_action,
                         animation: io.current_animation,
                         frame: io.sprite?.frameName ?? null,
+                        anim_is_playing: io.sprite?.animations.currentAnim.isPlaying ?? null,
                         base_collision_layer: io.base_collision_layer,
+                        send_to_back: io.sprite?.send_to_back ?? null,
+                        send_to_front: io.sprite?.send_to_front ?? null,
                         visible: io.sprite?.visible ?? null,
                         enable: io.enable,
                         entangled_by_bush: io.entangled_by_bush,
@@ -266,6 +288,7 @@ export class Snapshot {
                         allow_jumping_over_it: io.allow_jumping_over_it,
                         allow_jumping_through_it: io.allow_jumping_through_it,
                         body_in_map: this.data.map.body_in_map(io),
+                        shapes_collision_active: io.shapes_collision_active,
                     };
                 }),
                 tile_events: _.mapValues(TileEvent.events, event => {
