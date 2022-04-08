@@ -602,6 +602,17 @@ export class NPC extends ControllableChar {
         if (!this.snapshot_info || this.snapshot_info.anim_is_playing) {
             this.play(this.current_action, this.current_animation);
         }
+        if (this.snapshot_info?.color_filter_active) {
+            this.manage_filter(this.color_filter, true);
+            this.color_filter.gray = this.snapshot_info.color_filter_settings.gray;
+            this.color_filter.colorize_intensity = this.snapshot_info.color_filter_settings.colorize_intensity;
+            this.color_filter.colorize = this.snapshot_info.color_filter_settings.colorize;
+            this.color_filter.hue_adjust = this.snapshot_info.color_filter_settings.hue_adjust;
+            this.color_filter.tint = this.snapshot_info.color_filter_settings.tint;
+            this.color_filter.flame = this.snapshot_info.color_filter_settings.flame;
+            this.color_filter.levels = this.snapshot_info.color_filter_settings.levels;
+            this.color_filter.color_blend = this.snapshot_info.color_filter_settings.color_blend;
+        }
     }
 
     /**

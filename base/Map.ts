@@ -40,7 +40,7 @@ export class Map {
     private _bodies_positions: {[collision_index: number]: {[location_key: number]: (NPC | InteractableObjects)[]}};
     private _collision_layers_number: number;
     private _collision_sprite: Phaser.Sprite;
-    private _color_filter: any;
+    private _color_filter: Phaser.Filter.ColorFilters;
     private mode7_filter: any;
     private _collision_layer: number;
     private _show_footsteps: boolean;
@@ -119,7 +119,7 @@ export class Map {
         this._collision_layers_number = this.physics_names.length;
         this._collision_sprite = this.game.add.sprite(0, 0);
         this._collision_sprite.width = this.collision_sprite.height = 0;
-        this._color_filter = this.game.add.filter("ColorFilters");
+        this._color_filter = this.game.add.filter("ColorFilters") as Phaser.Filter.ColorFilters;
         this.mode7_filter = this.game.add.filter("Mode7");
         this._collision_layer = null;
         this._show_footsteps = false;

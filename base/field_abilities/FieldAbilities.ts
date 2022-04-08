@@ -265,7 +265,7 @@ export abstract class FieldAbilities {
             this.game,
             this.controllable_char.sprite,
             this.data.middlelayer_group,
-            this.controllable_char.color_filter,
+            this.controllable_char,
             //after_init
             () => {
                 if (this.tint_map && !this.controllable_char.on_reveal) {
@@ -392,15 +392,15 @@ export abstract class FieldAbilities {
         game: Phaser.Game,
         sprite: Phaser.Sprite,
         group: Phaser.Group,
-        filter,
-        after_init,
-        after_destroy,
-        before_destroy
+        char: ControllableChar,
+        after_init: () => void,
+        after_destroy: (reset_casting_psy_flag: boolean) => void,
+        before_destroy: (reset_map_tint: boolean) => void
     ) {
         const ring_up_time = 750;
         const ring_up_time_half = ring_up_time >> 1;
         const step_time = (ring_up_time / 3) | 0;
-        sprite.filters = [filter];
+        char.manage_filter(char.color_filter, true);
         const auras_number = 2;
         const tweens = [];
         let stop_asked = false;
@@ -500,13 +500,13 @@ export abstract class FieldAbilities {
         const hue_timer = game.time.create(false);
         blink_timer.loop(50, () => {
             if (blink_counter % 2 === 0) {
-                filter.tint = [1, 1, 1];
+                char.color_filter.tint = [1, 1, 1];
             } else {
-                filter.tint = [-1, -1, -1];
+                char.color_filter.tint = [-1, -1, -1];
             }
             --blink_counter;
             if (blink_counter === 0) {
-                filter.gray = 0.4;
+                char.color_filter.gray = 0.4;
                 blink_timer.stop();
                 if (after_init !== undefined) {
                     after_init();
@@ -515,7 +515,7 @@ export abstract class FieldAbilities {
             }
         });
         hue_timer.loop(100, () => {
-            filter.hue_adjust = Math.random() * 2 * Math.PI;
+            char.color_filter.hue_adjust = Math.random() * 2 * Math.PI;
         });
         blink_timer.start();
         return async (reset_casting_psy_flag?: boolean, reset_map_tint?: boolean) => {
@@ -525,9 +525,9 @@ export abstract class FieldAbilities {
             stop_asked = true;
             hue_timer.stop();
             blink_timer.stop();
-            filter.tint = [-1, -1, -1];
-            filter.gray = 0;
-            filter.hue_adjust = 0;
+            char.color_filter.tint = [-1, -1, -1];
+            char.color_filter.gray = 0;
+            char.color_filter.hue_adjust = 0;
             sprite.filters = undefined;
             await Promise.all(promises);
             for (let i = 0; i < tweens.length; ++i) {

@@ -259,7 +259,7 @@
             }
         }
     },{
-        "key_name": "trunk_tree_horizontal",
+        "key_name": "tree_log_horizontal",
         "anchor_x": 0.5,
         "anchor_y": 0.75,
         "custom_body_polygon": [
@@ -286,22 +286,22 @@
             "y_shift": 0
         }],
         "stop_animation_on_start": true,
-        "initial_action": "trunk_tree_horizontal",
+        "initial_action": "tree_log_horizontal",
         "actions": {
-            "trunk_tree_horizontal": {
+            "tree_log_horizontal": {
                 "frame_rate": [9, 3, 8],
                 "animations": ["falling", "floating", "rolling"],
                 "frames_count": [5, 4, 4],
                 "loop": [false, true, true],
                 "initial_animation": "rolling",
                 "spritesheet": {
-                    "image": "assets/images/interactable_objects/trunk_tree_horizontal.png",
-                    "json": "assets/images/interactable_objects/trunk_tree_horizontal.json"
+                    "image": "assets/images/interactable_objects/tree_log_horizontal.png",
+                    "json": "assets/images/interactable_objects/tree_log_horizontal.json"
                 }
             }
         }
     },{
-        "key_name": "trunk_tree_vertical",
+        "key_name": "tree_log_vertical",
         "anchor_x": 0.5,
         "anchor_y": 0.5,
         "custom_body_polygon": [
@@ -333,17 +333,17 @@
             "y_shift": 2
         }],
         "stop_animation_on_start": true,
-        "initial_action": "trunk_tree_vertical",
+        "initial_action": "tree_log_vertical",
         "actions": {
-            "trunk_tree_vertical": {
+            "tree_log_vertical": {
                 "frame_rate": [9, 3, 8],
                 "animations": ["falling", "floating", "rolling"],
                 "frames_count": [5, 4, 4],
                 "loop": [false, true, true],
                 "initial_animation": "rolling",
                 "spritesheet": {
-                    "image": "assets/images/interactable_objects/trunk_tree_vertical.png",
-                    "json": "assets/images/interactable_objects/trunk_tree_vertical.json"
+                    "image": "assets/images/interactable_objects/tree_log_vertical.png",
+                    "json": "assets/images/interactable_objects/tree_log_vertical.json"
                 }
             }
         }

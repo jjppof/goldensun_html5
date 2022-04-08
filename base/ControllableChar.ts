@@ -130,7 +130,8 @@ export abstract class ControllableChar {
     /** Whether the shadow is following or not this char. */
     public shadow_following: boolean;
 
-    private _color_filter: any;
+    private _color_filter: Phaser.Filter.ColorFilters;
+    private _color_filter_active: boolean;
     private _outline_filter: any;
     protected _push_timer: Phaser.Timer;
     private _footsteps: Footsteps;
@@ -223,7 +224,8 @@ export abstract class ControllableChar {
         this._required_direction = null;
         this._transition_direction = this.current_direction;
         this._ice_slide_direction = null;
-        this._color_filter = this.game.add.filter("ColorFilters");
+        this._color_filter = this.game.add.filter("ColorFilters") as Phaser.Filter.ColorFilters;
+        this._color_filter_active = false;
         this._outline_filter = this.game.add.filter("Outline");
         this.trying_to_push = false;
         this._trying_to_push_direction = null;
@@ -313,6 +315,10 @@ export abstract class ControllableChar {
     /** The Phaser.Filter that controls the color texture of this char sprite. */
     get color_filter() {
         return this._color_filter;
+    }
+    /** Whether this char has its color filter active. */
+    get color_filter_active() {
+        return this._color_filter_active;
     }
     /** The Phaser.Filter that avtivates an oouotline in this char sprite. */
     get outline_filter() {
@@ -1064,6 +1070,7 @@ export abstract class ControllableChar {
      * @param set whether it's to set or unset the filter.
      */
     manage_filter(filter: Phaser.Filter, set: boolean) {
+        this._color_filter_active = filter instanceof Phaser.Filter.ColorFilters ? set : this._color_filter_active;
         if (set) {
             if (this.sprite.filters && !this.sprite.filters.includes(filter)) {
                 this.sprite.filters.push(filter);

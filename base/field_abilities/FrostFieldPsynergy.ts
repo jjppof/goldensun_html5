@@ -45,7 +45,7 @@ export class FrostFieldPsynergy extends FieldAbilities {
             this.data.audio.play_se("misc/ice_hitting");
         });
         for (let i = 0; i < FrostFieldPsynergy.SNOWFLAKES_COUNT; ++i) {
-            let snowflake_sprite = this.data.overlayer_group.create(0, 0, "frost_snowflake");
+            const snowflake_sprite = this.data.overlayer_group.create(0, 0, "frost_snowflake");
             snowflake_sprite.anchor.setTo(0.5, 0.5);
             const scale_factor = _.random(5, 8) / 10.0;
             const rotation_factor = Math.random() * numbers.degree360;
@@ -145,8 +145,7 @@ export class FrostFieldPsynergy extends FieldAbilities {
     /*Plays the pillar's growing animation*/
     grow_pillar() {
         this.data.audio.play_se("psynergy/7");
-        const anim_key = this.target_object.sprite_info.getAnimationKey("frost_pool", "pillar");
-        this.target_object.sprite.animations.play(anim_key);
+        this.target_object.play("pillar");
         this.target_object.sprite.animations.currentAnim.onComplete.addOnce(() => {
             this.set_permanent_blink();
             this.return_to_idle_anim();
@@ -156,8 +155,8 @@ export class FrostFieldPsynergy extends FieldAbilities {
 
     /*Enables the pillar's blinking state*/
     set_permanent_blink() {
-        let blink_timer = this.game.time.create(false);
-        let target_object = this.target_object;
+        const blink_timer = this.game.time.create(false);
+        const target_object = this.target_object;
         blink_timer.loop(150, () => {
             target_object.color_filter.hue_adjust = 5.3;
             const timer_event = this.game.time.events.add(20, () => {

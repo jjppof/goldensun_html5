@@ -73,7 +73,7 @@ export class InteractableObjects {
     private _tile_x_pos: number;
     private _tile_y_pos: number;
     private _collision_tiles_bodies: Phaser.Physics.P2.Body[];
-    private _color_filter: any;
+    private _color_filter: Phaser.Filter.ColorFilters;
     private _enable: boolean;
     private _entangled_by_bush: boolean;
     private _sprite: Phaser.Sprite;
@@ -123,6 +123,7 @@ export class InteractableObjects {
     private _current_action: string;
     private _snapshot_info: SnapshotData["map_data"]["interactable_objects"][0];
     private _shapes_collision_active: boolean;
+    private _color_filter_active: boolean;
 
     constructor(
         game,
@@ -184,7 +185,7 @@ export class InteractableObjects {
         this.events_id = new Set();
         this._collision_tiles_bodies = [];
         this.collision_change_functions = [];
-        this._color_filter = this.game.add.filter("ColorFilters");
+        this._color_filter = this.game.add.filter("ColorFilters") as Phaser.Filter.ColorFilters;
         this.anchor_x = anchor_x;
         this.anchor_y = anchor_y;
         this.scale_x = scale_x;
@@ -223,6 +224,7 @@ export class InteractableObjects {
         this._current_animation = animation;
         this._current_action = action;
         this._shapes_collision_active = false;
+        this._color_filter_active = false;
     }
 
     get key_name() {
@@ -335,8 +337,13 @@ export class InteractableObjects {
     get snapshot_info() {
         return this._snapshot_info;
     }
+    /** Whether the shapes of this IO body are active (colliding) or not. */
     get shapes_collision_active() {
         return this._shapes_collision_active;
+    }
+    /** Whether this IO has its color filter active. */
+    get color_filter_active() {
+        return this._color_filter_active;
     }
 
     position_allowed(x: number, y: number) {
@@ -525,10 +532,10 @@ export class InteractableObjects {
             this.sprite.is_interactable_object = true;
             this.sprite.roundPx = true;
             this.sprite.base_collision_layer = this.base_collision_layer;
-            if (interactable_object_db.send_to_back !== undefined) {
-                this.sprite.send_to_back = interactable_object_db.send_to_back;
-            } else if (this.snapshot_info && this.snapshot_info.send_to_back !== null) {
+            if (this.snapshot_info && this.snapshot_info.send_to_back !== null) {
                 this.sprite.send_to_back = this.snapshot_info.send_to_back;
+            } else if (interactable_object_db.send_to_back !== undefined) {
+                this.sprite.send_to_back = interactable_object_db.send_to_back;
             }
             if (this.snapshot_info && this.snapshot_info.send_to_front !== null) {
                 this.sprite.send_to_front = this.snapshot_info.send_to_front;
@@ -552,6 +559,17 @@ export class InteractableObjects {
             }
             if (this.snapshot_info && this.snapshot_info.visible !== null) {
                 this.sprite.visible = this.snapshot_info.visible;
+            }
+            if (this.snapshot_info?.color_filter_active) {
+                this.set_color_filter();
+                this.color_filter.gray = this.snapshot_info.color_filter_settings.gray;
+                this.color_filter.colorize_intensity = this.snapshot_info.color_filter_settings.colorize_intensity;
+                this.color_filter.colorize = this.snapshot_info.color_filter_settings.colorize;
+                this.color_filter.hue_adjust = this.snapshot_info.color_filter_settings.hue_adjust;
+                this.color_filter.tint = this.snapshot_info.color_filter_settings.tint;
+                this.color_filter.flame = this.snapshot_info.color_filter_settings.flame;
+                this.color_filter.levels = this.snapshot_info.color_filter_settings.levels;
+                this.color_filter.color_blend = this.snapshot_info.color_filter_settings.color_blend;
             }
         }
         if (this.entangled_by_bush) {
@@ -634,10 +652,12 @@ export class InteractableObjects {
 
     set_color_filter() {
         this.sprite.filters = [this.color_filter];
+        this._color_filter_active = true;
     }
 
     unset_color_filter() {
         this.sprite.filters = undefined;
+        this._color_filter_active = false;
     }
 
     toggle_collision(enable: boolean) {

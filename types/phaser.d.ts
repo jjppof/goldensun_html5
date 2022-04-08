@@ -1207,6 +1207,17 @@ declare module Phaser {
 
     module Filter {
 
+        class ColorFilters extends Phaser.Filter {
+            gray: number;
+            colorize_intensity: number;
+            colorize: number;
+            hue_adjust: number;
+            tint: [number, number, number];
+            flame: boolean;
+            levels: [number, number, number];
+            color_blend: [number, number, number];
+        }
+
         class BinarySerpents extends Phaser.Filter {
 
             constructor(game: Phaser.Game, width: number, height: number, march?: number, maxDistance?: number);
