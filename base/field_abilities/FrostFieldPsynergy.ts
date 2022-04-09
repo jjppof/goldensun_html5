@@ -11,7 +11,7 @@ Does not handle the in-battle command
 Input:game [Phaser:Game] - Reference to the running game object
        data [GoldenSun] - Reference to the main JS Class instance*/
 export class FrostFieldPsynergy extends FieldAbilities {
-    private static readonly ABILITY_KEY_NAME = "frost";
+    public static readonly ABILITY_KEY_NAME = "frost";
     private static readonly ACTION_KEY_NAME = base_actions.CAST;
     private static readonly FROST_MAX_RANGE = 12;
     private static readonly SNOWFLAKES_COUNT = 16;
@@ -147,19 +147,18 @@ export class FrostFieldPsynergy extends FieldAbilities {
         this.data.audio.play_se("psynergy/7");
         this.target_object.play("pillar");
         this.target_object.sprite.animations.currentAnim.onComplete.addOnce(() => {
-            this.set_permanent_blink();
+            FrostFieldPsynergy.set_permanent_blink(this.game, this.target_object);
             this.return_to_idle_anim();
             this.stop_casting();
         });
     }
 
     /*Enables the pillar's blinking state*/
-    set_permanent_blink() {
-        const blink_timer = this.game.time.create(false);
-        const target_object = this.target_object;
+    static set_permanent_blink(game: Phaser.Game, target_object: FrostFieldPsynergy["target_object"]) {
+        const blink_timer = game.time.create(false);
         blink_timer.loop(150, () => {
             target_object.color_filter.hue_adjust = 5.3;
-            const timer_event = this.game.time.events.add(20, () => {
+            const timer_event = game.time.events.add(20, () => {
                 target_object.color_filter.hue_adjust = 0;
             });
             timer_event.timer.start();

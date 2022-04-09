@@ -69,7 +69,7 @@ export class RevealFieldPsynergy extends FieldAbilities {
         }
     }
 
-    finish(force: boolean = false, stop_char: boolean = true, finish_callback?: Function) {
+    finish(force: boolean = false, stop_char: boolean = true, finish_callback?: () => void) {
         this.controllable_char.on_reveal = false;
         this.controllable_char.casting_psynergy = true;
         this.toggle_reveal();

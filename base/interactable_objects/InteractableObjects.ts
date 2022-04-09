@@ -20,6 +20,7 @@ import {GameEvent} from "../game_events/GameEvent";
 import {LiftFieldPsynergy} from "../field_abilities/LiftFieldPsynergy";
 import {StoragePosition} from "../Storage";
 import {SnapshotData} from "../Snapshot";
+import {FrostFieldPsynergy} from "../field_abilities/FrostFieldPsynergy";
 
 export enum interactable_object_interaction_types {
     ONCE = "once",
@@ -581,6 +582,27 @@ export class InteractableObjects {
     }
 
     /**
+     * Checks whether it's necessary to restore any custom state related to psynergy cast
+     * on this IO when restoring a snapshot.
+     */
+    check_psynergy_casted_on_restore() {
+        if (!this.snapshot_info) {
+            return;
+        }
+        if (
+            FrostFieldPsynergy.ABILITY_KEY_NAME in this.psynergy_casted &&
+            this.psynergy_casted[FrostFieldPsynergy.ABILITY_KEY_NAME]
+        ) {
+            FrostFieldPsynergy.set_permanent_blink(this.game, this);
+        } else if (
+            LiftFieldPsynergy.ABILITY_KEY_NAME in this.psynergy_casted &&
+            this.psynergy_casted[LiftFieldPsynergy.ABILITY_KEY_NAME]
+        ) {
+            LiftFieldPsynergy.restore_lift_rock(this.game, this);
+        }
+    }
+
+    /**
      * Initialize the shadow sprite of this IO.
      * @param group the group where the shadow sprite is going to be inserted.
      * @param options options to be set like anchor values and whether it's a world map.
@@ -624,8 +646,8 @@ export class InteractableObjects {
         const scale_x = options?.is_world_map ? numbers.WORLD_MAP_SPRITE_SCALE_X : 1;
         const scale_y = options?.is_world_map ? numbers.WORLD_MAP_SPRITE_SCALE_Y : 1;
         this.shadow.scale.setTo(scale_x, scale_y);
-        this.shadow.x = this.x;
-        this.shadow.y = this.y;
+        this.shadow.x = this.snapshot_info?.shadow.x ?? this.x;
+        this.shadow.y = this.snapshot_info?.shadow.y ?? this.y;
     }
 
     init_bush(map: Map) {

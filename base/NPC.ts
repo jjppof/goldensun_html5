@@ -565,6 +565,11 @@ export class NPC extends ControllableChar {
                 shadow_anchor_x: npc_db.shadow_anchor_x,
                 shadow_anchor_y: npc_db.shadow_anchor_y,
             });
+            this.shadow_following = this.snapshot_info?.shadow_following ?? this.shadow_following;
+            if (!this.shadow_following) {
+                this.shadow.x = this.snapshot_info?.shadow.x ?? this.shadow.x;
+                this.shadow.y = this.snapshot_info?.shadow.y ?? this.shadow.y;
+            }
         }
         this.set_sprite(
             this.data.middlelayer_group,

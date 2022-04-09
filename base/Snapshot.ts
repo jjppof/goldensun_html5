@@ -12,6 +12,7 @@ import {Button} from "./XGamepad";
 import {reverse_directions} from "./utils";
 import {Breakable} from "./interactable_objects/Breakable";
 import {RollablePillar} from "./interactable_objects/RollingPillar";
+import {RevealFieldPsynergy} from "./field_abilities/RevealFieldPsynergy";
 
 type ColorFilterSettings = {
     gray: Phaser.Filter.ColorFilters["gray"];
@@ -78,6 +79,11 @@ export type SnapshotData = {
                 x: number;
                 y: number;
             };
+            shadow: {
+                x: number;
+                y: number;
+            };
+            shadow_following: boolean;
             action: string;
             animation: string;
             frame: string;
@@ -103,6 +109,10 @@ export type SnapshotData = {
                 y: number;
             };
             anchor: {
+                x: number;
+                y: number;
+            };
+            shadow: {
                 x: number;
                 y: number;
             };
@@ -243,6 +253,11 @@ export class Snapshot {
                             x: npc.sprite?.anchor.x ?? null,
                             y: npc.sprite?.anchor.y ?? null,
                         },
+                        shadow: {
+                            x: npc.shadow?.x ?? null,
+                            y: npc.shadow?.y ?? null,
+                        },
+                        shadow_following: npc.shadow_following,
                         action: npc.current_action,
                         animation: npc.current_animation,
                         frame: npc.sprite?.frameName ?? null,
@@ -283,6 +298,10 @@ export class Snapshot {
                         anchor: {
                             x: io.sprite?.anchor.x ?? null,
                             y: io.sprite?.anchor.y ?? null,
+                        },
+                        shadow: {
+                            x: io.shadow?.x ?? null,
+                            y: io.shadow?.y ?? null,
                         },
                         type: {
                             is_rope_dock: io.is_rope_dock,
@@ -349,6 +368,9 @@ export class Snapshot {
             full_screen: this.data.fullscreen,
             mute: this.game.sound.mute,
         };
+        if (this.data.hero.on_reveal) {
+            (this.data.info.field_abilities_list.reveal as RevealFieldPsynergy).finish(false, false);
+        }
         Snapshot.download_json(snapshot, Snapshot.SNAPSHOT_FILENAME);
     }
 

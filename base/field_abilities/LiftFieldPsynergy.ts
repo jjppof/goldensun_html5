@@ -12,7 +12,7 @@ import {SpriteBase} from "../SpriteBase";
 import {degree360} from "../magic_numbers";
 
 export class LiftFieldPsynergy extends FieldAbilities {
-    private static readonly ABILITY_KEY_NAME = "lift";
+    public static readonly ABILITY_KEY_NAME = "lift";
     private static readonly ACTION_KEY_NAME = base_actions.CAST;
     private static readonly LIFT_MAX_RANGE = 12;
     private static readonly MOVE_HAND_KEY_NAME = "move_hand";
@@ -217,15 +217,7 @@ export class LiftFieldPsynergy extends FieldAbilities {
 
         if (this.target_found) {
             this.target_object.set_color_filter();
-            const target_hueshift_timer = this.game.time.create(false);
-            const target_object = this.target_object;
-            target_hueshift_timer.loop(5, () => {
-                target_object.color_filter.hue_adjust = Math.random() * degree360;
-            });
-            target_hueshift_timer.start();
-            this.target_object.add_unset_callback(() => {
-                target_hueshift_timer?.destroy();
-            });
+            LiftFieldPsynergy.set_permanent_hue_effect(this.game, this.target_object);
         } else {
             this.left_hand_sprite.destroy();
             this.right_hand_sprite.destroy();
@@ -281,7 +273,7 @@ export class LiftFieldPsynergy extends FieldAbilities {
             .onComplete.addOnce(right_resolve);
 
         await Promise.all([target_promise, left_promise, right_promise]);
-        this.set_permanent_tween();
+        LiftFieldPsynergy.set_permanent_tween(this.game, this.target_object);
     }
 
     async set_final_emitter(hand_sprite: Phaser.Sprite) {
@@ -306,10 +298,19 @@ export class LiftFieldPsynergy extends FieldAbilities {
         final_emitter.destroy();
     }
 
-    set_permanent_tween() {
-        const tween = this.game.add.tween(this.target_object.body).to(
+    static restore_lift_rock(game: Phaser.Game, target_object: LiftFieldPsynergy["target_object"]) {
+        LiftFieldPsynergy.set_permanent_hue_effect(game, target_object);
+        LiftFieldPsynergy.set_permanent_tween(game, target_object);
+        if (target_object.has_shadow) {
+            target_object.shadow.sort_function = null;
+            target_object.shadow.send_to_back = true;
+        }
+    }
+
+    static set_permanent_tween(game: Phaser.Game, target_object: LiftFieldPsynergy["target_object"]) {
+        const tween = game.add.tween(target_object.body).to(
             {
-                y: this.target_object.y + 2,
+                y: target_object.y + 2,
             },
             500,
             Phaser.Easing.Linear.None,
@@ -318,8 +319,19 @@ export class LiftFieldPsynergy extends FieldAbilities {
             -1,
             true
         );
-        this.target_object.add_unset_callback(() => {
+        target_object.add_unset_callback(() => {
             tween?.stop();
+        });
+    }
+
+    static set_permanent_hue_effect(game: Phaser.Game, target_object: LiftFieldPsynergy["target_object"]) {
+        const target_hueshift_timer = game.time.create(false);
+        target_hueshift_timer.loop(5, () => {
+            target_object.color_filter.hue_adjust = Math.random() * degree360;
+        });
+        target_hueshift_timer.start();
+        target_object.add_unset_callback(() => {
+            target_hueshift_timer?.destroy();
         });
     }
 

@@ -786,7 +786,10 @@ export class Map {
     config_all_bodies(collision_layer: number) {
         if (!this.is_world_map) {
             this.npcs.forEach(npc => npc.config_body());
-            this.interactable_objects.forEach(interactable_obj => interactable_obj.config_body());
+            this.interactable_objects.forEach(interactable_obj => {
+                interactable_obj.config_body();
+                interactable_obj.check_psynergy_casted_on_restore();
+            });
         }
         this.config_body(collision_layer);
     }
