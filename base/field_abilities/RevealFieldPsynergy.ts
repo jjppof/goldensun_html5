@@ -113,8 +113,8 @@ export class RevealFieldPsynergy extends FieldAbilities {
         this.controllable_char.on_reveal = true;
 
         this.reveal_wave = this.game.add.image(0, 0);
-        this.data.overlayer_group.addChild(this.reveal_wave);
-        this.data.overlayer_group.bringToTop(this.reveal_wave);
+        this.data.super_group.addChild(this.reveal_wave);
+        this.data.super_group.bringToTop(this.reveal_wave);
         this.reveal_wave.width = numbers.GAME_WIDTH;
         this.reveal_wave.height = numbers.GAME_HEIGHT;
         this.reveal_wave.centerX = this.controllable_char.sprite.x;
