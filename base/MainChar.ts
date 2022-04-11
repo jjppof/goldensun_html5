@@ -327,9 +327,9 @@ export class MainChar extends Player {
      * Initializes this char items by equipping them.
      */
     private init_items() {
-        this.items.forEach((item_obj, index) => {
-            item_obj.index = index;
-            if (item_obj.equipped) {
+        this.items.forEach((item_slot, index) => {
+            item_slot.index = index;
+            if (item_slot.equipped) {
                 this.equip_item(index, true);
             }
         });
@@ -345,10 +345,10 @@ export class MainChar extends Player {
     add_item(item_key_name: string, quantity: number, equip: boolean) {
         let found = false;
         if (this.info.items_list[item_key_name].type === item_types.GENERAL_ITEM) {
-            this.items.forEach(item_obj => {
-                if (item_obj.key_name === item_key_name) {
+            this.items.forEach(item_slot => {
+                if (item_slot.key_name === item_key_name) {
                     found = true;
-                    item_obj.quantity += quantity;
+                    item_slot.quantity += quantity;
                 }
             });
         }
@@ -367,26 +367,26 @@ export class MainChar extends Player {
     /**
      * Removes/drops an item from this char. If the item is equipped, it will be
      * unequipped. If the given quantity is smaller than the current quantity, the item slot
-     * for the given item will be kept.
-     * @param item_obj_to_remove
-     * @param quantity
+     * for the given item will be kept, otherwise, it will be removed.
+     * @param item_slot_to_remove this char item slot you wish to remove.
+     * @param quantity the quantity to be removed. Default is 1.
      */
-    remove_item(item_obj_to_remove: ItemSlot, quantity: number) {
+    remove_item(item_slot_to_remove: ItemSlot, quantity: number = 1) {
         let adjust_index = false;
-        this._items = this.items.filter((item_obj, index) => {
-            if (item_obj_to_remove.key_name === item_obj.key_name) {
-                if (item_obj.equipped) {
+        this._items = this.items.filter((this_item_slot, index) => {
+            if (item_slot_to_remove === this_item_slot) {
+                if (this_item_slot.equipped) {
                     this.unequip_item(index);
                 }
-                if (item_obj.quantity - quantity >= 1) {
-                    item_obj.quantity = item_obj.quantity - quantity;
+                if (this_item_slot.quantity - quantity >= 1) {
+                    this_item_slot.quantity = this_item_slot.quantity - quantity;
                     return true;
                 }
                 adjust_index = true;
                 return false;
             }
             if (adjust_index) {
-                --item_obj.index;
+                --this_item_slot.index;
             }
             return true;
         });
@@ -399,18 +399,18 @@ export class MainChar extends Player {
      * @param initialize only sets this to true if constructing this char.
      */
     equip_item(index: number, initialize: boolean = false) {
-        const item_obj = this.items[index];
-        if (item_obj.equipped && !initialize) return;
-        const item = this.info.items_list[item_obj.key_name];
+        const item_slot = this.items[index];
+        if (item_slot.equipped && !initialize) return;
+        const item = this.info.items_list[item_slot.key_name];
 
         if (item.type in item_equip_slot && this.equip_slots[item_equip_slot[item.type]] !== null) {
             this.unequip_item(this.equip_slots[item_equip_slot[item.type]].index);
         }
         if (item.type in item_equip_slot) {
-            this.equip_slots[item_equip_slot[item.type]] = item_obj;
+            this.equip_slots[item_equip_slot[item.type]] = item_slot;
         }
 
-        item_obj.equipped = true;
+        item_slot.equipped = true;
         for (let i = 0; i < item.effects.length; ++i) {
             this.add_effect(item.effects[i], item);
         }
@@ -432,13 +432,13 @@ export class MainChar extends Player {
      * @param index the item slot index of this char.
      */
     unequip_item(index: number) {
-        const item_obj = this.items[index];
-        if (!item_obj.equipped) return;
-        const item = this.info.items_list[item_obj.key_name];
+        const item_slot = this.items[index];
+        if (!item_slot.equipped) return;
+        const item = this.info.items_list[item_slot.key_name];
         if (item.type in item_equip_slot && this.equip_slots[item_equip_slot[item.type]] !== null) {
             this.equip_slots[item_equip_slot[item.type]] = null;
         }
-        item_obj.equipped = false;
+        item_slot.equipped = false;
         this.effects.forEach(effect => {
             if (effect.effect_owner_instance === item) {
                 this.remove_effect(effect);
@@ -481,7 +481,7 @@ export class MainChar extends Player {
                 return -1;
             }
         });
-        this.items.forEach((item_obj, i) => (item_obj.index = i));
+        this.items.forEach((item_slot, i) => (item_slot.index = i));
     }
 
     /**

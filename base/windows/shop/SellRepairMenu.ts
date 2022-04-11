@@ -172,12 +172,7 @@ export class SellRepairMenu {
             this.data.info.party_data.coins += item_price * quantity;
             this.parent.update_your_coins();
 
-            for (let i = 0; i < this.selected_character.items.length; i++) {
-                let itm = this.selected_character.items[i];
-                if (itm.key_name === this.selected_item.key_name) {
-                    this.selected_character.remove_item(itm, quantity);
-                }
-            }
+            this.selected_character.remove_item(this.selected_item, quantity);
 
             if (item.rare_item) {
                 const shop_item = this.data.info.artifacts_global_list.find(item_data => {

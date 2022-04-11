@@ -148,17 +148,17 @@ export class InventoryWindow {
     }
 
     make_item_grid() {
-        this.item_grid = [];
-
         const char_items = this.char.items.filter(item_obj => {
             return item_obj.key_name in this.data.info.items_list;
         });
 
         const lines = [];
         for (let line = 0; line < Math.ceil(char_items.length / MAX_PER_LINE); line++) {
-            let this_line = [];
+            const this_line = [];
             for (let col = 0; col < MAX_PER_LINE; col++) {
-                if (char_items[line * MAX_PER_LINE + col]) this_line.push(char_items[line * MAX_PER_LINE + col]);
+                if (char_items[line * MAX_PER_LINE + col]) {
+                    this_line.push(char_items[line * MAX_PER_LINE + col]);
+                }
             }
             lines.push(this_line);
         }
