@@ -107,6 +107,7 @@ export class SellRepairMenu {
     }
 
     on_repair_item_select() {
+        this.data.control_manager.reset();
         let exec = () => {
             this.inv_win_pos = this.inv_win.cursor_pos;
             this.selected_item = this.inv_win.item_grid[this.inv_win_pos.line][this.inv_win_pos.col];
@@ -174,10 +175,7 @@ export class SellRepairMenu {
             for (let i = 0; i < this.selected_character.items.length; i++) {
                 let itm = this.selected_character.items[i];
                 if (itm.key_name === this.selected_item.key_name) {
-                    this.selected_character.items[i].quantity -= quantity;
-                    if (this.selected_character.items[i].quantity === 0) {
-                        this.selected_character.items.splice(i, 1);
-                    }
+                    this.selected_character.remove_item(itm, quantity);
                 }
             }
 

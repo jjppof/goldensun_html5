@@ -150,12 +150,12 @@ export class InventoryWindow {
     make_item_grid() {
         this.item_grid = [];
 
-        let char_items = this.char.items.filter(item_obj => {
+        const char_items = this.char.items.filter(item_obj => {
             return item_obj.key_name in this.data.info.items_list;
         });
 
-        let lines = [];
-        for (let line = 0; line < ((char_items.length / MAX_PER_LINE) | 0) + 1; line++) {
+        const lines = [];
+        for (let line = 0; line < Math.ceil(char_items.length / MAX_PER_LINE); line++) {
             let this_line = [];
             for (let col = 0; col < MAX_PER_LINE; col++) {
                 if (char_items[line * MAX_PER_LINE + col]) this_line.push(char_items[line * MAX_PER_LINE + col]);
@@ -298,8 +298,9 @@ export class InventoryWindow {
     set_sprites() {
         let finish = false;
 
-        for (let line = 0; line < MAX_LINES; line++) {
-            for (let col = 0; col < MAX_PER_LINE; col++) {
+        const max_per_line = Math.max(...this.item_grid.map(line => line.length));
+        for (let line = 0; line < this.item_grid.length; line++) {
+            for (let col = 0; col < max_per_line; col++) {
                 if (!this.item_grid[line][col]) {
                     finish = true;
                     break;
