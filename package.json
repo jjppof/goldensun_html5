@@ -20,15 +20,15 @@
   },
   "type": "commonjs",
   "scripts": {
-    "start": "webpack-dev-server",
+    "start": "npx webpack-dev-server",
     "start-desktop": "npm run build && npx electron ./electron/main.js",
-    "build": "webpack",
-    "format-check": "prettier --check \"base/**/*.ts\"",
+    "build": "npx webpack",
+    "format-check": "npx prettier --check \"base/**/*.ts\"",
     "format": "npx prettier --write \"base/**/*.ts\"",
     "docs": "node scripts/generate_docs.js",
-    "postinstall": "husky install",
-    "prepublish": "pinst --disable",
-    "postpublish": "pinst --enable"
+    "postinstall": "npx husky install",
+    "prepublish": "npx pinst --disable",
+    "postpublish": "npx pinst --enable"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.161",
