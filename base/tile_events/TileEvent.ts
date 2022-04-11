@@ -52,6 +52,7 @@ export abstract class TileEvent {
     protected _active: boolean[];
     protected _affected_by_reveal: boolean[];
     protected _origin_interactable_object: InteractableObjects;
+    protected _allow_active_in_diagonal: boolean;
 
     /** The collision layer shift value from origin Inter. Obj. base collision layer that will be
      * summed up to it which will form the activation collision layer of this event. */
@@ -77,7 +78,8 @@ export abstract class TileEvent {
         active_storage_key,
         origin_interactable_object,
         affected_by_reveal,
-        key_name
+        key_name,
+        allow_active_in_diagonal = true
     ) {
         this.game = game;
         this.data = data;
@@ -118,6 +120,7 @@ export abstract class TileEvent {
         if (this._key_name) {
             TileEvent.labeled_events[this._key_name] = this;
         }
+        this._allow_active_in_diagonal = allow_active_in_diagonal ?? true;
     }
 
     /** Returns the tile event type. */
@@ -169,6 +172,13 @@ export abstract class TileEvent {
     get key_name() {
         return this._key_name;
     }
+    /**
+     * When activating this event in diagonal, and if this var is not true, the diagonal direction whether
+     * the hero is trying to activate this event won't be splitted.
+     */
+    get allow_active_in_diagonal() {
+        return this._allow_active_in_diagonal;
+    }
 
     /**
      * Fires this tile event.
@@ -190,7 +200,7 @@ export abstract class TileEvent {
         if (direction === undefined) {
             return _.findIndex(this.active, v => v) ?? -1;
         } else {
-            const possible_directions = split_direction(direction);
+            const possible_directions = this.allow_active_in_diagonal ? split_direction(direction) : [direction];
             for (let i = 0; i < possible_directions.length; ++i) {
                 if (this.active[this.activation_directions.indexOf(possible_directions[i])]) {
                     return possible_directions[i];

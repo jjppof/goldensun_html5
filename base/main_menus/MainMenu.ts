@@ -121,6 +121,7 @@ export function initialize_menu(game: Phaser.Game, data: GoldenSun) {
     let trigger_menu = () => {
         if (
             data.hero.in_action() ||
+            data.hero.walking_over_rope ||
             data.in_battle ||
             !data.assets_loaded ||
             data.shop_open ||
