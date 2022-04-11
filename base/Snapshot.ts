@@ -13,6 +13,7 @@ import {reverse_directions} from "./utils";
 import {Breakable} from "./interactable_objects/Breakable";
 import {RollablePillar} from "./interactable_objects/RollingPillar";
 import {RevealFieldPsynergy} from "./field_abilities/RevealFieldPsynergy";
+import {RopeDock} from "./interactable_objects/RopeDock";
 
 type ColorFilterSettings = {
     gray: Phaser.Filter.ColorFilters["gray"];
@@ -129,6 +130,9 @@ export type SnapshotData = {
                 rollable?: {
                     pillar_is_stuck: boolean;
                 };
+                rope_dock?: {
+                    tied: boolean;
+                };
             };
             action: string;
             animation: string;
@@ -185,6 +189,9 @@ export class Snapshot {
         return this._snapshot;
     }
 
+    /**
+     * Generates a snapshot of the current game state and opens the download box.
+     */
     generate_snapshot() {
         const snapshot: SnapshotData = {
             storage_data: _.mapValues(this.data.storage.internal_storage, record => record.value),
@@ -318,6 +325,11 @@ export class Snapshot {
                             ...(io.rollable && {
                                 rollable: {
                                     pillar_is_stuck: (io as RollablePillar).pillar_is_stuck,
+                                },
+                            }),
+                            ...(io.is_rope_dock && {
+                                rope_dock: {
+                                    tied: (io as RopeDock).tied,
                                 },
                             }),
                         },

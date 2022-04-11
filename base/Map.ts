@@ -1040,7 +1040,7 @@ export class Map {
                     property_info.dest_x,
                     property_info.dest_y,
                     property_info.starting_dock,
-                    property_info.tied
+                    snapshot_info?.state_by_type.rope_dock?.tied ?? property_info.tied
                 );
             } else if (interactable_object.rollable) {
                 (interactable_object as RollablePillar).initialize_rolling_pillar(

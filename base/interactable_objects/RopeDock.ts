@@ -189,7 +189,7 @@ export class RopeDock extends InteractableObjects {
      * @param map the map is currently being mounted.
      */
     initialize_rope(map: Map) {
-        if (this._tied) {
+        if (this.tied) {
             this.play(RopeDock.ROPE_DOCK_TIED, RopeDock.ROPE_DOCK_KEY);
         } else {
             this.play(RopeDock.ROPE_DOCK_EMPTY, RopeDock.ROPE_DOCK_KEY);
@@ -260,7 +260,7 @@ export class RopeDock extends InteractableObjects {
             this._rope_fragments_group.useHeightWhenSorting = true;
         }
 
-        if (!this._tied) {
+        if (!this.tied) {
             this._frag_overlap_group = this.game.add.group(this.data.middlelayer_group);
             this._frag_overlap_group.x = this._rope_fragments_group.x;
             this._frag_overlap_group.y = this._rope_fragments_group.y;
@@ -282,9 +282,9 @@ export class RopeDock extends InteractableObjects {
                 x: default_x,
                 y: default_y,
             });
-            this._frag_able_to_swing.push(this._tied);
+            this._frag_able_to_swing.push(this.tied);
 
-            if (this._tied) {
+            if (this.tied) {
                 sprite.x = default_x;
                 sprite.y = default_y;
                 sprite.rotation = this._fragment_angle;
