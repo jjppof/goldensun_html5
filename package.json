@@ -30,6 +30,9 @@
     "prepublish": "npx pinst --disable",
     "postpublish": "npx pinst --enable"
   },
+  "engines": {
+    "npm": "^7"
+  },
   "devDependencies": {
     "@types/lodash": "^4",
     "@types/mathjs": "^6",
