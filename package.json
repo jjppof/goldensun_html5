@@ -5,9 +5,7 @@
   "author": "jjppof",
   "description": "An online Golden Sun Engine entirely built in HTML5 with Phaser 2.",
   "homepage": "https://github.com/jjppof/goldensun_html5#readme",
-  "bugs": {
-    "url": "https://github.com/jjppof/goldensun_html5/issues"
-  },
+  "bugs": "https://github.com/jjppof/goldensun_html5/issues",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/jjppof/goldensun_html5.git"
