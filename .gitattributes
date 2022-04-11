@@ -1,0 +1,3 @@
+#NOTE: Set to `text` if `format-package-lock` in `.npmrc` is `true`.
+package-lock.json   binary
+npm-shrinkwrap.json binary

@@ -31,23 +31,23 @@
     "postpublish": "npx pinst --enable"
   },
   "devDependencies": {
-    "@types/lodash": "^4.14.161",
-    "@types/mathjs": "^6.0.11",
-    "electron": "^15.3.5",
-    "husky": "^5.0.0-beta.0",
-    "pinst": "^2.0.0",
-    "prettier": "2.1.2",
-    "ts-loader": "^8.0.4",
-    "typedoc": "^0.20.35",
-    "typescript": "^4.0.3",
-    "webpack": "^4.44.2",
-    "webpack-cli": "^3.3.12",
-    "webpack-dev-server": "^3.11.0"
+    "@types/lodash": "^4",
+    "@types/mathjs": "^6",
+    "electron": "^15",
+    "husky": "^5",
+    "pinst": "^2",
+    "prettier": "^2",
+    "ts-loader": "^8",
+    "typedoc": "^0",
+    "typescript": "^4",
+    "webpack": "^4",
+    "webpack-cli": "^3",
+    "webpack-dev-server": "^3"
   },
   "dependencies": {
-    "@turf/turf": "^6.5.0",
-    "lodash": "^4.17.21",
-    "mathjs": "^9.3.2",
-    "rxjs": "^6.6.3"
+    "@turf/turf": "^6",
+    "lodash": "^4",
+    "mathjs": "^9",
+    "rxjs": "^6"
   }
 }
