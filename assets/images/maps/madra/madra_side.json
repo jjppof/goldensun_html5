@@ -1119,6 +1119,14 @@
                         }, 
                         {
                          "x":224,
+                         "y":112
+                        }, 
+                        {
+                         "x":240,
+                         "y":112
+                        }, 
+                        {
+                         "x":240,
                          "y":160
                         }, 
                         {
@@ -1482,7 +1490,7 @@
      "tile_event\/39":"string"
     },
  "renderorder":"right-down",
- "tiledversion":"1.7.2",
+ "tiledversion":"1.8.0",
  "tileheight":16,
  "tilesets":[
         {
