@@ -1,7 +1,17 @@
 {
   "name": "goldensun_html5",
   "version": "0.0.1",
+  "license": "MIT",
+  "author": "jjppof",
   "description": "An online Golden Sun Engine entirely built in HTML5 with Phaser 2.",
+  "homepage": "https://github.com/jjppof/goldensun_html5#readme",
+  "bugs": {
+    "url": "https://github.com/jjppof/goldensun_html5/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jjppof/goldensun_html5.git"
+  },
   "private": true,
   "scripts": {
     "start": "webpack-dev-server",
@@ -14,16 +24,6 @@
     "prepublish": "pinst --disable",
     "postpublish": "pinst --enable"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/jjppof/goldensun_html5.git"
-  },
-  "author": "jjppof",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/jjppof/goldensun_html5/issues"
-  },
-  "homepage": "https://github.com/jjppof/goldensun_html5#readme",
   "devDependencies": {
     "@types/lodash": "^4.14.161",
     "@types/mathjs": "^6.0.11",
