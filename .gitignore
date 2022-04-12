@@ -1,4 +1,26 @@
-node_modules
-dist
-debug.log
-code_docs
+## Version control
+.git/
+package-lock.json
+
+## Dynamic/Unversionable
+code_docs/
+dist/
+logs/
+node_modules/
+*.bak
+*.db
+*.log
+*.jar
+*.old
+*.swp
+*.tmp
+
+## System files
+.directory
+.DS_Store
+desktop.ini
+thumbs.db
+.fuse_hidden*
+
+# Keep .keep files
+!.keep

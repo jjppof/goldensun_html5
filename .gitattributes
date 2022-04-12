@@ -1,0 +1,32 @@
+#NOTE: Run `git add : --renormalize` after editing this file.
+
+## Defaults
+* text=auto eol=lf
+
+## Scripts
+*.js        text
+*.ts        text
+
+## Pages (client-side)
+*.html  text diff=html
+
+## Styling
+*.css    text diff=css
+
+## Serialization
+*.json       text
+*.yml        text
+
+## Documentation
+*.md  text
+*.txt text
+
+## Images
+*.ico binary
+*.jpg binary
+*.png binary
+
+## Caches
+package-lock.json   binary
+npm-shrinkwrap.json binary
+#NOTE: Set the above to `text` if `format-package-lock` in `.npmrc` is `true`.
