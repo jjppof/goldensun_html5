@@ -1,3 +1,83 @@
+#NOTE: Run `git add : --renormalize` after editing this file.
+
+## Defaults
+## -----------------------------------------------------------------------------
+* text=auto eol=lf
+
+## Windows-specific
+## -----------------------------------------------------------------------------
+*.bat text eol=crlf
+*.ps1 text eol=crlf
+
+## Other
+## -----------------------------------------------------------------------------
+*.sql text
+
+## Scripts
+## -----------------------------------------------------------------------------
+*.coffee    text
+*.litcoffee text
+*.js        text
+*.jsx       text
+*.ts        text
+*.tsx       text
+
+## Pages (server-side)
+## -----------------------------------------------------------------------------
+*.jsp   text
+*.php   text
+
+## Pages (client-side)
+## -----------------------------------------------------------------------------
+*.htm   text diff=html
+*.html  text diff=html
+*.xhtml text diff=xml
+
+## Styling
+## -----------------------------------------------------------------------------
+*.css    text diff=css
+*.less   text diff=css
+*.sass   text
+*.scss   text diff=css
+*.stylus text diff=css
+
+## Serialization
+## -----------------------------------------------------------------------------
+*.json       text
+*.jsonc      text
+*.xml        text diff=xml
+*.yml        text
+
+## Configuration
+## -----------------------------------------------------------------------------
+*.conf       text
+*.ini        text
+
+## Documentation
+## -----------------------------------------------------------------------------
+*.md  text
+*.rst text
+*.txt text
+
+## Images
+## -----------------------------------------------------------------------------
+*.ico binary
+*.jpg binary
+*.png binary
+
+#NOTE: Can be set to `text diff=xml`.
+*.svg binary
+
+## Fonts
+## -----------------------------------------------------------------------------
+*.otf   binary
+*.ttf   binary
+*.woff  binary
+*.woff2 binary
+
+## Other
+## -----------------------------------------------------------------------------
+
 #NOTE: Set to `text` if `format-package-lock` in `.npmrc` is `true`.
 package-lock.json   binary
 npm-shrinkwrap.json binary
