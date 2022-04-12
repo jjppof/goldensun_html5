@@ -1,10 +1,10 @@
 {
     "compilerOptions": {
         "typeRoots": ["types/pixi.d.ts", "types/p2.d.ts", "types/phaser.d.ts", "types/particlestorm.d.ts"],
-        "lib": ["dom", "es2019", "es2020.string"],
+        "lib": ["DOM", "ESNext"],
         "module": "commonjs",
         "noImplicitAny": false,
-        "target": "es2017",
+        "target": "ES6",
         "allowJs": true,
         "sourceMap": true,
         "experimentalDecorators": true
