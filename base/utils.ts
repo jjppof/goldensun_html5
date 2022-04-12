@@ -485,7 +485,7 @@ export function random_normal() {
  * @returns returns a `PIXI.blendModes` enum value
  */
 export function parse_blend_mode(blend_mode: string) {
-    return (PIXI.blendModes[blend_mode] as unknown) as PIXI.blendModes;
+    return PIXI.blendModes[blend_mode] as unknown as PIXI.blendModes;
 }
 
 /**

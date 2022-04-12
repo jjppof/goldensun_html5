@@ -268,9 +268,8 @@ export class MainPsynergyMenu {
                         this.char_choose();
                     },
                     () => {
-                        const dest_char = this.chars_menu.lines[this.chars_menu.current_line][
-                            this.chars_menu.selected_index
-                        ];
+                        const dest_char =
+                            this.chars_menu.lines[this.chars_menu.current_line][this.chars_menu.selected_index];
                         const ability_used = this.psynergy_choose_window.cast_ability(
                             this_char,
                             dest_char,
