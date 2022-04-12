@@ -478,8 +478,9 @@ export class InteractableObjects {
         const width = this.data.dbs.interactable_objects_db[this.key_name].body_radius * 2;
         body.setRectangle(width, width, 0, 0);
         if (!(target_layer in this.data.collision.interactable_objs_collision_groups)) {
-            this.data.collision.interactable_objs_collision_groups[target_layer] =
-                this.game.physics.p2.createCollisionGroup();
+            this.data.collision.interactable_objs_collision_groups[
+                target_layer
+            ] = this.game.physics.p2.createCollisionGroup();
         }
         body.setCollisionGroup(this.data.collision.interactable_objs_collision_groups[target_layer]);
         body.damping = numbers.MAP_DAMPING;

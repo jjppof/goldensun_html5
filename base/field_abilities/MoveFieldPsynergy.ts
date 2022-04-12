@@ -173,8 +173,7 @@ export class MoveFieldPsynergy extends FieldAbilities {
                             this.controllable_char.shadow.x = this.controllable_char.sprite.body.x;
                             this.controllable_char.shadow.y = this.controllable_char.sprite.body.y;
                         }
-                        this.controllable_char.sprite.body.velocity.x =
-                            this.controllable_char.sprite.body.velocity.y = 0;
+                        this.controllable_char.sprite.body.velocity.x = this.controllable_char.sprite.body.velocity.y = 0;
                         this.finish_hand();
                         this.return_to_idle_anim();
                     },

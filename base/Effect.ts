@@ -328,7 +328,9 @@ export class Effect {
         return {removed_effects: removed_effects};
     }
 
-    apply_effect(direct_value?): {
+    apply_effect(
+        direct_value?
+    ): {
         before?: number;
         after?: number;
         removed_effects?: Effect[];

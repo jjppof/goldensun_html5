@@ -484,8 +484,9 @@ export class Map {
                         },
                         _.cloneDeep(polygon_data.polygon)
                     );
-                    const shape: p2.Convex =
-                        this.collision_sprite.body.data.shapes[this.collision_sprite.body.data.shapes.length - 1];
+                    const shape: p2.Convex = this.collision_sprite.body.data.shapes[
+                        this.collision_sprite.body.data.shapes.length - 1
+                    ];
                     if (polygon_data.split_polygon) {
                         this._shapes[collision_layer][polygon_data.location_key][i] = shape;
                     }
