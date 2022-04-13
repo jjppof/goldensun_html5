@@ -317,7 +317,7 @@ export class SellRepairMenu {
 
                 let finish = () => {
                     this.inv_win.set_cursor(item_pos.line, item_pos.col);
-                    if (!this.inv_win.item_grid[item_pos.line][item_pos.col]) this.inv_win.previous_col();
+                    if (!this.inv_win.item_grid?.[item_pos.line]?.[item_pos.col]) this.inv_win.previous_col();
 
                     this.inv_win.grant_control(
                         this.open_inventory_view.bind(this),
