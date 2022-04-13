@@ -463,23 +463,15 @@ export class MainChar extends Player {
      */
     sort_items() {
         this.items.sort((b, a) => {
-            if (a.equipped && !b.equipped) {
-                return 1;
-            } else if (!a.equipped && b.equipped) {
-                return -1;
-            }
+            if (a.equipped && !b.equipped) return 1;
+            if (!a.equipped && b.equipped) return -1;
             const item_a = this.info.items_list[a.key_name];
             const item_b = this.info.items_list[b.key_name];
-            if (item_types_sort_priority[item_a.type] > item_types_sort_priority[item_b.type]) {
-                return 1;
-            } else if (item_types_sort_priority[item_a.type] < item_types_sort_priority[item_b.type]) {
-                return -1;
-            }
-            if (item_a.index > item_b.index) {
-                return 1;
-            } else if (item_a.index < item_b.index) {
-                return -1;
-            }
+            if (item_types_sort_priority[item_a.type] > item_types_sort_priority[item_b.type]) return 1;
+            if (item_types_sort_priority[item_a.type] < item_types_sort_priority[item_b.type]) return -1;
+            if (item_a.index > item_b.index) return 1;
+            if (item_a.index < item_b.index) return -1;
+            return 1;
         });
         this.items.forEach((item_slot, i) => (item_slot.index = i));
     }
