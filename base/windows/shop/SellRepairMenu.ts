@@ -310,9 +310,8 @@ export class SellRepairMenu {
             this.show_windows(open_windows, () => {
                 if (msg_key) this.npc_dialog.update_dialog(msg_key);
 
-                this.selected_character = this.char_display.lines[this.char_display.current_line][
-                    this.char_display.selected_index
-                ];
+                this.selected_character =
+                    this.char_display.lines[this.char_display.current_line][this.char_display.selected_index];
                 this.selected_char_index = this.char_display.selected_index;
 
                 let finish = () => {

@@ -34,13 +34,14 @@
         "strict": false, //TODO: Make `true` (see issue #401)
 
         // Maps
-        "declarationMap": true,
+        "declaration": false,
+        "declarationMap": false,
         "sourceMap": true,
         // "mapRoot": "debug/maps",
         // "sourceRoot": "debug/src",
 
         // Misc
-        "composite": true,
+        "composite": false,
         "preserveSymlinks": true,
 
         // Compilation options

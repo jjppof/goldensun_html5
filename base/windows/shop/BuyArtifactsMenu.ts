@@ -99,9 +99,8 @@ export class BuyArtifactsMenu {
 
     check_game_ticket() {
         let game_ticket = false;
-        this.data.info.party_data.game_tickets.coins_remaining -= this.data.info.items_list[
-            this.selected_item.key_name
-        ].price;
+        this.data.info.party_data.game_tickets.coins_remaining -=
+            this.data.info.items_list[this.selected_item.key_name].price;
         if (this.data.info.party_data.game_tickets.coins_remaining <= 0) {
             game_ticket = true;
             this.data.info.party_data.game_tickets.tickets_bought += 1;
@@ -337,9 +336,8 @@ export class BuyArtifactsMenu {
     }
 
     on_buy_equip_select() {
-        this.selected_character = this.char_display.lines[this.char_display.current_line][
-            this.char_display.selected_index
-        ];
+        this.selected_character =
+            this.char_display.lines[this.char_display.current_line][this.char_display.selected_index];
         this.selected_char_index = this.char_display.selected_index;
 
         if (this.selected_character.items.length === MAX_INVENTORY_SIZE) {
@@ -369,9 +367,8 @@ export class BuyArtifactsMenu {
     }
 
     on_buy_item_select(game_ticket: boolean = false) {
-        this.selected_character = this.char_display.lines[this.char_display.current_line][
-            this.char_display.selected_index
-        ];
+        this.selected_character =
+            this.char_display.lines[this.char_display.current_line][this.char_display.selected_index];
         this.selected_char_index = this.char_display.selected_index;
         let have_quant = 0;
 
@@ -567,9 +564,8 @@ export class BuyArtifactsMenu {
                     {name: WindowNames.ITEM_DESC_WIN, arguments: []},
                 ];
                 this.show_windows(open_windows, () => {
-                    this.selected_item = this.buy_select.pages[this.buy_select.current_page][
-                        this.buy_select.selected_index
-                    ];
+                    this.selected_item =
+                        this.buy_select.pages[this.buy_select.current_page][this.buy_select.selected_index];
                     this.parent.update_item_info(this.selected_item.key_name);
                     this.parent.update_your_coins();
 
