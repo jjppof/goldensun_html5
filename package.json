@@ -27,7 +27,6 @@
     "format": "npx prettier --write \"base/**/*.ts\"",
     "docs": "node scripts/generate_docs.js",
     "postinstall": "npx husky install && npm dedupe",
-    "//postinstall": "npm rebuild",
     "prepublish": "npx pinst --disable",
     "postpublish": "npx pinst --enable"
   },
