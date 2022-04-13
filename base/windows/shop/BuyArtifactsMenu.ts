@@ -93,13 +93,8 @@ export class BuyArtifactsMenu {
 
     update_game_ticket_step() {
         const bought = this.data.info.party_data.game_tickets.tickets_bought;
-        if (bought <=  0) return    0;
-        if (bought <=  5) return  250;
-        if (bought <= 10) return  500;
-        if (bought <= 15) return 1000;
-        if (bought <= 20) return 2000;
-        if (bought <= 25) return 4000;
-        return 8000;
+        if (bought <= 0) return 0;
+        return Math.round(125 * Math.pow(2, bought / 5));
     }
 
     check_game_ticket() {
