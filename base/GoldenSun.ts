@@ -285,9 +285,8 @@ export class GoldenSun {
         this.game_event_manager = new GameEventManager(this.game, this);
 
         //configs map layers: creates sprites, interactable objects and npcs, lists events and sets the map layers
-        const map = this.info.maps_list[
-            this.snapshot_manager.snapshot?.map_data.key_name ?? this.dbs.init_db.map_key_name
-        ];
+        const map =
+            this.info.maps_list[this.snapshot_manager.snapshot?.map_data.key_name ?? this.dbs.init_db.map_key_name];
         const initial_collision_layer =
             this.snapshot_manager.snapshot?.map_data.collision_layer ?? this.dbs.init_db.collision_layer;
         this.map = await map.mount_map(

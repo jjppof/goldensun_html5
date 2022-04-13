@@ -501,10 +501,12 @@ export class BattleStatusWindow {
             );
         } else {
             return _.sortBy(
-                ([...this.data.info.main_char_list[this.selected_char.key_name].temporary_status] as (
-                    | permanent_status
-                    | temporary_status
-                )[]).concat([...this.data.info.main_char_list[this.selected_char.key_name].permanent_status]),
+                (
+                    [...this.data.info.main_char_list[this.selected_char.key_name].temporary_status] as (
+                        | permanent_status
+                        | temporary_status
+                    )[]
+                ).concat([...this.data.info.main_char_list[this.selected_char.key_name].permanent_status]),
                 s => ordered_status_battle.indexOf(s)
             );
         }

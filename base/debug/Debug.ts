@@ -224,22 +224,17 @@ export class Debug {
         document.querySelector("#key_debug table .y").innerHTML = `${
             this.data.hero.tile_y_pos
         }/${this.data.hero.sprite.body.y.toFixed(3)}`;
-        document.querySelector("#key_debug table .speed_x").innerHTML = this.data.hero.sprite.body.velocity.x.toFixed(
-            3
-        );
-        document.querySelector("#key_debug table .speed_y").innerHTML = this.data.hero.sprite.body.velocity.y.toFixed(
-            3
-        );
-        document.querySelector(
-            "#key_debug table .force_direction"
-        ).innerHTML = this.data.hero.force_direction.toString();
-        document.querySelector(
-            "#key_debug table .stop_by_colliding"
-        ).innerHTML = this.data.hero.stop_by_colliding.toString();
+        document.querySelector("#key_debug table .speed_x").innerHTML =
+            this.data.hero.sprite.body.velocity.x.toFixed(3);
+        document.querySelector("#key_debug table .speed_y").innerHTML =
+            this.data.hero.sprite.body.velocity.y.toFixed(3);
+        document.querySelector("#key_debug table .force_direction").innerHTML =
+            this.data.hero.force_direction.toString();
+        document.querySelector("#key_debug table .stop_by_colliding").innerHTML =
+            this.data.hero.stop_by_colliding.toString();
         document.querySelector("#key_debug table .sliding_on_ice").innerHTML = this.data.hero.sliding_on_ice.toString();
-        document.querySelector(
-            "#key_debug table .collision_layer"
-        ).innerHTML = this.data.map.collision_layer.toString();
+        document.querySelector("#key_debug table .collision_layer").innerHTML =
+            this.data.map.collision_layer.toString();
     }
 
     //enable fps show
@@ -383,15 +378,12 @@ export class Debug {
         document.querySelector("#stats_debug table .agi").innerHTML = char.agi.toString();
         document.querySelector("#stats_debug table .luk").innerHTML = char.luk.toString();
         ordered_elements.forEach(element => {
-            document.querySelector(`#stats_debug table .${element}_power`).innerHTML = char.current_power[
-                element
-            ].toString();
-            document.querySelector(`#stats_debug table .${element}_resist`).innerHTML = char.current_resist[
-                element
-            ].toString();
-            document.querySelector(`#stats_debug table .${element}_level`).innerHTML = char.current_level[
-                element
-            ].toString();
+            document.querySelector(`#stats_debug table .${element}_power`).innerHTML =
+                char.current_power[element].toString();
+            document.querySelector(`#stats_debug table .${element}_resist`).innerHTML =
+                char.current_resist[element].toString();
+            document.querySelector(`#stats_debug table .${element}_level`).innerHTML =
+                char.current_level[element].toString();
         });
         document.querySelector("#stats_debug table .turns").innerHTML = char.turns.toString();
         document.querySelector("#stats_debug table .temp_statuses").innerHTML = [...char.temporary_status].join(" ");
