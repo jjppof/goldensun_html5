@@ -112,7 +112,7 @@ export class InventoryWindow {
 
         for (let line = 0; line < MAX_LINES; line++) {
             for (let col = 0; col < MAX_PER_LINE; col++) {
-                if (!this.item_grid[line][col]) {
+                if (!this.item_grid?.[line]?.[col]) {
                     finish = true;
                     break;
                 }

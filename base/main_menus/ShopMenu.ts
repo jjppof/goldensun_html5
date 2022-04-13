@@ -223,7 +223,7 @@ export class ShopMenu {
     on_inv_win_change(line: number, col: number) {
         if (this.item_price_win.open && this.sell_menu.active) {
             let is_repair = this.sell_menu.is_repair_menu;
-            let itm = this.inv_win.item_grid[line][col];
+            let itm = this.inv_win.item_grid?.[line]?.[col];
 
             if (itm) {
                 let item_price = this.data.info.items_list[itm.key_name].price;
