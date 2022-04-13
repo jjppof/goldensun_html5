@@ -693,6 +693,7 @@ export class MainChar extends Player {
                 this[current_key] = Math.round((this[current_key] * this[stat]) / previous_value);
             }
         }
+        return 0;
     }
 
     /**

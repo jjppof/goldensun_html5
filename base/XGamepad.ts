@@ -362,7 +362,7 @@ export class Gamepad {
      */
     private _on_down(game_button: AnyButton, event?: KeyboardEvent): GamepadButton {
         const btn = this.buttons[game_button];
-        if (btn.is_down) return;
+        if (btn.is_down) return null;
         btn.is_down = true;
         btn.on_down.dispatch(event);
         return btn;
@@ -375,7 +375,7 @@ export class Gamepad {
      */
     private _on_up(game_button: AnyButton, event?: KeyboardEvent): GamepadButton {
         const btn = this.buttons[game_button];
-        if (btn.is_up) return;
+        if (btn.is_up) return null;
         btn.is_up = true;
         btn.on_up.dispatch(event);
         return btn;

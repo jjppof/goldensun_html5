@@ -487,7 +487,7 @@ export class Effect {
     }
 
     static remove_status_from_player(effect_obj: any, target: Player) {
-        if (![effect_types.TEMPORARY_STATUS, effect_types.PERMANENT_STATUS].includes(effect_obj.type)) return;
+        if (![effect_types.TEMPORARY_STATUS, effect_types.PERMANENT_STATUS].includes(effect_obj.type)) return [];
 
         const removed_effects: Effect[] = [];
         if (Math.random() < effect_obj.chance) {

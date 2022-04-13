@@ -1224,6 +1224,7 @@ export class Map {
                 return property_value > this.collision_layer ? property_value : -1;
             default:
                 console.warn(`'${property_type}' is not a valid type for 'over'.`);
+                return -1;
         }
     }
 

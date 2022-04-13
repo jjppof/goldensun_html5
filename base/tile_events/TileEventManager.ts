@@ -413,6 +413,7 @@ export class TileEventManager {
             );
         } else {
             console.warn(`Tile event type ${info.type} not found.`);
+            return null;
         }
     }
 }
