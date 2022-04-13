@@ -371,6 +371,7 @@ export class HealerMenu {
                     info_msg = `Revive for ${price} coins`;
                     break;
                 case permanent_status.POISON:
+                case permanent_status.VENOM:
                     info_msg = `Cure for ${price} coins`;
                     break;
                 case permanent_status.HAUNT:
@@ -388,6 +389,7 @@ export class HealerMenu {
                     info_msg = "This ally needs no healing.";
                     break;
                 case permanent_status.POISON:
+                case permanent_status.VENOM:
                     info_msg = "This ally is not poisoned.";
                     break;
                 case permanent_status.HAUNT:
@@ -574,6 +576,7 @@ export class HealerMenu {
             case permanent_status.DOWNED:
                 return level * 20;
             case permanent_status.POISON:
+            case permanent_status.VENOM:
                 return 10;
             case permanent_status.HAUNT:
                 return 50;
