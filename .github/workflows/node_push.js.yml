@@ -22,7 +22,7 @@ jobs:
       run: |
         npm install
         npm run build
-        npm run format
+        npm run format-check
         npm run docs
         mkdir _temp_
         mv assets/ _temp_/assets
