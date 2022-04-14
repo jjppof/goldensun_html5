@@ -73,7 +73,7 @@ export class TileEventManager {
     private game: Phaser.Game;
     private data: GoldenSun;
     private _event_timers: {
-        [event_id: number]: {
+        [timer_key: number]: {
             timer: Phaser.Timer;
             activation_direction: directions;
         };
@@ -96,7 +96,8 @@ export class TileEventManager {
     get walking_on_pillars_tiles() {
         return this._walking_on_pillars_tiles;
     }
-    /** An object that holds the timers of tile events that are up to happen. */
+    /** An object that holds the timers and chosen activation direction
+     * of tile events that are up to happen. */
     get event_timers() {
         return this._event_timers;
     }
