@@ -29,7 +29,7 @@
         "experimentalDecorators": true,
         "forceConsistentCasingInFileNames": true,
         "noImplicitAny": false, //TODO: Make `true` or remove.  (see issue #401)
-        "noImplicitReturns": false, //TODO: Make `true` or remove.  (see issue #401)  // Is technically a typing error, so should be handled by TypeScript.
+        "noImplicitReturns": true, // Is technically a typing error, so should be handled by TypeScript.
         "resolveJsonModule": true,
         "strict": false, //TODO: Make `true` (see issue #401)
 
