@@ -22,28 +22,12 @@
             "types/pixi.d.ts"
         ],
 
-        // Linter rules (enable anything that causes a compilation/typing error;  leave everything else to a proper linting tool.)
+        // Misc
         "allowJs": true,
-        "allowUnreachableCode": true, // Isn't a compilation error; should be handled by a dedicated linter.
-        "alwaysStrict": true,
         "checkJs": true,
         "experimentalDecorators": true,
-        "forceConsistentCasingInFileNames": true,
-        "noImplicitAny": false, //TODO: Make `true`.  (see issue #401)
-        "noImplicitThis": true,
-        "noImplicitReturns": true, // Is technically a typing error, so should be handled by TypeScript.
+        "preserveSymlinks": true,
         "resolveJsonModule": true,
-        "strict": false, //TODO: Make `true` (see issue #401)
-        "strictBindCallApply": true,
-        "strictFunctionTypes": false, //TODO: Make `true` (see issue #401)
-        "strictNullChecks": false, //TODO: Make `true` (see issue #401)
-        "strictPropertyInitialization": false, //TODO: Make `true` (see issue #401)
-        "useUnknownInCatchVariables": true,
-
-        // Maps
-        "sourceMap": true,
-        // "mapRoot": "debug/maps",
-        // "sourceRoot": "debug/src",
 
         // Compilation options
         "downlevelIteration": true,
@@ -52,8 +36,24 @@
         "importHelpers": true,
         "removeComments": true,
 
-        // Misc
-        "preserveSymlinks": true
+        // Maps
+        "sourceMap": true,
+        // "mapRoot": "debug/maps",
+        // "sourceRoot": "debug/src",
+
+        // Linting (enable anything that causes a compilation/typing error;  leave everything else to a proper linting tool.)
+        "allowUnreachableCode": true, // Isn't a compilation or typing error; should be handled by a dedicated linter.
+        "alwaysStrict": true,
+        "forceConsistentCasingInFileNames": true,
+        "noImplicitAny": false, //TODO: Make `true` (see issue #401)
+        "noImplicitThis": true,
+        "noImplicitReturns": true,
+        "strict": true,
+        "strictBindCallApply": true,
+        "strictFunctionTypes": false, //TODO: Make `true` (see issue #401)
+        "strictNullChecks": false, //TODO: Make `true` (see issue #401)
+        "strictPropertyInitialization": false, //TODO: Make `true` (see issue #401)
+        "useUnknownInCatchVariables": true,
     },
 
     "include": [
