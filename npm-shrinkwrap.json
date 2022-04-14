@@ -7,27 +7,29 @@
     "": {
       "name": "goldensun_html5",
       "version": "0.0.1",
-      "hasInstallScript": true,
       "license": "MIT",
       "dependencies": {
         "@turf/turf": "^6",
         "lodash": "^4",
-        "mathjs": "^9",
-        "rxjs": "^6"
+        "mathjs": "~9.5",
+        "rxjs": "~6.6"
       },
       "devDependencies": {
-        "@types/lodash": "^4",
-        "@types/mathjs": "^6",
-        "electron": "^15",
+        "@types/lodash": "~4.14",
+        "@types/mathjs": "~6.0",
+        "electron": "~15.5",
         "husky": "^5",
-        "pinst": "^2",
-        "prettier": "^2",
-        "ts-loader": "^8",
-        "typedoc": "^0",
-        "typescript": "^4",
-        "webpack": "^4",
+        "pinst": "~2.1",
+        "prettier": "~2.6",
+        "ts-loader": "~8.3",
+        "typedoc": "~0.22",
+        "typescript": "~4.6",
+        "webpack": "~4.46",
         "webpack-cli": "^3",
-        "webpack-dev-server": "^3"
+        "webpack-dev-server": "~3.11"
+      },
+      "engines": {
+        "npm": "^7"
       }
     },
     "node_modules/@babel/runtime": {
