@@ -514,6 +514,7 @@ export class GameEventManager {
                 );
             default:
                 console.warn(`Game event type ${info.type} not found.`);
+                return null;
         }
     }
 

@@ -46,7 +46,7 @@ export class Camera {
      * @param duration the duration that the camera will to take to reach target position in ms.
      * @returns returns a promise to the transition end.
      */
-    follow(target?: Camera["target"], duration?: number): Promise<void> {
+    async follow(target?: Camera["target"], duration?: number): Promise<void> {
         if (target) {
             this._target = target;
         }
