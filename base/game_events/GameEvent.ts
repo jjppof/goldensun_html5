@@ -105,23 +105,11 @@ export abstract class GameEvent {
         await promise;
     }
 
-    /**
-     * Everytime a game event is fired, it's checked whether reveal is casted, if yes, it stops the reveal psynergy effect.
-     * @param target not used.
-     * @param property_key not used.
-     * @param descriptor the function descriptor.
-     * @returns returns a new descriptor.
-     */
-    static check_reveal(target: Object, property_key: string, descriptor: PropertyDescriptor) {
-        const original_method = descriptor.value;
-        descriptor.value = function (...args) {
-            const data: GoldenSun = this.data;
-            if (data.hero.on_reveal) {
-                (this.data.info.field_abilities_list.reveal as RevealFieldPsynergy).finish(false, false);
-            }
-            return original_method.apply(this, args);
-        };
-        return descriptor;
+    /** Check if "Reveal" is currently active.  If yes, then cancel it. */
+    check_reveal() {
+        if (this.data.hero.on_reveal) {
+            (this.data.info.field_abilities_list.reveal as RevealFieldPsynergy).finish(false, false);
+        }
     }
 
     /**
@@ -132,8 +120,8 @@ export abstract class GameEvent {
      * @param origin_npc the NPC that originated this game event.
      * @returns if the child class has an async fire function, returns its Promise.
      */
-    @GameEvent.check_reveal
     fire(origin_npc?: NPC) {
+        this.check_reveal();
         return this._fire(origin_npc);
     }
 

@@ -252,12 +252,7 @@ export class SellRepairMenu {
 
                 let quant_control = () => {
                     this.quant_win.grant_control(
-                        this.on_character_select.bind(
-                            this,
-                            "sell_follow_up",
-                            this.selected_char_index,
-                            this.inv_win_pos
-                        ),
+                        this.on_character_select.bind(this, "sell_follow_up", this.inv_win_pos),
                         () => {
                             let quant = 1;
                             quant = this.quant_win.chosen_quantity;
