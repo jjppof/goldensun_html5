@@ -339,73 +339,79 @@ export class Effect {
             case effect_types.DEFENSE:
             case effect_types.AGILITY:
             case effect_types.LUCK:
-                if (this.remove_buff) {
-                    return this.remove_char_buffs(this.type);
-                }
+                return this.remove_buff ? this.remove_char_buffs(this.type) : null;
+
             case effect_types.MAX_HP:
             case effect_types.MAX_PP:
                 return this.apply_general_value(effect_type_stat[this.type]);
+
             case effect_types.HP_RECOVERY:
                 return this.apply_general_value(recovery_stats.HP_RECOVERY);
             case effect_types.PP_RECOVERY:
                 return this.apply_general_value(recovery_stats.PP_RECOVERY);
+
             case effect_types.CURRENT_HP:
                 const result_current_hp = this.apply_general_value(main_stats.CURRENT_HP);
                 this.check_caps(main_stats.CURRENT_HP, main_stats.MAX_HP, 0, result_current_hp);
                 return result_current_hp;
+
             case effect_types.CURRENT_PP:
                 const result_current_pp = this.apply_general_value(main_stats.CURRENT_PP);
                 this.check_caps(main_stats.CURRENT_PP, main_stats.MAX_PP, 0, result_current_pp);
                 return result_current_pp;
+
             case effect_types.POWER:
             case effect_types.RESIST:
                 const property = effect_type_elemental_stat[this.type];
                 if (this.remove_buff) {
-                    if (this.element === elements.ALL_ELEMENTS) {
-                        const removed_effects = new Array(ordered_elements.length);
-                        ordered_elements.forEach((element, i) => {
-                            removed_effects[i] = this.remove_char_buffs(this.type, element).removed_effects;
-                        });
-                        return {
-                            removed_effects: removed_effects.flat(),
-                            all_elements: true,
-                        };
-                    } else {
+                    if (this.element !== elements.ALL_ELEMENTS) {
                         return this.remove_char_buffs(this.type, this.element);
                     }
+                    const removed_effects = new Array(ordered_elements.length);
+                    ordered_elements.forEach((element, i) => {
+                        removed_effects[i] = this.remove_char_buffs(this.type, element).removed_effects;
+                    });
+                    return {
+                        removed_effects: removed_effects.flat(),
+                        all_elements: true,
+                    };
                 } else {
-                    if (this.element === elements.ALL_ELEMENTS) {
-                        const results: ReturnType<Effect["apply_general_value"]>[] = new Array(ordered_elements.length);
-                        ordered_elements.forEach((element, i) => {
-                            results[i] = this.apply_general_value(property, undefined, element);
-                        });
-                        return {
-                            before: _.mean(results.map(r => r.before)) | 0,
-                            after: _.mean(results.map(r => r.after)) | 0,
-                            all_elements: true,
-                        };
-                    } else {
+                    if (this.element !== elements.ALL_ELEMENTS) {
                         return this.apply_general_value(property, undefined, this.element);
                     }
+                    const results: ReturnType<Effect["apply_general_value"]>[] = new Array(ordered_elements.length);
+                    ordered_elements.forEach((element, i) => {
+                        results[i] = this.apply_general_value(property, undefined, element);
+                    });
+                    return {
+                        before: _.mean(results.map(r => r.before)) | 0,
+                        after: _.mean(results.map(r => r.after)) | 0,
+                        all_elements: true,
+                    };
                 }
+
             case effect_types.TURNS:
                 return this.apply_general_value("turns");
+
             case effect_types.PERMANENT_STATUS:
                 if (this.add_status) {
                     this.char.add_permanent_status(this.status_key_name as permanent_status);
                 } else {
                     this.char.remove_permanent_status(this.status_key_name as permanent_status);
                 }
-                return;
+                return null;
+
             case effect_types.TEMPORARY_STATUS:
                 if (this.add_status) {
                     this.char.add_temporary_status(this.status_key_name as temporary_status);
                 } else {
                     this.char.remove_temporary_status(this.status_key_name as temporary_status);
                 }
-                return;
+                return null;
+
             case effect_types.DAMAGE_MODIFIER:
                 return this.apply_general_value(undefined, direct_value);
+
             case effect_types.DAMAGE_INPUT:
                 let result = this.apply_general_value(undefined, direct_value);
                 const stat = effect_type_stat[this.sub_effect.type];
@@ -420,6 +426,7 @@ export class Effect {
                         break;
                 }
                 return result;
+
             case effect_types.EXTRA_ATTACK:
             case effect_types.EXTRA_DEFENSE:
             case effect_types.EXTRA_AGILITY:
@@ -427,11 +434,15 @@ export class Effect {
             case effect_types.EXTRA_MAX_HP:
             case effect_types.EXTRA_MAX_PP:
                 return this.apply_general_value("extra_stats", undefined, effect_type_extra_stat[this.type]);
+
             case effect_types.PARALYZE:
                 if (Math.random() < this.chance) {
                     this.char.paralyzed_by_effect = true;
                 }
-                return;
+                return null;
+
+            default:
+                return null;
         }
     }
 
@@ -474,7 +485,7 @@ export class Effect {
     }
 
     static remove_status_from_player(effect_obj: any, target: Player) {
-        if (![effect_types.TEMPORARY_STATUS, effect_types.PERMANENT_STATUS].includes(effect_obj.type)) return;
+        if (![effect_types.TEMPORARY_STATUS, effect_types.PERMANENT_STATUS].includes(effect_obj.type)) return [];
 
         const removed_effects: Effect[] = [];
         if (Math.random() < effect_obj.chance) {
