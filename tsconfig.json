@@ -2,8 +2,8 @@
 // Documentation: https://www.typescriptlang.org/tsconfig
 {
     "compilerOptions": {
-        // "baseUrl": ".",
-        // "outDir": "./dist/tsc",
+        "baseUrl": "base",
+        "outDir": "./dist/tsc",
 
         // Library versions
         "moduleResolution": "node",
@@ -16,10 +16,10 @@
             "ESNext"
         ],
         "typeRoots": [
-            "types/pixi.d.ts",
             "types/p2.d.ts",
+            "types/particlestorm.d.ts",
             "types/phaser.d.ts",
-            "types/particlestorm.d.ts"
+            "types/pixi.d.ts"
         ],
 
         // Linter rules (enable anything that causes a compilation/typing error;  leave everything else to a proper linting tool.)
@@ -34,15 +34,9 @@
         "strict": false, //TODO: Make `true` (see issue #401)
 
         // Maps
-        "declaration": false,
-        "declarationMap": false,
         "sourceMap": true,
         // "mapRoot": "debug/maps",
         // "sourceRoot": "debug/src",
-
-        // Misc
-        "composite": false,
-        "preserveSymlinks": true,
 
         // Compilation options
         "downlevelIteration": true,
@@ -51,6 +45,8 @@
         "importHelpers": true,
         "removeComments": true,
 
+        // Misc
+        "preserveSymlinks": true
     },
 
     "include": [
