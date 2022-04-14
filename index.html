@@ -11,35 +11,11 @@
     <link rel="stylesheet" href="./static/styles.css">
     <script type="text/javascript" src="static/phaser.js"></script>
     <script type="module" src="dist/bundle.js"></script>
-
-    <script>
-        //Prevent arrows to scroll the page
-        window.addEventListener("keydown", function(e) {
-            if ([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) { // space and arrow keys
-                e.preventDefault();
-            }
-        }, false);
-
-        //Detect Firefox browser
-        const dom_ready = () => {
-            const is_firefox = navigator.userAgent.toLowerCase().indexOf("firefox") > -1;
-            if (is_firefox) {
-                document.querySelector(".firefox-banner").style.display = "block";
-            }
-        };
-        document.addEventListener('DOMContentLoaded', dom_ready, false);
-    </script>
+    <script src="./static/home.js"></script>
 
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-66229740-5"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag() {
-            dataLayer.push(arguments);
-        }
-        gtag('js', new Date());
-        gtag('config', 'UA-66229740-5');
-    </script>
+    <script async src="./static/gtag.js"></script>
 
 </head>
 <body>
