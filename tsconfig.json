@@ -25,14 +25,20 @@
         // Linter rules (enable anything that causes a compilation/typing error;  leave everything else to a proper linting tool.)
         "allowJs": true,
         "allowUnreachableCode": true, // Isn't a compilation error; should be handled by a dedicated linter.
+        "alwaysStrict": true,
         "checkJs": true,
         "experimentalDecorators": true,
         "forceConsistentCasingInFileNames": true,
-        "noImplicitAny": false, //TODO: Make `true` or remove.  (see issue #401)
+        "noImplicitAny": false, //TODO: Make `true`.  (see issue #401)
+        "noImplicitThis": false, //TODO: Make `true`.  (see issue #401)
         "noImplicitReturns": true, // Is technically a typing error, so should be handled by TypeScript.
         "resolveJsonModule": true,
         "strict": false, //TODO: Make `true` (see issue #401)
         "strictBindCallApply": true,
+        "strictFunctionTypes": false, //TODO: Make `true` (see issue #401)
+        "strictNullChecks": false, //TODO: Make `true` (see issue #401)
+        "strictPropertyInitialization": false, //TODO: Make `true` (see issue #401)
+        "useUnknownInCatchVariables": true,
 
         // Maps
         "sourceMap": true,
