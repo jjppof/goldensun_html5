@@ -86,9 +86,9 @@
         "voice_key": "adult_male_2",
         "actions": {
             "idle": {
-                "frame_rate": [[0.2,3,1,0.7,1,0.6,0.6]],
+                "frame_rate": [[0.2,3,1,1.2,1,0.9,0.9]],
                 "animations": ["down", "up", "left", "right"],
-                "frames_count": 6,
+                "frames_count": 7,
                 "initial_animation": "down",
                 "spritesheet": {
                     "image": "assets/images/spritesheets/npc/healer_idle.png",
