@@ -1,6 +1,6 @@
 import {NPC, npc_movement_types, npc_types} from "./NPC";
 import {InteractableObjects} from "./interactable_objects/InteractableObjects";
-import {LocationKey, TileEvent} from "./tile_events/TileEvent";
+import {IntegerPairKey, TileEvent} from "./tile_events/TileEvent";
 import * as numbers from "./magic_numbers";
 import {event_types, GameEvent} from "./game_events/GameEvent";
 import {GoldenSun} from "./GoldenSun";
@@ -648,7 +648,7 @@ export class Map {
      * @param collision_layer the collision layer of tile. If not passed, gets the current one.
      */
     set_collision_in_tile(tile_x_pos: number, tile_y_pos: number, collide: boolean, collision_layer?: number) {
-        const location_key = LocationKey.get_key(tile_x_pos, tile_y_pos);
+        const location_key = IntegerPairKey.get_key(tile_x_pos, tile_y_pos);
         collision_layer = collision_layer ?? this.collision_layer;
         if (collision_layer in this.processed_polygons) {
             this.processed_polygons[collision_layer].forEach(polygon_data => {
@@ -674,7 +674,7 @@ export class Map {
      * @returns Returns whether the given position is blocked or not.
      */
     is_tile_blocked(tile_x_pos: number, tile_y_pos: number, collision_layer?: number) {
-        const location_key = LocationKey.get_key(tile_x_pos, tile_y_pos);
+        const location_key = IntegerPairKey.get_key(tile_x_pos, tile_y_pos);
         collision_layer = collision_layer ?? this.collision_layer;
         if (location_key in this._shapes[collision_layer]) {
             const shapes = this._shapes[collision_layer][location_key];
@@ -693,7 +693,7 @@ export class Map {
      * @returns Returns a list of NPCs and IOs based on constraints given.
      */
     get_tile_bodies(tile_x_pos: number, tile_y_pos: number, collision_layer?: number) {
-        const location_key = LocationKey.get_key(tile_x_pos, tile_y_pos);
+        const location_key = IntegerPairKey.get_key(tile_x_pos, tile_y_pos);
         collision_layer = collision_layer ?? this.collision_layer;
         let objects: (NPC | InteractableObjects)[] = [];
         if (collision_layer in this._bodies_positions) {
@@ -713,7 +713,7 @@ export class Map {
         if (!instance.body) {
             return false;
         }
-        const location_key = LocationKey.get_key(instance.tile_x_pos, instance.tile_y_pos);
+        const location_key = IntegerPairKey.get_key(instance.tile_x_pos, instance.tile_y_pos);
         const instances = this._bodies_positions[instance.base_collision_layer][location_key];
         return instances.includes(instance);
     }
@@ -739,7 +739,7 @@ export class Map {
     ) {
         this.remove_body_tile(old_x, old_y, old_col_index, instance);
         if (new_col_index in this._bodies_positions) {
-            const new_location_key = LocationKey.get_key(new_x, new_y);
+            const new_location_key = IntegerPairKey.get_key(new_x, new_y);
             if (new_location_key in this._bodies_positions[new_col_index]) {
                 this._bodies_positions[new_col_index][new_location_key].push(instance);
             } else {
@@ -757,7 +757,7 @@ export class Map {
      */
     remove_body_tile(x_tile: number, y_tile: number, collision_layer: number, instance: NPC | InteractableObjects) {
         if (collision_layer in this._bodies_positions) {
-            const location_key = LocationKey.get_key(x_tile, y_tile);
+            const location_key = IntegerPairKey.get_key(x_tile, y_tile);
             this._bodies_positions[collision_layer][location_key] = this._bodies_positions[collision_layer][
                 location_key
             ].filter(inst => inst !== instance);
@@ -819,7 +819,7 @@ export class Map {
         try {
             const property_info = JSON.parse(raw_property);
             const event = this.data.tile_event_manager.get_event_instance(property_info);
-            const this_event_location_key = LocationKey.get_key(event.x, event.y);
+            const this_event_location_key = IntegerPairKey.get_key(event.x, event.y);
             if (event.in_map) {
                 if (!(this_event_location_key in this.events)) {
                     this.events[this_event_location_key] = [];
@@ -1075,7 +1075,7 @@ export class Map {
                 snapshot_info?.body_in_map
             ) {
                 const bodies_positions = this._bodies_positions[interactable_object.base_collision_layer];
-                const location_key = LocationKey.get_key(
+                const location_key = IntegerPairKey.get_key(
                     interactable_object.tile_x_pos,
                     interactable_object.tile_y_pos
                 );
@@ -1098,7 +1098,7 @@ export class Map {
             const snapshot_info = this.data.snapshot_manager.snapshot?.map_data.npcs[i];
             if ((!snapshot_info && npc.base_collision_layer in this._bodies_positions) || snapshot_info?.body_in_map) {
                 const bodies_positions = this._bodies_positions[npc.base_collision_layer];
-                const location_key = LocationKey.get_key(npc.tile_x_pos, npc.tile_y_pos);
+                const location_key = IntegerPairKey.get_key(npc.tile_x_pos, npc.tile_y_pos);
                 if (location_key in bodies_positions) {
                     bodies_positions[location_key].push(npc);
                 } else {

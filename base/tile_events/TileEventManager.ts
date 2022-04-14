@@ -10,7 +10,7 @@ import {SliderEvent} from "./SliderEvent";
 import {SpeedEvent} from "./SpeedEvent";
 import {StepEvent} from "./StepEvent";
 import {TeleportEvent} from "./TeleportEvent";
-import {event_types, TileEvent} from "./TileEvent";
+import {event_types, IntegerPairKey, TileEvent} from "./TileEvent";
 
 class EventQueue {
     private climb_event: boolean;
@@ -72,7 +72,12 @@ export class TileEventManager {
 
     private game: Phaser.Game;
     private data: GoldenSun;
-    private _event_timers: {[event_id: number]: Phaser.Timer};
+    private _event_timers: {
+        [event_id: number]: {
+            timer: Phaser.Timer;
+            activation_direction: directions;
+        };
+    };
     public on_event: boolean;
     private _walking_on_pillars_tiles: Set<string>;
     private triggered_events: {[event_id: number]: TileEvent};
@@ -146,7 +151,11 @@ export class TileEventManager {
      * they'll be added to the event queue, then fired in sequence.
      * @param location_key the location key of the current position of the hero.
      */
-    check_tile_events(location_key: TileEvent["location_key"]) {
+    check_tile_events() {
+        const location_key = IntegerPairKey.get_key(this.data.hero.tile_x_pos, this.data.hero.tile_y_pos);
+        if (!(location_key in this.data.map.events)) {
+            return;
+        }
         for (let i = 0; i < this.data.map.events[location_key].length; ++i) {
             const this_event = this.data.map.events[location_key][i];
 
@@ -212,31 +221,37 @@ export class TileEventManager {
                                 this.data.hero.current_action as base_actions
                             )
                         ) {
+                            const timer_key = IntegerPairKey.get_key(this_event.id, this.data.hero.current_direction);
                             //these events take a little time to start, if the timer of this event already started,
                             //this incoming event will be ignored.
-                            if (this.event_timers[this_event.id] && this.event_timers[this_event.id].running) {
+                            if (this.event_timers[timer_key] && this.event_timers[timer_key].timer.running) {
                                 continue;
                             }
                             this.event_queue.add(this_event, this.data.hero.current_direction, () => {
                                 //creates a timer to activate this event. The event will be fired on this timer finish.
-                                this.event_timers[this_event.id] = this.game.time.create(true);
-                                this.event_timers[this_event.id].add(TileEventManager.EVENT_INIT_DELAY, () => {
+                                this.event_timers[timer_key] = {
+                                    timer: this.game.time.create(true),
+                                    activation_direction: this.data.hero.current_direction,
+                                };
+                                this.event_timers[timer_key].timer.add(TileEventManager.EVENT_INIT_DELAY, () => {
                                     //checks whether the hero is still going towards event activation direction and is in the same collision layer.
                                     if (
+                                        this.event_timers[timer_key].activation_direction ===
+                                            this.data.hero.current_direction &&
                                         this_event.is_active(this.data.hero.current_direction) >= 0 &&
                                         this_event.activation_collision_layers.includes(this.data.hero.collision_layer)
                                     ) {
                                         this.fire_event(this_event, this.data.hero.current_direction);
                                     }
                                     //kills the timer that started this event
-                                    if (this.event_timers[this_event.id]) {
-                                        if (!this.event_timers[this_event.id].autoDestroy) {
-                                            this.event_timers[this_event.id].destroy();
+                                    if (this.event_timers[timer_key]) {
+                                        if (!this.event_timers[timer_key].timer.autoDestroy) {
+                                            this.event_timers[timer_key].timer.destroy();
                                         }
-                                        delete this.event_timers[this_event.id];
+                                        delete this.event_timers[timer_key];
                                     }
                                 });
-                                this.event_timers[this_event.id].start();
+                                this.event_timers[timer_key].timer.start();
                             });
                         }
                     }

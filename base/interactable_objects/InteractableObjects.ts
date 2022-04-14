@@ -1,5 +1,5 @@
 import {SpriteBase} from "../SpriteBase";
-import {LocationKey, TileEvent} from "../tile_events/TileEvent";
+import {IntegerPairKey, TileEvent} from "../tile_events/TileEvent";
 import * as numbers from "../magic_numbers";
 import {
     directions,
@@ -757,7 +757,7 @@ export class InteractableObjects {
         map: Map
     ) {
         if (this.not_allowed_tile_test(x_pos, y_pos)) return;
-        const this_event_location_key = LocationKey.get_key(x_pos, y_pos);
+        const this_event_location_key = IntegerPairKey.get_key(x_pos, y_pos);
         if (!(this_event_location_key in map.events)) {
             map.events[this_event_location_key] = [];
         }
@@ -835,7 +835,7 @@ export class InteractableObjects {
                     return;
             }
             if (this.not_allowed_tile_test(x, y)) return;
-            const this_event_location_key = LocationKey.get_key(x, y);
+            const this_event_location_key = IntegerPairKey.get_key(x, y);
             if (!(this_event_location_key in map.events)) {
                 map.events[this_event_location_key] = [];
             }
@@ -863,7 +863,7 @@ export class InteractableObjects {
     private set_jump_around_event(x_pos: number, y_pos: number, active_event: boolean, target_layer: number, map: Map) {
         get_surroundings(x_pos, y_pos).forEach((pos, index) => {
             if (this.not_allowed_tile_test(pos.x, pos.y)) return;
-            const this_event_location_key = LocationKey.get_key(pos.x, pos.y);
+            const this_event_location_key = IntegerPairKey.get_key(pos.x, pos.y);
             if (!(this_event_location_key in map.events)) {
                 map.events[this_event_location_key] = [];
             }
@@ -968,7 +968,7 @@ export class InteractableObjects {
             },
         ];
         events_data.forEach(event_data => {
-            const this_location_key = LocationKey.get_key(event_data.x, event_data.y);
+            const this_location_key = IntegerPairKey.get_key(event_data.x, event_data.y);
             if (!(this_location_key in map.events)) {
                 map.events[this_location_key] = [];
             }

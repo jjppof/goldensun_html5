@@ -1,4 +1,4 @@
-import {event_types, LocationKey, TileEvent} from "./TileEvent";
+import {event_types, IntegerPairKey, TileEvent} from "./TileEvent";
 import {get_opposite_direction, directions, get_front_position} from "../utils";
 import {Breakable} from "../interactable_objects/Breakable";
 import {InteractableObjects} from "../interactable_objects/InteractableObjects";
@@ -33,7 +33,8 @@ export class JumpEvent extends TileEvent {
             active_storage_key,
             origin_interactable_object,
             affected_by_reveal,
-            key_name
+            key_name,
+            false
         );
     }
 
@@ -114,7 +115,7 @@ export class JumpEvent extends TileEvent {
         }
 
         //jump only happens if the jump target position also has an active jump event in the opposite direction
-        const next_pos_key = LocationKey.get_key(next_position.x, next_position.y);
+        const next_pos_key = IntegerPairKey.get_key(next_position.x, next_position.y);
         let active_jump_event_found = false;
         let breakable: Breakable = null;
         if (next_pos_key in this.data.map.events) {

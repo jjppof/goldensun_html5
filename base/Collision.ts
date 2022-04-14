@@ -4,7 +4,7 @@ import {Map as GameMap} from "./Map";
 import * as numbers from "./magic_numbers";
 import {range_360, base_actions, get_direction_mask, directions, get_tile_position} from "./utils";
 import * as turf from "@turf/turf";
-import {LocationKey} from "./tile_events/TileEvent";
+import {IntegerPairKey} from "./tile_events/TileEvent";
 
 /**
  * This class manages collision between the main concepts of the engine:
@@ -343,7 +343,7 @@ export class Collision {
                 if (intersection_poly) {
                     const tile_x = get_tile_position(x, map.tile_width);
                     const tile_y = get_tile_position(y, map.tile_height);
-                    const location_key = LocationKey.get_key(tile_x, tile_y);
+                    const location_key = IntegerPairKey.get_key(tile_x, tile_y);
                     intersections.set(location_key, intersection_poly.geometry.coordinates as any);
                 }
             }

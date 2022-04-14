@@ -1,5 +1,5 @@
 import * as numbers from "../magic_numbers";
-import {event_types, LocationKey} from "../tile_events/TileEvent";
+import {event_types, IntegerPairKey} from "../tile_events/TileEvent";
 import {directions, reverse_directions, base_actions, get_centered_pos_in_px, get_front_position} from "../utils";
 import {InteractableObjects} from "./InteractableObjects";
 import {ControllableChar} from "../ControllableChar";
@@ -120,7 +120,7 @@ export class Pushable extends InteractableObjects {
             return false;
         }
 
-        const pos_key = LocationKey.get_key(char.tile_x_pos, char.tile_y_pos);
+        const pos_key = IntegerPairKey.get_key(char.tile_x_pos, char.tile_y_pos);
         const events = this.data.map.events[pos_key];
 
         if (!events) return false;

@@ -3,7 +3,7 @@ import {MainChar} from "../MainChar";
 import {Button} from "../XGamepad";
 import {reverse_directions, ordered_elements} from "../utils";
 import * as _ from "lodash";
-import {LocationKey} from "../tile_events/TileEvent";
+import {IntegerPairKey} from "../tile_events/TileEvent";
 
 export class Debug {
     public game: Phaser.Game;
@@ -277,9 +277,11 @@ export class Debug {
                 "rgba(20,75,0,1.0)"
             );
             for (let point in this.data.map.events) {
-                const pos = LocationKey.get_pos(+point);
+                const pos = IntegerPairKey.get_value(+point);
+                const x = pos.a,
+                    y = pos.b;
                 this.game.debug.geom(
-                    new Phaser.Rectangle(pos.x * tile_width, pos.y * tile_height, tile_width, tile_height),
+                    new Phaser.Rectangle(x * tile_width, y * tile_height, tile_width, tile_height),
                     "rgba(255,255,60,0.7)"
                 );
             }
@@ -295,7 +297,7 @@ export class Debug {
                     15,
                     "#00ff00"
                 );
-                const event_key = LocationKey.get_key(mouse_x_tile, mouse_y_tile);
+                const event_key = IntegerPairKey.get_key(mouse_x_tile, mouse_y_tile);
                 if (event_key in this.data.map.events) {
                     const events = this.data.map.events[event_key].map(event => {
                         return _.omitBy(
@@ -313,7 +315,7 @@ export class Debug {
                                     active ? [reverse_directions[event.activation_directions[i]]] : []
                                 ),
                                 ...(event.origin_interactable_object && {
-                                    origin_interactable_object: `[${event.origin_interactable_object.key_name}/${
+                                    origin_interactable_object: `[${event.origin_interactable_object.key_name}${
                                         event.origin_interactable_object.label
                                             ? `/${event.origin_interactable_object.label}`
                                             : ""

@@ -16,19 +16,19 @@ export enum event_types {
     ROPE = "rope",
 }
 
-export abstract class LocationKey {
+export abstract class IntegerPairKey {
     private static readonly X_MASK = 0b1111111111111100000000000000;
     private static readonly Y_MASK = 0b11111111111111;
     private static readonly POS_BITS_NUMBER = 14;
 
-    static get_key(x: number, y: number) {
-        return (x << LocationKey.POS_BITS_NUMBER) | y;
+    static get_key(a: number, b: number) {
+        return (a << IntegerPairKey.POS_BITS_NUMBER) | b;
     }
 
-    static get_pos(key: number) {
+    static get_value(key: number) {
         return {
-            x: (key & LocationKey.X_MASK) >> LocationKey.POS_BITS_NUMBER,
-            y: key & LocationKey.Y_MASK,
+            a: (key & IntegerPairKey.X_MASK) >> IntegerPairKey.POS_BITS_NUMBER,
+            b: key & IntegerPairKey.Y_MASK,
         };
     }
 }
@@ -88,7 +88,7 @@ export abstract class TileEvent {
         const snapshot_info = this.data.snapshot_manager.snapshot?.map_data.tile_events[this._id];
         this._x = snapshot_info?.position.x ?? x;
         this._y = snapshot_info?.position.y ?? y;
-        this._location_key = LocationKey.get_key(this.x, this.y);
+        this._location_key = IntegerPairKey.get_key(this.x, this.y);
         this.in_map = snapshot_info?.in_map ?? true;
 
         activation_collision_layers = snapshot_info?.activation_collision_layers ?? activation_collision_layers;
@@ -272,7 +272,7 @@ export abstract class TileEvent {
         this._x = x_tile ?? this.x;
         this._y = y_tile ?? this.y;
         const previous_location_key: number = this._location_key;
-        this._location_key = LocationKey.get_key(this.x, this.y);
+        this._location_key = IntegerPairKey.get_key(this.x, this.y);
         if (change_in_map && this.location_key !== previous_location_key) {
             if (!(this.location_key in this.data.map.events)) {
                 this.data.map.events[this.location_key] = [];
