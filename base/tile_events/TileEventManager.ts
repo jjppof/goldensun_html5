@@ -222,7 +222,10 @@ export class TileEventManager {
                                 this.data.hero.current_action as base_actions
                             )
                         ) {
+                            //it's important to also bind direction because the hero may change its direction on timer end,
+                            //so we need to make sure that we still are in the same direction as before.
                             const timer_key = IntegerPairKey.get_key(this_event.id, this.data.hero.current_direction);
+
                             //these events take a little time to start, if the timer of this event already started,
                             //this incoming event will be ignored.
                             if (this.event_timers[timer_key] && this.event_timers[timer_key].timer.running) {
