@@ -302,9 +302,18 @@ export class Debug {
                             Object.assign({}, event, {
                                 game: "[Phaser.Game]",
                                 data: "[GoldenSun]",
+                                id: event.id,
+                                ...(event.key_name && {key_name: event.key_name}),
+                                type: event.type,
+                                x: event.x,
+                                y: event.y,
                                 activation_directions: event.activation_directions.map(dir => reverse_directions[dir]),
+                                activation_collision_layers: event.activation_collision_layers,
+                                active: event.active.flatMap((active, i) =>
+                                    active ? [reverse_directions[event.activation_directions[i]]] : []
+                                ),
                                 ...(event.origin_interactable_object && {
-                                    origin_interactable_object: `[${event.origin_interactable_object.key_name}${
+                                    origin_interactable_object: `[${event.origin_interactable_object.key_name}/${
                                         event.origin_interactable_object.label
                                             ? `/${event.origin_interactable_object.label}`
                                             : ""
