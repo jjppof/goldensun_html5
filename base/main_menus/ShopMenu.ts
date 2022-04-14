@@ -272,17 +272,16 @@ export class ShopMenu {
         const artifact_list = this.data.info.artifacts_global_list.filter(item_data => {
             const item = this.data.info.items_list[item_data.key_name];
             switch (item.type) {
-
                 case item_types.WEAPONS:
                 case item_types.ABILITY_GRANTOR: // Technically impossible, as none of these can be sold.
                 case item_types.CLASS_CHANGER:
-                    switch(this.shop_type) {
+                    switch (this.shop_type) {
                         case shop_types.WEAPON_SHOP:
                         case shop_types.WEAPON_ARMOR_SHOP:
                         case shop_types.GENERAL_SHOP:
                             return item_data;
                     }
-                break;
+                    break;
 
                 case item_types.ARMOR:
                 case item_types.CHEST_PROTECTOR:
@@ -290,21 +289,21 @@ export class ShopMenu {
                 case item_types.LEG_PROTECTOR:
                 case item_types.RING:
                 case item_types.UNDERWEAR:
-                    switch(this.shop_type) {
+                    switch (this.shop_type) {
                         case shop_types.ARMOR_SHOP:
                         case shop_types.WEAPON_ARMOR_SHOP:
                         case shop_types.GENERAL_SHOP:
                             return item_data;
                     }
-                break;
+                    break;
 
                 case item_types.GENERAL_ITEM:
-                    switch(this.shop_type) {
+                    switch (this.shop_type) {
                         case shop_types.MEDICINE_SHOP:
                         case shop_types.GENERAL_SHOP:
                             return item_data;
                     }
-                break;
+                    break;
             }
             return null;
         });

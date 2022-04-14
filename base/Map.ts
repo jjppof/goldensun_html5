@@ -270,7 +270,7 @@ export class Map {
         });
         this.data.middlelayer_group.customSort((a: PIXI.DisplayObjectContainer, b: PIXI.DisplayObjectContainer) => {
             if (a.base_collision_layer < b.base_collision_layer) return -1;
-            if (a.base_collision_layer > b.base_collision_layer)  return 1;
+            if (a.base_collision_layer > b.base_collision_layer) return 1;
             if (a.is_tilemap_layer && b.is_tilemap_layer) {
                 const a_layer = a as Phaser.TilemapLayer;
                 const b_layer = b as Phaser.TilemapLayer;
