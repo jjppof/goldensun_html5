@@ -1,235 +1,229 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="description" content="An online Golden Sun Engine entirely built in HTML5 with Phaser 2. This project is 100% open source and MIT licensed. Build your own GS game without programming skills." />
-    <meta name="keywords" content="golden sun, golden sun the lost age, golden sun engine, golden sun html5, golden sun online, golden sun 4, opengs, open golden sun, gshtml5" />
-    <meta name="google-site-verification" content="Gi0KXT6roJFNQGpBwhJA-j_AhEz1XVeke18qPG4dTF4" />
+<html lang="en-US">
+    <head>
+        <!-- EARLY -->
+        <meta http-equiv="Content-Type" content="text/html"/>
+        <meta charset="utf-8" />
+        <base target="_blank" href="/" />
 
-    <title>Golden Sun Engine - HTML5</title>
-    <link rel="shortcut icon" type="image/x-icon" href="static/favicon.ico">
-    <link rel="stylesheet" href="./static/styles.css">
-    <script type="text/javascript" src="static/phaser.js"></script>
-    <script type="module" src="dist/bundle.js"></script>
+        <!-- SEO -->
+        <link  rel="robots" type="text/plain" href="/static/robots.txt" />
+        <meta name="robots"        content="" />
+        <meta name="revisit-after" content="90 day" />
+        <meta name="keywords"      content="golden sun, golden sun the lost age, golden sun engine, golden sun html5, golden sun online, golden sun 4, opengs, open golden sun, gshtml5" />
+        <title>Golden Sun Engine - HTML5</title>
+        <meta name="description"   content="An online Golden Sun Engine entirely built in HTML5 with Phaser 2. This project is 100% open source and MIT licensed. Build your own GS game without programming skills." />
 
-    <script>
-        //Prevent arrows to scroll the page
-        window.addEventListener("keydown", function(e) {
-            if ([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) { // space and arrow keys
-                e.preventDefault();
-            }
-        }, false);
+        <!-- MISC -->
+        <link  rel="manifest" type="application/manifest+json" href="/static/manifest.webmanifest" />
+        <meta name="background-color" content="#000" />
+        <meta name="theme-color"      content="#fff" />
+        <meta name="viewport"         content="width=device-width,initial-scale=1.0" />
+        <link  rel="author"   type="text/plain"                href="/static/humans.txt" />
 
-        //Detect Firefox browser
-        const dom_ready = () => {
-            const is_firefox = navigator.userAgent.toLowerCase().indexOf("firefox") > -1;
-            if (is_firefox) {
-                document.querySelector(".firefox-banner").style.display = "block";
-            }
-        };
-        document.addEventListener('DOMContentLoaded', dom_ready, false);
-    </script>
+        <!-- ICONS -->
+        <link rel="shortcut icon" type="image/x-icon" href="/static/favicon.ico"  />
 
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-66229740-5"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag() {
-            dataLayer.push(arguments);
-        }
-        gtag('js', new Date());
-        gtag('config', 'UA-66229740-5');
-    </script>
+        <!-- LIBRARIES -->
+        <link rel="stylesheet" href="/static/styles.css">
+        <script type="text/javascript" src="/static/phaser.js"></script>
+        <script type="module" src="/dist/bundle.js"></script>
+        <script src="/static/home.js"></script>
 
-</head>
-<body>
-    <div class="firefox-banner">You are using Firefox. GS HTML5 does not run smoothly on it. Please consider switching to a Chromium based browser.</div>
-    <div class="intro">
-        <pre>
+        <!-- GOOGLE -->
+        <meta name="google-site-verification" content="Gi0KXT6roJFNQGpBwhJA-j_AhEz1XVeke18qPG4dTF4" />
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-66229740-5"></script>
+        <script async src="/static/gtag.js"></script>
+    </head>
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <body>
+        <div class="firefox-banner">You are using Firefox. GS HTML5 does not run smoothly on it. Please consider switching to a Chromium based browser.</div>
+        <div class="intro">
+            <pre>
 <b>Golden Sun Engine - HTML5</b>
 <small>MIT License. Open source project. Under development.</small>
 
 Please use <b>Chromium</b> based browsers instead of Firefox.
 <small>The engine is not working properly on Firefox. Don't use it.</small>
 
-  • Use the same controls of VBA: arrows, Z, X, A, S, Backspace and Enter.
-  • Press 1,2 and 3 for zoom. Double click on screen to fullscreen.
-  • Press M to unmute. Press SHIFT + PGUP/PGDN to control the volume.
-  • D for debug colision. F for fps. G for grid. K for keys debug. T for battle stats. L for sliders.
-  • Use Q to cast Move. Use W to cast Frost. Use E to cast Growth (swap djinn first). Use R to cast Reveal.
+• Use the same controls of VBA: arrows, Z, X, A, S, Backspace and Enter.
+• Press 1,2 and 3 for zoom. Double click on screen to fullscreen.
+• Press M to unmute. Press SHIFT + PGUP/PGDN to control the volume.
+• D for debug colision. F for fps. G for grid. K for keys debug. T for battle stats. L for sliders.
+• Use Q to cast Move. Use W to cast Frost. Use E to cast Growth (swap djinn first). Use R to cast Reveal.
 
 See the <a href="https://github.com/jjppof/goldensun_html5">source code and full info</a> on github.
 <b>We need your help!</b> Check our <a href="https://github.com/jjppof/goldensun_html5/milestones">milestones</a> to see what you can help.
-        </pre>
-    </div>
-    <div id="game"></div>
-    <div id="key_debug">
-        <div class="up"><img src="./assets/images/debug/keyboard_arrow.png"/></div>
-        <div class="down"><img src="./assets/images/debug/keyboard_arrow.png"/></div>
-        <div class="left"><img src="./assets/images/debug/keyboard_arrow.png"/></div>
-        <div class="right"><img src="./assets/images/debug/keyboard_arrow.png"/></div>
-        <table>
-            <tr>
-                <th>Direction:</th>
-                <td class="direction"></td>
-            </tr>
-            <tr>
-                <th>Action:</th>
-                <td class="action"></td>
-            </tr>
-            <tr>
-                <th>x:</th>
-                <td class="x"></td>
-            </tr>
-            <tr>
-                <th>y:</th>
-                <td class="y"></td>
-            </tr>
-            <tr>
-                <th>speed_x:</th>
-                <td class="speed_x"></td>
-            </tr>
-            <tr>
-                <th>speed_y:</th>
-                <td class="speed_y"></td>
-            </tr>
-            <tr>
-                <th>Force direction:</th>
-                <td class="force_direction"></td>
-            </tr>
-            <tr>
-                <th>Stop by colliding:</th>
-                <td class="stop_by_colliding"></td>
-            </tr>
-            <tr>
-                <th>Sliding on ice:</th>
-                <td class="sliding_on_ice"></td>
-            </tr>
-            <tr>
-                <th>Collision layer:</th>
-                <td class="collision_layer"></td>
-            </tr>
-        </table>
-    </div>
-    <div id="stats_debug">
-        <label for="stats_debug_select">Choose a char:</label>
-        <select id="stats_debug_select"></select>
-        <table>
-            <tr>
-                <th>Name:</th>
-                <td class="name"></td>
-            </tr>
-            <tr>
-                <th>Class:</th>
-                <td class="class"></td>
-            </tr>
-            <tr>
-                <th>Level:</th>
-                <td class="level"></td>
-            </tr>
-            <tr>
-                <th>Exp:</th>
-                <td class="exp"></td>
-            </tr>
-            <tr>
-                <th>HP:</th>
-                <td><span class="current_hp"></span>/<span class="max_hp"></span></td>
-            </tr>
-            <tr>
-                <th>PP:</th>
-                <td><span class="current_pp"></span>/<span class="max_pp"></span></td>
-            </tr>
-            <tr>
-                <th>Attack:</th>
-                <td class="atk"></td>
-            </tr>
-            <tr>
-                <th>Defense:</th>
-                <td class="def"></td>
-            </tr>
-            <tr>
-                <th>Agility:</th>
-                <td class="agi"></td>
-            </tr>
-            <tr>
-                <th>Luck:</th>
-                <td class="luk"></td>
-            </tr>
-            <tr>
-                <th>Venus Level:</th>
-                <td class="venus_level"></td>
-            </tr>
-            <tr>
-                <th>Mercury Level:</th>
-                <td class="mercury_level"></td>
-            </tr>
-            <tr>
-                <th>Mars Level:</th>
-                <td class="mars_level"></td>
-            </tr>
-            <tr>
-                <th>Jupiter Level:</th>
-                <td class="jupiter_level"></td>
-            </tr>
-            <tr>
-                <th>Venus Power:</th>
-                <td class="venus_power"></td>
-            </tr>
-            <tr>
-                <th>Mercury Power:</th>
-                <td class="mercury_power"></td>
-            </tr>
-            <tr>
-                <th>Mars Power:</th>
-                <td class="mars_power"></td>
-            </tr>
-            <tr>
-                <th>Jupiter Power:</th>
-                <td class="jupiter_power"></td>
-            </tr>
-            <tr>
-                <th>Venus Resist:</th>
-                <td class="venus_resist"></td>
-            </tr>
-            <tr>
-                <th>Mercury Resist:</th>
-                <td class="mercury_resist"></td>
-            </tr>
-            <tr>
-                <th>Mars Resist:</th>
-                <td class="mars_resist"></td>
-            </tr>
-            <tr>
-                <th>Jupiter Resist:</th>
-                <td class="jupiter_resist"></td>
-            </tr>
-            <tr>
-                <th>Turns:</th>
-                <td class="turns"></td>
-            </tr>
-            <tr>
-                <th>Temp. statuses:</th>
-                <td class="temp_statuses"></td>
-            </tr>
-            <tr>
-                <th>Perm. statuses:</th>
-                <td class="perm_statuses"></td>
-            </tr>
-            <tr>
-                <th>Buff/Turn count</th>
-                <td class="buff"></td>
-            </tr>
-            <tr>
-                <th>Effects count</th>
-                <td class="effect_count"></td>
-            </tr>
-        </table>
-    </div>
-    <div><pre id="object_inspector"></pre></div>
-    <div id="sliders_debug">
-        <button onclick="data.debug.add_slider()">Add slider</button>
-        <div id="sliders"></div>
-    </div>
-    <p class="disclaimer">All Golden Sun games and their media are property of Camelot Software Planning Ltd., Nintendo and/or Nintendo of America Inc., and are protected by United States and international copyright, trademark and other intellectual property laws.</p>
-</body>
+            </pre>
+        </div>
+        <div id="game"></div>
+        <div id="key_debug">
+            <div class="up"><img src="./assets/images/debug/keyboard_arrow.png"/></div>
+            <div class="down"><img src="./assets/images/debug/keyboard_arrow.png"/></div>
+            <div class="left"><img src="./assets/images/debug/keyboard_arrow.png"/></div>
+            <div class="right"><img src="./assets/images/debug/keyboard_arrow.png"/></div>
+            <table>
+                <tr>
+                    <th>Direction:</th>
+                    <td class="direction"></td>
+                </tr>
+                <tr>
+                    <th>Action:</th>
+                    <td class="action"></td>
+                </tr>
+                <tr>
+                    <th>x:</th>
+                    <td class="x"></td>
+                </tr>
+                <tr>
+                    <th>y:</th>
+                    <td class="y"></td>
+                </tr>
+                <tr>
+                    <th>speed_x:</th>
+                    <td class="speed_x"></td>
+                </tr>
+                <tr>
+                    <th>speed_y:</th>
+                    <td class="speed_y"></td>
+                </tr>
+                <tr>
+                    <th>Force direction:</th>
+                    <td class="force_direction"></td>
+                </tr>
+                <tr>
+                    <th>Stop by colliding:</th>
+                    <td class="stop_by_colliding"></td>
+                </tr>
+                <tr>
+                    <th>Sliding on ice:</th>
+                    <td class="sliding_on_ice"></td>
+                </tr>
+                <tr>
+                    <th>Collision layer:</th>
+                    <td class="collision_layer"></td>
+                </tr>
+            </table>
+        </div>
+        <div id="stats_debug">
+            <label for="stats_debug_select">Choose a char:</label>
+            <select id="stats_debug_select"></select>
+            <table>
+                <tr>
+                    <th>Name:</th>
+                    <td class="name"></td>
+                </tr>
+                <tr>
+                    <th>Class:</th>
+                    <td class="class"></td>
+                </tr>
+                <tr>
+                    <th>Level:</th>
+                    <td class="level"></td>
+                </tr>
+                <tr>
+                    <th>Exp:</th>
+                    <td class="exp"></td>
+                </tr>
+                <tr>
+                    <th>HP:</th>
+                    <td><span class="current_hp"></span>/<span class="max_hp"></span></td>
+                </tr>
+                <tr>
+                    <th>PP:</th>
+                    <td><span class="current_pp"></span>/<span class="max_pp"></span></td>
+                </tr>
+                <tr>
+                    <th>Attack:</th>
+                    <td class="atk"></td>
+                </tr>
+                <tr>
+                    <th>Defense:</th>
+                    <td class="def"></td>
+                </tr>
+                <tr>
+                    <th>Agility:</th>
+                    <td class="agi"></td>
+                </tr>
+                <tr>
+                    <th>Luck:</th>
+                    <td class="luk"></td>
+                </tr>
+                <tr>
+                    <th>Venus Level:</th>
+                    <td class="venus_level"></td>
+                </tr>
+                <tr>
+                    <th>Mercury Level:</th>
+                    <td class="mercury_level"></td>
+                </tr>
+                <tr>
+                    <th>Mars Level:</th>
+                    <td class="mars_level"></td>
+                </tr>
+                <tr>
+                    <th>Jupiter Level:</th>
+                    <td class="jupiter_level"></td>
+                </tr>
+                <tr>
+                    <th>Venus Power:</th>
+                    <td class="venus_power"></td>
+                </tr>
+                <tr>
+                    <th>Mercury Power:</th>
+                    <td class="mercury_power"></td>
+                </tr>
+                <tr>
+                    <th>Mars Power:</th>
+                    <td class="mars_power"></td>
+                </tr>
+                <tr>
+                    <th>Jupiter Power:</th>
+                    <td class="jupiter_power"></td>
+                </tr>
+                <tr>
+                    <th>Venus Resist:</th>
+                    <td class="venus_resist"></td>
+                </tr>
+                <tr>
+                    <th>Mercury Resist:</th>
+                    <td class="mercury_resist"></td>
+                </tr>
+                <tr>
+                    <th>Mars Resist:</th>
+                    <td class="mars_resist"></td>
+                </tr>
+                <tr>
+                    <th>Jupiter Resist:</th>
+                    <td class="jupiter_resist"></td>
+                </tr>
+                <tr>
+                    <th>Turns:</th>
+                    <td class="turns"></td>
+                </tr>
+                <tr>
+                    <th>Temp. statuses:</th>
+                    <td class="temp_statuses"></td>
+                </tr>
+                <tr>
+                    <th>Perm. statuses:</th>
+                    <td class="perm_statuses"></td>
+                </tr>
+                <tr>
+                    <th>Buff/Turn count</th>
+                    <td class="buff"></td>
+                </tr>
+                <tr>
+                    <th>Effects count</th>
+                    <td class="effect_count"></td>
+                </tr>
+            </table>
+        </div>
+        <div><pre id="object_inspector"></pre></div>
+        <div id="sliders_debug">
+            <button onclick="data.debug.add_slider()">Add slider</button>
+            <div id="sliders"></div>
+        </div>
+        <p class="disclaimer">All Golden Sun games and their media are property of Camelot Software Planning Ltd., Nintendo and/or Nintendo of America Inc., and are protected by United States and international copyright, trademark and other intellectual property laws.</p>
+    </body>
 </html>

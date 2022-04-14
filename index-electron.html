@@ -1,27 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8" />
+    <head>
+        <!-- EARLY -->
+        <meta http-equiv="Content-Type" content="text/html"/>
+        <meta charset="utf-8" />
+        <base target="_blank" href="/" />
 
-    <title>Golden Sun Engine - HTML5</title>
-    <link rel="shortcut icon" type="image/x-icon" href="static/favicon.ico">
-    <link rel="stylesheet" href="./static/styles.css">
-    <script type="text/javascript" src="static/phaser.js"></script>
-    <script type="module" src="dist/bundle.js"></script>
+        <!-- SEO -->
+        <link  rel="robots" type="text/plain" href="/static/robots.txt" />
+        <meta name="robots"        content="" />
+        <meta name="revisit-after" content="90 day" />
+        <meta name="keywords"      content="golden sun, golden sun the lost age, golden sun engine, golden sun html5, golden sun online, golden sun 4, opengs, open golden sun, gshtml5" />
+        <title>Golden Sun Engine - HTML5</title>
+        <meta name="description"   content="An online Golden Sun Engine entirely built in HTML5 with Phaser 2. This project is 100% open source and MIT licensed. Build your own GS game without programming skills." />
 
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-66229740-5"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag() {
-            dataLayer.push(arguments);
-        }
-        gtag('js', new Date());
-        gtag('config', 'UA-66229740-5');
-    </script>
+        <!-- MISC -->
+        <link  rel="manifest" type="application/manifest+json" href="/static/manifest.webmanifest" />
+        <meta name="background-color" content="#000" />
+        <meta name="theme-color"      content="#fff" />
+        <meta name="viewport"         content="width=device-width,initial-scale=1.0" />
+        <link  rel="author"   type="text/plain"                href="/static/humans.txt" />
 
-</head>
-<body class="electron">
-    <div id="game"></div>
-</body>
+        <!-- ICONS -->
+        <link rel="shortcut icon" type="image/x-icon" href="/static/favicon.ico"  />
+
+        <!-- LIBRARIES -->
+        <link rel="stylesheet" href="/static/styles.css">
+        <script type="text/javascript" src="/static/phaser.js"></script>
+        <script type="module" src="/dist/bundle.js"></script>
+        <script src="/static/home.js"></script>
+
+        <!-- GOOGLE -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-66229740-5"></script>
+        <script async src="/static/gtag.js"></script>
+    </head>
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <body class="electron">
+        <div id="game"></div>
+    </body>
 </html>
