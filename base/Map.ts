@@ -1602,6 +1602,7 @@ export class Map {
      * Unsets this map.
      */
     unset_map() {
+        this.layers.forEach(layer => layer.sprite.destroy());
         this.sprite.destroy();
         this.data.underlayer_group.removeAll();
         this.data.overlayer_group.removeAll();

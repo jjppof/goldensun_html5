@@ -50528,14 +50528,15 @@ Phaser.GameObjectFactory.prototype = {
      * @param {number} [height=256] - The height of the BitmapData in pixels.
      * @param {string} [key=''] - Asset key for the BitmapData when stored in the Cache (see addToCache parameter).
      * @param {boolean} [addToCache=false] - Should this BitmapData be added to the Game.Cache? If so you can retrieve it with Cache.getBitmapData(key)
+     * @param {boolean} [skipPool=false] - When this BitmapData generates its internal canvas to use for rendering, it will get the canvas from the CanvasPool if false, or create its own if true.
      * @return {Phaser.BitmapData} The newly created BitmapData object.
      */
-    bitmapData: function (width, height, key, addToCache)
+    bitmapData: function (width, height, key, addToCache, skipPool = false)
     {
         if (addToCache === undefined) { addToCache = false; }
         if (key === undefined || key === '') { key = this.game.rnd.uuid(); }
 
-        var texture = new Phaser.BitmapData(this.game, key, width, height);
+        var texture = new Phaser.BitmapData(this.game, key, width, height, skipPool);
 
         if (addToCache)
         {
@@ -53437,29 +53438,34 @@ Phaser.BitmapData.prototype = {
         return this;
     },
 
-    writeOnCanvas(source, dx, dy, scaleX, scaleY, alpha, rotation, blendMode) {
-        this._image = source.texture.baseTexture.source;
-        var ctx = this.context;
-        if (typeof alpha === "number") {
-            this._alpha.current = alpha;
-        }
-        this._alpha.prev = ctx.globalAlpha;
-        ctx.save();
-        ctx.globalAlpha = this._alpha.current;
-        if (blendMode) {
-            this.op = blendMode;
-        }
-
-        if (rotation) {
-            this._rotate = rotation;
-            ctx.rotate(this._rotate);
-        }
+    writeOnCanvas(source, dx, dy, scaleX, scaleY, alpha, rotate) {
+        //source is Phaser.Sprite
+        this._image = source;
 
         this._pos.set(source.texture.crop.x, source.texture.crop.y);
         this._size.set(source.texture.crop.width, source.texture.crop.height);
-        this._scale.set(scaleX, scaleY);
+        this._scale.set(source.scale.x, source.scale.y);
+        this._anchor.set(source.anchor.x, source.anchor.y);
+        this._rotate = source.rotation;
+        this._alpha.current = source.alpha;
 
+        this._image = source.texture.baseTexture.source;
+
+        this._rotate = rotate;
+        this._scale.x = scaleX;
+        this._scale.y = scaleY;
+        this._alpha.current = alpha;
+
+        var ctx = this.context;
+        this._alpha.prev = ctx.globalAlpha;
+        ctx.save();
+        ctx.globalAlpha = this._alpha.current;
+
+        this.op = null;
+
+        ctx.translate(0, 0);
         ctx.scale(this._scale.x, this._scale.y);
+        ctx.rotate(this._rotate);
 
         dx = (this._scale.x < 0 ? -dx - this._size.x : dx)/Math.abs(this._scale.x);
         dy = (this._scale.y < 0 ? -dy - this._size.y : dy)/Math.abs(this._scale.y);

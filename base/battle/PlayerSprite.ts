@@ -282,7 +282,7 @@ export class PlayerSprite {
     async unmount_by_dissolving() {
         const bmd_width = (this.group.width / this.group.scale.x) | 0;
         const bmd_height = (this.group.height / this.group.scale.y) | 0;
-        const bmd = this.game.add.bitmapData(bmd_width, bmd_height);
+        const bmd = this.game.add.bitmapData(bmd_width, bmd_height, undefined, undefined, true);
         bmd.smoothed = false;
         const img: Phaser.Sprite = this.group.create(0, 0, bmd);
         img.anchor.setTo(0.5, 1.0);
@@ -336,6 +336,7 @@ export class PlayerSprite {
         });
 
         await promise;
+
         bmd.destroy();
         img.destroy();
         this.deactive();
