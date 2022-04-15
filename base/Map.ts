@@ -1326,7 +1326,9 @@ export class Map {
                                     false
                                 );
                             }
-                            get_djinn_fire_event();
+                            if (get_djinn_fire_event !== undefined) {
+                                get_djinn_fire_event();
+                            }
                         }
                     });
                     event.fire();

@@ -1199,14 +1199,14 @@
                         }, 
                         {
                          "x":144,
-                         "y":88
+                         "y":80
                         }, 
                         {
-                         "x":112,
-                         "y":88
+                         "x":104,
+                         "y":80
                         }, 
                         {
-                         "x":112,
+                         "x":104,
                          "y":-16
                         }, 
                         {
@@ -1310,7 +1310,7 @@
              "join_with_layer":"int"
             },
          "type":"objectgroup",
-         "visible":false,
+         "visible":true,
          "x":0,
          "y":0
         }, 
@@ -1398,7 +1398,7 @@
              "join_with_layer":"int"
             },
          "type":"objectgroup",
-         "visible":false,
+         "visible":true,
          "x":0,
          "y":0
         }, 
@@ -1546,7 +1546,7 @@
              "layer_index":"int"
             },
          "type":"objectgroup",
-         "visible":true,
+         "visible":false,
          "x":0,
          "y":0
         }, 
