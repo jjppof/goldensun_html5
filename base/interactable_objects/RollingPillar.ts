@@ -176,7 +176,7 @@ export class RollablePillar extends InteractableObjects {
             if (rolling_direction === directions.left && char.tile_x_pos <= this.tile_x_pos) return;
 
             char.pushing = true;
-            this.game.physics.p2.pause();
+            char.toggle_collision(false);
             this.fire_rolling(char, next_contact, rolling_pillar_will_fall);
         }
     }
@@ -191,7 +191,7 @@ export class RollablePillar extends InteractableObjects {
         char.change_action(base_actions.PUSH, true);
 
         let promise_resolve;
-        let promise = new Promise(resolve => (promise_resolve = resolve));
+        const promise = new Promise(resolve => (promise_resolve = resolve));
 
         const dest_x = get_centered_pos_in_px(next_contact.x, this.data.map.tile_width);
         const dest_y = get_centered_pos_in_px(next_contact.y, this.data.map.tile_height);
@@ -263,7 +263,7 @@ export class RollablePillar extends InteractableObjects {
             }
         }
 
-        this.game.physics.p2.resume();
+        char.toggle_collision(true);
         char.pushing = false;
     }
 

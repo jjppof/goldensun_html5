@@ -77,7 +77,7 @@ export class DjinnGetEvent extends GameEvent {
     }
 
     next() {
-        this.dialog_manager.next(async finished => {
+        this.dialog_manager.next(finished => {
             this.control_enable = true;
             if (finished) {
                 this.finish();
@@ -97,7 +97,7 @@ export class DjinnGetEvent extends GameEvent {
         this.djinn.set_status(djinn_status.STANDBY, char);
         this.data.hero.play(base_actions.IDLE);
         this.data.game_event_manager.force_idle_action = true;
-        this.game.physics.p2.resume();
+        this.data.hero.toggle_collision(true);
         --this.data.game_event_manager.events_running_count;
         this.finish_events.forEach(event => event.fire(this.origin_npc));
         if (this.on_event_finish) {
@@ -111,7 +111,7 @@ export class DjinnGetEvent extends GameEvent {
         this.data.control_manager.detach_bindings(this.control_key);
         this.data.hero.play(base_actions.IDLE);
         this.data.game_event_manager.force_idle_action = true;
-        this.game.physics.p2.resume();
+        this.data.hero.toggle_collision(true);
         --this.data.game_event_manager.events_running_count;
         this.on_battle_defeat_events.forEach(event => event.fire(this.origin_npc));
     }
@@ -834,7 +834,6 @@ export class DjinnGetEvent extends GameEvent {
         });
         event.assign_finish_callback(victory => {
             this.djinn_defeated = victory;
-            this.game.physics.p2.pause();
             this.aux_resolve();
         });
         event.fire();
@@ -847,7 +846,8 @@ export class DjinnGetEvent extends GameEvent {
         this.origin_npc = oringin_npc;
         this.data.game_event_manager.force_idle_action = false;
         this.running = true;
-        this.game.physics.p2.pause();
+        this.data.hero.toggle_collision(false);
+        this.origin_npc.toggle_collision(false);
 
         if (this.origin_npc.interaction_pattern !== interaction_patterns.SIMPLE) {
             await this.data.game_event_manager.set_npc_and_hero_directions(this.origin_npc);

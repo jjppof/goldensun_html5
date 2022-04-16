@@ -212,7 +212,8 @@ export class Pushable extends InteractableObjects {
             } else {
                 this.data.audio.play_se("menu/positive_4");
             }
-            this.game.physics.p2.pause();
+            char.toggle_collision(false);
+            this.toggle_collision(false);
             let tween_x = 0,
                 tween_y = 0;
             let event_shift_x = 0,
@@ -327,7 +328,8 @@ export class Pushable extends InteractableObjects {
             Promise.all(promises).then(() => {
                 char.pushing = false;
                 if (enable_physics_at_end) {
-                    this.game.physics.p2.resume();
+                    char.toggle_collision(true);
+                    this.toggle_collision(true);
                 }
                 if (push_end !== undefined) {
                     push_end();

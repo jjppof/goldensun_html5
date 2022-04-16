@@ -41,6 +41,10 @@ export abstract class FieldAbilities {
     private extra_cast_check: () => boolean;
     private target_is_npc: boolean;
     private map_colors_sequence: boolean;
+    private previous_collision_status: {
+        char: boolean;
+        target?: boolean;
+    };
 
     /**
      * FieldAbilities Ctor.
@@ -249,7 +253,8 @@ export abstract class FieldAbilities {
         this.controllable_char.casting_psynergy = true;
         this.controllable_char.misc_busy = false;
         this.data.audio.play_se("psynergy/4");
-        this.game.physics.p2.pause();
+        this.previous_collision_status = {char: this.controllable_char.shapes_collision_active};
+        this.controllable_char.toggle_collision(false);
         this.controllable_char.stop_char(false);
 
         this.cast_direction = this.get_cast_direction(this.controllable_char.current_direction);
@@ -257,6 +262,10 @@ export abstract class FieldAbilities {
         if (this.need_target) {
             this.search_for_target();
             this.set_target_casted();
+            if (this.target_found) {
+                this.previous_collision_status.target = this.target_object.shapes_collision_active;
+                this.target_object.toggle_collision(false);
+            }
         }
 
         this.set_hero_cast_anim();
@@ -285,15 +294,18 @@ export abstract class FieldAbilities {
             },
             //after_destroy
             (reset_casting_psy_flag: boolean = true) => {
-                this.game.physics.p2.resume();
+                this.controllable_char.toggle_collision(this.previous_collision_status.char);
                 if (reset_casting_psy_flag) {
                     this.controllable_char.casting_psynergy = false;
                 }
-                if (this.target_found && this.target_object.is_interactable_object) {
-                    const events = (this.target_object as InteractableObjects).after_psynergy_cast_events[
-                        this.ability_key_name
-                    ];
-                    events?.forEach(e => e.fire());
+                if (this.target_found) {
+                    this.target_object.toggle_collision(this.previous_collision_status.target);
+                    if (this.target_object.is_interactable_object) {
+                        const events = (this.target_object as InteractableObjects).after_psynergy_cast_events[
+                            this.ability_key_name
+                        ];
+                        events?.forEach(e => e.fire());
+                    }
                 }
                 if (reset_casting_psy_flag) {
                     this.target_object = null;

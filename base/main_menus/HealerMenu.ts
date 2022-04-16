@@ -484,6 +484,9 @@ export class HealerMenu {
         await this.cure_animation();
         this.data.cursor_manager.show();
         char.remove_permanent_status(this.selected_perm_status);
+        if (this.selected_perm_status === permanent_status.DOWNED) {
+            char.current_hp = char.max_hp;
+        }
         this.coins_window.update_text(this.data.info.party_data.coins.toString(), this.coins_number);
         this.set_dialog({
             ask_for_input: true,
