@@ -897,9 +897,28 @@ export class MainChar extends Player {
      * @param char the char to be added.
      */
     static add_member_to_party(party_data: PartyData, char: MainChar) {
+        const members = party_data.members;
         char.in_party = true;
-        party_data.members.push(char);
-        party_data.avg_level = _.mean(party_data.members.map(char => char.level)) | 0;
+        members.push(char);
+
+        //updates party avg level
+        party_data.avg_level = _.meanBy(members, char => char.level) | 0;
+
+        //if necessary, distribute djinn among chars equally
+        const djinn_per_char_min = _.meanBy(members, char => char.djinni.length) | 0;
+        const djinn_buffer = [];
+        _.sortBy(members, c => c.djinni.length)
+            .reverse()
+            .forEach(char => {
+                if (char.djinni.length > djinn_per_char_min + 1) {
+                    const last_djinni = _.last(char.djinni);
+                    char.remove_djinn(last_djinni);
+                    djinn_buffer.push(last_djinni);
+                } else if (djinn_buffer.length && char.djinni.length < djinn_per_char_min) {
+                    const djinni_to_add = djinn_buffer.pop();
+                    char.add_djinn(djinni_to_add);
+                }
+            });
     }
 
     /**
