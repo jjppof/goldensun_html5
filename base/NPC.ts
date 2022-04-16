@@ -666,6 +666,10 @@ export class NPC extends ControllableChar {
         this.sprite.body.mass = 1;
         this.sprite.body.static = true;
         this.sprite.body.collides(this.data.collision.hero_collision_group);
+        this._shapes_collision_active = this.snapshot_info?.shapes_collision_active ?? true;
+        if (!this.shapes_collision_active) {
+            this.toggle_collision(false);
+        }
     }
 
     /**

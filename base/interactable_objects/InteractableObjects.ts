@@ -681,9 +681,15 @@ export class InteractableObjects {
         this._color_filter_active = false;
     }
 
+    /**
+     * Sets whether the collision body of this IO is enable or not.
+     * @param enable if true, activates the collision.
+     */
     toggle_collision(enable: boolean) {
-        this.sprite.body.data.shapes.forEach(shape => (shape.sensor = !enable));
-        this._shapes_collision_active = enable;
+        if (this.sprite?.body) {
+            this.sprite.body.data.shapes.forEach(shape => (shape.sensor = !enable));
+            this._shapes_collision_active = enable;
+        }
     }
 
     initialize_related_events(map: Map) {
@@ -1075,7 +1081,7 @@ export class InteractableObjects {
         }
         this.sprite.body.collides(this.data.collision.hero_collision_group);
         this._shapes_collision_active = this.snapshot_info?.shapes_collision_active ?? true;
-        if (!this._shapes_collision_active) {
+        if (!this.shapes_collision_active) {
             this.toggle_collision(false);
         }
     }

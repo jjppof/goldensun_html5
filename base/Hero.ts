@@ -306,5 +306,6 @@ export class Hero extends ControllableChar {
         this.sprite.body.fixedRotation = true;
         this.sprite.body.data.shapes[0].extra_radius = 0.005;
         this.sprite.body.data.ccdIterations = 1;
+        this._shapes_collision_active = true;
     }
 }

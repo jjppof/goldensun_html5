@@ -95,6 +95,7 @@ export type SnapshotData = {
             visible: boolean;
             movement_type: npc_movement_types;
             body_in_map: boolean;
+            shapes_collision_active: boolean;
             color_filter_active: boolean;
             color_filter_settings?: ColorFilterSettings;
         }[];
@@ -275,6 +276,7 @@ export class Snapshot {
                         visible: npc.sprite.visible,
                         movement_type: npc.movement_type,
                         body_in_map: this.data.map.body_in_map(npc),
+                        shapes_collision_active: npc.shapes_collision_active,
                         color_filter_active: npc.color_filter_active,
                         ...(npc.color_filter_active && {
                             color_filter_settings: {

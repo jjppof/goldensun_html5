@@ -149,6 +149,7 @@ export abstract class ControllableChar {
     private _rotating_elapsed: number;
     private _rotating_frame_index: number;
     private _default_scale: {x: number; y: number};
+    protected _shapes_collision_active: boolean;
 
     constructor(
         game: Phaser.Game,
@@ -234,6 +235,7 @@ export abstract class ControllableChar {
         this._footsteps = this.enable_footsteps ? new Footsteps(this.game, this.data, this) : null;
         this.crop_texture = false;
         this.shadow_following = true;
+        this._shapes_collision_active = false;
     }
 
     /** The char key. */
@@ -367,6 +369,11 @@ export abstract class ControllableChar {
     /** Returns whether it's an IO. Always returns false. */
     get is_interactable_object() {
         return false;
+    }
+
+    /** Whether the shapes of this char body are active (colliding) or not. */
+    get shapes_collision_active() {
+        return this._shapes_collision_active;
     }
 
     /** The collision layer that this NPC is. */
@@ -1498,6 +1505,17 @@ export abstract class ControllableChar {
     set_temporary_speed(x_speed?: number, y_speed?: number) {
         this.temp_speed.x = x_speed ?? this.temp_speed.x;
         this.temp_speed.y = y_speed ?? this.temp_speed.y;
+    }
+
+    /**
+     * Sets whether the collision body of this char is enable or not.
+     * @param enable if true, activates the collision.
+     */
+    toggle_collision(enable: boolean) {
+        if (this.sprite?.body) {
+            this.sprite.body.data.shapes.forEach(shape => (shape.sensor = !enable));
+            this._shapes_collision_active = enable;
+        }
     }
 
     /**
