@@ -101,7 +101,7 @@ export class RetreatFieldPsynergy extends FieldAbilities {
             this.controllable_char.shadow.visible = false;
         }
         this.data.camera.unfollow();
-        this.game.physics.p2.pause();
+        this.controllable_char.toggle_collision(false);
 
         const emitter = this.start_particles_emitter();
 
@@ -192,7 +192,7 @@ export class RetreatFieldPsynergy extends FieldAbilities {
         if (this.controllable_char.shadow) {
             this.controllable_char.shadow.visible = true;
         }
-        this.game.physics.p2.resume();
+        this.controllable_char.toggle_collision(false);
         this.data.camera.follow(this.controllable_char);
         this.game.camera.flash(0x0, undefined, true);
         this.game.camera.onFlashComplete.addOnce(() => {

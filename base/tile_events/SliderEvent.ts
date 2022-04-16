@@ -53,7 +53,7 @@ export class SliderEvent extends TileEvent {
         }
         this.data.tile_event_manager.on_event = true;
         this.data.hero.sliding = true;
-        this.game.physics.p2.pause();
+        this.data.hero.toggle_collision(false);
 
         const initial_x = this.data.map.tile_width * (this.x + 0.5);
         const initial_y = this.data.map.tile_height * (this.y + 0.6);
@@ -98,7 +98,7 @@ export class SliderEvent extends TileEvent {
                                     }
                                     this.game.time.events.add(80, () => {
                                         this.data.hero.sliding = false;
-                                        this.game.physics.p2.resume();
+                                        this.data.hero.toggle_collision(true);
                                         this.data.tile_event_manager.on_event = false;
                                     });
                                 });

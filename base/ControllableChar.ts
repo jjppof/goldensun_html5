@@ -741,7 +741,7 @@ export abstract class ControllableChar {
             } else {
                 tween_obj.x = dest_char.x;
             }
-            this.game.physics.p2.pause();
+            this.toggle_collision(false);
             this.jumping = true;
             if (this.sprite_info.hasAction(base_actions.JUMP)) {
                 let jump_init_resolve;
@@ -768,7 +768,7 @@ export abstract class ControllableChar {
                         this.sprite.animations.currentAnim.reverseOnce();
                         this.play(base_actions.JUMP, reverse_directions[jump_direction]);
                         this.sprite.animations.currentAnim.onComplete.addOnce(() => {
-                            this.game.physics.p2.resume();
+                            this.toggle_collision(true);
                             this.jumping = false;
                             if (!camera_follow) {
                                 this.data.camera.follow(current_camera_target);
@@ -776,7 +776,7 @@ export abstract class ControllableChar {
                             promise_resolve();
                         });
                     } else {
-                        this.game.physics.p2.resume();
+                        this.toggle_collision(true);
                         this.jumping = false;
                         if (!camera_follow) {
                             this.data.camera.follow(current_camera_target);

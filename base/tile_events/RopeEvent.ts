@@ -78,7 +78,7 @@ export class RopeEvent extends TileEvent {
 
         this.data.tile_event_manager.on_event = true;
         this.data.map.sprites_sort_paused = true;
-        this.game.physics.p2.pause();
+        this.data.hero.toggle_collision(false);
 
         if (this._starting_rope_dock) {
             if (this.data.hero.walking_over_rope) {
@@ -88,7 +88,7 @@ export class RopeEvent extends TileEvent {
             }
         }
 
-        this.game.physics.p2.resume();
+        this.data.hero.toggle_collision(true);
         this.data.tile_event_manager.on_event = false;
         this.data.map.sprites_sort_paused = false;
     }
