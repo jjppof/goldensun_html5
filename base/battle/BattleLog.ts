@@ -144,9 +144,6 @@ export class BattleLog {
         const current_property = pp_damage ? main_stats.CURRENT_PP : main_stats.CURRENT_HP;
         const max_property = pp_damage ? main_stats.MAX_PP : main_stats.MAX_HP;
         if (damage >= 0) {
-            if (target[current_property] - damage < 0) {
-                damage = target[current_property];
-            }
             await this.add(`${target.name} takes ${damage.toString()} damage!`);
         } else {
             if (target[current_property] >= target[max_property]) {

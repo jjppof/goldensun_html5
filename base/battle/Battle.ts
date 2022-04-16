@@ -925,7 +925,7 @@ export class Battle {
 
             const current_property = ability.affects_pp ? main_stats.CURRENT_PP : main_stats.CURRENT_HP;
             const max_property = ability.affects_pp ? main_stats.MAX_PP : main_stats.MAX_HP;
-            target_instance.current_hp = _.clamp(
+            target_instance[current_property] = _.clamp(
                 target_instance[current_property] - damage,
                 0,
                 target_instance[max_property]
