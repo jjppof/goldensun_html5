@@ -1109,11 +1109,15 @@ export class InteractableObjects {
         }
     }
 
+    /**
+     * Destroys the collision body of this IO.
+     * @param update_map if true, will tell the map that this body was removed.
+     */
     destroy_body(update_map: boolean = true) {
         if (this.body) {
             this.body.destroy();
             if (update_map) {
-                this.data.map.remove_body_tile(this.tile_x_pos, this.tile_y_pos, this.base_collision_layer, this);
+                this.data.map.remove_body_tile(this);
             }
         }
     }

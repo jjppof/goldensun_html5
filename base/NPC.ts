@@ -673,6 +673,19 @@ export class NPC extends ControllableChar {
     }
 
     /**
+     * Destroys the collision body of this NPC.
+     * @param update_map if true, will tell the map that this body was removed.
+     */
+    destroy_body(update_map: boolean = true) {
+        if (this.body) {
+            this.body.destroy();
+            if (update_map) {
+                this.data.map.remove_body_tile(this);
+            }
+        }
+    }
+
+    /**
      * Removes this NPC snapshot reference.
      */
     clear_snapshot() {

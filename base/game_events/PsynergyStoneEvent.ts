@@ -86,13 +86,15 @@ export class PsynergyStoneEvent extends GameEvent {
             particle.animations.currentAnim.setFrame((Math.random() * particle.animations.frameTotal) | 0);
         });
 
-        this.game.physics.p2.pause();
+        this.origin_npc.toggle_collision(false);
         this.origin_npc.sprite.send_to_front = true;
         this.data.map.sort_sprites();
         this.game.add
             .tween(this.origin_npc.sprite.body)
             .to({x: stone_sprite_x, y: stone_sprite_y}, 300, Phaser.Easing.Linear.None, true);
         await this.set_text(GET_TEXT(hero_name));
+
+        this.origin_npc.destroy_body();
 
         //Recover PP and show status window
         this.data.main_menu.chars_status_window.show();
@@ -123,7 +125,6 @@ export class PsynergyStoneEvent extends GameEvent {
         this.control_enable = false;
         this.data.control_manager.detach_bindings(this.control_key);
         this.data.game_event_manager.force_idle_action = true;
-        this.game.physics.p2.resume();
         --this.data.game_event_manager.events_running_count;
         this.finish_events.forEach(event => event.fire(this.origin_npc));
     }

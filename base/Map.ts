@@ -737,7 +737,7 @@ export class Map {
         new_col_index: number,
         instance: NPC | InteractableObjects
     ) {
-        this.remove_body_tile(old_x, old_y, old_col_index, instance);
+        this.remove_body_tile(instance, old_x, old_y, old_col_index);
         if (new_col_index in this._bodies_positions) {
             const new_location_key = IntegerPairKey.get_key(new_x, new_y);
             if (new_location_key in this._bodies_positions[new_col_index]) {
@@ -755,7 +755,10 @@ export class Map {
      * @param collision_layer the collision index.
      * @param instance the NPC or IO instance.
      */
-    remove_body_tile(x_tile: number, y_tile: number, collision_layer: number, instance: NPC | InteractableObjects) {
+    remove_body_tile(instance: NPC | InteractableObjects, x_tile?: number, y_tile?: number, collision_layer?: number) {
+        x_tile = x_tile ?? instance.tile_x_pos;
+        y_tile = y_tile ?? instance.tile_y_pos;
+        collision_layer = collision_layer ?? instance.base_collision_layer;
         if (collision_layer in this._bodies_positions) {
             const location_key = IntegerPairKey.get_key(x_tile, y_tile);
             this._bodies_positions[collision_layer][location_key] = this._bodies_positions[collision_layer][
