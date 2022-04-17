@@ -9,7 +9,7 @@ function createWindow() {
     const win = new BrowserWindow({
         width: 480,
         height: 320,
-        // resizable: false,
+        resizable: false,
         center: true,
         useContentSize: true,
         autoHideMenuBar: true,
@@ -26,13 +26,11 @@ function createWindow() {
     win.loadFile('../index-electron.html');
 }
 
-app.commandLine.appendSwitch(
-    // would be nice if we could limit fps to 60.
-    // "--disable-frame-rate-limit",
-    // "--disable-gpu-vsync",
-    // "--max-gum-fps=\"60\"",
-    "--force_high_performance_gpu",
-);
+app.commandLine.appendSwitch('limit-fps', 60);
+app.commandLine.appendSwitch('max-gum-fps', 60);
+app.commandLine.appendSwitch('disable-gpu-vsync');
+// app.commandLine.appendSwitch('disable-frame-rate-limit');
+app.commandLine.appendSwitch('force_high_performance_gpu');
 
 app.whenReady().then(() => {
     createWindow();
