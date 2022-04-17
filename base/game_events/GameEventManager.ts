@@ -318,13 +318,10 @@ export class GameEventManager {
                     this.data,
                     info.active,
                     info.key_name,
-                    info.text,
-                    info.avatar,
+                    info.dialog_info,
                     info.npc_hero_reciprocal_look,
                     info.reset_reciprocal_look,
-                    info.finish_events,
-                    info.voice_key,
-                    info.disable_controls
+                    info.finish_events
                 );
             case event_types.LOOK:
                 return new LookEvent(
