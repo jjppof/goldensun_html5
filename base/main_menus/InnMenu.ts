@@ -4,6 +4,20 @@ import {GoldenSun} from "../GoldenSun";
 import {TextObj, Window} from "../Window";
 import * as _ from "lodash";
 
+export type Inn = {
+    inn_id: string;
+    avatar_key: string;
+    cost: number;
+    messages: {
+        welcome_message: string;
+        price_message: string;
+        cancel_message: string;
+        stay_message: string;
+        goodbye_message: string;
+        not_enough_coins: string;
+    };
+};
+
 export class InnMenu {
     public game: Phaser.Game;
     public data: GoldenSun;

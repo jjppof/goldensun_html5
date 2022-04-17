@@ -15,7 +15,6 @@ import {SpriteBase} from "../SpriteBase";
 import {Djinn} from "../Djinn";
 import {Ability} from "../Ability";
 import {Item} from "../Item";
-import {Inn} from "../Inn";
 import {FieldAbilities} from "../field_abilities/FieldAbilities";
 import {Summon} from "../Summon";
 import {GoldenSun} from "../GoldenSun";
@@ -24,6 +23,7 @@ import {initialize_npcs_data} from "./npcs";
 import {initialize_cast_recipes} from "./cast_recipes";
 import {ShopItem, Shop} from "../main_menus/ShopMenu";
 import {Button} from "../XGamepad";
+import {Inn} from "main_menus/InnMenu";
 
 export type PartyData = {
     members: MainChar[];
