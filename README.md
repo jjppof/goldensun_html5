@@ -42,6 +42,7 @@ Some useful tools that I use to manage the resources:
 - [XnConvert](https://www.xnview.com/en/xnconvert/) (for batch image convertion)
 - [Format Factory](http://www.pcfreetime.com/formatfactory/index.php) (for converting audio files)
 - [Audacity](https://www.audacityteam.org/) (for editing audio files)
+- [ScreenToGif](https://www.screentogif.com/) (for creating gifs and reporting bugs)
 
 ## Credits
 - **http://www.goldensunhacking.net/** (This project would be impossible without these guys)
