@@ -275,7 +275,6 @@ export class GameEventManager {
                     info.condition,
                     info.left_comparator_value,
                     info.right_comparator_value,
-                    info.has_else,
                     info.events,
                     info.else_events
                 );

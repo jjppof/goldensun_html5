@@ -14,7 +14,6 @@ export class BranchEvent extends GameEvent {
     private condition: conditions;
     private left_comparator_value: EventValue;
     private right_comparator_value: EventValue;
-    private has_else: boolean;
     private events: GameEvent[] = [];
     private else_events: GameEvent[] = [];
 
@@ -26,7 +25,6 @@ export class BranchEvent extends GameEvent {
         condition,
         left_comparator_value,
         right_comparator_value,
-        has_else,
         events,
         else_events
     ) {
@@ -34,7 +32,6 @@ export class BranchEvent extends GameEvent {
         this.condition = condition;
         this.left_comparator_value = left_comparator_value;
         this.right_comparator_value = right_comparator_value;
-        this.has_else = has_else;
         this.initialize_events(events, else_events);
     }
 
@@ -92,7 +89,7 @@ export class BranchEvent extends GameEvent {
 
         if (result) {
             this.events.forEach(event => event.fire(this.origin_npc));
-        } else if (this.has_else) {
+        } else if (this.else_events.length) {
             this.else_events.forEach(event => event.fire(this.origin_npc));
         }
     }
