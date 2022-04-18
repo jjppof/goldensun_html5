@@ -15,14 +15,21 @@ export class DialogManager {
     private static readonly DIALOG_CRYSTAL_KEY = "dialog_crystal";
     private static readonly VOICE_MIN_INTERVAL: number = 50;
     private static readonly COLOR_START = /\${COLOR:(\w+)}/;
+    private static readonly COLOR_START_G = /\${COLOR:(\w+)}/g;
     private static readonly COLOR_START_GLOB = /\${COLOR:(\w+)}/g;
     private static readonly COLOR_END = /\${COLOR:\/}/;
+    private static readonly COLOR_END_G = /\${COLOR:\/}/g;
+    private static readonly PAUSE_PATTERN = /\$\{PAUSE:(\d+)\}/;
+    private static readonly PAUSE_PATTERN_G = /\$\{PAUSE:(\d+)\}/g;
 
     private game: Phaser.Game;
     private data: GoldenSun;
     private parts: {
         lines: string[];
         colors: number[][];
+        pauses: {
+            [letter_index: number]: number;
+        }[];
         width: number;
         height: number;
     }[];
@@ -276,6 +283,7 @@ export class DialogManager {
                         animate: true,
                         colors: this.parts[step].colors,
                         word_callback: play_voice,
+                        pauses: this.parts[step].pauses,
                     })
                     .then(() => {
                         if (step < this.parts.length - 1 || this.show_crystal) {
@@ -342,6 +350,7 @@ export class DialogManager {
      * Use ${HERO} to replace by hero name.
      * Use ${BREAK} to start a new window.
      * Use ${BREAK_LINE} to break line.
+     * Use ${PAUSE:duration_ms} to delay the dialog for the given duration value in ms.
      * Use ${STORAGE:storage_key} to replace by by a storage value with the given key.
      * Place your text between ${COLOR:hex_value} and ${COLOR:/} to change its color.
      * @param text The text to be formatted.
@@ -397,14 +406,18 @@ export class DialogManager {
         let lines = []; //array of strings
         let line = []; //array of words
         let line_width = 0; //in px
+        let line_length = 0;
         let max_window_width = 0;
         let line_color = [];
         let lines_color = [];
+        let line_pauses = {};
+        let lines_pauses = [];
         let this_color = this.font_color;
         const push_window = () => {
             windows.push({
                 lines: lines.slice(),
                 colors: lines_color.slice(),
+                pauses: _.cloneDeep(lines_pauses),
                 width: max_window_width + 2 * numbers.WINDOW_PADDING_H + numbers.INSIDE_BORDER_WIDTH,
                 height:
                     numbers.WINDOW_PADDING_TOP +
@@ -414,6 +427,7 @@ export class DialogManager {
             });
         };
         const push_line = () => {
+            line_length = 0;
             const line_text = line.filter(Boolean).join(" ");
             lines.push(line_text);
             for (let i = 0; i < line_text.length; ++i) {
@@ -422,13 +436,26 @@ export class DialogManager {
                 }
             }
             lines_color.push(line_color);
+            lines_pauses.push(Object.keys(line_pauses).length ? line_pauses : null);
             max_window_width = Math.max(max_window_width, utils.get_text_width(this.game, line_text, this.italic_font));
         };
         for (let i = 0; i < words.length; ++i) {
             let word = words[i];
-            const match = word.match(/\${COLOR:(?:(\w+)|(\/))}/);
+
+            let temp_word = word.replaceAll(DialogManager.COLOR_START_G, "").replaceAll(DialogManager.COLOR_END_G, "");
+            let pause_match = DialogManager.PAUSE_PATTERN.exec(temp_word);
+            while (pause_match) {
+                const index_in_word = pause_match.index;
+                const pause_duration = parseInt(pause_match[1]);
+                temp_word = temp_word.replace(DialogManager.PAUSE_PATTERN, "");
+                line_pauses[line_length + index_in_word] = pause_duration;
+                pause_match = DialogManager.PAUSE_PATTERN.exec(temp_word);
+            }
+            word = word.replaceAll(DialogManager.PAUSE_PATTERN_G, "");
+
+            const color_match = word.match(/\${COLOR:(?:(\w+)|(\/))}/);
             let letter_colors: number[];
-            if (match) {
+            if (color_match) {
                 const colors_seq = [];
                 let current_start_idx = 0;
                 do {
@@ -466,13 +493,16 @@ export class DialogManager {
             } else {
                 letter_colors = new Array(word.length).fill(this_color);
             }
+
             line_width = utils.get_text_width(this.game, line.filter(Boolean).join(" ") + word, this.italic_font);
             if (line_width >= max_efective_width || word === "${BREAK}" || word === "${BREAK_LINE}") {
                 //check if it's the end of the line
                 push_line();
                 line = [];
                 line_color = [];
+                line_pauses = {};
                 if (word !== "${BREAK}" && word !== "${BREAK_LINE}") {
+                    line_length += word.length + 1;
                     line.push(word);
                     line_color.push(...letter_colors);
                 }
@@ -482,8 +512,10 @@ export class DialogManager {
                     max_window_width = 0;
                     lines = [];
                     lines_color = [];
+                    lines_pauses = [];
                 }
             } else {
+                line_length += word.length + 1;
                 line.push(word);
                 line_color.push(...letter_colors);
             }

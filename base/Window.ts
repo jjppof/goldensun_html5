@@ -755,6 +755,12 @@ export class Window {
             colors?: number | number[][];
             /** A callback the is called whenever a word is displayed in the window when animate is true. */
             word_callback?: (word?: string, current_text?: string) => void;
+            /** Specific points to pause/delay the dialog. Each array item represents a line.
+             * An item is an object containing the follow key:value -> line_letter_index:duration_ms.
+             * The duration is in ms. */
+            pauses?: {
+                [letter_index: number]: number;
+            }[];
         }
     ) {
         const top_shift = options?.italic ? -2 : 0;
@@ -799,13 +805,48 @@ export class Window {
 
             if (options?.animate) {
                 const words = line.split(" ");
+                const pauses = options.pauses ? options.pauses[i] : null;
+                const pauses_indexes = pauses
+                    ? Object.keys(pauses)
+                          .map(i => parseInt(i))
+                          .sort()
+                    : null;
                 let words_index = 0;
                 let line_promise_resolve;
+                let line_length = 0;
+                const append_text = (text: string) => {
+                    text_sprite.text += text;
+                    if (text_sprite_shadow) {
+                        text_sprite_shadow.text += text;
+                    }
+                };
                 const repeater = () => {
-                    this.game.time.events.repeat(30, words.length, () => {
-                        text_sprite.text += words[words_index] + " ";
-                        if (text_sprite_shadow) {
-                            text_sprite_shadow.text += words[words_index] + " ";
+                    const repeater_timer = this.game.time.events.repeat(30, words.length, async () => {
+                        const word_to_append = words[words_index] + " ";
+                        if (pauses) {
+                            const final_index = line_length + word_to_append.length;
+                            let initial_slice = 0;
+                            for (let j = 0; j < pauses_indexes.length; ++j) {
+                                const pause_index = pauses_indexes[j];
+                                if (pause_index >= line_length && pause_index < final_index) {
+                                    const final_slice = initial_slice + pause_index - line_length;
+                                    append_text(word_to_append.slice(initial_slice, final_slice));
+                                    initial_slice = final_slice;
+                                    line_length = pause_index;
+                                    repeater_timer.timer.pause();
+                                    await utils.promised_wait(this.game, pauses[pause_index]);
+                                    repeater_timer.timer.resume();
+                                }
+                            }
+                            if (line_length < final_index) {
+                                append_text(
+                                    word_to_append.slice(initial_slice, initial_slice + final_index - line_length)
+                                );
+                                line_length = final_index;
+                            }
+                        } else {
+                            line_length += word_to_append.length;
+                            append_text(word_to_append);
                         }
                         ++words_index;
                         if (options?.word_callback) {
@@ -815,6 +856,7 @@ export class Window {
                             line_promise_resolve();
                         }
                     });
+                    repeater_timer.timer.start();
                 };
                 if (!lines_promises.length) {
                     repeater();
