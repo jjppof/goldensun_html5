@@ -10,6 +10,7 @@ type DialogInfo = {
     avatar: string;
     voice_key: string;
     consider_hero_direction: boolean;
+    reference_npc: string;
     custom_pos: {
         x: number;
         y: number;
@@ -169,10 +170,14 @@ export class DialogEvent extends GameEvent {
         this.current_info = this.dialog_info[this.dialog_index];
         ++this.dialog_index;
         this.set_control();
+        const reference_npc = this.current_info.reference_npc
+            ? this.data.map.npcs_label_map[this.current_info.reference_npc]
+            : null;
         this.dialog_manager = new DialogManager(this.game, this.data);
         this.dialog_manager.set_dialog(this.current_info.text, {
-            avatar: this.current_info.avatar ?? this.origin_npc.avatar,
-            voice_key: this.current_info.voice_key ?? this.origin_npc.voice_key,
+            avatar: this.current_info.avatar ?? (reference_npc ? reference_npc.avatar : this.origin_npc.avatar),
+            voice_key:
+                this.current_info.voice_key ?? (reference_npc ? reference_npc.voice_key : this.origin_npc.voice_key),
             hero_direction: this.current_info.consider_hero_direction ? this.data.hero.current_direction : null,
         });
         this.next();
