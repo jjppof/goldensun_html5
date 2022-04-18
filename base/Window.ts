@@ -135,9 +135,11 @@ export class Window {
     get font_color() {
         return this._font_color;
     }
+    /** The x position relative to camera in px. */
     get x() {
         return this._x;
     }
+    /** The y position relative to camera in px. */
     get y() {
         return this._y;
     }
@@ -156,9 +158,11 @@ export class Window {
     get open() {
         return this._open;
     }
+    /** The x world position in px. */
     get real_x() {
         return this.group.x;
     }
+    /** The y world position in px. */
     get real_y() {
         return this.group.y;
     }

@@ -321,6 +321,8 @@ export class GameEventManager {
                     info.dialog_info,
                     info.npc_hero_reciprocal_look,
                     info.reset_reciprocal_look,
+                    info.end_with_yes_no,
+                    info.yes_no_events,
                     info.finish_events
                 );
             case event_types.LOOK:
@@ -569,13 +571,19 @@ export class GameEventManager {
                     case game_info_types.HERO:
                         return _.get(this.data.hero, event_value.value.property);
                     case game_info_types.NPC:
-                        const npc = this.data.map.npcs[event_value.value.index];
+                        const npc = event_value.value.label
+                            ? this.data.map.npcs_label_map[event_value.value.label]
+                            : this.data.map.npcs[event_value.value.index];
                         return _.get(npc, event_value.value.property);
                     case game_info_types.INTERACTABLE_OBJECT:
-                        const interactable_object = this.data.map.interactable_objects[event_value.value.index];
+                        const interactable_object = event_value.value.label
+                            ? this.data.map.interactable_objects_label_map[event_value.value.label]
+                            : this.data.map.interactable_objects[event_value.value.index];
                         return _.get(interactable_object, event_value.value.property);
                     case game_info_types.EVENT:
-                        const event = TileEvent.get_event(event_value.value.index);
+                        const event = event_value.value.label
+                            ? TileEvent.get_labeled_event(event_value.value.label)
+                            : TileEvent.get_event(event_value.value.index);
                         return _.get(event, event_value.value.property);
                     default:
                         return null;

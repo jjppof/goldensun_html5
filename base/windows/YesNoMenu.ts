@@ -69,7 +69,7 @@ export class YesNoMenu {
         return this.menu.menu_active;
     }
 
-    open(callbacks: {yes?: Function; no?: Function}, custom_pos?: {x: number; y: number}, open_callback?: Function) {
+    open(callbacks: {yes?: Function; no?: Function}, custom_pos?: {x?: number; y?: number}, open_callback?: Function) {
         this.yes_callback = callbacks.yes ?? (() => {});
         this.no_callback = callbacks.no ?? (() => {});
 

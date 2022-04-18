@@ -26,7 +26,7 @@ export class DialogManager {
         width: number;
         height: number;
     }[];
-    private step: number;
+    private _step: number;
     private finished: boolean;
     private avatar: string;
     private voice_key: string;
@@ -49,7 +49,7 @@ export class DialogManager {
         this.italic_font = italic_font;
 
         this.parts = null; //parts of the dialog text
-        this.step = 0; //step index
+        this._step = 0; //step index
         this.finished = false;
 
         this.avatar = null;
@@ -62,6 +62,20 @@ export class DialogManager {
         this.show_crystal = false;
         this.mind_read_window = mind_read_window;
         this.font_color = this.mind_read_window ? Window.MIND_READ_FONT_COLOR : numbers.DEFAULT_FONT_COLOR;
+    }
+
+    get window_x() {
+        if (this.window) {
+            return this.window.x;
+        }
+        return null;
+    }
+
+    get window_y() {
+        if (this.window) {
+            return this.window.y;
+        }
+        return null;
     }
 
     get current_width() {
@@ -80,6 +94,14 @@ export class DialogManager {
 
     get is_finished() {
         return this.finished;
+    }
+
+    get step() {
+        return this._step;
+    }
+
+    get size() {
+        return this.parts?.length ?? 0;
     }
 
     /**
@@ -194,7 +216,7 @@ export class DialogManager {
             this.window = null;
         }
         this.mount_window(callback, custom_pos, custom_avatar_pos);
-        ++this.step;
+        ++this._step;
     }
 
     /**
@@ -359,6 +381,7 @@ export class DialogManager {
             voice_key?: string;
         }
     ) {
+        this._step = 0;
         this.avatar = options?.avatar;
         this.voice_key = options?.voice_key;
         this.set_hero_direction(options?.hero_direction);
@@ -500,7 +523,6 @@ export class DialogManager {
         }
     ) {
         this.parts = null;
-        this.step = 0;
         if (this.window) {
             this.window.destroy(false);
             this.window = null;
