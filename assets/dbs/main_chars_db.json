@@ -261,7 +261,7 @@
             },{
                 "key_name": "thunder_crown",
                 "quantity": 1,
-                "equipped": true
+                "equipped": false
             },{
                 "key_name": "lifting_gem",
                 "quantity": 1,

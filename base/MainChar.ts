@@ -414,6 +414,9 @@ export class MainChar extends Player {
         for (let i = 0; i < item.effects.length; ++i) {
             this.add_effect(item.effects[i], item);
         }
+        if (item.curses_when_equipped) {
+            this.add_permanent_status(permanent_status.EQUIP_CURSE);
+        }
 
         this.update_elemental_attributes();
         if (item.type === item_types.ABILITY_GRANTOR) {

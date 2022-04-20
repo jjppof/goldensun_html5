@@ -543,6 +543,15 @@ export class Battle {
             return;
         }
 
+        //check whether the char will skip this turn due to cursed item
+        //Curse check: 1/4 chance of not being able to move
+        if (action.caster.has_permanent_status(permanent_status.EQUIP_CURSE) && Math.random() < 0.25) {
+            await this.battle_log.add(`${action.caster.name} is bound and cannot move!`);
+            await this.wait_for_key();
+            this.check_phases();
+            return;
+        }
+
         //check whether all targets are downed and change ability to "defend" in the case it's true
         for (let i = 0; i < action.targets.length; ++i) {
             const target = action.targets[i];

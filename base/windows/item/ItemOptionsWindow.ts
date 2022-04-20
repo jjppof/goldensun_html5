@@ -5,11 +5,12 @@ import {ItemQuantityManagerWindow} from "./ItemQuantityManagerWindow";
 import {UseGiveItemWindow} from "./UseGiveItemWindow";
 import {GoldenSun} from "../../GoldenSun";
 import {Button} from "../../XGamepad";
-import {ItemSlot, MainChar} from "../../MainChar";
+import {ItemSlot, item_equip_slot, MainChar} from "../../MainChar";
 import {Item, item_types} from "../../Item";
 import {MainItemMenu} from "../../main_menus/MainItemMenu";
 import {CursorManager, PointVariants} from "../../utils/CursorManager";
 import {StatsOrClassCheckWithItemWindow} from "./StatsOrClassCheckWithItemWindow";
+import {get_text_width} from "../../utils";
 
 const WIN_WIDTH = 132;
 const WIN_HEIGHT = 52;
@@ -34,7 +35,7 @@ const ITEM_ICON_Y = 8;
 const DISABLE_COLOR = 0x606060;
 const ENABLE_COLOR = 0xffffff;
 
-const ACTION_WINDOW_MSG_X = 122;
+const ACTION_WINDOW_MSG_X = 110;
 const ACTION_WINDOW_MSG_Y = 66;
 const ACTION_WINDOW_MSG_WIDTH = 67;
 const ACTION_WINDOW_MSG_HEIGHT = 20;
@@ -168,7 +169,7 @@ export class ItemOptionsWindow {
             ACTION_WINDOW_MSG_HEIGHT
         );
 
-        this.action_msg = this.action_message_window.set_text_in_position("");
+        this.action_msg = this.action_message_window.set_text_in_position("", undefined, undefined, {italic: true});
     }
 
     hide() {
@@ -227,6 +228,9 @@ export class ItemOptionsWindow {
 
     set_available_options() {
         this.show_text();
+        const current_char_slot: ItemSlot = this.item.equipable
+            ? this.char.equip_slots[item_equip_slot[this.item.type]]
+            : null;
         if (
             !this.item.use_ability ||
             this.item_obj.broken ||
@@ -238,14 +242,22 @@ export class ItemOptionsWindow {
             this.text_sprites.use.text.tint = ENABLE_COLOR;
             this.option_active.use = true;
         }
-        if (!this.item.equipable || this.item_obj.equipped || !this.item.equipable_chars.includes(this.char.key_name)) {
+        if (
+            !this.item.equipable ||
+            this.item_obj.equipped ||
+            !this.item.equipable_chars.includes(this.char.key_name) ||
+            (current_char_slot && this.data.info.items_list[current_char_slot.key_name].curses_when_equipped)
+        ) {
             this.text_sprites.equip.text.tint = DISABLE_COLOR;
             this.option_active.equip = false;
         } else {
             this.text_sprites.equip.text.tint = ENABLE_COLOR;
             this.option_active.equip = true;
         }
-        if (this.data.info.party_data.members.length <= 1) {
+        if (
+            this.data.info.party_data.members.length <= 1 ||
+            (this.item_obj.equipped && this.item.curses_when_equipped)
+        ) {
             this.text_sprites.give.text.tint = DISABLE_COLOR;
             this.option_active.give = false;
         } else {
@@ -255,7 +267,8 @@ export class ItemOptionsWindow {
         if (
             !this.item.equipable ||
             !this.item_obj.equipped ||
-            !this.item.equipable_chars.includes(this.char.key_name)
+            !this.item.equipable_chars.includes(this.char.key_name) ||
+            (this.item_obj.equipped && this.item.curses_when_equipped)
         ) {
             this.text_sprites.remove.text.tint = DISABLE_COLOR;
             this.option_active.remove = false;
@@ -263,7 +276,7 @@ export class ItemOptionsWindow {
             this.text_sprites.remove.text.tint = ENABLE_COLOR;
             this.option_active.remove = true;
         }
-        if (this.item.important_item) {
+        if (this.item.important_item || (this.item_obj.equipped && this.item.curses_when_equipped)) {
             this.text_sprites.drop.text.tint = DISABLE_COLOR;
             this.option_active.drop = false;
         } else {
@@ -302,6 +315,8 @@ export class ItemOptionsWindow {
     }
 
     open_action_message_window(text: string, close_callback: Function) {
+        const text_width = get_text_width(this.game, text, true);
+        this.action_message_window.update_size({width: text_width + 10});
         this.action_message_window.update_text(text, this.action_msg);
         this.data.cursor_manager.hide();
         if (this.stats_update_callback !== undefined) {
@@ -347,8 +362,14 @@ export class ItemOptionsWindow {
             if (this.vertical_index === 0 && this.option_active.equip) {
                 //Equip
                 this.char.equip_item(this.item_obj.index);
-                this.open_action_message_window("Equipped.", () => {
-                    this.close(this.close_callback);
+                this.open_action_message_window("Equipped it.", () => {
+                    if (this.item.curses_when_equipped) {
+                        this.open_action_message_window("You were cursed!", () => {
+                            this.close(this.close_callback);
+                        });
+                    } else {
+                        this.close(this.close_callback);
+                    }
                 });
             }
             if (this.vertical_index === 1 && this.option_active.remove) {

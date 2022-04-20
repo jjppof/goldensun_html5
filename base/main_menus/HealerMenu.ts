@@ -1,6 +1,6 @@
 import {GoldenSun} from "../GoldenSun";
 import {degree360} from "../magic_numbers";
-import {MainChar} from "../MainChar";
+import {equip_slots, MainChar} from "../MainChar";
 import {NPC} from "../NPC";
 import {permanent_status} from "../Player";
 import {CharsMenu, CharsMenuModes} from "../support_menus/CharsMenu";
@@ -486,6 +486,16 @@ export class HealerMenu {
         char.remove_permanent_status(this.selected_perm_status);
         if (this.selected_perm_status === permanent_status.DOWNED) {
             char.current_hp = char.max_hp;
+        } else if (this.selected_perm_status === permanent_status.EQUIP_CURSE) {
+            for (let slot_type in char.equip_slots) {
+                const slot = char.equip_slots[slot_type as equip_slots];
+                if (slot) {
+                    const item = this.data.info.items_list[slot.key_name];
+                    if (item.curses_when_equipped) {
+                        char.unequip_item(slot.index);
+                    }
+                }
+            }
         }
         this.coins_window.update_text(this.data.info.party_data.coins.toString(), this.coins_number);
         this.set_dialog({

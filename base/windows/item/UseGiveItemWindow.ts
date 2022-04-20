@@ -207,7 +207,7 @@ export class UseGiveItemWindow {
     }
 
     on_give(equip?: boolean) {
-        if (!equip) {
+        if (equip === undefined) {
             equip = this.answer_index === YES_Y ? true : false;
         }
 
@@ -239,12 +239,23 @@ export class UseGiveItemWindow {
         this.yes_text.text.visible = this.no_text.text.visible = false;
         this.yes_text.shadow.visible = this.no_text.shadow.visible = false;
 
-        this.item_menu.item_options_window.open_action_message_window("Given.", () => {
+        const on_action_window_close = () => {
             const char_index = this.data.info.party_data.members.indexOf(this.char);
             this.item_menu.item_options_window.close(() => {
                 this.item_menu.item_options_window.close_callback(true, char_index);
             });
             this.close();
+        };
+
+        const action_window_text = equip ? "Equipped it." : "Given.";
+        this.item_menu.item_options_window.open_action_message_window(action_window_text, () => {
+            if (this.item.curses_when_equipped) {
+                this.item_menu.item_options_window.open_action_message_window("You were cursed!", () => {
+                    on_action_window_close();
+                });
+            } else {
+                on_action_window_close();
+            }
         });
     }
 
