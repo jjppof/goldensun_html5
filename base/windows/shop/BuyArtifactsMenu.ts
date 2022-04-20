@@ -153,9 +153,30 @@ export class BuyArtifactsMenu {
         this.data.control_manager.add_simple_controls(this.check_game_ticket.bind(this));
     }
 
-    equip_new_item() {
+    async show_cursed_msg() {
+        let promise_resolve;
+        const promise = new Promise(resolve => (promise_resolve = resolve));
+        const cursed_msg_win = new Window(this.game, 64, 32, 140, 20);
+        cursed_msg_win.set_text_in_position("You've been cursed!", undefined, undefined, {italic: true});
+        cursed_msg_win.show(() => {
+            this.data.control_manager.add_simple_controls(() => {
+                cursed_msg_win.close(() => {
+                    cursed_msg_win.destroy(false);
+                    promise_resolve();
+                });
+            });
+        });
+        await promise;
+    }
+
+    async equip_new_item() {
         const item_type = this.data.info.items_list[this.selected_item.key_name].type;
         const char_slots = this.selected_character.equip_slots;
+
+        if (this.data.info.items_list[this.selected_item.key_name].curses_when_equipped) {
+            this.npc_dialog.close_dialog();
+            await this.show_cursed_msg();
+        }
 
         this.npc_dialog.update_dialog("equip_compliment", true);
 
@@ -307,7 +328,12 @@ export class BuyArtifactsMenu {
 
                     this.parent.update_items();
 
-                    if (equip_ask) {
+                    const slot_type = item_to_add.equipable ? item_equip_slot[item_to_add.type] : null;
+                    const slot_key_name = slot_type ? this.selected_character.equip_slots[slot_type]?.key_name : null;
+                    const has_cursed_slot = slot_key_name
+                        ? this.data.info.items_list[slot_key_name].curses_when_equipped
+                        : false;
+                    if (equip_ask && !has_cursed_slot) {
                         let equip_now = () => {
                             let text = this.npc_dialog.get_message("equip_now");
                             text = this.npc_dialog.replace_text(text, this.selected_character.name);

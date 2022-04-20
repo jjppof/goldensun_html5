@@ -249,7 +249,7 @@ export class UseGiveItemWindow {
 
         const action_window_text = equip ? "Equipped it." : "Given.";
         this.item_menu.item_options_window.open_action_message_window(action_window_text, () => {
-            if (this.item.curses_when_equipped) {
+            if (equip && this.item.curses_when_equipped) {
                 this.item_menu.item_options_window.open_action_message_window("You were cursed!", () => {
                     on_action_window_close();
                 });

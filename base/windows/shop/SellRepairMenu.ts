@@ -206,24 +206,28 @@ export class SellRepairMenu {
             this.inv_win_pos = this.inv_win.cursor_pos;
             this.selected_item = this.inv_win.item_grid[this.inv_win_pos.line][this.inv_win_pos.col];
 
-            if (this.data.info.items_list[this.selected_item.key_name].important_item) {
-                this.npc_dialog.update_dialog("cant_sell", true);
+            const item = this.data.info.items_list[this.selected_item.key_name];
+            if (item.important_item) {
+                this.npc_dialog.update_dialog("cant_sell_important", true);
+
+                this.data.control_manager.add_simple_controls(
+                    this.on_character_select.bind(this, "sell_follow_up", this.inv_win_pos)
+                );
+            } else if (item.curses_when_equipped && this.selected_item.equipped) {
+                let text = this.npc_dialog.get_message("cant_sell_equipped_cursed");
+                text = this.npc_dialog.replace_text(text, undefined, item.name);
+                this.npc_dialog.update_dialog(text, true, false);
 
                 this.data.control_manager.add_simple_controls(
                     this.on_character_select.bind(this, "sell_follow_up", this.inv_win_pos)
                 );
             } else if (this.selected_item.quantity === 1) {
-                let msg_key = this.data.info.items_list[this.selected_item.key_name].rare_item
-                    ? "sell_artifact"
-                    : "sell_normal";
+                let msg_key = item.rare_item ? "sell_artifact" : "sell_normal";
 
                 let text = this.npc_dialog.get_message(msg_key);
-                let item_name =
-                    msg_key === "sell_normal" ? this.data.info.items_list[this.selected_item.key_name].name : undefined;
+                let item_name = msg_key === "sell_normal" ? item.name : undefined;
                 let item_price =
-                    (this.data.info.items_list[this.selected_item.key_name].price *
-                        (this.selected_item.broken ? SELL_BROKEN_MULTIPLIER : SELL_MULTIPLIER)) |
-                    0;
+                    (item.price * (this.selected_item.broken ? SELL_BROKEN_MULTIPLIER : SELL_MULTIPLIER)) | 0;
                 text = this.npc_dialog.replace_text(text, undefined, item_name, String(item_price));
                 this.npc_dialog.update_dialog(text, false, false);
 
@@ -231,9 +235,7 @@ export class SellRepairMenu {
                     {
                         yes: this.on_sale_success.bind(this, 1),
                         no: () => {
-                            let decline_msg = this.data.info.items_list[this.selected_item.key_name].rare_item
-                                ? "decline_sell_artifact"
-                                : "decline_sell_normal";
+                            let decline_msg = item.rare_item ? "decline_sell_artifact" : "decline_sell_normal";
                             this.npc_dialog.update_dialog(decline_msg, true);
                             this.data.control_manager.add_simple_controls(
                                 this.on_character_select.bind(this, "sell_follow_up", this.inv_win_pos)
@@ -261,8 +263,7 @@ export class SellRepairMenu {
 
                             let text = this.npc_dialog.get_message("sell_quantity_confirm");
                             let item_price =
-                                (this.data.info.items_list[this.selected_item.key_name].price *
-                                    (this.selected_item.broken ? SELL_BROKEN_MULTIPLIER : SELL_MULTIPLIER)) |
+                                (item.price * (this.selected_item.broken ? SELL_BROKEN_MULTIPLIER : SELL_MULTIPLIER)) |
                                 0;
                             text = this.npc_dialog.replace_text(text, undefined, undefined, String(item_price * quant));
                             this.npc_dialog.update_dialog(text, false, false);
@@ -271,8 +272,7 @@ export class SellRepairMenu {
                                 {
                                     yes: this.on_sale_success.bind(this, quant),
                                     no: () => {
-                                        let decline_msg = this.data.info.items_list[this.selected_item.key_name]
-                                            .rare_item
+                                        let decline_msg = item.rare_item
                                             ? "decline_sell_artifact"
                                             : "decline_sell_normal";
                                         this.npc_dialog.update_dialog(decline_msg, true);
