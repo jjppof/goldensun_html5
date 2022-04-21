@@ -12,7 +12,11 @@ export type Control = {
     /** Stop propagation of the event, blocking the dispatch to next listener on the queue. Does not work for loops. */
     halt?: boolean;
     params?: {
-        /** Whether to reset the binding set upon press */
+        /**
+         * Will reset all controls that were set together upon this button press.
+         * Double check it usage when "no_initial_reset" was set to true in further controls.
+         * Only works if "persist" is false.
+         */
         reset_controls?: boolean;
         /** Time between each trigger on button held */
         loop_time?: number;
@@ -29,20 +33,38 @@ type ControlParams = {
         shoulder?: boolean;
         shoulder_time?: number;
     };
-    /** Whether the binding set must persist */
+    /**
+     * Whether the bindings set must persist even if ControlManager.reset is called.
+     * If true, ControlManager.detach_bindings need to be called to disable these controls.
+     * */
     persist?: boolean;
-    /** Whether to reset the current controls first */
+    /**
+     * Whether to reset the current controls before attaching new ones.
+     * Only works for controls set with "persist" false.
+     * When setting this to true, use it wiselly.
+     * */
     no_initial_reset?: boolean;
 };
 
 type SimpleControlParams = {
-    /** Whether to reset the binding set upon button pressed. */
+    /**
+     * Will reset all controls that were set together upon this button press.
+     * Double check it usage when "no_initial_reset" was set to true in further controls.
+     * Only works if "persist" is false.
+     */
     reset_on_press?: boolean;
     /** If true, only button A will receive the callback. Otherwise button B also receives. */
     confirm_only?: boolean;
-    /** Whether the binding set must persist. */
+    /**
+     * Whether the bindings set must persist even if ControlManager.reset is called.
+     * If true, ControlManager.detach_bindings need to be called to disable these controls.
+     * */
     persist?: boolean;
-    /** Whether to reset the current controls first. */
+    /**
+     * Whether to reset the current controls before attaching new ones.
+     * Only works for controls set with "persist" false.
+     * When setting this to true, use it wiselly.
+     * */
     no_initial_reset?: boolean;
     /** The sfx to be played upon button pressed. */
     sfx?: string;
@@ -50,6 +72,10 @@ type SimpleControlParams = {
 
 /**
  * This class allows to bind callbacks to gamepad buttons.
+ * For permanent bindins, set "persist" to true when adding controls.
+ * Permanent bindings are kepts even if you call ControlManager.reset.
+ * Otherwise, set "persist" to false, then these controls will be disabled
+ * after ControlManager.reset being called.
  */
 export class ControlManager {
     private game: Phaser.Game;
@@ -119,8 +145,8 @@ export class ControlManager {
 
     /**
      * Adds a list of controls to listen to, also adding them to a binding set.
-     * @param {Control[]} controls - Some controls to add
-     * @param {ControlParams} params - Some parameters for these controls
+     * @param {Control[]} controls - Some controls to add.
+     * @param {ControlParams} params - Some parameters for these controls.
      */
     add_controls(controls: Control[], params?: ControlParams) {
         const disable_initial_reset = params?.no_initial_reset ?? false;
@@ -172,6 +198,8 @@ export class ControlManager {
         };
 
         controls.forEach(control => {
+            const trigger_reset = control.params?.reset_controls;
+
             if (control.on_up) {
                 const gamepad_button = this.gamepad.get_button(control.buttons);
                 const last_gamepad_bt = Array.isArray(gamepad_button)
@@ -184,6 +212,7 @@ export class ControlManager {
                         if (!this.check_bt_sequence_is_down(control.buttons as Button[])) return;
                     }
 
+                    if (trigger_reset) this.reset();
                     if (control.sfx?.up) this.audio.play_se(control.sfx.up);
                     if (control.halt) {
                         if (Array.isArray(gamepad_button)) {
@@ -199,7 +228,6 @@ export class ControlManager {
 
             if (control.on_down) {
                 const loop_time = control.params?.loop_time;
-                const trigger_reset = control.params?.reset_controls;
 
                 const last_bt = control.buttons[(control.buttons as Button[]).length - 1];
                 const gamepad_button = this.gamepad.get_button(control.buttons);
