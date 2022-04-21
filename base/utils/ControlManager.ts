@@ -44,6 +44,14 @@ export type ControlParams = {
      * When setting this to true, use it wiselly.
      * */
     no_initial_reset?: boolean;
+    /**
+     * The passed callbacks will be called just once and then automatically unbound.
+     * ControlManager.reset has no effect over it. Use ControlManager.detach_bindings
+     * to detach bindings in the case it's not necessary to call the callbacks anymore.
+     * If this parameter is true, "persist", "reset_controls" and "no_initial_reset" have no effect.
+     * Don't work for loops.
+     */
+    call_once?: boolean;
 };
 
 export type SimpleControlParams = {
@@ -72,10 +80,10 @@ export type SimpleControlParams = {
 
 /**
  * This class allows to bind callbacks to gamepad buttons.
- * For permanent bindins, set "persist" to true when adding controls.
+ * For permanent bindings, set "persist" to true when adding controls.
  * Permanent bindings are kepts even if you call ControlManager.reset.
  * Otherwise, set "persist" to false, then these controls will be disabled
- * after ControlManager.reset being called.
+ * after ControlManager.reset is called.
  */
 export class ControlManager {
     private game: Phaser.Game;
@@ -150,11 +158,12 @@ export class ControlManager {
      */
     add_controls(controls: Control[], params?: ControlParams) {
         const disable_initial_reset = params?.no_initial_reset ?? false;
-        if (this.initialized && !disable_initial_reset) this.reset();
+        const call_once = params?.call_once ?? false;
+        if (this.initialized && !disable_initial_reset && !call_once) this.reset();
 
         if (params) this.apply_control_params(controls, params);
 
-        return this.enable_controls(controls.slice(), params?.persist);
+        return this.enable_controls(controls.slice(), params?.persist, call_once);
     }
 
     /**
@@ -187,55 +196,64 @@ export class ControlManager {
 
     /**
      * Add a listener/event for the controls passed.
-     * @param {Control[]} controls - Controls to listen for
-     * @param {boolean?} persist - Whether the controls have to persist
+     * @param {Control[]} controls - Controls to listen for.
+     * @param {boolean?} persist - Whether the controls have to persist.
+     * @param {boolean?} call_once - Whether the controls will be called once.
      */
-    private enable_controls(controls: Control[], persist?: boolean) {
+    private enable_controls(controls: Control[], persist?: boolean, call_once?: boolean) {
         const bindings: Phaser.SignalBinding[] = [];
         const register = (sb: Phaser.SignalBinding) => {
-            if (!persist) this.current_signal_bindings.push(sb);
+            if (!persist && !call_once) this.current_signal_bindings.push(sb);
             bindings.push(sb);
         };
+
+        const key = this.make_key();
 
         controls.forEach(control => {
             const trigger_reset = control.params?.reset_controls;
 
+            const gamepad_button = this.gamepad.get_button(control.buttons);
+            const last_gamepad_bt = Array.isArray(gamepad_button)
+                ? gamepad_button[gamepad_button.length - 1]
+                : gamepad_button;
+
+            const binding_callback = (callback: Function) => {
+                if (this.disabled) return;
+                if (Array.isArray(control.buttons)) {
+                    if (!this.check_bt_sequence_is_down(control.buttons as Button[])) return;
+                }
+
+                if (call_once) {
+                    delete this.signal_bindings[key];
+                } else if (trigger_reset) {
+                    this.reset();
+                }
+                if (control.sfx?.up) this.audio.play_se(control.sfx.up);
+                if (control.halt) {
+                    if (Array.isArray(gamepad_button)) {
+                        gamepad_button.forEach(bt => bt.on_up.halt());
+                    } else {
+                        last_gamepad_bt.on_up.halt();
+                    }
+                }
+                callback();
+            };
+
             if (control.on_up) {
-                const gamepad_button = this.gamepad.get_button(control.buttons);
-                const last_gamepad_bt = Array.isArray(gamepad_button)
-                    ? gamepad_button[gamepad_button.length - 1]
-                    : gamepad_button;
-
-                const b = last_gamepad_bt.on_up.add(() => {
-                    if (this.disabled) return;
-                    if (Array.isArray(control.buttons)) {
-                        if (!this.check_bt_sequence_is_down(control.buttons as Button[])) return;
-                    }
-
-                    if (trigger_reset) this.reset();
-                    if (control.sfx?.up) this.audio.play_se(control.sfx.up);
-                    if (control.halt) {
-                        if (Array.isArray(gamepad_button)) {
-                            gamepad_button.forEach(bt => bt.on_up.halt());
-                        } else {
-                            last_gamepad_bt.on_up.halt();
-                        }
-                    }
-                    control.on_up();
-                });
-                register(b);
+                let signal_binding: Phaser.SignalBinding;
+                if (call_once) {
+                    signal_binding = last_gamepad_bt.on_up.addOnce(binding_callback.bind(this, control.on_up));
+                } else {
+                    signal_binding = last_gamepad_bt.on_up.add(binding_callback.bind(this, control.on_up));
+                }
+                register(signal_binding);
             }
 
             if (control.on_down) {
                 const loop_time = control.params?.loop_time;
 
-                const last_bt = control.buttons[(control.buttons as Button[]).length - 1];
-                const gamepad_button = this.gamepad.get_button(control.buttons);
-                const last_gamepad_bt = Array.isArray(gamepad_button)
-                    ? gamepad_button[gamepad_button.length - 1]
-                    : gamepad_button;
-
-                if (loop_time) {
+                if (loop_time && !call_once) {
+                    const last_bt = control.buttons[(control.buttons as Button[]).length - 1];
                     const b1 = last_gamepad_bt.on_down.add(event => {
                         if (this.disabled) return;
                         if (Array.isArray(control.buttons)) {
@@ -267,32 +285,20 @@ export class ControlManager {
                     register(b1);
                     register(b2);
                 } else {
-                    const b = last_gamepad_bt.on_down.add(event => {
-                        if (this.disabled) return;
-                        if (Array.isArray(control.buttons)) {
-                            if (!this.check_bt_sequence_is_down(control.buttons as Button[])) return;
-                        }
-
-                        if (trigger_reset) this.reset();
-                        if (control.sfx?.down) this.audio.play_se(control.sfx.down);
-                        if (control.halt) {
-                            if (Array.isArray(gamepad_button)) {
-                                gamepad_button.forEach(bt => bt.on_down.halt());
-                            } else {
-                                last_gamepad_bt.on_down.halt();
-                            }
-                        }
-                        control.on_down();
-                    });
-                    register(b);
+                    let signal_binding: Phaser.SignalBinding;
+                    if (call_once) {
+                        signal_binding = last_gamepad_bt.on_down.addOnce(binding_callback.bind(this, control.on_down));
+                    } else {
+                        signal_binding = last_gamepad_bt.on_down.add(binding_callback.bind(this, control.on_down));
+                    }
+                    register(signal_binding);
                 }
             }
         });
 
         this.reset(false);
-        const key = this.make_key();
         this.signal_bindings[key] = bindings;
-        if (!persist) this.current_set_key = key;
+        if (!persist && !call_once) this.current_set_key = key;
 
         return key;
     }
