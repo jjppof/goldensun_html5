@@ -24,7 +24,7 @@ export type Control = {
     sfx?: {up?: string; down?: string};
 };
 
-type ControlParams = {
+export type ControlParams = {
     loop_config?: {
         vertical?: boolean;
         vertical_time?: number;
@@ -46,7 +46,7 @@ type ControlParams = {
     no_initial_reset?: boolean;
 };
 
-type SimpleControlParams = {
+export type SimpleControlParams = {
     /**
      * Will reset all controls that were set together upon this button press.
      * Double check it usage when "no_initial_reset" was set to true in further controls.
