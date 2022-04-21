@@ -36,16 +36,21 @@ type ControlParams = {
 };
 
 type SimpleControlParams = {
-    /** Whether to reset the binding set upon button pressed */
+    /** Whether to reset the binding set upon button pressed. */
     reset_on_press?: boolean;
-    /** Only add a confirm (A) button, no back (B) button */
+    /** If true, only button A will receive the callback. Otherwise button B also receives. */
     confirm_only?: boolean;
-    /** Whether the binding set must persist */
+    /** Whether the binding set must persist. */
     persist?: boolean;
-    /** Whether to reset the current controls first */
+    /** Whether to reset the current controls first. */
     no_initial_reset?: boolean;
+    /** The sfx to be played upon button pressed. */
+    sfx?: string;
 };
 
+/**
+ * This class allows to bind callbacks to gamepad buttons.
+ */
 export class ControlManager {
     private game: Phaser.Game;
     private gamepad: XGamepad;
@@ -79,32 +84,31 @@ export class ControlManager {
         this.loop_repeat_timer = this.game.time.create(false);
     }
 
-    get initialized() {
+    private get initialized() {
         return this.current_signal_bindings.length;
     }
 
     /**
-     * Adds a confirm (A) and back (B) controls.
-     * @param {Function} callback - The callback to call
-     * @param {Object} params - Some parameters for these controls
+     * Binds a callback for button A that will be unbound on use.
+     * @param {Function} callback - The callback to call.
+     * @param {Object} params - Some parameters for these controls.
      */
-    add_simple_controls(callback: Function, params?: SimpleControlParams, sfx?: string) {
+    add_simple_controls(callback: Function, params?: SimpleControlParams) {
         const controls: Control[] = [
             {
                 buttons: Button.A,
                 on_down: callback,
                 params: {reset_controls: params?.reset_on_press},
-                sfx: sfx ? {down: sfx} : null,
+                sfx: params?.sfx ? {down: params?.sfx} : null,
             },
         ];
 
         if (params?.confirm_only !== true) {
             controls.push({
-                // ... controls[0]
                 buttons: Button.B,
                 on_down: callback,
                 params: {reset_controls: params?.reset_on_press},
-                sfx: sfx ? {down: sfx} : null,
+                sfx: params?.sfx ? {down: params?.sfx} : null,
             });
         }
 
@@ -132,7 +136,7 @@ export class ControlManager {
      * @param {Control[]} controls - Controls getting added
      * @param {ControlParams} params - Parameters to apply to these controls
      */
-    apply_control_params(controls: Control[], params: any) {
+    private apply_control_params(controls: Control[], params: any) {
         const edits = [],
             options = params?.loop_config;
         if (options?.vertical || options?.vertical_time) {
@@ -160,7 +164,7 @@ export class ControlManager {
      * @param {Control[]} controls - Controls to listen for
      * @param {boolean?} persist - Whether the controls have to persist
      */
-    enable_controls(controls: Control[], persist?: boolean) {
+    private enable_controls(controls: Control[], persist?: boolean) {
         const bindings: Phaser.SignalBinding[] = [];
         const register = (sb: Phaser.SignalBinding) => {
             if (!persist) this.current_signal_bindings.push(sb);
@@ -271,7 +275,7 @@ export class ControlManager {
      * @param {number} loop_time - Ticks length
      * @param {string} sfx - Sfx to play at each tick
      */
-    start_loop_timers(callback: Function, loop_time: number, sfx: string) {
+    private start_loop_timers(callback: Function, loop_time: number, sfx: string) {
         if (sfx) this.audio.play_se(sfx);
         callback();
 
@@ -290,7 +294,7 @@ export class ControlManager {
      *   we could also simply use .length
      * @return {number} - A free usable index
      */
-    make_key() {
+    private make_key() {
         let i = 0;
 
         do {
@@ -325,7 +329,7 @@ export class ControlManager {
     /**
      * Stops the loop timers.
      */
-    stop_timers() {
+    private stop_timers() {
         this.loop_start_timer.stop();
         this.loop_repeat_timer.stop();
     }
