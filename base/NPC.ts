@@ -320,7 +320,7 @@ export class NPC extends ControllableChar {
             );
         }
         this._base_collision_layer = destination_collision_layer;
-        this.sprite.base_collision_layer = destination_collision_layer;
+        this.set_collision_layer(destination_collision_layer);
     }
 
     /**

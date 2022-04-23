@@ -727,7 +727,7 @@ export class InteractableObjects {
         }
     }
 
-    play(animation: string, action?: string, frame_rate?: number, loop?: boolean) {
+    play(animation: string, action?: string, start: boolean = true, frame_rate?: number, loop?: boolean) {
         this._current_animation = animation;
         this._current_action = action ?? this._current_action;
 
@@ -741,7 +741,14 @@ export class InteractableObjects {
             this.sprite_info.setAnimation(this.sprite, this.current_action);
         }
 
-        return this.sprite.animations.play(anim_key, frame_rate, loop);
+        const animation_obj = this.sprite.animations.getAnimation(anim_key);
+        if (start) {
+            this.sprite.animations.play(anim_key, frame_rate, loop);
+        } else {
+            animation_obj.stop(true);
+        }
+
+        return animation_obj;
     }
 
     private not_allowed_tile_test(x: number, y: number) {

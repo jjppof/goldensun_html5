@@ -29,6 +29,7 @@ import {CharLevelChangeEvent} from "./CharLevelChangeEvent";
 import {MapOpacityEvent} from "./MapOpacityEvent";
 import {MapBlendModeEvent} from "./MapBlendModeEvent";
 import {IOAnimPlayEvent} from "./IOAnimPlayEvent";
+import {CharAnimPlayEvent} from "./CharAnimPlayEvent";
 
 export enum interaction_patterns {
     NO_INTERACTION = "no_interaction",
@@ -63,6 +64,9 @@ export class GameEventManager {
     }
 
     get on_event() {
+        if (this.events_running_count === 0 && !this.force_idle_action) {
+            this.force_idle_action = true;
+        }
         return this.events_running_count;
     }
 
@@ -508,6 +512,22 @@ export class GameEventManager {
                     info.animation,
                     info.frame_rate,
                     info.loop,
+                    info.stop_animation,
+                    info.finish_events
+                );
+            case event_types.CHAR_ANIM_PLAY:
+                return new CharAnimPlayEvent(
+                    this.game,
+                    this.data,
+                    info.active,
+                    info.key_name,
+                    info.is_npc,
+                    info.npc_label,
+                    info.action,
+                    info.animation,
+                    info.frame_rate,
+                    info.loop,
+                    info.stop_animation,
                     info.finish_events
                 );
             default:

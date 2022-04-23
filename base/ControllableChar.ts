@@ -557,7 +557,9 @@ export abstract class ControllableChar {
      */
     set_collision_layer(layer: number) {
         this.sprite.base_collision_layer = layer;
-        this.shadow.base_collision_layer = layer;
+        if (this.shadow) {
+            this.shadow.base_collision_layer = layer;
+        }
     }
 
     /**
@@ -566,9 +568,16 @@ export abstract class ControllableChar {
      * @param animation an specific animation of the given action that this char is going to be executing.
      * @param start whether you want the animation to start. Otherwise it will be stopped.
      * @param frame_rate a custom frame rate value.
+     * @param loop whether the animation will be looping.
      * @returns Returns the resulting Phaser.Animation object.
      */
-    play(action?: string | base_actions, animation?: string | number, start: boolean = true, frame_rate?: number) {
+    play(
+        action?: string | base_actions,
+        animation?: string | number,
+        start: boolean = true,
+        frame_rate?: number,
+        loop?: boolean
+    ) {
         action = action ?? this.current_action;
         if (animation === null || animation === undefined) {
             if (this.current_direction in reverse_directions) {
@@ -590,7 +599,7 @@ export abstract class ControllableChar {
             console.warn("Invalid animation key:", animation_key);
         }
         if (start) {
-            this.sprite.animations.play(animation_key, frame_rate);
+            this.sprite.animations.play(animation_key, frame_rate, loop);
         } else {
             animation_obj.stop(true);
         }
