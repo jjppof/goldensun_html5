@@ -1,6 +1,5 @@
 import {GameEvent, event_types} from "./GameEvent";
 import {NPC} from "../NPC";
-import {ControllableChar} from "ControllableChar";
 
 export class CharAnimPlayEvent extends GameEvent {
     private finish_events: GameEvent[] = [];
@@ -46,17 +45,11 @@ export class CharAnimPlayEvent extends GameEvent {
         if (!this.active) return;
         this.origin_npc = oringin_npc;
 
-        let target_char: ControllableChar;
-        if (this.is_npc) {
-            if (this.npc_label) {
-                target_char = this.data.map.npcs_label_map[this.npc_label];
-            } else {
-                target_char = this.origin_npc;
-            }
-        } else {
-            target_char = this.data.hero;
-            this.data.game_event_manager.force_idle_action = false;
-        }
+        const target_char =
+            GameEvent.get_char(this.data, {
+                is_npc: this.is_npc,
+                npc_label: this.npc_label,
+            }) ?? this.origin_npc;
 
         const animation = target_char.play(
             this.animation,

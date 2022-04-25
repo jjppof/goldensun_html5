@@ -30,6 +30,7 @@ import {MapOpacityEvent} from "./MapOpacityEvent";
 import {MapBlendModeEvent} from "./MapBlendModeEvent";
 import {IOAnimPlayEvent} from "./IOAnimPlayEvent";
 import {CharAnimPlayEvent} from "./CharAnimPlayEvent";
+import {CharSetActivationEvent} from "./CharSetActivationEvent";
 
 export enum interaction_patterns {
     NO_INTERACTION = "no_interaction",
@@ -529,6 +530,16 @@ export class GameEventManager {
                     info.loop,
                     info.stop_animation,
                     info.finish_events
+                );
+            case event_types.CHAR_SET_ACTIVATION:
+                return new CharSetActivationEvent(
+                    this.game,
+                    this.data,
+                    info.active,
+                    info.key_name,
+                    info.is_npc,
+                    info.npc_label,
+                    info.active
                 );
             default:
                 console.warn(`Game event type ${info.type} not found.`);

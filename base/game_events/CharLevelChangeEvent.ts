@@ -1,4 +1,3 @@
-import {Game} from "phaser-ce";
 import {GameEvent, event_types} from "./GameEvent";
 
 export class CharLevelChangeEvent extends GameEvent {
@@ -13,18 +12,20 @@ export class CharLevelChangeEvent extends GameEvent {
 
     _fire() {
         if (!this.active) return;
-        if (this.target_char_key !== undefined) {
-            let target_char = this.data.info.main_char_list[this.target_char_key];
+        if (this.target_char_key !== undefined && this.target_char_key in this.data.info.main_char_list) {
+            const target_char = this.data.info.main_char_list[this.target_char_key];
             target_char.change_level(this.target_level_value);
         } else {
-            console.warn("Char is undefined");
+            console.warn(
+                `Could not find a char to change level.${
+                    this.target_char_key ?? ` Could not find ${this.target_char_key}.`
+                }`
+            );
         }
     }
 
     destroy() {
         this.origin_npc = null;
         this.active = false;
-        this.target_char_key = null;
-        this.target_level_value = null;
     }
 }
