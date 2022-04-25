@@ -11,7 +11,6 @@ export class CharLevelChangeEvent extends GameEvent {
     }
 
     _fire() {
-        if (!this.active) return;
         if (this.target_char_key !== undefined && this.target_char_key in this.data.info.main_char_list) {
             const target_char = this.data.info.main_char_list[this.target_char_key];
             target_char.change_level(this.target_level_value);
@@ -24,8 +23,5 @@ export class CharLevelChangeEvent extends GameEvent {
         }
     }
 
-    destroy() {
-        this.origin_npc = null;
-        this.active = false;
-    }
+    _destroy() {}
 }

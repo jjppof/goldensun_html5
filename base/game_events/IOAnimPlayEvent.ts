@@ -1,5 +1,4 @@
 import {GameEvent, event_types} from "./GameEvent";
-import {NPC} from "../NPC";
 
 export class IOAnimPlayEvent extends GameEvent {
     private finish_events: GameEvent[] = [];
@@ -38,10 +37,7 @@ export class IOAnimPlayEvent extends GameEvent {
         }
     }
 
-    async _fire(oringin_npc: NPC) {
-        if (!this.active) return;
-        this.origin_npc = oringin_npc;
-
+    async _fire() {
         const interactable_object = this.data.map.interactable_objects_label_map[this.io_label];
         const animation = interactable_object.play(
             this.animation,
@@ -59,9 +55,7 @@ export class IOAnimPlayEvent extends GameEvent {
         }
     }
 
-    destroy() {
+    _destroy() {
         this.finish_events.forEach(event => event.destroy());
-        this.origin_npc = null;
-        this.active = false;
     }
 }

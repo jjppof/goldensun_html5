@@ -12,7 +12,6 @@ export class DestroyerEvent extends GameEvent {
     }
 
     _fire() {
-        if (!this.active) return;
         if (this.target_event_key !== undefined) {
             let target_event = GameEvent.get_labeled_event(this.target_event_key);
             target_event.destroy();
@@ -21,9 +20,5 @@ export class DestroyerEvent extends GameEvent {
         }
     }
 
-    destroy() {
-        this.origin_npc = null;
-        this.active = false;
-        this.target_event_key = null;
-    }
+    _destroy() {}
 }

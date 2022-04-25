@@ -1,5 +1,4 @@
 import {event_types, GameEvent} from "./GameEvent";
-import {NPC} from "../NPC";
 import {directions} from "../utils";
 import {CharControlEvent} from "./CharControlEvent";
 
@@ -58,9 +57,7 @@ export class JumpEvent extends CharControlEvent {
         this.jump_direction = jump_direction !== undefined ? directions[jump_direction as string] : undefined;
     }
 
-    async _fire(oringin_npc: NPC) {
-        if (!this.active) return;
-        this.origin_npc = oringin_npc;
+    async _fire() {
         ++this.data.game_event_manager.events_running_count;
 
         this.char = GameEvent.get_char(this.data, {
@@ -100,10 +97,8 @@ export class JumpEvent extends CharControlEvent {
         this.finish_events.forEach(event => event.fire(this.origin_npc));
     }
 
-    destroy() {
+    _destroy() {
         this.finish_events.forEach(event => event.destroy());
-        this.origin_npc = null;
         this.char = null;
-        this.active = false;
     }
 }

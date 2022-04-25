@@ -55,13 +55,12 @@ export enum event_types {
  * this event receives an unique id. These ids are reset whenever a map is destroyed. In order
  * to fire a GameEvent, calls GameEvent.fire. In order to destroy a game event, calls GameEvent.destroy.
  * Game events can be fired from TileEvents, NPC or Interactable Objects interaction, map changes or
- * other game events. For easy reference/example, check base/game_events/EmoriconEvent.ts.
+ * other game events. For easy reference/example, check base/game_events/EmoticonEvent.ts.
  * Whenever an asynchronous game event is fired, increments the GameEventManager.events_running_count, so the
  * engine knows that there's an event going on. When the event is finished, decrements the same variable.
  * If your event has internal states, don't forget to reset them on finish.
- * When crating a new GameEvent class, add its instantiation in GameEventManager.get_event_instance factory
- * method. On GameEvent.destroy implementation, please at least set GameEvent.origin_npc
- * to null and GameEvent.active to false.
+ * When creating a new GameEvent class, add its instantiation in GameEventManager.get_event_instance factory
+ * method.
  */
 export abstract class GameEvent {
     public game: Phaser.Game;
@@ -125,21 +124,33 @@ export abstract class GameEvent {
      */
     fire(origin_npc?: NPC) {
         this.check_reveal();
-        return this._fire(origin_npc);
+        if (!this.active) return;
+        this.origin_npc = origin_npc;
+        return this._fire();
     }
 
     /**
      * This abstract function is the one that GameEvent child classes should override.
      * It should never be called.
-     * @param origin_npc the NPC that originated this game event.
      */
-    protected abstract _fire(origin_npc?: NPC): void;
+    protected abstract _fire(): void;
 
     /**
-     * A child event should implement it in order to destroy the event instance.
-     * This is called whenever an associated entity is destroyed, like maps, NPCs etc.
+     * This function is the one that should be called to start a event.
+     * It should never be overriden. Call this function to destroy this event.
+     * This can be called whenever an associated entity is destroyed, like maps, NPCs etc.
      */
-    abstract destroy(): void;
+    destroy() {
+        this._destroy();
+        this.active = false;
+        this.origin_npc = null;
+    }
+
+    /**
+     * This abstract function is the one that GameEvent child classes should override.
+     * It should never be called.
+     */
+    protected abstract _destroy(): void;
 
     /**
      * A helper function that defines the ControllableChar based on inputs.

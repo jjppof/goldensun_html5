@@ -1,6 +1,5 @@
 import {Item} from "../Item";
 import {MainChar} from "../MainChar";
-import {NPC} from "../NPC";
 import {base_actions, directions} from "../utils";
 import {DialogManager} from "../utils/DialogManager";
 import {GameEvent, event_types} from "./GameEvent";
@@ -71,9 +70,7 @@ export class ChestEvent extends GameEvent {
         });
     }
 
-    async _fire(origin_npc?: NPC) {
-        if (!this.active) return;
-        this.origin_npc = origin_npc;
+    async _fire() {
         ++this.data.game_event_manager.events_running_count;
         this.control_enable = false;
         this.running = true;
@@ -182,11 +179,9 @@ export class ChestEvent extends GameEvent {
         this.finish_events.forEach(event => event.fire(this.origin_npc));
     }
 
-    destroy() {
+    _destroy() {
         this.finish_events.forEach(event => event.destroy());
-        this.origin_npc = null;
         this.dialog_manager?.destroy();
         this.data.control_manager.detach_bindings(this.control_key);
-        this.active = false;
     }
 }

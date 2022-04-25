@@ -1,4 +1,3 @@
-import {NPC} from "../NPC";
 import {DialogManager} from "../utils/DialogManager";
 import {GameEvent, event_types} from "./GameEvent";
 import {Button} from "../XGamepad";
@@ -183,12 +182,10 @@ export class DialogEvent extends GameEvent {
         this.next();
     }
 
-    async _fire(origin_npc?: NPC) {
-        if (!this.active) return;
+    async _fire() {
         ++this.data.game_event_manager.events_running_count;
         this.control_enable = false;
         this.running = true;
-        this.origin_npc = origin_npc;
         if (this.origin_npc && this.npc_hero_reciprocal_look) {
             this.previous_npc_direction = this.origin_npc.current_direction;
             await this.data.game_event_manager.set_npc_and_hero_directions(this.origin_npc);
@@ -197,18 +194,16 @@ export class DialogEvent extends GameEvent {
         this.start_dialog();
     }
 
-    destroy() {
+    _destroy() {
         this.finish_events.forEach(event => event.destroy());
         this.yes_no_events.yes.forEach(event => event.destroy());
         this.yes_no_events.no.forEach(event => event.destroy());
         this.dialog_index = 0;
-        this.origin_npc = null;
         this.yes_no_menu?.destroy();
         this.yes_no_menu = null;
         this.current_info = null;
         this.dialog_manager?.destroy();
         this.dialog_manager = null;
         this.reset_control();
-        this.active = false;
     }
 }

@@ -1,5 +1,4 @@
 import {GameEvent, event_types} from "./GameEvent";
-import {NPC} from "../NPC";
 
 enum audio_types {
     SFX = "sfx",
@@ -27,10 +26,7 @@ export class AudioPlayEvent extends GameEvent {
         }
     }
 
-    async _fire(oringin_npc: NPC) {
-        if (!this.active) return;
-        this.origin_npc = oringin_npc;
-
+    async _fire() {
         if (this.audio_type === audio_types.BGM) {
             this.data.audio.set_bgm(this.audio_key);
             this.data.audio.play_bgm(this.loop, this.volume, this.finish.bind(this));
@@ -43,9 +39,7 @@ export class AudioPlayEvent extends GameEvent {
         this.finish_events.forEach(event => event.fire(this.origin_npc));
     }
 
-    destroy() {
+    _destroy() {
         this.finish_events.forEach(event => event.destroy());
-        this.origin_npc = null;
-        this.active = false;
     }
 }

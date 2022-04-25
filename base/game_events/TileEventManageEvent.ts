@@ -17,7 +17,7 @@ export class TileEventManageEvent extends GameEvent {
     }
 
     _fire() {
-        if (!this.active || !this.tile_event_key) return;
+        if (!this.tile_event_key) return;
         const event = TileEvent.get_labeled_event(this.tile_event_key);
         if (!event) return;
 
@@ -50,8 +50,5 @@ export class TileEventManageEvent extends GameEvent {
         }
     }
 
-    destroy() {
-        this.origin_npc = null;
-        this.active = false;
-    }
+    _destroy() {}
 }

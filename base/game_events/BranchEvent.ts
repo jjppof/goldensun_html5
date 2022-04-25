@@ -1,5 +1,4 @@
 import {GameEvent, event_types, EventValue} from "./GameEvent";
-import {NPC} from "../NPC";
 
 enum conditions {
     EQ = "=",
@@ -50,9 +49,7 @@ export class BranchEvent extends GameEvent {
         }
     }
 
-    _fire(origin_npc?: NPC) {
-        if (!this.active) return;
-        this.origin_npc = origin_npc;
+    _fire() {
         let result: boolean;
         switch (this.condition) {
             case conditions.EQ:
@@ -94,9 +91,7 @@ export class BranchEvent extends GameEvent {
         }
     }
 
-    destroy() {
+    _destroy() {
         this.events.forEach(event => event.destroy());
-        this.origin_npc = null;
-        this.active = false;
     }
 }

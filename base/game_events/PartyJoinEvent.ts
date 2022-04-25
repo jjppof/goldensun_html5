@@ -1,4 +1,3 @@
-import {NPC} from "../NPC";
 import {DialogManager} from "../utils/DialogManager";
 import {GameEvent, event_types} from "./GameEvent";
 import {Button} from "../XGamepad";
@@ -52,10 +51,8 @@ export class PartyJoinEvent extends GameEvent {
         });
     }
 
-    async _fire(origin_npc?: NPC) {
-        if (!this.active) return;
+    async _fire() {
         ++this.data.game_event_manager.events_running_count;
-        this.origin_npc = origin_npc;
         const this_char = this.data.info.main_char_list[this.char_key_name];
         if (this.join) {
             this.control_enable = false;
@@ -81,11 +78,9 @@ export class PartyJoinEvent extends GameEvent {
         }
     }
 
-    destroy() {
+    _destroy() {
         this.finish_events.forEach(event => event.destroy());
-        this.origin_npc = null;
         this.dialog_manager?.destroy();
         this.data.control_manager.detach_bindings(this.control_key);
-        this.active = false;
     }
 }

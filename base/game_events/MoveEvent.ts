@@ -82,9 +82,7 @@ export class MoveEvent extends CharControlEvent {
         this.finish();
     }
 
-    async _fire(origin_npc?: NPC) {
-        if (!this.active) return;
-        this.origin_npc = origin_npc;
+    async _fire() {
         ++this.data.game_event_manager.events_running_count;
         this.data.collision.disable_npc_collision();
         this.char = GameEvent.get_char(this.data, {
@@ -147,10 +145,8 @@ export class MoveEvent extends CharControlEvent {
         this.finish_events.forEach(event => event.fire(this.origin_npc));
     }
 
-    destroy() {
+    _destroy() {
         this.finish_events.forEach(event => event.destroy());
-        this.origin_npc = null;
         this.char = null;
-        this.active = false;
     }
 }

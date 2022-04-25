@@ -1,7 +1,6 @@
 import {GameEvent, event_types, game_info_types, EventValue, event_value_types} from "./GameEvent";
 import * as _ from "lodash";
 import {TileEvent} from "../tile_events/TileEvent";
-import {NPC} from "../NPC";
 
 export class SetValueEvent extends GameEvent {
     private event_value: EventValue;
@@ -13,9 +12,7 @@ export class SetValueEvent extends GameEvent {
         this.check_npc_storage_values = check_npc_storage_values ?? false;
     }
 
-    _fire(oringin_npc: NPC) {
-        if (!this.active) return;
-        this.origin_npc = oringin_npc;
+    _fire() {
         switch (this.event_value.type) {
             case event_value_types.STORAGE:
                 this.data.storage.set(this.event_value.value.key_name, this.event_value.value.value);
@@ -49,8 +46,5 @@ export class SetValueEvent extends GameEvent {
         }
     }
 
-    destroy() {
-        this.origin_npc = null;
-        this.active = false;
-    }
+    _destroy() {}
 }

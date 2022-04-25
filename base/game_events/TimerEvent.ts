@@ -1,4 +1,3 @@
-import {NPC} from "../NPC";
 import {GameEvent, event_types} from "./GameEvent";
 
 export class TimerEvent extends GameEvent {
@@ -16,19 +15,15 @@ export class TimerEvent extends GameEvent {
         }
     }
 
-    _fire(origin_npc?: NPC) {
-        if (!this.active) return;
+    _fire() {
         ++this.data.game_event_manager.events_running_count;
-        this.origin_npc = origin_npc;
         this.game.time.events.add(this.duration, () => {
             --this.data.game_event_manager.events_running_count;
             this.finish_events.forEach(event => event.fire(this.origin_npc));
         });
     }
 
-    destroy() {
+    _destroy() {
         this.finish_events.forEach(event => event.destroy());
-        this.origin_npc = null;
-        this.active = false;
     }
 }

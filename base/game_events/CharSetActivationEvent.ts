@@ -1,5 +1,4 @@
 import {GameEvent, event_types} from "./GameEvent";
-import {NPC} from "../NPC";
 
 export class CharSetActivationEvent extends GameEvent {
     private is_npc: boolean;
@@ -13,10 +12,7 @@ export class CharSetActivationEvent extends GameEvent {
         this.activate = activate;
     }
 
-    async _fire(oringin_npc: NPC) {
-        if (!this.active) return;
-        this.origin_npc = oringin_npc;
-
+    async _fire() {
         const target_char =
             GameEvent.get_char(this.data, {
                 is_npc: this.is_npc,
@@ -26,8 +22,5 @@ export class CharSetActivationEvent extends GameEvent {
         target_char.toggle_active(this.activate);
     }
 
-    destroy() {
-        this.origin_npc = null;
-        this.active = false;
-    }
+    _destroy() {}
 }

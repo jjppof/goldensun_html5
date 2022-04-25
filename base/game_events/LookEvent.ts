@@ -14,14 +14,10 @@ export class LookEvent extends GameEvent {
     }
 
     _fire() {
-        if (!this.active) return;
         const looker: ControllableChar = this.looker === "hero" ? this.data.hero : this.data.map.npcs[this.looker];
         const target: ControllableChar = this.target === "hero" ? this.data.hero : this.data.map.npcs[this.target];
         looker.set_look_to_target(this.look, target);
     }
 
-    destroy() {
-        this.origin_npc = null;
-        this.active = false;
-    }
+    _destroy() {}
 }

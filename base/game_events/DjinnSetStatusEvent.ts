@@ -1,7 +1,6 @@
 import {GameEvent, event_types} from "./GameEvent";
 import {Djinn, djinn_status} from "../Djinn";
 import {MainChar} from "../MainChar";
-import {NPC} from "../NPC";
 
 export class DjinnSetStatusEvent extends GameEvent {
     /** INPUT. The key for the Djinn whose status we are setting */
@@ -32,10 +31,7 @@ export class DjinnSetStatusEvent extends GameEvent {
         this.status = this.status_key as djinn_status;
     }
 
-    protected _fire(oringin_npc: NPC): void {
-        if (!this.active) return;
-        this.origin_npc = oringin_npc;
-
+    protected _fire(): void {
         if (this.status !== undefined && this.djinn !== undefined && this.character != undefined) {
             this.djinn.set_status(this.status, this.character);
         }
@@ -44,9 +40,7 @@ export class DjinnSetStatusEvent extends GameEvent {
     /**
      * Unsets this event.
      */
-    destroy(): void {
-        this.origin_npc = null;
+    _destroy(): void {
         this.character = null;
-        this.active = false;
     }
 }

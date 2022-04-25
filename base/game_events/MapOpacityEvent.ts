@@ -1,4 +1,3 @@
-import {NPC} from "../NPC";
 import {GameEvent, event_types} from "./GameEvent";
 
 export class MapOpacityEvent extends GameEvent {
@@ -25,8 +24,7 @@ export class MapOpacityEvent extends GameEvent {
         return this.data.map.get_layer(this.map_layer_name);
     }
 
-    async _fire(origin_npc?: NPC) {
-        if (!this.active) return;
+    async _fire() {
         this.map_layer = this.get_map_layer();
 
         if (!this.map_layer || !this.map_layer.sprite) {
@@ -48,7 +46,6 @@ export class MapOpacityEvent extends GameEvent {
             this.map_layer.visible = this.map_layer.sprite.alpha > 0;
             this.finish();
         }
-        this.origin_npc = origin_npc;
     }
 
     finish() {
@@ -57,10 +54,8 @@ export class MapOpacityEvent extends GameEvent {
         this.finish_events.forEach(event => event.fire(this.origin_npc));
     }
 
-    destroy() {
+    _destroy() {
         this.map_layer = null;
         this.finish_events.forEach(event => event.destroy());
-        this.origin_npc = null;
-        this.active = false;
     }
 }

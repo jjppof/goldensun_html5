@@ -1,6 +1,5 @@
 import {GameEvent, event_types} from "./GameEvent";
 import * as _ from "lodash";
-import {NPC} from "../NPC";
 import {Djinn, djinn_status} from "../Djinn";
 import {base_actions, directions, elements, element_colors, element_colors_in_battle, hex2rgb} from "../utils";
 import {MainChar} from "../MainChar";
@@ -840,10 +839,8 @@ export class DjinnGetEvent extends GameEvent {
         await this.aux_promise;
     }
 
-    async _fire(oringin_npc: NPC) {
-        if (!this.active) return;
+    async _fire() {
         ++this.data.game_event_manager.events_running_count;
-        this.origin_npc = oringin_npc;
         this.data.game_event_manager.force_idle_action = false;
         this.running = true;
         this.data.hero.toggle_collision(false);
@@ -894,12 +891,10 @@ export class DjinnGetEvent extends GameEvent {
         this.next();
     }
 
-    destroy() {
+    _destroy() {
         this.finish_events.forEach(event => event.destroy());
         this.on_battle_defeat_events.forEach(event => event.destroy());
-        this.origin_npc = null;
         this.dialog_manager?.destroy();
         this.data.control_manager.detach_bindings(this.control_key);
-        this.active = false;
     }
 }

@@ -1,5 +1,4 @@
 import {GameEvent, event_types} from "./GameEvent";
-import {NPC} from "../NPC";
 import {ControllableChar} from "../ControllableChar";
 
 /**
@@ -63,11 +62,8 @@ export class EmoticonEvent extends GameEvent {
 
     /**
      * Fires the EmoticonEvent.
-     * @param oringin_npc If it's the case, the origin NPC that originated this event.
      */
-    async _fire(oringin_npc: NPC) {
-        if (!this.active) return;
-        this.origin_npc = oringin_npc;
+    async _fire() {
         ++this.data.game_event_manager.events_running_count;
 
         this.char = GameEvent.get_char(this.data, {
@@ -108,10 +104,8 @@ export class EmoticonEvent extends GameEvent {
     /**
      * Unsets this event.
      */
-    destroy() {
+    _destroy() {
         this.finish_events.forEach(event => event.destroy());
-        this.origin_npc = null;
         this.char = null;
-        this.active = false;
     }
 }

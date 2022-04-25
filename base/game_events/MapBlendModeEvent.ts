@@ -1,4 +1,3 @@
-import {NPC} from "../NPC";
 import {parse_blend_mode} from "../utils";
 import {GameEvent, event_types} from "./GameEvent";
 
@@ -12,8 +11,7 @@ export class MapBlendModeEvent extends GameEvent {
         this.blend_mode = parse_blend_mode(blend_mode);
     }
 
-    _fire(origin_npc?: NPC) {
-        if (!this.active) return;
+    _fire() {
         const map_layer = this.data.map.get_layer(this.map_layer_name);
 
         if (!map_layer || !map_layer.sprite) {
@@ -23,8 +21,5 @@ export class MapBlendModeEvent extends GameEvent {
         map_layer.sprite.blendMode = this.blend_mode;
     }
 
-    destroy() {
-        this.active = false;
-        this.origin_npc = null;
-    }
+    _destroy() {}
 }

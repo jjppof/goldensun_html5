@@ -1,5 +1,4 @@
 import {GameEvent, event_types} from "./GameEvent";
-import {NPC} from "../NPC";
 import {DialogManager} from "../utils/DialogManager";
 import {Summon} from "../Summon";
 import {FieldAbilities} from "../field_abilities/FieldAbilities";
@@ -103,10 +102,8 @@ export class SummonEvent extends GameEvent {
         this.finish_events.forEach(event => event.fire(this.origin_npc));
     }
 
-    async _fire(oringin_npc: NPC) {
-        if (!this.active) return;
+    async _fire() {
         ++this.data.game_event_manager.events_running_count;
-        this.origin_npc = oringin_npc;
         this.running = true;
         this.control_enable = false;
 
@@ -321,11 +318,9 @@ export class SummonEvent extends GameEvent {
         this.finish();
     }
 
-    destroy() {
+    _destroy() {
         this.finish_events.forEach(event => event.destroy());
-        this.origin_npc = null;
         this.dialog?.destroy();
         this.data.control_manager.detach_bindings(this.control_key);
-        this.active = false;
     }
 }

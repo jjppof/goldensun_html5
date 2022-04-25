@@ -15,7 +15,6 @@ export class BattleEvent extends GameEvent {
     }
 
     _fire() {
-        if (!this.active) return;
         ++this.data.game_event_manager.events_running_count;
         this.battle = new Battle(
             this.game,
@@ -45,9 +44,7 @@ export class BattleEvent extends GameEvent {
         this.before_fade_finish_callback = callback;
     }
 
-    destroy() {
-        this.origin_npc = null;
+    _destroy() {
         this.battle = null;
-        this.active = false;
     }
 }
