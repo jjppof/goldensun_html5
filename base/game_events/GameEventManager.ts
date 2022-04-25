@@ -76,7 +76,7 @@ export class GameEventManager {
     }
 
     /**
-     * Initialize the controls tha allows interaction with NPCs.
+     * Initialize the controls that allow interaction with NPCs.
      */
     private set_controls() {
         this.data.control_manager.add_controls(

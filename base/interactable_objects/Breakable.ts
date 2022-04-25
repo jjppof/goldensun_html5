@@ -133,6 +133,7 @@ export class Breakable extends InteractableObjects {
     private async break_entire_pillar(char: ControllableChar) {
         char.misc_busy = true;
         char.play(base_actions.IDLE);
+        char.toggle_collision(false);
 
         this.data.camera.enable_shake();
         await this.down_dust_animation(char);
@@ -175,6 +176,7 @@ export class Breakable extends InteractableObjects {
             }
         });
         this.destroy_body();
+        char.toggle_collision(true);
         char.misc_busy = false;
     }
 
