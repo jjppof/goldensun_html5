@@ -48,6 +48,7 @@ export enum event_types {
     CHAR_SET_ACTIVATION = "char_set_activation",
     AUDIO_PLAY = "audio_play",
     CONTROL_BGM = "control_bgm",
+    SET_PARTY_COINS = "set_party_coins",
 }
 
 /**

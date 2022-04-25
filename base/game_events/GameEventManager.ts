@@ -33,6 +33,7 @@ import {CharAnimPlayEvent} from "./CharAnimPlayEvent";
 import {CharSetActivationEvent} from "./CharSetActivationEvent";
 import {AudioPlayEvent} from "./AudioPlayEvent";
 import {ControlBgmEvent} from "./ControlBgmEvent";
+import {SetPartyCoinsEvent} from "./SetPartyCoinsEvent";
 
 export enum interaction_patterns {
     NO_INTERACTION = "no_interaction",
@@ -563,6 +564,15 @@ export class GameEventManager {
                     info.key_name,
                     info.control_type,
                     info.volume
+                );
+            case event_types.SET_PARTY_COINS:
+                return new SetPartyCoinsEvent(
+                    this.game,
+                    this.data,
+                    info.active,
+                    info.key_name,
+                    info.control_type,
+                    info.amount
                 );
             default:
                 console.warn(`Game event type ${info.type} not found.`);
