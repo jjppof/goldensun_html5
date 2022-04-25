@@ -40,7 +40,7 @@ export class CharAnimPlayEvent extends GameEvent {
         }
     }
 
-    async _fire() {
+    _fire() {
         const target_char =
             GameEvent.get_char(this.data, {
                 is_npc: this.is_npc,

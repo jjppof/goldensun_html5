@@ -32,6 +32,7 @@ import {IOAnimPlayEvent} from "./IOAnimPlayEvent";
 import {CharAnimPlayEvent} from "./CharAnimPlayEvent";
 import {CharSetActivationEvent} from "./CharSetActivationEvent";
 import {AudioPlayEvent} from "./AudioPlayEvent";
+import {ControlBgmEvent} from "./ControlBgmEvent";
 
 export enum interaction_patterns {
     NO_INTERACTION = "no_interaction",
@@ -553,6 +554,15 @@ export class GameEventManager {
                     info.volume,
                     info.loop,
                     info.finish_events
+                );
+            case event_types.CONTROL_BGM:
+                return new ControlBgmEvent(
+                    this.game,
+                    this.data,
+                    info.active,
+                    info.key_name,
+                    info.control_type,
+                    info.volume
                 );
             default:
                 console.warn(`Game event type ${info.type} not found.`);

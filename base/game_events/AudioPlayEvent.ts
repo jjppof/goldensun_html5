@@ -26,7 +26,7 @@ export class AudioPlayEvent extends GameEvent {
         }
     }
 
-    async _fire() {
+    _fire() {
         if (this.audio_type === audio_types.BGM) {
             this.data.audio.set_bgm(this.audio_key);
             this.data.audio.play_bgm(this.loop, this.volume, this.finish.bind(this));

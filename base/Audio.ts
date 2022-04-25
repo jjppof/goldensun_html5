@@ -18,12 +18,17 @@ export class Audio {
     private game: Phaser.Game;
     private data: GoldenSun;
     private se_data: {[se_key: string]: Phaser.AudioSprite} = {};
-    private current_bgm: Phaser.Sound = null;
+    private _current_bgm: Phaser.Sound = null;
     private bgm_volume: number;
 
     constructor(game: Phaser.Game, data: GoldenSun) {
         this.game = game;
         this.data = data;
+    }
+
+    /** The current BGM Phaser.Sound object. */
+    get current_bgm() {
+        return this._current_bgm;
     }
 
     /**
@@ -107,12 +112,12 @@ export class Audio {
     set_bgm(bgm_key: string, play: boolean = false) {
         if (bgm_key && (!this.current_bgm || this.current_bgm.key !== bgm_key)) {
             if (this.current_bgm) this.current_bgm.destroy();
-            this.current_bgm = this.game.add.audio(bgm_key);
+            this._current_bgm = this.game.add.audio(bgm_key);
             if (play) this.play_bgm();
         } else if (!bgm_key && this.current_bgm) {
             this.current_bgm.stop();
             this.current_bgm.destroy();
-            this.current_bgm = null;
+            this._current_bgm = null;
         }
     }
 

@@ -47,6 +47,7 @@ export enum event_types {
     CHAR_ANIM_PLAY = "char_animation_play",
     CHAR_SET_ACTIVATION = "char_set_activation",
     AUDIO_PLAY = "audio_play",
+    CONTROL_BGM = "control_bgm",
 }
 
 /**
@@ -107,7 +108,7 @@ export abstract class GameEvent {
         await promise;
     }
 
-    /** Check if "Reveal" is currently active.  If yes, then cancel it. */
+    /** Check if "Reveal" is currently active. If yes, then cancel it. */
     check_reveal() {
         if (this.data.hero.on_reveal) {
             (this.data.info.field_abilities_list.reveal as RevealFieldPsynergy).finish(false, false);
@@ -136,7 +137,7 @@ export abstract class GameEvent {
     protected abstract _fire(): void;
 
     /**
-     * This function is the one that should be called to start a event.
+     * This function is the one that should be called to destroy an event.
      * It should never be overriden. Call this function to destroy this event.
      * This can be called whenever an associated entity is destroyed, like maps, NPCs etc.
      */
