@@ -100,11 +100,11 @@ export class Audio {
     }
 
     /**
-     * Registers a bgm sound in the engine.
+     * Sets the current bgm object to played by the engine.
      * @param bgm_key The bgm key name.
      * @param play whether is to already start playing.
      */
-    add_bgm(bgm_key: string, play: boolean = false) {
+    set_bgm(bgm_key: string, play: boolean = false) {
         if (bgm_key && (!this.current_bgm || this.current_bgm.key !== bgm_key)) {
             if (this.current_bgm) this.current_bgm.destroy();
             this.current_bgm = this.game.add.audio(bgm_key);
@@ -117,15 +117,19 @@ export class Audio {
     }
 
     /**
-     * Plays a bgm sound.
+     * Plays current activated bgm sound.
      * @param loop Whether the bgm should loop or not.
-     * @param volume The volume to be applied. [0,1]
+     * @param volume The volume to be applied. [0,1].
+     * @param on_complete On bgm complete callback.
      */
-    play_bgm(loop: boolean = true, volume?: number) {
+    play_bgm(loop: boolean = true, volume?: number, on_complete?: () => void) {
         this.current_bgm.loop = loop;
         this.current_bgm.volume = volume ?? Audio.DEFAULT_BGM_VOLUME;
         this.bgm_volume = this.current_bgm.volume;
         this.current_bgm.play();
+        if (on_complete) {
+            this.current_bgm.onMarkerComplete.addOnce(on_complete);
+        }
     }
 
     /**

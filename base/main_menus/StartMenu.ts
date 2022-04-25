@@ -135,7 +135,7 @@ export class StartMenu {
             .onLoadComplete.addOnce(load_bgm_promise_resolve);
         this.game.load.start();
         await promise;
-        this.data.audio.add_bgm(StartMenu.INIT_BMG.key, true);
+        this.data.audio.set_bgm(StartMenu.INIT_BMG.key, true);
     }
 
     async open(choose_callback: StartMenu["choose_callback"]) {

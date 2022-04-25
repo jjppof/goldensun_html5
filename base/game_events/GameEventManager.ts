@@ -31,6 +31,7 @@ import {MapBlendModeEvent} from "./MapBlendModeEvent";
 import {IOAnimPlayEvent} from "./IOAnimPlayEvent";
 import {CharAnimPlayEvent} from "./CharAnimPlayEvent";
 import {CharSetActivationEvent} from "./CharSetActivationEvent";
+import {AudioPlayEvent} from "./AudioPlayEvent";
 
 export enum interaction_patterns {
     NO_INTERACTION = "no_interaction",
@@ -540,6 +541,18 @@ export class GameEventManager {
                     info.is_npc,
                     info.npc_label,
                     info.active
+                );
+            case event_types.AUDIO_PLAY:
+                return new AudioPlayEvent(
+                    this.game,
+                    this.data,
+                    info.active,
+                    info.key_name,
+                    info.audio_type,
+                    info.audio_key,
+                    info.volume,
+                    info.loop,
+                    info.finish_events
                 );
             default:
                 console.warn(`Game event type ${info.type} not found.`);

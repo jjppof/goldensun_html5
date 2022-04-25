@@ -1548,7 +1548,7 @@ export class Map {
 
         this.config_world_map();
 
-        this.data.audio.add_bgm(this.bgm_key, true);
+        this.data.audio.set_bgm(this.bgm_key, true);
 
         return this;
     }

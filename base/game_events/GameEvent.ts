@@ -46,6 +46,7 @@ export enum event_types {
     IO_ANIM_PLAY = "io_animation_play",
     CHAR_ANIM_PLAY = "char_animation_play",
     CHAR_SET_ACTIVATION = "char_set_activation",
+    AUDIO_PLAY = "audio_play",
 }
 
 /**
