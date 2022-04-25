@@ -50,6 +50,7 @@ export enum event_types {
     CONTROL_BGM = "control_bgm",
     SET_PARTY_COINS = "set_party_coins",
     CHAR_EXP = "char_exp",
+    CHAR_ITEM_MANIPULATION = "char_item_manipulation",
 }
 
 /**

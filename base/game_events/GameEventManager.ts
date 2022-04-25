@@ -35,6 +35,7 @@ import {AudioPlayEvent} from "./AudioPlayEvent";
 import {ControlBgmEvent} from "./ControlBgmEvent";
 import {SetPartyCoinsEvent} from "./SetPartyCoinsEvent";
 import {SetCharExpEvent} from "./SetCharExpEvent";
+import {CharItemManipulationEvent} from "./CharItemManipulationEvent";
 
 export enum interaction_patterns {
     NO_INTERACTION = "no_interaction",
@@ -583,6 +584,21 @@ export class GameEventManager {
                     info.key_name,
                     info.char_key,
                     info.control_type,
+                    info.amount
+                );
+            case event_types.CHAR_ITEM_MANIPULATION:
+                return new CharItemManipulationEvent(
+                    this.game,
+                    this.data,
+                    info.active,
+                    info.key_name,
+                    info.char_key,
+                    info.control_type,
+                    info.item_key,
+                    info.equip,
+                    info.equip_slot,
+                    info.slot_index,
+                    info.broken,
                     info.amount
                 );
             default:

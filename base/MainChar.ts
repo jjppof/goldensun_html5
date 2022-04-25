@@ -17,7 +17,7 @@ export type ItemSlot = {
     index?: number;
     equipped?: boolean;
     broken?: boolean;
-    addtional_details?: {[detail_key: string]: string};
+    additional_details?: {[detail_key: string]: string};
 };
 
 export enum equip_slots {
@@ -341,6 +341,7 @@ export class MainChar extends Player {
      * @param item_key_name The item key name.
      * @param quantity The amount of this item to add.
      * @param equip if true, this item will be equipped.
+     * @returns return true if the item was added.
      */
     add_item(item_key_name: string, quantity: number, equip: boolean) {
         let found = false;
@@ -352,7 +353,9 @@ export class MainChar extends Player {
                 }
             });
         }
-        if (found) return;
+        if (found || this.items.length === MainChar.MAX_ITEMS_PER_CHAR) {
+            return found;
+        }
         this.items.push({
             key_name: item_key_name,
             quantity: quantity,
@@ -362,6 +365,7 @@ export class MainChar extends Player {
         if (equip) {
             this.equip_item(this.items.length - 1);
         }
+        return true;
     }
 
     /**
@@ -370,13 +374,14 @@ export class MainChar extends Player {
      * for the given item will be kept, otherwise, it will be removed.
      * @param item_slot_to_remove this char item slot you wish to remove.
      * @param quantity the quantity to be removed. Default is 1.
+     * @param remove_curse if removing a cursed item, removes the curse too.
      */
-    remove_item(item_slot_to_remove: ItemSlot, quantity: number = 1) {
+    remove_item(item_slot_to_remove: ItemSlot, quantity: number = 1, remove_curse: boolean = false) {
         let adjust_index = false;
         this._items = this.items.filter((this_item_slot, index) => {
             if (item_slot_to_remove === this_item_slot) {
                 if (this_item_slot.equipped) {
-                    this.unequip_item(index);
+                    this.unequip_item(index, remove_curse);
                 }
                 if (this_item_slot.quantity - quantity >= 1) {
                     this_item_slot.quantity = this_item_slot.quantity - quantity;
@@ -433,8 +438,9 @@ export class MainChar extends Player {
      * Unequips an item to this char. After unequipping, all relevant updates are done
      * like abilities, class, attributes, effects etc.
      * @param index the item slot index of this char.
+     * @param remove_curse if unequipping a cursed item, removes the curse too.
      */
-    unequip_item(index: number) {
+    unequip_item(index: number, remove_curse: boolean = false) {
         const item_slot = this.items[index];
         if (!item_slot.equipped) return;
         const item = this.info.items_list[item_slot.key_name];
@@ -447,6 +453,10 @@ export class MainChar extends Player {
                 this.remove_effect(effect);
             }
         });
+
+        if (item.curses_when_equipped && remove_curse) {
+            this.remove_permanent_status(permanent_status.EQUIP_CURSE);
+        }
 
         this.update_elemental_attributes();
         if (item.type === item_types.ABILITY_GRANTOR) {

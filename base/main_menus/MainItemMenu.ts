@@ -510,9 +510,9 @@ export class MainItemMenu {
         if (item.items_after_forge.length) {
             details_misc.push(`Forgeable.`);
         }
-        if (item_slot.addtional_details !== undefined && Object.keys(item_slot.addtional_details).length) {
-            for (let key in item_slot.addtional_details) {
-                details_misc.push(item_slot.addtional_details[key]);
+        if (item_slot.additional_details !== undefined && Object.keys(item_slot.additional_details).length) {
+            for (let key in item_slot.additional_details) {
+                details_misc.push(item_slot.additional_details[key]);
             }
         }
         item.effects.forEach(effect => {
