@@ -34,6 +34,7 @@ import {CharSetActivationEvent} from "./CharSetActivationEvent";
 import {AudioPlayEvent} from "./AudioPlayEvent";
 import {ControlBgmEvent} from "./ControlBgmEvent";
 import {SetPartyCoinsEvent} from "./SetPartyCoinsEvent";
+import {SetCharExpEvent} from "./SetCharExpEvent";
 
 export enum interaction_patterns {
     NO_INTERACTION = "no_interaction",
@@ -571,6 +572,16 @@ export class GameEventManager {
                     this.data,
                     info.active,
                     info.key_name,
+                    info.control_type,
+                    info.amount
+                );
+            case event_types.CHAR_EXP:
+                return new SetCharExpEvent(
+                    this.game,
+                    this.data,
+                    info.active,
+                    info.key_name,
+                    info.char_key,
                     info.control_type,
                     info.amount
                 );
