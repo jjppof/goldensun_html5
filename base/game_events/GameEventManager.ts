@@ -37,6 +37,7 @@ import {SetPartyCoinsEvent} from "./SetPartyCoinsEvent";
 import {SetCharExpEvent} from "./SetCharExpEvent";
 import {CharItemManipulationEvent} from "./CharItemManipulationEvent";
 import {CameraShakeEvent} from "./CameraShakeEvent";
+import {CameraMoveEvent} from "./CameraMoveEvent";
 
 export enum interaction_patterns {
     NO_INTERACTION = "no_interaction",
@@ -604,6 +605,17 @@ export class GameEventManager {
                 );
             case event_types.CAMERA_SHAKE:
                 return new CameraShakeEvent(this.game, this.data, info.active, info.key_name, info.enable);
+            case event_types.CAMERA_MOVE:
+                return new CameraMoveEvent(
+                    this.game,
+                    this.data,
+                    info.active,
+                    info.key_name,
+                    info.positions,
+                    info.reset_follow,
+                    info.return_to_target_duration,
+                    info.finish_events
+                );
             default:
                 console.warn(`Game event type ${info.type} not found.`);
                 return null;
