@@ -73,6 +73,7 @@ export enum event_types {
     CAMERA_SHAKE = "camera_shake",
     CAMERA_MOVE = "camera_move",
     CAMERA_FADE = "camera_fade",
+    TINT_MAP = "tint_map",
 }
 
 /**

@@ -39,6 +39,7 @@ import {CharItemManipulationEvent} from "./CharItemManipulationEvent";
 import {CameraShakeEvent} from "./CameraShakeEvent";
 import {CameraMoveEvent} from "./CameraMoveEvent";
 import {CameraFadeEvent} from "./CameraFadeEvent";
+import {TintMapEvent} from "./TintMapEvent";
 
 export enum interaction_patterns {
     NO_INTERACTION = "no_interaction",
@@ -624,6 +625,18 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.fade_type,
+                    info.duration,
+                    info.finish_events
+                );
+            case event_types.TINT_MAP:
+                return new TintMapEvent(
+                    this.game,
+                    this.data,
+                    info.active,
+                    info.key_name,
+                    info.color_key,
+                    info.intensity,
+                    info.gray,
                     info.duration,
                     info.finish_events
                 );
