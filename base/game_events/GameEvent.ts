@@ -53,6 +53,7 @@ export enum event_types {
     CHAR_ITEM_MANIPULATION = "char_item_manipulation",
     CAMERA_SHAKE = "camera_shake",
     CAMERA_MOVE = "camera_move",
+    CAMERA_FADE = "camera_fade",
 }
 
 /**

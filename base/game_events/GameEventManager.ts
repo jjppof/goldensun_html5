@@ -38,6 +38,7 @@ import {SetCharExpEvent} from "./SetCharExpEvent";
 import {CharItemManipulationEvent} from "./CharItemManipulationEvent";
 import {CameraShakeEvent} from "./CameraShakeEvent";
 import {CameraMoveEvent} from "./CameraMoveEvent";
+import {CameraFadeEvent} from "./CameraFadeEvent";
 
 export enum interaction_patterns {
     NO_INTERACTION = "no_interaction",
@@ -614,6 +615,16 @@ export class GameEventManager {
                     info.positions,
                     info.reset_follow,
                     info.return_to_target_duration,
+                    info.finish_events
+                );
+            case event_types.CAMERA_FADE:
+                return new CameraFadeEvent(
+                    this.game,
+                    this.data,
+                    info.active,
+                    info.key_name,
+                    info.fade_type,
+                    info.duration,
                     info.finish_events
                 );
             default:
