@@ -5,7 +5,7 @@ import {GoldenSun} from "../GoldenSun";
 import {Button} from "../XGamepad";
 import {BattleEvent} from "./BattleEvent";
 import {BranchEvent} from "./BranchEvent";
-import {EventValue, event_types, event_value_types, game_info_types} from "./GameEvent";
+import {DetailedValues, EventValue, event_types, event_value_types, game_info_types} from "./GameEvent";
 import {SetValueEvent} from "./SetValueEvent";
 import {MoveEvent} from "./MoveEvent";
 import {DialogEvent} from "./DialogEvent";
@@ -671,36 +671,37 @@ export class GameEventManager {
      * @returns The engine value issued by the user.
      */
     get_value(event_value: EventValue) {
+        const detailed_value = event_value.value as DetailedValues;
         switch (event_value.type) {
             case event_value_types.VALUE:
                 return event_value.value;
             case event_value_types.STORAGE:
-                const storage = this.data.storage.get_object(event_value.value.key_name);
+                const storage = this.data.storage.get_object(detailed_value.key_name);
                 return storage.type === storage_types.POSITION
                     ? `${(storage.value as StoragePosition).x}/${(storage.value as StoragePosition).y}`
                     : storage.value;
             case event_value_types.GAME_INFO:
-                switch (event_value.value.type) {
+                switch (detailed_value.type) {
                     case game_info_types.CHAR:
-                        const char = this.data.info.main_char_list[event_value.value.key_name];
-                        return _.get(char, event_value.value.property);
+                        const char = this.data.info.main_char_list[detailed_value.key_name];
+                        return _.get(char, detailed_value.property);
                     case game_info_types.HERO:
-                        return _.get(this.data.hero, event_value.value.property);
+                        return _.get(this.data.hero, detailed_value.property);
                     case game_info_types.NPC:
-                        const npc = event_value.value.label
-                            ? this.data.map.npcs_label_map[event_value.value.label]
-                            : this.data.map.npcs[event_value.value.index];
-                        return _.get(npc, event_value.value.property);
+                        const npc = detailed_value.label
+                            ? this.data.map.npcs_label_map[detailed_value.label]
+                            : this.data.map.npcs[detailed_value.index];
+                        return _.get(npc, detailed_value.property);
                     case game_info_types.INTERACTABLE_OBJECT:
-                        const interactable_object = event_value.value.label
-                            ? this.data.map.interactable_objects_label_map[event_value.value.label]
-                            : this.data.map.interactable_objects[event_value.value.index];
-                        return _.get(interactable_object, event_value.value.property);
+                        const interactable_object = detailed_value.label
+                            ? this.data.map.interactable_objects_label_map[detailed_value.label]
+                            : this.data.map.interactable_objects[detailed_value.index];
+                        return _.get(interactable_object, detailed_value.property);
                     case game_info_types.EVENT:
-                        const event = event_value.value.label
-                            ? TileEvent.get_labeled_event(event_value.value.label)
-                            : TileEvent.get_event(event_value.value.index);
-                        return _.get(event, event_value.value.property);
+                        const event = detailed_value.label
+                            ? TileEvent.get_labeled_event(detailed_value.label)
+                            : TileEvent.get_event(detailed_value.index);
+                        return _.get(event, detailed_value.property);
                     default:
                         return null;
                 }

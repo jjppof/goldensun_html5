@@ -1,6 +1,25 @@
+import {StoragePosition} from "Storage";
 import {RevealFieldPsynergy} from "../field_abilities/RevealFieldPsynergy";
 import {GoldenSun} from "../GoldenSun";
 import {NPC} from "../NPC";
+
+type BasicValues = string | number | boolean;
+
+/** Event value detailed info. */
+export type DetailedValues = {
+    /** Storage or MainChar key name. */
+    key_name: string;
+    /** The target object type to has its value retrieved. */
+    type: game_info_types;
+    /** The property name of the target that you want to retrieve the value of. */
+    property: string;
+    /** NPC, IO or TileEvent unique label. */
+    label: string;
+    /** NPC, IO or TileEvent index. */
+    index: number;
+    /** The value to be set or used. */
+    value: BasicValues | StoragePosition;
+};
 
 export enum game_info_types {
     CHAR = "char",
@@ -18,7 +37,7 @@ export enum event_value_types {
 
 export type EventValue = {
     type: event_value_types;
-    value: any;
+    value: BasicValues | DetailedValues;
 };
 
 export enum event_types {

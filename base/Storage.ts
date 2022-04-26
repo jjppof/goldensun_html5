@@ -120,7 +120,7 @@ export class Storage {
      * @param key_name the state unique key name.
      * @param value the new state value to be set.
      */
-    set(key_name: string, value: any) {
+    set(key_name: string, value: RawStorageRecord["value"]) {
         this.internal_storage[key_name].value = value;
         for (let id in this.internal_storage[key_name].callbacks) {
             const callback_obj = this.internal_storage[key_name].callbacks[id];
