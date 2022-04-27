@@ -40,6 +40,9 @@ import {CameraShakeEvent} from "./CameraShakeEvent";
 import {CameraMoveEvent} from "./CameraMoveEvent";
 import {CameraFadeEvent} from "./CameraFadeEvent";
 import {TintMapEvent} from "./TintMapEvent";
+import {ColorizeCharEvent} from "./ColorizeCharEvent";
+import {TintCharEvent} from "./TintCharEvent";
+import {OutlineCharEvent} from "./OutlineCharEvent";
 
 export enum interaction_patterns {
     NO_INTERACTION = "no_interaction",
@@ -639,6 +642,41 @@ export class GameEventManager {
                     info.gray,
                     info.duration,
                     info.finish_events
+                );
+            case event_types.COLORIZE_CHAR:
+                return new ColorizeCharEvent(
+                    this.game,
+                    this.data,
+                    info.active,
+                    info.key_name,
+                    info.is_npc,
+                    info.npc_label,
+                    info.color_key,
+                    info.intensity,
+                    info.gray
+                );
+            case event_types.TINT_CHAR:
+                return new TintCharEvent(
+                    this.game,
+                    this.data,
+                    info.active,
+                    info.key_name,
+                    info.is_npc,
+                    info.npc_label,
+                    info.enable,
+                    info.color
+                );
+            case event_types.OUTLINE_CHAR:
+                return new OutlineCharEvent(
+                    this.game,
+                    this.data,
+                    info.active,
+                    info.key_name,
+                    info.is_npc,
+                    info.npc_label,
+                    info.enable,
+                    info.color,
+                    info.keep_transparent
                 );
             default:
                 console.warn(`Game event type ${info.type} not found.`);

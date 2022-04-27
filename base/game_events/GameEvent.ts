@@ -74,6 +74,9 @@ export enum event_types {
     CAMERA_MOVE = "camera_move",
     CAMERA_FADE = "camera_fade",
     TINT_MAP = "tint_map",
+    COLORIZE_CHAR = "colorize_char",
+    TINT_CHAR = "tint_char",
+    OUTLINE_CHAR = "outline_char",
 }
 
 /**

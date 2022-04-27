@@ -25,11 +25,11 @@ export class TintMapEvent extends GameEvent {
     async _fire() {
         ++this.data.game_event_manager.events_running_count;
 
-        this.color_key = this.color_key ?? this.data.map.color_filter.colorize;
-        this.intensity = this.intensity ?? this.data.map.color_filter.colorize_intensity;
-        this.gray = this.gray ?? this.data.map.color_filter.gray;
+        const color_key = this.color_key ?? this.data.map.color_filter.colorize;
+        const intensity = this.intensity ?? this.data.map.color_filter.colorize_intensity;
+        const gray = this.gray ?? this.data.map.color_filter.gray;
 
-        this.data.map.color_filter.colorize = this.color_key;
+        this.data.map.color_filter.colorize = color_key;
 
         if (this.duration > 30) {
             let promise_resolve;
@@ -38,8 +38,8 @@ export class TintMapEvent extends GameEvent {
                 .tween(this.data.map.color_filter)
                 .to(
                     {
-                        colorize_intensity: this.intensity,
-                        gray: this.gray,
+                        colorize_intensity: intensity,
+                        gray: gray,
                     },
                     this.duration,
                     Phaser.Easing.Linear.None,
@@ -49,11 +49,11 @@ export class TintMapEvent extends GameEvent {
 
             await promise;
         } else {
-            this.data.map.color_filter.colorize_intensity = this.intensity;
-            this.data.map.color_filter.gray = this.gray;
+            this.data.map.color_filter.colorize_intensity = intensity;
+            this.data.map.color_filter.gray = gray;
         }
 
-        if (this.intensity === 0) {
+        if (intensity === 0) {
             this.data.map.color_filter.colorize = -1;
         }
 
