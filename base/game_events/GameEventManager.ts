@@ -43,6 +43,7 @@ import {TintMapEvent} from "./TintMapEvent";
 import {ColorizeCharEvent} from "./ColorizeCharEvent";
 import {TintCharEvent} from "./TintCharEvent";
 import {OutlineCharEvent} from "./OutlineCharEvent";
+import {CastingAuraEvent} from "./CastingAuraEvent";
 
 export enum interaction_patterns {
     NO_INTERACTION = "no_interaction",
@@ -677,6 +678,16 @@ export class GameEventManager {
                     info.enable,
                     info.color,
                     info.keep_transparent
+                );
+            case event_types.CASTING_AURA:
+                return new CastingAuraEvent(
+                    this.game,
+                    this.data,
+                    info.active,
+                    info.key_name,
+                    info.is_npc,
+                    info.npc_label,
+                    info.enable
                 );
             default:
                 console.warn(`Game event type ${info.type} not found.`);

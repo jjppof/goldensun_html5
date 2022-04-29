@@ -272,8 +272,7 @@ export abstract class FieldAbilities {
         //stop_casting calls after_destroy and before_destroy.
         this.stop_casting = FieldAbilities.init_cast_aura(
             this.game,
-            this.controllable_char.sprite,
-            this.data.middlelayer_group,
+            this.data,
             this.controllable_char,
             //after_init
             () => {
@@ -402,13 +401,14 @@ export abstract class FieldAbilities {
 
     static init_cast_aura(
         game: Phaser.Game,
-        sprite: Phaser.Sprite,
-        group: Phaser.Group,
+        data: GoldenSun,
         char: ControllableChar,
-        after_init: () => void,
-        after_destroy: (reset_casting_psy_flag: boolean) => void,
-        before_destroy: (reset_map_tint: boolean) => void
+        after_init?: () => void,
+        after_destroy?: (reset_casting_psy_flag: boolean) => void,
+        before_destroy?: (reset_map_tint: boolean) => void
     ) {
+        const sprite = char.sprite;
+        const group = data.middlelayer_group;
         const ring_up_time = 750;
         const ring_up_time_half = ring_up_time >> 1;
         const step_time = (ring_up_time / 3) | 0;
@@ -530,7 +530,8 @@ export abstract class FieldAbilities {
             char.color_filter.hue_adjust = Math.random() * 2 * Math.PI;
         });
         blink_timer.start();
-        return async (reset_casting_psy_flag?: boolean, reset_map_tint?: boolean) => {
+        const casting_aura_stop_function = async (reset_casting_psy_flag?: boolean, reset_map_tint?: boolean) => {
+            char.casting_aura_stop_function = null;
             if (before_destroy !== undefined) {
                 before_destroy(reset_map_tint);
             }
@@ -556,6 +557,8 @@ export abstract class FieldAbilities {
                 after_destroy(reset_casting_psy_flag);
             }
         };
+        char.casting_aura_stop_function = casting_aura_stop_function;
+        return casting_aura_stop_function;
     }
 
     static tint_map_layers(

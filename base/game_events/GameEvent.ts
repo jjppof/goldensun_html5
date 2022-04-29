@@ -77,6 +77,7 @@ export enum event_types {
     COLORIZE_CHAR = "colorize_char",
     TINT_CHAR = "tint_char",
     OUTLINE_CHAR = "outline_char",
+    CASTING_AURA = "casting_aura",
 }
 
 /**

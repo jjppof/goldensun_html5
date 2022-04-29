@@ -17,6 +17,7 @@ import {Camera} from "./Camera";
 import {Pushable} from "./interactable_objects/Pushable";
 import {RollablePillar} from "./interactable_objects/RollingPillar";
 import {StoragePosition} from "./Storage";
+import {FieldAbilities} from "field_abilities/FieldAbilities";
 
 /**
  * All chars that can be controlled by human (Hero) or code/event procedures (NPC)
@@ -150,6 +151,8 @@ export abstract class ControllableChar {
     private _rotating_frame_index: number;
     private _default_scale: {x: number; y: number};
     protected _shapes_collision_active: boolean;
+    /** The function used to stop this char casting aura. */
+    public casting_aura_stop_function: ReturnType<typeof FieldAbilities.init_cast_aura>;
 
     constructor(
         game: Phaser.Game,
