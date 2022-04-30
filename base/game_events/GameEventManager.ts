@@ -44,6 +44,7 @@ import {ColorizeCharEvent} from "./ColorizeCharEvent";
 import {TintCharEvent} from "./TintCharEvent";
 import {OutlineCharEvent} from "./OutlineCharEvent";
 import {CastingAuraEvent} from "./CastingAuraEvent";
+import {CustomCollisionBodyEvent} from "./CustomCollisionBodyEvent";
 
 export enum interaction_patterns {
     NO_INTERACTION = "no_interaction",
@@ -688,6 +689,19 @@ export class GameEventManager {
                     info.is_npc,
                     info.npc_label,
                     info.enable
+                );
+            case event_types.CUSTOM_COLLISION_BODY:
+                return new CustomCollisionBodyEvent(
+                    this.game,
+                    this.data,
+                    info.active,
+                    info.key_name,
+                    info.label,
+                    info.control,
+                    info.x,
+                    info.y,
+                    info.body_type,
+                    info.properties
                 );
             default:
                 console.warn(`Game event type ${info.type} not found.`);

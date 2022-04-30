@@ -3689,7 +3689,7 @@ declare module Phaser {
                 addFixture(fixtureData: string): p2.Shape[];
                 addLine(length: number, offsetX?: number, offsetY?: number, rotation?: number): p2.Line;
                 addParticle(offsetX?: number, offsetY?: number, rotation?: number): p2.Particle;
-                addPolygon(options: { optimalDecomp?: boolean; skipSimpleCheck?: boolean; removeCollinearPoints?: boolean; }, points: number[][]): boolean;
+                addPolygon(options: { optimalDecomp?: boolean; skipSimpleCheck?: boolean; removeCollinearPoints?: boolean; remove?: boolean, adjustCenterOfMass?: boolean }, points: number[][]): boolean;
                 addPhaserPolygon(key: string, object: string): Phaser.Physics.P2.FixtureList;
                 addPlane(offsetX?: number, offsetY?: number, rotation?: number): p2.Plane;
                 addRectangle(width: number, height: number, offsetX?: number, offsetY?: number, rotation?: number): p2.Rectangle;

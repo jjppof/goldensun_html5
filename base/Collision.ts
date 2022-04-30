@@ -5,6 +5,7 @@ import * as numbers from "./magic_numbers";
 import {range_360, base_actions, get_direction_mask, directions, get_tile_position} from "./utils";
 import * as turf from "@turf/turf";
 import {IntegerPairKey} from "./tile_events/TileEvent";
+import * as _ from "lodash";
 
 /**
  * This class manages collision between the main concepts of the engine:
@@ -39,6 +40,7 @@ export class Collision {
     private _npc_collision_groups: {[layer_index: number]: Phaser.Physics.P2.CollisionGroup};
     private _interactable_objs_collision_groups: {[layer_index: number]: Phaser.Physics.P2.CollisionGroup};
     private max_layers_created: number;
+    private _custom_bodies: {[label: string]: Phaser.Physics.P2.Body};
 
     constructor(game: Phaser.Game, data: GoldenSun) {
         this.game = game;
@@ -50,6 +52,7 @@ export class Collision {
         this._npc_collision_groups = {};
         this._interactable_objs_collision_groups = {};
         this.max_layers_created = 0;
+        this._custom_bodies = {};
     }
 
     get hero_collision_group() {
@@ -66,6 +69,9 @@ export class Collision {
     }
     get interactable_objs_collision_groups() {
         return this._interactable_objs_collision_groups;
+    }
+    get custom_bodies() {
+        return this._custom_bodies;
     }
 
     /**
@@ -189,6 +195,94 @@ export class Collision {
         this.config_collision_groups(this.data.map);
         this.config_collisions(new_collision_layer_index);
         this.data.map.config_layers(true);
+    }
+
+    /**
+     * Creates a custom body on interactable objects collision group.
+     * It can be a box, circle or polygon.
+     * @param label the custom body unique label name.
+     * @param x the x position of the body.
+     * @param y the y position of the body.
+     * @param type the body type: "box", "circle" or "polygon".
+     * @param properties some properties regarding the type of the body.
+     * @returns returns the created body.
+     */
+    create_custom_body(
+        label: string,
+        x: number,
+        y: number,
+        body_type: "box" | "circle" | "polygon",
+        properties: {
+            /** The width of the box. */
+            width?: number;
+            /** The height of the box. */
+            height?: number;
+            /** The radius of the circle. */
+            radius?: number;
+            /** The array of polygon points. */
+            points?: number[][];
+            /** The target collision layer for the body to be. */
+            collision_layer?: number;
+        }
+    ) {
+        if (label in this.custom_bodies) {
+            return null;
+        }
+        const body = this.game.physics.p2.createBody(x, y, 0, true);
+        body.clearShapes();
+        switch (body_type) {
+            case "box":
+                body.setRectangle(properties.width, properties.height, 0, 0);
+                break;
+            case "circle":
+                body.setCircle(properties.radius);
+                break;
+            case "polygon":
+                body.addPolygon(
+                    {
+                        optimalDecomp: false,
+                        skipSimpleCheck: true,
+                        removeCollinearPoints: false,
+                        remove: false,
+                        adjustCenterOfMass: false,
+                    },
+                    _.cloneDeep(properties.points)
+                );
+                break;
+        }
+        this.custom_bodies[label] = body;
+        const target_layer = properties.collision_layer ?? this.data.map.collision_layer;
+        body.setCollisionGroup(this.data.collision.interactable_objs_collision_groups[target_layer]);
+        body.damping = numbers.MAP_DAMPING;
+        body.angularDamping = numbers.MAP_DAMPING;
+        body.setZeroRotation();
+        body.fixedRotation = true;
+        body.dynamic = false;
+        body.static = true;
+        body.debug = this.data.hero.sprite.body.debug;
+        body.collides(this.data.collision.hero_collision_group);
+        return body;
+    }
+
+    /**
+     * Destroys a custom body.
+     * @param label the unique label of the body to be destroyed.
+     */
+    destroy_custom_body(label: string) {
+        if (label in this.custom_bodies) {
+            this.custom_bodies[label].destroy();
+            delete this._custom_bodies[label];
+        }
+    }
+
+    /**
+     * Clears all custom bodies.
+     */
+    clear_custom_bodies() {
+        for (let label in this.custom_bodies) {
+            this.custom_bodies[label].destroy();
+            delete this._custom_bodies[label];
+        }
     }
 
     /**

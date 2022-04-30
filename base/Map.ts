@@ -463,7 +463,7 @@ export class Map {
                 for (let i = 0; i < this.processed_polygons[this.collision_layer].length; ++i) {
                     const polygon_data = this.processed_polygons[this.collision_layer][i];
                     //add pollygon modifies the polygon input
-                    this.collision_sprite.body.addPolygon(
+                    this.body.addPolygon(
                         {
                             optimalDecomp: false,
                             skipSimpleCheck: true,
@@ -1620,6 +1620,8 @@ export class Map {
             this.data.hero.footsteps.clean_all();
         }
         this.game_events.forEach(event => event.destroy());
+
+        this.data.collision.clear_custom_bodies();
 
         TileEvent.reset();
         GameEvent.reset();
