@@ -79,6 +79,8 @@ export enum event_types {
     OUTLINE_CHAR = "outline_char",
     CASTING_AURA = "casting_aura",
     CUSTOM_COLLISION_BODY = "custom_collision_body",
+    SET_CHAR_COLLISION = "set_char_collision",
+    SET_IO_COLLISION = "set_io_collision",
 }
 
 /**
