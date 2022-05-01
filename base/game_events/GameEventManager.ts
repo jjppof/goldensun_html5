@@ -47,6 +47,7 @@ import {CastingAuraEvent} from "./CastingAuraEvent";
 import {CustomCollisionBodyEvent} from "./CustomCollisionBodyEvent";
 import {SetCharCollisionEvent} from "./SetCharCollisionEvent";
 import {SetIoCollisionEvent} from "./SetIoCollisionEvent";
+import {GrantAbilityEvent} from "./GrantAbilityEvent";
 
 export enum interaction_patterns {
     NO_INTERACTION = "no_interaction",
@@ -723,6 +724,15 @@ export class GameEventManager {
                     info.key_name,
                     info.io_label,
                     info.control_type
+                );
+            case event_types.GRANT_ABILITY:
+                return new GrantAbilityEvent(
+                    this.game,
+                    this.data,
+                    info.active,
+                    info.key_name,
+                    info.char_key,
+                    info.ability
                 );
             default:
                 console.warn(`Game event type ${info.type} not found.`);
