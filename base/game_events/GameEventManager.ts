@@ -48,6 +48,7 @@ import {CustomCollisionBodyEvent} from "./CustomCollisionBodyEvent";
 import {SetCharCollisionEvent} from "./SetCharCollisionEvent";
 import {SetIoCollisionEvent} from "./SetIoCollisionEvent";
 import {GrantAbilityEvent} from "./GrantAbilityEvent";
+import {StorageChangeEvent} from "./StorageChangeEvent";
 
 export enum interaction_patterns {
     NO_INTERACTION = "no_interaction",
@@ -733,6 +734,16 @@ export class GameEventManager {
                     info.key_name,
                     info.char_key,
                     info.ability
+                );
+            case event_types.STORAGE_CHANGE:
+                return new StorageChangeEvent(
+                    this.game,
+                    this.data,
+                    info.active,
+                    info.key_name,
+                    info.keys,
+                    info.change_events,
+                    info.callback_call_type
                 );
             default:
                 console.warn(`Game event type ${info.type} not found.`);

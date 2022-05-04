@@ -82,6 +82,7 @@ export enum event_types {
     SET_CHAR_COLLISION = "set_char_collision",
     SET_IO_COLLISION = "set_io_collision",
     GRANT_ABILITY = "grant_ability",
+    STORAGE_CHANGE = "storage_change",
 }
 
 /**

@@ -7,7 +7,7 @@ export enum storage_types {
     POSITION = "position",
 }
 
-export enum callback_call_type {
+export enum callback_call_types {
     ONCE = "once",
     MULTIPLE = "multiple",
 }
@@ -27,7 +27,7 @@ type StorageRecord = RawStorageRecord & {
     callbacks?: {
         [id: number]: {
             callback: () => void;
-            call_type: callback_call_type;
+            call_type: callback_call_types;
         };
     };
     callback_id_counter: number;
@@ -125,7 +125,7 @@ export class Storage {
         for (let id in this.internal_storage[key_name].callbacks) {
             const callback_obj = this.internal_storage[key_name].callbacks[id];
             callback_obj.callback();
-            if (callback_obj.call_type === callback_call_type.ONCE) {
+            if (callback_obj.call_type === callback_call_types.ONCE) {
                 this.remove_callback(key_name, id);
             }
         }
@@ -136,14 +136,16 @@ export class Storage {
      * @param key_name the state unique key name.
      * @param callback the callback function.
      * @param call_type the call type of this callback. Can be "once" or "multiple".
+     * @returns returns the binding id.
      */
-    add_callback(key_name: string, callback: () => void, call_type: callback_call_type) {
+    add_callback(key_name: string, callback: () => void, call_type: callback_call_types) {
         const this_id = this.internal_storage[key_name].callback_id_counter;
         this.internal_storage[key_name].callbacks[this_id] = {
             call_type: call_type,
             callback: callback,
         };
         ++this.internal_storage[key_name].callback_id_counter;
+        return this_id;
     }
 
     /**
