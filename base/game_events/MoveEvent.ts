@@ -114,7 +114,7 @@ export class MoveEvent extends CharControlEvent {
         if (!this.is_npc) {
             this.data.game_event_manager.allow_char_to_move = true;
         }
-        let previous_sqr_dist: number;
+        let previous_sqr_dist = Infinity;
         const udpate_callback = () => {
             this.char.update_movement(true);
             this.data.map.sort_sprites();
