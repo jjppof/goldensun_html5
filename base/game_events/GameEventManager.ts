@@ -51,6 +51,7 @@ import {GrantAbilityEvent} from "./GrantAbilityEvent";
 import {StorageChangeEvent} from "./StorageChangeEvent";
 import {CameraFollowEvent} from "./CameraFollowEvent";
 import {SetPermanentStatusEvent} from "./SetPermanentStatusEvent";
+import {ChangeCollisionLayerEvent} from "./ChangeCollisionLayerEvent";
 
 export enum interaction_patterns {
     NO_INTERACTION = "no_interaction",
@@ -771,6 +772,14 @@ export class GameEventManager {
                     info.permanent_status,
                     info.add,
                     info.revive_target_hp
+                );
+            case event_types.CHANGE_COLLISION_LAYER:
+                return new ChangeCollisionLayerEvent(
+                    this.game,
+                    this.data,
+                    info.active,
+                    info.key_name,
+                    info.target_collision_layer
                 );
             default:
                 console.warn(`Game event type ${info.type} not found.`);

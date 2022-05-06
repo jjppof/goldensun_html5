@@ -448,9 +448,7 @@ export class Map {
      * @param collision_layer the collsion layer index.
      */
     config_body(collision_layer: number) {
-        if (this.collision_layer !== collision_layer) {
-            this._collision_layer = collision_layer;
-        }
+        this._collision_layer = collision_layer;
         this.game.physics.p2.enable(this.collision_sprite, false);
         this.collision_sprite.body.clearShapes();
         if (this.collision_embedded) {
