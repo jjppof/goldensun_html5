@@ -1,6 +1,6 @@
 import {event_types, GameEvent} from "./GameEvent";
 import * as _ from "lodash";
-import {directions} from "../utils";
+import {directions, get_sqr_distance} from "../utils";
 import {NPC} from "../NPC";
 import {CharControlEvent} from "./CharControlEvent";
 
@@ -110,18 +110,20 @@ export class MoveEvent extends CharControlEvent {
 
         const direction = new Phaser.Point(dest.x - this.char.sprite.x, dest.y - this.char.sprite.y).normalize();
         this.char.set_speed(direction.x, direction.y, false);
-        const sqr = x => x * x;
-        const minimal_distance_sqr = sqr(this.minimal_distance ?? MoveEvent.MINIMAL_DISTANCE);
+        const minimal_distance_sqr = Math.pow(this.minimal_distance ?? MoveEvent.MINIMAL_DISTANCE, 2.0);
         if (!this.is_npc) {
             this.data.game_event_manager.allow_char_to_move = true;
         }
+        let previous_sqr_dist: number;
         const udpate_callback = () => {
             this.char.update_movement(true);
             this.data.map.sort_sprites();
-            if (sqr(dest.x - this.char.sprite.x) + sqr(dest.y - this.char.sprite.y) < minimal_distance_sqr) {
+            const this_sqr_dist = get_sqr_distance(this.char.x, dest.x, this.char.y, dest.y);
+            if (this_sqr_dist < minimal_distance_sqr || this_sqr_dist > previous_sqr_dist) {
                 this.data.game_event_manager.remove_callback(udpate_callback);
                 this.on_position_reach();
             }
+            previous_sqr_dist = this_sqr_dist;
         };
         this.data.game_event_manager.add_callback(udpate_callback);
     }
