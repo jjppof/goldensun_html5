@@ -86,6 +86,7 @@ export enum event_types {
     CAMERA_FOLLOW = "camera_follow",
     PERMANENT_STATUS = "permanent_status",
     CHANGE_COLLISION_LAYER = "change_collision_layer",
+    CREATE_STORAGE_VAR = "create_storage_var",
 }
 
 /**

@@ -52,6 +52,7 @@ import {StorageChangeEvent} from "./StorageChangeEvent";
 import {CameraFollowEvent} from "./CameraFollowEvent";
 import {SetPermanentStatusEvent} from "./SetPermanentStatusEvent";
 import {ChangeCollisionLayerEvent} from "./ChangeCollisionLayerEvent";
+import {CreateStorageVarEvent} from "./CreateStorageVarEvent";
 
 export enum interaction_patterns {
     NO_INTERACTION = "no_interaction",
@@ -780,6 +781,15 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.target_collision_layer
+                );
+            case event_types.CREATE_STORAGE_VAR:
+                return new CreateStorageVarEvent(
+                    this.game,
+                    this.data,
+                    info.active,
+                    info.key_name,
+                    info.var_name,
+                    info.initial_value
                 );
             default:
                 console.warn(`Game event type ${info.type} not found.`);

@@ -76,6 +76,9 @@ export class Storage {
                 case "object":
                     type = storage_types.POSITION;
                     break;
+                default:
+                    console.warn(`Invalid data type for "${key}" storage key.`);
+                    continue;
             }
             this.add(key, type, value);
         }
@@ -88,6 +91,10 @@ export class Storage {
      * @param initial_value the initial value of the state.
      */
     add(key_name: string, type: storage_types, initial_value: RawStorageRecord["value"] = null) {
+        if (key_name in this.internal_storage) {
+            console.warn(`${key_name} already defined in game storage.`);
+            return;
+        }
         this.internal_storage[key_name] = {
             key_name: key_name,
             type: type,
