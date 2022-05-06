@@ -28,6 +28,7 @@ export class Djinn {
     public status: djinn_status;
     public index: number;
     public recovery_turn: number;
+    public owner: MainChar;
 
     constructor(
         key_name,
@@ -58,6 +59,7 @@ export class Djinn {
         this.status = djinn_status.SET;
         this.index = index;
         this.recovery_turn = 0;
+        this.owner = null;
     }
 
     set_status(status: djinn_status, char: MainChar) {

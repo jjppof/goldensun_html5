@@ -498,6 +498,7 @@ export class MainChar extends Player {
         for (let i = 0; i < djinni.length; ++i) {
             const djinn = this.info.djinni_list[djinni[i]];
             this.djinn_by_element[djinn.element].push(djinn.key_name);
+            djinn.owner = this;
         }
         this.update_elemental_attributes();
     }
@@ -509,6 +510,7 @@ export class MainChar extends Player {
     add_djinn(djinn_key_name: string) {
         const djinn = this.info.djinni_list[djinn_key_name];
         this.djinn_by_element[djinn.element].push(djinn.key_name);
+        djinn.owner = this;
         this.update_all();
     }
 
@@ -522,6 +524,7 @@ export class MainChar extends Player {
         const index = this_djinni_list.indexOf(djinn_key_name);
         if (index !== -1) this_djinni_list.splice(index, 1);
         this.update_all();
+        djinn.owner = null;
     }
 
     /**
@@ -918,6 +921,15 @@ export class MainChar extends Player {
         party_data.avg_level = _.meanBy(members, char => char.level) | 0;
 
         //if necessary, distribute djinn among chars equally
+        MainChar.distribute_djinn(party_data);
+    }
+
+    /**
+     * Distributes djinn among chars equally.
+     * @param party_data the party data object.
+     */
+    static distribute_djinn(party_data: PartyData) {
+        const members = party_data.members;
         const djinn_per_char_min = _.meanBy(members, char => char.djinni.length) | 0;
         const djinn_buffer = [];
         _.sortBy(members, c => c.djinni.length)

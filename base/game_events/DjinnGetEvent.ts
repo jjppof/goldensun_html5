@@ -33,6 +33,7 @@ export class DjinnGetEvent extends GameEvent {
     private djinn_defeated: boolean;
     private on_event_finish: () => void;
     private no_animation: boolean;
+    private add_djinn: boolean; //only works with no_animation set to true.
 
     constructor(
         game,
@@ -45,7 +46,8 @@ export class DjinnGetEvent extends GameEvent {
         custom_battle_bg,
         finish_events,
         on_battle_defeat_events,
-        no_animation
+        no_animation,
+        add_djinn
     ) {
         super(game, data, event_types.DJINN_GET, active, key_name);
         this.djinn = this.data.info.djinni_list[djinn_key];
@@ -54,6 +56,7 @@ export class DjinnGetEvent extends GameEvent {
         this.custom_battle_bg = custom_battle_bg;
         this.djinn_defeated = false;
         this.no_animation = no_animation ?? false;
+        this.add_djinn = add_djinn ?? true;
 
         finish_events?.forEach(event_info => {
             const event = this.data.game_event_manager.get_event_instance(event_info);
@@ -831,8 +834,16 @@ export class DjinnGetEvent extends GameEvent {
 
     async _fire() {
         if (this.no_animation) {
-            const char = MainChar.add_djinn_to_party(this.data.info.party_data, this.djinn);
-            this.djinn.set_status(djinn_status.STANDBY, char);
+            if (this.add_djinn) {
+                const char = MainChar.add_djinn_to_party(this.data.info.party_data, this.djinn);
+                this.djinn.set_status(djinn_status.STANDBY, char);
+            } else {
+                const char = this.djinn.owner;
+                if (char) {
+                    char.remove_djinn(this.djinn.key_name);
+                    MainChar.distribute_djinn(this.data.info.party_data);
+                }
+            }
             return;
         }
         ++this.data.game_event_manager.events_running_count;

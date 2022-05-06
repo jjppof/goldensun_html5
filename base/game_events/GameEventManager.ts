@@ -414,7 +414,8 @@ export class GameEventManager {
                     info.custom_battle_bg,
                     info.finish_events,
                     info.on_battle_defeat_events,
-                    info.no_animation
+                    info.no_animation,
+                    info.add_djinn
                 );
             case event_types.DJINN_SET_STATUS:
                 return new DjinnSetStatusEvent(
