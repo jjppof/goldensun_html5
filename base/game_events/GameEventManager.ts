@@ -49,6 +49,7 @@ import {SetCharCollisionEvent} from "./SetCharCollisionEvent";
 import {SetIoCollisionEvent} from "./SetIoCollisionEvent";
 import {GrantAbilityEvent} from "./GrantAbilityEvent";
 import {StorageChangeEvent} from "./StorageChangeEvent";
+import {CameraFollowEvent} from "./CameraFollowEvent";
 
 export enum interaction_patterns {
     NO_INTERACTION = "no_interaction",
@@ -744,6 +745,18 @@ export class GameEventManager {
                     info.keys,
                     info.change_events,
                     info.callback_call_type
+                );
+            case event_types.CAMERA_FOLLOW:
+                return new CameraFollowEvent(
+                    this.game,
+                    this.data,
+                    info.active,
+                    info.key_name,
+                    info.follow,
+                    info.is_hero,
+                    info.npc_label,
+                    info.io_label,
+                    info.transition_duration
                 );
             default:
                 console.warn(`Game event type ${info.type} not found.`);

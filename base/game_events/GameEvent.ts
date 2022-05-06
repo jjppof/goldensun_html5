@@ -83,6 +83,7 @@ export enum event_types {
     SET_IO_COLLISION = "set_io_collision",
     GRANT_ABILITY = "grant_ability",
     STORAGE_CHANGE = "storage_change",
+    CAMERA_FOLLOW = "camera_follow",
 }
 
 /**
