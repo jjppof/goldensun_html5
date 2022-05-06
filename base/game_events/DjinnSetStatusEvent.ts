@@ -15,7 +15,6 @@ export class DjinnSetStatusEvent extends GameEvent {
     private status_key: string;
     /** The status to set */
     private status: djinn_status;
-    /** INPUT. The list of game events to be fired on this event end. */
 
     constructor(game, data, active, key_name, djinn_key, character_key, status_key) {
         super(game, data, event_types.DJINN_SET_STATUS, active, key_name);
@@ -41,6 +40,7 @@ export class DjinnSetStatusEvent extends GameEvent {
      * Unsets this event.
      */
     _destroy(): void {
+        this.djinn = null;
         this.character = null;
     }
 }

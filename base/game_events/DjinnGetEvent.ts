@@ -32,6 +32,7 @@ export class DjinnGetEvent extends GameEvent {
     private custom_battle_bg: string;
     private djinn_defeated: boolean;
     private on_event_finish: () => void;
+    private no_animation: boolean;
 
     constructor(
         game,
@@ -43,7 +44,8 @@ export class DjinnGetEvent extends GameEvent {
         enemy_party_key,
         custom_battle_bg,
         finish_events,
-        on_battle_defeat_events
+        on_battle_defeat_events,
+        no_animation
     ) {
         super(game, data, event_types.DJINN_GET, active, key_name);
         this.djinn = this.data.info.djinni_list[djinn_key];
@@ -51,19 +53,7 @@ export class DjinnGetEvent extends GameEvent {
         this.enemy_party_key = enemy_party_key;
         this.custom_battle_bg = custom_battle_bg;
         this.djinn_defeated = false;
-
-        this.control_key = this.data.control_manager.add_controls(
-            [
-                {
-                    buttons: Button.A,
-                    on_down: () => {
-                        if (!this.running || !this.control_enable) return;
-                        this.next();
-                    },
-                },
-            ],
-            {persist: true}
-        );
+        this.no_animation = no_animation ?? false;
 
         finish_events?.forEach(event_info => {
             const event = this.data.game_event_manager.get_event_instance(event_info);
@@ -840,9 +830,28 @@ export class DjinnGetEvent extends GameEvent {
     }
 
     async _fire() {
+        if (this.no_animation) {
+            const char = MainChar.add_djinn_to_party(this.data.info.party_data, this.djinn);
+            this.djinn.set_status(djinn_status.STANDBY, char);
+            return;
+        }
         ++this.data.game_event_manager.events_running_count;
         this.data.game_event_manager.force_idle_action = false;
         this.running = true;
+
+        this.control_key = this.data.control_manager.add_controls(
+            [
+                {
+                    buttons: Button.A,
+                    on_down: () => {
+                        if (!this.running || !this.control_enable) return;
+                        this.next();
+                    },
+                },
+            ],
+            {persist: true}
+        );
+
         this.data.hero.toggle_collision(false);
         this.origin_npc.toggle_collision(false);
 
@@ -892,9 +901,11 @@ export class DjinnGetEvent extends GameEvent {
     }
 
     _destroy() {
+        this.djinn = null;
         this.finish_events.forEach(event => event.destroy());
         this.on_battle_defeat_events.forEach(event => event.destroy());
         this.dialog_manager?.destroy();
+        this.dialog_manager = null;
         this.data.control_manager.detach_bindings(this.control_key);
     }
 }

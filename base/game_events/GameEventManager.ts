@@ -413,7 +413,8 @@ export class GameEventManager {
                     info.enemy_party_key,
                     info.custom_battle_bg,
                     info.finish_events,
-                    info.on_battle_defeat_events
+                    info.on_battle_defeat_events,
+                    info.no_animation
                 );
             case event_types.DJINN_SET_STATUS:
                 return new DjinnSetStatusEvent(
