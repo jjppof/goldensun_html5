@@ -84,6 +84,7 @@ export enum event_types {
     GRANT_ABILITY = "grant_ability",
     STORAGE_CHANGE = "storage_change",
     CAMERA_FOLLOW = "camera_follow",
+    PERMANENT_STATUS = "permanent_status",
 }
 
 /**
