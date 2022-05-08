@@ -89,6 +89,7 @@ export enum event_types {
     CREATE_STORAGE_VAR = "create_storage_var",
     ITEM_CHECKS = "item_checks",
     ADD_ITEM_TO_PARTY = "add_item_to_party",
+    GENERIC_SPRITE = "generic_sprite",
 }
 
 /**

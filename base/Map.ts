@@ -78,6 +78,7 @@ export class Map {
         direction: directions;
     };
     private _paused: boolean;
+    private _generic_sprites: {[key_name: string]: Phaser.Sprite};
 
     /** If true, sprites in middlelayer_group won't be sorted. */
     public sprites_sort_paused: boolean;
@@ -139,6 +140,7 @@ export class Map {
         this._retreat_data = null;
         this._paused = false;
         this.sprites_sort_paused = false;
+        this._generic_sprites = {};
     }
 
     /** The list of TileEvents of this map. */
@@ -228,6 +230,10 @@ export class Map {
     /** Whether the map is paused or not. */
     get paused() {
         return this._paused;
+    }
+    /** An object of generic sprites that can be created by Game Events. */
+    get generic_sprites() {
+        return this._generic_sprites;
     }
 
     /**
@@ -1409,6 +1415,84 @@ export class Map {
     }
 
     /**
+     * Adds a generic sprite to this map.
+     * @param key_name the generic sprite key name.
+     * @param sprite_key the sprite key name.
+     * @param x the x position in px.
+     * @param y the y position in px.
+     * @param group the Phaser.Group to be in.
+     * @param options some options.
+     * @returns returns the generated sprite.
+     */
+    add_generic_sprite(
+        key_name: string,
+        sprite_key: string,
+        x: number,
+        y: number,
+        group: Phaser.Group,
+        options?: {
+            /** The frame key name to be set for this sprite. */
+            frame?: string;
+            /** The sprite alpha value. */
+            alpha?: number;
+            /** The sprite ancho x value. */
+            anchor_x?: number;
+            /** The sprite ancho y value. */
+            anchor_y?: number;
+            /** The sprite scale x value. */
+            scale_x?: number;
+            /** The sprite scale y value. */
+            scale_y?: number;
+            /** The sprite rotation value. */
+            rotation?: number;
+            /** If true, an animation of this sprite will be started. */
+            play?: boolean;
+            /** The frame rate of the animation. */
+            frame_rate?: number;
+            /** Whether the animation will loop. */
+            loop?: boolean;
+            /** The animation action key. */
+            action?: string;
+            /** The animation key. */
+            animation?: string;
+        }
+    ) {
+        if (key_name in this.generic_sprites) {
+            console.warn(`Generic sprite "${key_name}" already exists.`);
+            return null;
+        }
+        const generic_sprite = this.game.add.sprite(x, y, sprite_key, options?.frame, group);
+        this.generic_sprites[key_name] = generic_sprite;
+        generic_sprite.roundPx = true;
+        generic_sprite.alpha = options?.alpha ?? generic_sprite.alpha;
+        generic_sprite.anchor.x = options?.anchor_x ?? generic_sprite.anchor.x;
+        generic_sprite.anchor.y = options?.anchor_y ?? generic_sprite.anchor.y;
+        generic_sprite.scale.x = options?.scale_x ?? generic_sprite.scale.x;
+        generic_sprite.scale.y = options?.scale_y ?? generic_sprite.scale.y;
+        generic_sprite.rotation = options?.rotation ?? generic_sprite.rotation;
+        if (options?.play) {
+            const anim_key = `${options.action}/${options.animation}`;
+            const anim = generic_sprite.animations.getAnimation(anim_key);
+            anim.play(options?.frame_rate, options?.loop);
+        }
+        return generic_sprite;
+    }
+
+    /**
+     * Removes a generic sprite from this map.
+     * @param key_name the generic sprite key name.
+     * @returns return true if the sprite was removed.
+     */
+    remove_generic_sprite(key_name: string) {
+        if (key_name in this.generic_sprites) {
+            this.generic_sprites[key_name].destroy();
+            delete this._generic_sprites[key_name];
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Initializes game events of this map.
      * @param events list of input events before parse.
      */
@@ -1620,6 +1704,11 @@ export class Map {
         this.game_events.forEach(event => event.destroy());
 
         this.data.collision.clear_custom_bodies();
+
+        for (let key in this.generic_sprites) {
+            this.generic_sprites[key].destroy();
+        }
+        this._generic_sprites = {};
 
         TileEvent.reset();
         GameEvent.reset();

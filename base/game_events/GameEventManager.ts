@@ -55,6 +55,7 @@ import {ChangeCollisionLayerEvent} from "./ChangeCollisionLayerEvent";
 import {CreateStorageVarEvent} from "./CreateStorageVarEvent";
 import {ItemChecksEvent} from "./ItemChecksEvent";
 import {AddItemToPartyEvent} from "./AddItemToPartyEvent";
+import {GenericSpriteEvent} from "./GenericSpriteEvent";
 
 export enum interaction_patterns {
     NO_INTERACTION = "no_interaction",
@@ -815,6 +816,31 @@ export class GameEventManager {
                     info.key_name,
                     info.item_key,
                     info.quantity
+                );
+            case event_types.GENERIC_SPRITE:
+                return new GenericSpriteEvent(
+                    this.game,
+                    this.data,
+                    info.active,
+                    info.key_name,
+                    info.control_type,
+                    info.generic_sprite_key_name,
+                    info.sprite_key,
+                    info.x,
+                    info.y,
+                    info.group,
+                    info.frame,
+                    info.alpha,
+                    info.anchor_x,
+                    info.anchor_y,
+                    info.scale_x,
+                    info.scale_y,
+                    info.rotation,
+                    info.play,
+                    info.frame_rate,
+                    info.loop,
+                    info.action,
+                    info.animation
                 );
             default:
                 console.warn(`Game event type ${info.type} not found.`);
