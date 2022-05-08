@@ -53,6 +53,7 @@ import {CameraFollowEvent} from "./CameraFollowEvent";
 import {SetPermanentStatusEvent} from "./SetPermanentStatusEvent";
 import {ChangeCollisionLayerEvent} from "./ChangeCollisionLayerEvent";
 import {CreateStorageVarEvent} from "./CreateStorageVarEvent";
+import {ItemChecksEvent} from "./ItemChecksEvent";
 
 export enum interaction_patterns {
     NO_INTERACTION = "no_interaction",
@@ -790,6 +791,20 @@ export class GameEventManager {
                     info.key_name,
                     info.var_name,
                     info.initial_value
+                );
+            case event_types.ITEM_CHECKS:
+                return new ItemChecksEvent(
+                    this.game,
+                    this.data,
+                    info.active,
+                    info.key_name,
+                    info.char_key,
+                    info.control_type,
+                    info.item_key,
+                    info.slot_index,
+                    info.quantity,
+                    info.check_ok_events,
+                    info.check_fail_events
                 );
             default:
                 console.warn(`Game event type ${info.type} not found.`);
