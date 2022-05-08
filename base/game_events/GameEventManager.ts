@@ -54,6 +54,7 @@ import {SetPermanentStatusEvent} from "./SetPermanentStatusEvent";
 import {ChangeCollisionLayerEvent} from "./ChangeCollisionLayerEvent";
 import {CreateStorageVarEvent} from "./CreateStorageVarEvent";
 import {ItemChecksEvent} from "./ItemChecksEvent";
+import {AddItemToPartyEvent} from "./AddItemToPartyEvent";
 
 export enum interaction_patterns {
     NO_INTERACTION = "no_interaction",
@@ -805,6 +806,15 @@ export class GameEventManager {
                     info.quantity,
                     info.check_ok_events,
                     info.check_fail_events
+                );
+            case event_types.ADD_ITEM_TO_PARTY:
+                return new AddItemToPartyEvent(
+                    this.game,
+                    this.data,
+                    info.active,
+                    info.key_name,
+                    info.item_key,
+                    info.quantity
                 );
             default:
                 console.warn(`Game event type ${info.type} not found.`);
