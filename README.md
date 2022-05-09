@@ -33,7 +33,7 @@ Some useful tools that I use to manage the resources:
 - [Tiledmap Editor](https://www.mapeditor.org/)
 - [Golden Sun Editor](http://forum.goldensunhacking.net/index.php?action=downloads;sa=view;down=124) (for game info and media)
 - [TexturePacker 4.6.1](https://www.codeandweb.com/texturepacker) (for creating spritesheets)
-  - [Free texture packer](https://github.com/odrick/free-tex-packer) (free alternative for TexturePacker)
+  - [Free texture packer](http://free-tex-packer.com/) (free alternative for TexturePacker)
   - [Sprite Sheet Packer](https://www.codeandweb.com/free-sprite-sheet-packer) (free alternative for TexturePacker)
   
 #### Minor utils
