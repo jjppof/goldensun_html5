@@ -56,6 +56,7 @@ import {CreateStorageVarEvent} from "./CreateStorageVarEvent";
 import {ItemChecksEvent} from "./ItemChecksEvent";
 import {AddItemToPartyEvent} from "./AddItemToPartyEvent";
 import {GenericSpriteEvent} from "./GenericSpriteEvent";
+import {ParticlesEvent} from "./ParticlesEvent";
 
 export enum interaction_patterns {
     NO_INTERACTION = "no_interaction",
@@ -841,6 +842,15 @@ export class GameEventManager {
                     info.loop,
                     info.action,
                     info.animation
+                );
+            case event_types.PARTICLES:
+                return new ParticlesEvent(
+                    this.game,
+                    this.data,
+                    info.active,
+                    info.key_name,
+                    info.particles_info,
+                    info.group
                 );
             default:
                 console.warn(`Game event type ${info.type} not found.`);
