@@ -22,7 +22,9 @@ export class CastingAuraEvent extends GameEvent {
         if (this.enable) {
             FieldAbilities.init_cast_aura(this.game, this.data, target_char);
         } else {
-            target_char.casting_aura_stop_function();
+            if (target_char.casting_aura_stop_function) {
+                target_char.casting_aura_stop_function();
+            }
         }
     }
 
