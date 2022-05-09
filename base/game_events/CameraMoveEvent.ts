@@ -30,7 +30,8 @@ export class CameraMoveEvent extends GameEvent {
 
     async _fire() {
         ++this.data.game_event_manager.events_running_count;
-        const previous_target = this.data.camera.target;
+        const camera_was_following = this.data.camera.following;
+        const previous_target = this.data.camera.unfollow();
         for (let i = 0; i < this.positions.length; ++i) {
             const point = this.positions[i];
             const x = point.x ?? this.game.camera.x;
@@ -53,7 +54,7 @@ export class CameraMoveEvent extends GameEvent {
                 .onComplete.addOnce(promise_resolve);
             await promise;
         }
-        if (this.reset_follow) {
+        if (this.reset_follow && camera_was_following) {
             await this.data.camera.follow(previous_target, this.return_to_target_duration);
         }
         --this.data.game_event_manager.events_running_count;
