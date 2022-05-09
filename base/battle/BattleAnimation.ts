@@ -4,11 +4,12 @@ import {elements, element_colors_in_battle, hex2rgb, range_360} from "../utils";
 import {BattleStage, DEFAULT_POS_ANGLE} from "./BattleStage";
 import * as _ from "lodash";
 import {battle_actions, PlayerSprite} from "./PlayerSprite";
+import {ParticlesInfo} from "../ParticlesWrapper";
 
 export const CAST_STAGE_POSITION = 0.5242024;
 export const MIRRORED_CAST_STAGE_POSITION = -0.7151327;
 
-enum positions {
+export enum battle_positions {
     OVER = "over",
     BETWEEN = "between",
     BEHIND = "behind",
@@ -25,124 +26,6 @@ type DefaultAttr = {
     shift?: number | number[];
     shift_direction?: ("in_center" | "out_center") | ("in_center" | "out_center")[];
     direction?: string;
-};
-
-type AdvParticleValue =
-    | number
-    | {min: number; max: number}
-    | {
-          initial?: number | {min: number; max: number};
-          value: number | {min: number; max: number};
-          delta: number | {min: number; max: number};
-          radial: {arcStart: number; arcEnd: number};
-          control: {x: number; y: number}[] | "linear" | "reverse" | "yoyo";
-      };
-
-type ParticleObject = {
-    lifespan: AdvParticleValue;
-    color: string;
-    red: AdvParticleValue;
-    green: AdvParticleValue;
-    blue: AdvParticleValue;
-    vx: AdvParticleValue;
-    vy: AdvParticleValue;
-    ax: AdvParticleValue;
-    ay: AdvParticleValue;
-    alpha: AdvParticleValue;
-    scale: AdvParticleValue;
-    rotation: AdvParticleValue;
-    image: string | string[];
-    frame: string | string[];
-    blendMode: string;
-    visible: boolean;
-    sendToBack: boolean;
-    bringToTop: boolean;
-    hsv: AdvParticleValue;
-    target: {
-        x: number;
-        y: number;
-        shift_x: number;
-        shift_y: number;
-        zone_key?: string;
-        zone?: Phaser.ParticleStorm.Zones.Base;
-        speed?: "yoyo" | "reverse" | "linear";
-    };
-};
-
-enum zone_types {
-    RECTANGLE = "rectangle",
-    POINT = "point",
-    LINE = "line",
-    ELLIPSE = "ellipse",
-    CIRCLE = "circle",
-}
-
-type ParticlesZone = {
-    type: zone_types;
-    radius: number;
-    width: number;
-    height: number;
-    points: {
-        x: number;
-        y: number;
-        shift_x: number;
-        shift_y: number;
-    }[];
-};
-
-type Emitter = {
-    emitter_data_key: string;
-    render_type: "pixel" | "sprite";
-    x: number | string;
-    y: number | string;
-    position: positions;
-    shift_x: number;
-    shift_y: number;
-    total: number;
-    repeat: number;
-    frequency: number;
-    x_step: number;
-    y_step: number;
-    delay: {
-        start: number;
-        step: number;
-        visible: boolean;
-    };
-    particles_display_blend_mode: string;
-    render_white_core: boolean;
-    zone_key: string;
-    random_in_zone: boolean;
-    spacing: number | number[];
-    force: {x: number; y: number};
-    radiate: {
-        velocity: number;
-        from: number;
-        to: number;
-    };
-    radiateFrom: {
-        x: number;
-        y: number;
-        velocity: number;
-    };
-    show_trails: boolean;
-    trails_clear_factor: number;
-    pixel_size: number;
-    pixel_reducing_factor: number;
-    pixel_is_rect: boolean;
-    gravity_well: {
-        x: number | string;
-        y: number | string;
-        shift_x: number;
-        shift_y: number;
-        power: number;
-        epsilon: number;
-        gravity: number;
-    };
-    animation: {
-        animation_key: string;
-        frame_rate: number;
-        loop: boolean;
-    };
 };
 
 enum sprite_types {
@@ -223,12 +106,7 @@ export class BattleAnimation {
         sprite_index: string | number | number[];
         mode: string;
     }[] = [];
-    public particles_sequence: {
-        data: {[emitter_data_key: string]: ParticleObject};
-        zones: {[zone_key: string]: ParticlesZone};
-        emitters: Emitter[];
-        emission_finish: number;
-    }[];
+    public particles_sequence: ParticlesInfo;
     public running: boolean;
     public sprites: (Phaser.Sprite | Phaser.Graphics)[];
     public sprites_prev_properties: {
@@ -250,9 +128,9 @@ export class BattleAnimation {
     public back_group: Phaser.Group;
     public front_group: Phaser.Group;
     public ability_sprites_groups: {
-        [positions.BEHIND]: Phaser.Group;
-        [positions.BETWEEN]: Phaser.Group;
-        [positions.OVER]: Phaser.Group;
+        [battle_positions.BEHIND]: Phaser.Group;
+        [battle_positions.BETWEEN]: Phaser.Group;
+        [battle_positions.OVER]: Phaser.Group;
     };
     public battle_stage: BattleStage;
     public trails_objs: Phaser.Image[];
@@ -346,9 +224,9 @@ export class BattleAnimation {
         };
         this.render_callbacks = {};
         this.ability_sprites_groups = {
-            [positions.BEHIND]: this.game.add.group(),
-            [positions.BETWEEN]: this.game.add.group(),
-            [positions.OVER]: this.game.add.group(),
+            [battle_positions.BEHIND]: this.game.add.group(),
+            [battle_positions.BETWEEN]: this.game.add.group(),
+            [battle_positions.OVER]: this.game.add.group(),
         };
     }
 
@@ -393,7 +271,7 @@ export class BattleAnimation {
         super_group.addChildAt(this.ability_sprites_groups.between, super_group.getChildIndex(this.front_group));
         super_group.addChildAt(this.ability_sprites_groups.behind, super_group.getChildIndex(this.back_group));
         if (this.mirrored) {
-            Object.values(positions).forEach(position => {
+            Object.values(battle_positions).forEach(position => {
                 this.ability_sprites_groups[position].scale.x = -1;
                 this.ability_sprites_groups[position].x += numbers.GAME_WIDTH;
             });
@@ -975,208 +853,14 @@ export class BattleAnimation {
     }
 
     play_particles() {
-        for (let i = 0; i < this.particles_sequence.length; ++i) {
-            let resolve_function;
-            const this_promise = new Promise(resolve => {
-                resolve_function = resolve;
-            });
-            this.promises.push(this_promise);
-            const adv_particles_seq = this.particles_sequence[i];
-
-            const zone_objs: {[zone_key: string]: Phaser.ParticleStorm.Zones.Base} = {};
-            for (let key in adv_particles_seq.zones) {
-                const zone_info = adv_particles_seq.zones[key];
-                let zone: Phaser.ParticleStorm.Zones.Base;
-                switch (zone_info.type) {
-                    case zone_types.CIRCLE:
-                        zone = this.data.particle_manager.createCircleZone(zone_info.radius);
-                        break;
-                    case zone_types.ELLIPSE:
-                        zone = this.data.particle_manager.createEllipseZone(zone_info.width, zone_info.height);
-                        break;
-                    case zone_types.LINE:
-                        zone = this.data.particle_manager.createLineZone(
-                            zone_info.points[0].x,
-                            zone_info.points[0].y,
-                            zone_info.points[1].x,
-                            zone_info.points[1].y
-                        );
-                        break;
-                    case zone_types.POINT:
-                        const {x, y} = this.get_sprite_xy_pos(
-                            zone_info.points[0].x,
-                            zone_info.points[0].y,
-                            zone_info.points[0].shift_x,
-                            zone_info.points[0].shift_y
-                        );
-                        zone = this.data.particle_manager.createPointZone(x, y);
-                        break;
-                    case zone_types.RECTANGLE:
-                        zone = this.data.particle_manager.createRectangleZone(zone_info.width, zone_info.height);
-                        break;
-                }
-                zone_objs[key] = zone;
-            }
-
-            for (let key in adv_particles_seq.data) {
-                const data = _.cloneDeep(adv_particles_seq.data[key]);
-                if (data.target) {
-                    if (data.target.zone_key !== undefined) {
-                        data.target.zone = zone_objs[data.target.zone_key];
-                    }
-                    if (data.target.hasOwnProperty("x") && data.target.hasOwnProperty("y")) {
-                        const {x, y} = this.get_sprite_xy_pos(
-                            data.target.x,
-                            data.target.y,
-                            data.target.shift_x,
-                            data.target.shift_y
-                        );
-                        data.target.x = x;
-                        data.target.y = y;
-                    }
-                }
-                if (data.color) {
-                    let rgb: ReturnType<typeof hex2rgb>;
-                    if (data.color === "element") {
-                        rgb = hex2rgb(element_colors_in_battle[this.element]);
-                    } else {
-                        rgb = hex2rgb(data.color);
-                    }
-                    data.red = rgb.r;
-                    data.green = rgb.g;
-                    data.blue = rgb.b;
-                }
-                this.data.particle_manager.addData(key, data);
-            }
-
-            const render_callbacks = [];
-            const emitters: Phaser.ParticleStorm.Emitter[] = [];
-            adv_particles_seq.emitters.forEach((emitter_info, index) => {
-                const emitter = this.data.particle_manager.createEmitter(
-                    emitter_info.render_type,
-                    undefined,
-                    undefined,
-                    emitter_info.render_white_core
-                );
-                emitter.force.x = emitter_info.force?.x ?? emitter.force.x;
-                emitter.force.y = emitter_info.force?.y ?? emitter.force.y;
-
-                (emitter.renderer as Phaser.ParticleStorm.Renderer.Pixel).autoClear = !emitter_info.show_trails;
-                if (emitter_info.show_trails || emitter_info.pixel_reducing_factor) {
-                    const key = `advanced_particles_sequence_${i}_${index}`;
-                    this.render_callbacks[key] = () => {
-                        if (emitter_info.render_type === "pixel") {
-                            if (emitter_info.show_trails) {
-                                (emitter.renderer as Phaser.ParticleStorm.Renderer.Pixel).clear(
-                                    emitter_info.trails_clear_factor
-                                );
-                            }
-                            if (emitter_info.pixel_reducing_factor !== undefined) {
-                                if (!(emitter as any)._delay.waiting) {
-                                    (emitter.renderer as Phaser.ParticleStorm.Renderer.Pixel).pixelSize -=
-                                        emitter_info.pixel_reducing_factor;
-                                }
-                            }
-                        }
-                    };
-                    render_callbacks.push(key);
-                }
-
-                if (emitter_info.render_type === "pixel") {
-                    (emitter.renderer as Phaser.ParticleStorm.Renderer.Pixel).pixelSize = emitter_info.pixel_size ?? 2;
-                    (emitter.renderer as Phaser.ParticleStorm.Renderer.Pixel).useRect =
-                        emitter_info.pixel_is_rect ?? false;
-
-                    if (emitter_info.particles_display_blend_mode === "screen") {
-                        (emitter.renderer as Phaser.ParticleStorm.Renderer.Pixel).display.blendMode =
-                            Phaser.blendModes.SCREEN;
-                    }
-                    (emitter.renderer as Phaser.ParticleStorm.Renderer.Pixel).resize(
-                        numbers.GAME_WIDTH << 1,
-                        numbers.GAME_HEIGHT
-                    );
-                }
-
-                const displays = emitter.addToWorld(this.super_group);
-                displays.forEach(display => {
-                    if (!display) return;
-                    this.ability_sprites_groups[emitter_info.position].addChild(display);
-                });
-                if (emitter_info.gravity_well) {
-                    const {x, y} = this.get_sprite_xy_pos(
-                        emitter_info.gravity_well.x,
-                        emitter_info.gravity_well.y,
-                        emitter_info.gravity_well.shift_x,
-                        emitter_info.gravity_well.shift_y
-                    );
-                    emitter.createGravityWell(
-                        x,
-                        y,
-                        emitter_info.gravity_well.power,
-                        emitter_info.gravity_well.epsilon,
-                        emitter_info.gravity_well.gravity
-                    );
-                }
-                const {x, y} = this.get_sprite_xy_pos(
-                    emitter_info.x,
-                    emitter_info.y,
-                    emitter_info.shift_x,
-                    emitter_info.shift_y
-                );
-                emitter.emit(emitter_info.emitter_data_key, x, y, {
-                    ...(emitter_info.total !== undefined && {total: emitter_info.total}),
-                    ...(emitter_info.repeat !== undefined && {repeat: emitter_info.repeat}),
-                    ...(emitter_info.frequency !== undefined && {frequency: emitter_info.frequency}),
-                    ...(emitter_info.x_step !== undefined && {xStep: emitter_info.x_step}),
-                    ...(emitter_info.y_step !== undefined && {yStep: emitter_info.y_step}),
-                    ...(emitter_info.delay !== undefined && {delay: emitter_info.delay}),
-                    ...(emitter_info.zone_key !== undefined && {zone: zone_objs[emitter_info.zone_key]}),
-                    ...(emitter_info.random_in_zone !== undefined && {random: emitter_info.random_in_zone}),
-                    ...(emitter_info.spacing !== undefined && {spacing: emitter_info.spacing}),
-                    ...(emitter_info.radiate !== undefined && {radiate: emitter_info.radiate}),
-                    ...(emitter_info.radiateFrom !== undefined && {radiateFrom: emitter_info.radiateFrom}),
-                });
-                if (emitter_info.animation !== undefined) {
-                    const particle_key = adv_particles_seq.data[emitter_info.emitter_data_key].image as string;
-                    const particle_sprite_base = this.data.info.misc_sprite_base_list[particle_key];
-                    const anim_key = particle_sprite_base.getAnimationKey(
-                        particle_key,
-                        emitter_info.animation.animation_key
-                    );
-                    emitter.forEach((particle: Phaser.ParticleStorm.Particle) => {
-                        particle_sprite_base.setAnimation(particle.sprite, particle_key);
-                    }, this);
-                    emitter.onEmit = new Phaser.Signal();
-                    emitter.onEmit.add(
-                        (emitter: Phaser.ParticleStorm.Emitter, particle: Phaser.ParticleStorm.Particle) => {
-                            particle.sprite.animations.play(
-                                anim_key,
-                                emitter_info.animation.frame_rate,
-                                emitter_info.animation.loop
-                            );
-                        }
-                    );
-                }
-                emitters.push(emitter);
-            });
-
-            this.game.time.events.add(adv_particles_seq.emission_finish, () => {
-                render_callbacks.forEach(key => {
-                    delete this.render_callbacks[key];
-                });
-                emitters.forEach(emitter => {
-                    this.data.particle_manager.removeEmitter(emitter);
-                    if (emitter.onEmit) {
-                        emitter.onEmit.removeAll();
-                    }
-                    emitter.destroy();
-                });
-                for (let key in adv_particles_seq.data) {
-                    this.data.particle_manager.clearData(key);
-                }
-                resolve_function();
-            });
-        }
+        const promises = this.data.particle_wrapper.start_particles(
+            this.particles_sequence,
+            this.super_group,
+            this.ability_sprites_groups,
+            this.element,
+            this.get_sprite_xy_pos.bind(this)
+        );
+        this.promises.push(...promises);
     }
 
     render() {
@@ -1204,6 +888,7 @@ export class BattleAnimation {
         for (let key in this.render_callbacks) {
             this.render_callbacks[key]();
         }
+        this.data.particle_wrapper.render();
     }
 
     //assuming that current angle is between 0 and 360 in rad

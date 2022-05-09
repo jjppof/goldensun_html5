@@ -127,7 +127,7 @@
             "show_trails": true,
             "trails_clear_factor": 0.2,
             "pixel_size": 6,
-            "pixel_reducing_factor": 0.1,
+            "pixel_reducing_factor": 0.03,
             "pixel_is_rect": false,
             "particles_display_blend_mode": "screen",
             "render_white_core": true,

@@ -23,6 +23,7 @@ import {Snapshot} from "./Snapshot";
 import {base_actions} from "./utils";
 import {StartMenu} from "./main_menus/StartMenu";
 import {initialize_save_menu, SaveMenu} from "./main_menus/SaveMenu";
+import {ParticlesWrapper} from "./ParticlesWrapper";
 
 /**
  * The project has basically two important folders: assets and base. All the source code is located inside base folder.
@@ -104,6 +105,9 @@ export class GoldenSun {
 
     /** Class responsible for generating and restoring save files. */
     public snapshot_manager: Snapshot = null;
+
+    /** A wrapper for Particles Storm. */
+    public particle_wrapper: ParticlesWrapper = null;
 
     //managers
     public control_manager: ControlManager = null;
@@ -223,6 +227,7 @@ export class GoldenSun {
 
         //advanced particle system
         this.particle_manager = this.game.plugins.add(Phaser.ParticleStorm);
+        this.particle_wrapper = new ParticlesWrapper(this.game, this);
 
         //init debug systems
         if (!this.electron_app) {
