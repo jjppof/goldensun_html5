@@ -712,7 +712,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.label,
-                    info.control,
+                    info.create,
                     info.x,
                     info.y,
                     info.body_type,

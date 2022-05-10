@@ -68,6 +68,10 @@ export class Debug {
                 interactable_object.blocking_stair_block.debug = !interactable_object.blocking_stair_block.debug;
             }
         }
+        for (let key in this.data.collision.custom_bodies) {
+            const body = this.data.collision.custom_bodies[key];
+            body.debug = !body.debug;
+        }
         this.debug_physics = !this.debug_physics;
     }
 
