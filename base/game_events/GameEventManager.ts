@@ -794,7 +794,8 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.var_name,
-                    info.initial_value
+                    info.initial_value,
+                    info.add
                 );
             case event_types.ITEM_CHECKS:
                 return new ItemChecksEvent(
