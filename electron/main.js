@@ -27,8 +27,7 @@ function createWindow() {
 }
 
 app.commandLine.appendSwitch('limit-fps', 60);
-app.commandLine.appendSwitch('max-gum-fps', 60);
-app.commandLine.appendSwitch('disable-gpu-vsync');
+// app.commandLine.appendSwitch('disable-gpu-vsync');
 // app.commandLine.appendSwitch('disable-frame-rate-limit');
 app.commandLine.appendSwitch('force_high_performance_gpu');
 

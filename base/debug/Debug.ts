@@ -34,12 +34,18 @@ export class Debug {
     initialize_controls() {
         const debug_controls = [
             {buttons: Button.DEBUG_PHYSICS, on_down: this.toggle_debug_physics.bind(this)},
-            {buttons: Button.DEBUG_GRID, on_down: this.toggle_grid.bind(this)},
-            {buttons: Button.DEBUG_KEYS, on_down: this.toggle_keys.bind(this)},
-            {buttons: Button.DEBUG_STATS, on_down: this.toggle_stats.bind(this)},
             {buttons: Button.DEBUG_FPS, on_down: this.toggle_fps.bind(this)},
-            {buttons: Button.DEBUG_SLIDERS, on_down: this.toggle_sliders.bind(this)},
         ];
+        if (!this.data.electron_app) {
+            debug_controls.push(
+                ...[
+                    {buttons: Button.DEBUG_GRID, on_down: this.toggle_grid.bind(this)},
+                    {buttons: Button.DEBUG_KEYS, on_down: this.toggle_keys.bind(this)},
+                    {buttons: Button.DEBUG_STATS, on_down: this.toggle_stats.bind(this)},
+                    {buttons: Button.DEBUG_SLIDERS, on_down: this.toggle_sliders.bind(this)},
+                ]
+            );
+        }
         this.data.control_manager.add_controls(debug_controls, {persist: true});
     }
 
@@ -257,6 +263,10 @@ export class Debug {
         if (this.show_fps) {
             this.game.debug.text("RPS: " + this.game.time.rps || "RPS: --", 5, 15, "#00ff00");
             this.game.debug.text("UPS: " + this.game.time.ups || "UPS: --", 5, 27, "#00ff00");
+        }
+
+        if (this.data.electron_app) {
+            return;
         }
 
         if (this.grid) {

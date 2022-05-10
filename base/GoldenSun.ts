@@ -230,10 +230,8 @@ export class GoldenSun {
         this.particle_wrapper = new ParticlesWrapper(this.game, this);
 
         //init debug systems
-        if (!this.electron_app) {
-            this.debug = new Debug(this.game, this);
-            this.debug.initialize_controls();
-        }
+        this.debug = new Debug(this.game, this);
+        this.debug.initialize_controls();
 
         this.audio.initialize_controls();
         this.initialize_utils_controls();
@@ -547,13 +545,15 @@ export class GoldenSun {
      * Renders some debug info.
      */
     private render() {
-        if (!this.electron_app && this.assets_loaded) {
+        if (this.assets_loaded) {
             this.debug.set_debug_info();
-            if (this.game.time.frames % 8 === 0) {
-                this.debug.fill_key_debug_table();
-            }
-            if (this.game.time.frames % 30 === 0) {
-                this.debug.fill_stats_debug_table();
+            if (!this.electron_app) {
+                if (this.game.time.frames % 8 === 0) {
+                    this.debug.fill_key_debug_table();
+                }
+                if (this.game.time.frames % 30 === 0) {
+                    this.debug.fill_stats_debug_table();
+                }
             }
         }
     }
