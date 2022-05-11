@@ -485,6 +485,7 @@ export class GameEventManager {
                     info.npc_label,
                     info.location,
                     info.face_hero,
+                    info.reset_direction,
                     info.finish_events
                 );
             case event_types.TILE_EVENT_MANAGE:

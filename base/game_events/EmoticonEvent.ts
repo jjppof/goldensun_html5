@@ -1,5 +1,6 @@
 import {GameEvent, event_types} from "./GameEvent";
 import {ControllableChar} from "../ControllableChar";
+import {directions} from "utils";
 
 /**
  * The GameEvent that shows an emoticon above a ControllableChar head.
@@ -25,8 +26,12 @@ export class EmoticonEvent extends GameEvent {
     private location: {x: number; y: number};
     /** INPUT. If target char is NPC, make hero and npc look each other. */
     private face_hero: boolean;
+    /** INPUT. Reset direction on finish if "face_hero" was set to true. */
+    private reset_direction: boolean;
     /** The target char that will show the emoticon. */
     private char: ControllableChar;
+    /** The previous direction before facing hero. */
+    private previous_direction: directions;
 
     constructor(
         game,
@@ -41,6 +46,7 @@ export class EmoticonEvent extends GameEvent {
         npc_label,
         location,
         face_hero,
+        reset_direction,
         finish_events
     ) {
         super(game, data, event_types.EMOTICON, active, key_name);
@@ -51,7 +57,9 @@ export class EmoticonEvent extends GameEvent {
         this.npc_index = npc_index;
         this.npc_label = npc_label;
         this.location = location;
-        this.face_hero = face_hero ?? true;
+        this.face_hero = face_hero ?? false;
+        this.reset_direction = reset_direction ?? true;
+        this.previous_direction = null;
         if (finish_events !== undefined) {
             finish_events.forEach(event_info => {
                 const event = this.data.game_event_manager.get_event_instance(event_info);
@@ -77,6 +85,7 @@ export class EmoticonEvent extends GameEvent {
         }
 
         if (this.face_hero && this.char !== this.data.hero) {
+            this.previous_direction = this.char.current_direction;
             await this.data.game_event_manager.set_npc_and_hero_directions(this.origin_npc);
         }
 
@@ -89,13 +98,16 @@ export class EmoticonEvent extends GameEvent {
             sound_effect: this.sound_effect,
         });
 
-        this.finish();
+        await this.finish();
     }
 
     /**
      * Finishes this event by reducing GameEventManager.events_running_count and firing final events.
      */
-    finish() {
+    async finish() {
+        if (this.face_hero && this.reset_direction && this.char !== this.data.hero) {
+            await this.origin_npc.face_direction(this.previous_direction);
+        }
         this.is_npc = undefined;
         --this.data.game_event_manager.events_running_count;
         this.finish_events.forEach(event => event.fire(this.origin_npc));
