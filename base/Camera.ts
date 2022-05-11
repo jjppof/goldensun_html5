@@ -52,7 +52,7 @@ export class Camera {
         }
         if (this.target?.sprite) {
             this._following = true;
-            if (duration == undefined || duration < 30) {
+            if (duration === undefined || duration < 30) {
                 this.game.camera.follow(
                     this.target.sprite,
                     Phaser.Camera.FOLLOW_LOCKON,
@@ -68,8 +68,8 @@ export class Camera {
                     .tween(this.game.camera)
                     .to(
                         {
-                            x: (this.target.x - this.game.camera.width) >> 1,
-                            y: (this.target.y - this.game.camera.height) >> 1,
+                            x: this.target.x - (this.game.camera.width >> 1),
+                            y: this.target.y - (this.game.camera.height >> 1),
                         },
                         duration,
                         Phaser.Easing.Linear.None,

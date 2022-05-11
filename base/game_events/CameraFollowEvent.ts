@@ -7,17 +7,37 @@ export class CameraFollowEvent extends GameEvent {
     private npc_label: string;
     private io_label: string;
     private transition_duration: number;
+    private transition_end_events: GameEvent[];
 
-    constructor(game, data, active, key_name, follow, is_hero, npc_label, io_label, transition_duration) {
+    constructor(
+        game,
+        data,
+        active,
+        key_name,
+        follow,
+        is_hero,
+        npc_label,
+        io_label,
+        transition_duration,
+        transition_end_events
+    ) {
         super(game, data, event_types.CAMERA_FOLLOW, active, key_name);
         this.follow = follow ?? true;
         this.is_hero = is_hero ?? true;
         this.npc_label = npc_label;
         this.io_label = io_label;
         this.transition_duration = transition_duration ?? 0;
+        this.transition_end_events = [];
+        if (transition_end_events !== undefined) {
+            transition_end_events.forEach(event_info => {
+                const event = this.data.game_event_manager.get_event_instance(event_info);
+                this.transition_end_events.push(event);
+            });
+        }
     }
 
-    _fire() {
+    async _fire() {
+        ++this.data.game_event_manager.events_running_count;
         if (this.follow) {
             let target: Camera["target"];
             if (this.io_label) {
@@ -29,11 +49,15 @@ export class CameraFollowEvent extends GameEvent {
                         npc_label: this.npc_label,
                     }) ?? this.origin_npc;
             }
-            this.data.camera.follow(target, this.transition_duration);
+            await this.data.camera.follow(target, this.transition_duration);
+            this.transition_end_events.forEach(event => event.fire(this.origin_npc));
         } else {
             this.data.camera.unfollow();
         }
+        --this.data.game_event_manager.events_running_count;
     }
 
-    _destroy() {}
+    _destroy() {
+        this.transition_end_events.forEach(event => event.destroy());
+    }
 }

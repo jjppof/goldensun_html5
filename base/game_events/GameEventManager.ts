@@ -465,10 +465,6 @@ export class GameEventManager {
                     info.npc_label,
                     info.time_between_frames,
                     info.finish_events,
-                    info.camera_follow,
-                    info.camera_follow_time,
-                    info.follow_hero_on_finish,
-                    info.keep_camera_follow,
                     info.wait_after
                 );
             case event_types.EMOTICON:
@@ -766,7 +762,8 @@ export class GameEventManager {
                     info.is_hero,
                     info.npc_label,
                     info.io_label,
-                    info.transition_duration
+                    info.transition_duration,
+                    info.transition_end_events
                 );
             case event_types.PERMANENT_STATUS:
                 return new SetPermanentStatusEvent(
