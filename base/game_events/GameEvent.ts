@@ -140,17 +140,6 @@ export abstract class GameEvent {
         }
     }
 
-    /**
-     * Promised way to create and wait a Phaser.Timer. Waits for the amount of time given.
-     * @param time the time in ms.
-     */
-    async wait(time: number) {
-        let this_resolve;
-        const promise = new Promise(resolve => (this_resolve = resolve));
-        this.game.time.events.add(time, this_resolve);
-        await promise;
-    }
-
     /** Check if "Reveal" is currently active. If yes, then cancel it. */
     check_reveal() {
         if (this.data.hero.on_reveal) {

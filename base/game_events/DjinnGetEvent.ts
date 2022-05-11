@@ -1,7 +1,15 @@
 import {GameEvent, event_types} from "./GameEvent";
 import * as _ from "lodash";
 import {Djinn, djinn_status} from "../Djinn";
-import {base_actions, directions, elements, element_colors, element_colors_in_battle, hex2rgb} from "../utils";
+import {
+    base_actions,
+    directions,
+    elements,
+    element_colors,
+    element_colors_in_battle,
+    hex2rgb,
+    promised_wait,
+} from "../utils";
 import {MainChar} from "../MainChar";
 import {FieldAbilities} from "../field_abilities/FieldAbilities";
 import {degree360, GAME_HEIGHT, GAME_WIDTH} from "../magic_numbers";
@@ -179,7 +187,7 @@ export class DjinnGetEvent extends GameEvent {
             random: true,
         });
 
-        await this.wait(2000);
+        await promised_wait(this.game, 2000);
 
         this.data.particle_manager.removeEmitter(emitter);
         emitter.destroy();
@@ -268,7 +276,7 @@ export class DjinnGetEvent extends GameEvent {
             repeat: 0,
         });
 
-        await this.wait(200);
+        await promised_wait(this.game, 200);
 
         this.data.particle_manager.removeEmitter(finish_emitter);
         finish_emitter.destroy();
@@ -287,7 +295,7 @@ export class DjinnGetEvent extends GameEvent {
         });
         await this.aux_promise;
 
-        await this.wait(200);
+        await promised_wait(this.game, 200);
 
         await this.origin_npc.shake({
             repeats_number: 2,
@@ -296,7 +304,7 @@ export class DjinnGetEvent extends GameEvent {
             max_scale_mult: 0.75,
         });
 
-        await this.wait(500);
+        await promised_wait(this.game, 500);
 
         await this.origin_npc.jump({
             duration: 70,
@@ -350,7 +358,7 @@ export class DjinnGetEvent extends GameEvent {
 
         await this.data.hero.face_direction(directions.down);
         this.data.hero.play(base_actions.GRANT);
-        await this.wait(350);
+        await promised_wait(this.game, 350);
 
         /* particles getting into the hero */
         const x1_s = -8;
@@ -382,7 +390,7 @@ export class DjinnGetEvent extends GameEvent {
             zone: zone_source,
         });
 
-        await this.wait(250);
+        await promised_wait(this.game, 250);
 
         /* water particles that get out from hero's head */
         const water_hit = {
@@ -406,7 +414,7 @@ export class DjinnGetEvent extends GameEvent {
             random: true,
         });
 
-        await this.wait(2100);
+        await promised_wait(this.game, 2100);
 
         this.data.particle_manager.removeEmitter(into_emitter);
         into_emitter.destroy();
@@ -435,11 +443,11 @@ export class DjinnGetEvent extends GameEvent {
             repeat_period: 50,
         });
 
-        await this.wait(500);
+        await promised_wait(this.game, 500);
         this.origin_npc.set_rotation(true, 10);
-        await this.wait(800);
+        await promised_wait(this.game, 800);
         this.origin_npc.set_rotation(true);
-        await this.wait(500);
+        await promised_wait(this.game, 500);
 
         this.game.add
             .tween(this.origin_npc.sprite.scale)
@@ -476,11 +484,11 @@ export class DjinnGetEvent extends GameEvent {
             random: true,
         });
 
-        await this.wait(800);
+        await promised_wait(this.game, 800);
         await this.data.hero.face_direction(directions.down);
         this.data.hero.play(base_actions.GRANT);
 
-        await this.wait(1500);
+        await promised_wait(this.game, 1500);
 
         this.data.particle_manager.removeEmitter(out_emitter);
         out_emitter.destroy();
@@ -512,10 +520,10 @@ export class DjinnGetEvent extends GameEvent {
             zone: zone,
         });
 
-        await this.wait(400);
+        await promised_wait(this.game, 400);
         this.data.hero.shake({repeats_number: 11});
 
-        await this.wait(1800);
+        await promised_wait(this.game, 1800);
         this.data.particle_manager.removeEmitter(into_emitter);
         into_emitter.destroy();
         this.data.particle_manager.clearData("into_hero");
@@ -531,7 +539,7 @@ export class DjinnGetEvent extends GameEvent {
         });
         await this.aux_promise;
 
-        await this.wait(200);
+        await promised_wait(this.game, 200);
 
         await this.origin_npc.shake({
             repeats_number: 2,
@@ -540,10 +548,10 @@ export class DjinnGetEvent extends GameEvent {
             max_scale_mult: 0.75,
         });
 
-        await this.wait(500);
+        await promised_wait(this.game, 500);
 
         this.origin_npc.set_rotation(true);
-        await this.wait(1000);
+        await promised_wait(this.game, 1000);
 
         this.origin_npc.shadow.visible = false;
         const obj_to_tween = this.origin_npc.sprite.body ?? this.origin_npc.sprite;
@@ -709,7 +717,7 @@ export class DjinnGetEvent extends GameEvent {
         await this.data.hero.face_direction(directions.down);
         this.data.hero.play(base_actions.GRANT);
 
-        await this.wait(1200);
+        await promised_wait(this.game, 1200);
         this.data.hero.shake({repeats_number: 7});
 
         await this.aux_promise;
@@ -726,7 +734,7 @@ export class DjinnGetEvent extends GameEvent {
             max_scale_mult: 0.75,
         });
 
-        await this.wait(500);
+        await promised_wait(this.game, 500);
 
         await this.origin_npc.show_emoticon("annoyed", {
             location: {

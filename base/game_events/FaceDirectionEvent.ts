@@ -1,5 +1,5 @@
 import {event_types, GameEvent} from "./GameEvent";
-import {directions} from "../utils";
+import {directions, promised_wait} from "../utils";
 import {CharControlEvent} from "./CharControlEvent";
 
 export class FaceDirectionEvent extends CharControlEvent {
@@ -62,7 +62,7 @@ export class FaceDirectionEvent extends CharControlEvent {
         await this.char.face_direction(this.direction, this.time_between_frames);
 
         if (this.wait_after) {
-            await this.wait(this.wait_after);
+            await promised_wait(this.game, this.wait_after);
         }
 
         await this.camera_unfollow_char();
