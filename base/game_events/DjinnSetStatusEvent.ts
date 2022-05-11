@@ -1,38 +1,31 @@
 import {GameEvent, event_types} from "./GameEvent";
 import {Djinn, djinn_status} from "../Djinn";
-import {MainChar} from "../MainChar";
 
 export class DjinnSetStatusEvent extends GameEvent {
     /** INPUT. The key for the Djinn whose status we are setting */
     private djinn_key: string;
     /** The key for the Djinn whose status we are setting */
     private djinn: Djinn;
-    /** INPUT. The key for the mainChar. */
-    private character_key: string;
-    /** The MainChar who has the Djinn. */
-    private character: MainChar;
     /** INPUT. The key for the status to set */
     private status_key: string;
     /** The status to set */
     private status: djinn_status;
 
-    constructor(game, data, active, key_name, djinn_key, character_key, status_key) {
+    constructor(game, data, active, key_name, djinn_key, status_key) {
         super(game, data, event_types.DJINN_SET_STATUS, active, key_name);
 
         //djinn
         this.djinn_key = djinn_key;
         this.djinn = this.data.info.djinni_list[this.djinn_key];
-        //character
-        this.character_key = character_key;
-        this.character = this.data.info.main_char_list[this.character_key];
         //status
         this.status_key = status_key;
         this.status = this.status_key as djinn_status;
     }
 
     protected _fire(): void {
-        if (this.status !== undefined && this.djinn !== undefined && this.character != undefined) {
-            this.djinn.set_status(this.status, this.character);
+        if (this.status !== undefined && this.djinn !== undefined) {
+            const owner = this.djinn.owner;
+            this.djinn.set_status(this.status, owner);
         }
     }
 
@@ -41,6 +34,5 @@ export class DjinnSetStatusEvent extends GameEvent {
      */
     _destroy(): void {
         this.djinn = null;
-        this.character = null;
     }
 }

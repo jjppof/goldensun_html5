@@ -430,7 +430,6 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.djinn_key,
-                    info.character_key,
                     info.status_key
                 );
             case event_types.JUMP:

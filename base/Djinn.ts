@@ -62,12 +62,14 @@ export class Djinn {
         this.owner = null;
     }
 
-    set_status(status: djinn_status, char: MainChar) {
+    set_status(status: djinn_status, char?: MainChar) {
         this.status = status;
-        char.update_elemental_attributes();
-        char.update_class();
-        char.update_attributes();
-        char.update_abilities();
+        if (char) {
+            char.update_elemental_attributes();
+            char.update_class();
+            char.update_attributes();
+            char.update_abilities();
+        }
     }
 
     static sprite_base_key(element?: elements) {
