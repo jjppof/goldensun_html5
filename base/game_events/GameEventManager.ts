@@ -840,7 +840,8 @@ export class GameEventManager {
                     info.frame_rate,
                     info.loop,
                     info.action,
-                    info.animation
+                    info.animation,
+                    info.collision_layer
                 );
             case event_types.PARTICLES:
                 return new ParticlesEvent(

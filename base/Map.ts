@@ -1455,6 +1455,8 @@ export class Map {
             action?: string;
             /** The animation key. */
             animation?: string;
+            /** The collision layer that the sprite will be. Important when sorting sprites. */
+            collision_layer?: number;
         }
     ) {
         if (key_name in this.generic_sprites) {
@@ -1470,6 +1472,7 @@ export class Map {
         generic_sprite.scale.x = options?.scale_x ?? generic_sprite.scale.x;
         generic_sprite.scale.y = options?.scale_y ?? generic_sprite.scale.y;
         generic_sprite.rotation = options?.rotation ?? generic_sprite.rotation;
+        generic_sprite.base_collision_layer = options?.collision_layer ?? this.collision_layer;
         if (options?.play) {
             const anim_key = `${options.action}/${options.animation}`;
             const anim = generic_sprite.animations.getAnimation(anim_key);

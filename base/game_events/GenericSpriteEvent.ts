@@ -31,6 +31,7 @@ export class GenericSpriteEvent extends GameEvent {
     private loop: boolean;
     private action: string;
     private animation: string;
+    private collision_layer: number;
 
     constructor(
         game,
@@ -54,7 +55,8 @@ export class GenericSpriteEvent extends GameEvent {
         frame_rate,
         loop,
         action,
-        animation
+        animation,
+        collision_layer
     ) {
         super(game, data, event_types.GENERIC_SPRITE, active, key_name);
         this.control_type = control_type;
@@ -85,6 +87,7 @@ export class GenericSpriteEvent extends GameEvent {
         this.loop = loop;
         this.action = action;
         this.animation = animation;
+        this.collision_layer = collision_layer;
     }
 
     _fire() {
@@ -109,6 +112,7 @@ export class GenericSpriteEvent extends GameEvent {
                         loop: this.loop,
                         action: this.action,
                         animation: this.animation,
+                        collision_layer: this.collision_layer,
                     }
                 );
                 break;
@@ -127,6 +131,7 @@ export class GenericSpriteEvent extends GameEvent {
                 generic_sprite.scale.x = this.scale_x ?? generic_sprite.scale.x;
                 generic_sprite.scale.y = this.scale_y ?? generic_sprite.scale.y;
                 generic_sprite.rotation = this.rotation ?? generic_sprite.rotation;
+                generic_sprite.base_collision_layer = this.collision_layer ?? generic_sprite.base_collision_layer;
                 if (this.play) {
                     const anim_key = `${this.action}/${this.animation}`;
                     const anim = generic_sprite.animations.getAnimation(anim_key);
