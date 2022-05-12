@@ -441,17 +441,13 @@ export class GameEventManager {
                     info.is_npc,
                     info.npc_index,
                     info.npc_label,
-                    info.camera_follow,
-                    info.camera_follow_time,
-                    info.follow_hero_on_finish,
                     info.finish_events,
                     info.jump_height,
                     info.duration,
                     info.dest,
                     info.jump_direction,
-                    info.keep_camera_follow,
-                    info.wait_after,
-                    info.camera_follow_while_jumping
+                    info.sfx_key,
+                    info.wait_after
                 );
             case event_types.FACE_DIRECTION:
                 return new FaceDirectionEvent(

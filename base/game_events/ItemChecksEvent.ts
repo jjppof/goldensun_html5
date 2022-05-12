@@ -55,7 +55,7 @@ export class ItemChecksEvent extends GameEvent {
     _fire() {
         const char = this.data.info.main_char_list[this.char_key];
         if (!char) {
-            console.warn(`Could not manipulate items for ${this.char_key} char. Check "char_key" property.`);
+            console.warn(`Could not manipulate items for "${this.char_key}" char. Check "char_key" property.`);
             return;
         }
         let item_slot: ItemSlot = null;

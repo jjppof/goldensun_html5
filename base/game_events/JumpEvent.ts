@@ -1,18 +1,23 @@
 import {event_types, GameEvent} from "./GameEvent";
 import {directions} from "../utils";
-import {CharControlEvent} from "./CharControlEvent";
 
-export class JumpEvent extends CharControlEvent {
+export class JumpEvent extends GameEvent {
+    private npc_index: number;
+    private npc_label: string;
+    private is_npc: boolean;
     private jump_height: number;
     private duration: number;
     private wait_after: number;
     private dest: {
         tile_x?: number;
         tile_y?: number;
+        x?: number;
+        y?: number;
         distance?: number;
     };
     private jump_direction: directions;
-    private camera_follow_while_jumping: boolean;
+    private sfx_key: string;
+    private finish_events: GameEvent[];
 
     constructor(
         game,
@@ -22,83 +27,64 @@ export class JumpEvent extends CharControlEvent {
         is_npc,
         npc_index,
         npc_label,
-        camera_follow,
-        camera_follow_time,
-        follow_hero_on_finish,
         finish_events,
         jump_height,
         duration,
         dest,
         jump_direction,
-        keep_camera_follow,
-        wait_after,
-        camera_follow_while_jumping
+        sfx_key,
+        wait_after
     ) {
-        super(
-            game,
-            data,
-            event_types.JUMP,
-            active,
-            key_name,
-            is_npc,
-            npc_index,
-            npc_label,
-            camera_follow,
-            camera_follow_time,
-            follow_hero_on_finish,
-            finish_events,
-            keep_camera_follow
-        );
+        super(game, data, event_types.JUMP, active, key_name);
+        this.is_npc = is_npc;
+        this.npc_index = npc_index;
+        this.npc_label = npc_label;
         this.jump_height = jump_height;
         this.duration = duration;
         this.wait_after = wait_after;
-        this.camera_follow_while_jumping = camera_follow_while_jumping;
         this.dest = dest;
         this.jump_direction = jump_direction !== undefined ? directions[jump_direction as string] : undefined;
+        this.sfx_key = sfx_key;
+        this.finish_events = [];
+        if (finish_events !== undefined) {
+            finish_events.forEach(event_info => {
+                const event = this.data.game_event_manager.get_event_instance(event_info);
+                this.finish_events.push(event);
+            });
+        }
     }
 
     async _fire() {
         ++this.data.game_event_manager.events_running_count;
 
-        this.char = GameEvent.get_char(this.data, {
-            is_npc: this.is_npc,
-            npc_index: this.npc_index,
-            npc_label: this.npc_label,
-        });
-        if (!this.char) {
-            this.char = this.origin_npc;
-            this.is_npc = true;
-        } else if (!this.char.is_npc) {
+        const char =
+            GameEvent.get_char(this.data, {
+                is_npc: this.is_npc,
+                npc_index: this.npc_index,
+                npc_label: this.npc_label,
+            }) ?? this.origin_npc;
+        if (!char.is_npc) {
             this.data.game_event_manager.allow_char_to_move = true;
         }
 
-        await this.camera_follow_char();
-
-        await this.char.jump({
+        await char.jump({
             jump_height: this.jump_height,
             duration: this.duration,
             jump_direction: this.jump_direction,
             dest: this.dest,
             time_on_finish: this.wait_after,
-            camera_follow: this.camera_follow_while_jumping,
+            sfx_key: this.sfx_key,
         });
 
-        await this.camera_unfollow_char();
-
-        this.finish();
-    }
-
-    finish() {
         if (!this.is_npc) {
             this.data.game_event_manager.allow_char_to_move = false;
         }
-        this.is_npc = undefined;
+
         --this.data.game_event_manager.events_running_count;
         this.finish_events.forEach(event => event.fire(this.origin_npc));
     }
 
     _destroy() {
         this.finish_events.forEach(event => event.destroy());
-        this.char = null;
     }
 }

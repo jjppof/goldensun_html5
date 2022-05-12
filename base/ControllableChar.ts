@@ -705,8 +705,6 @@ export abstract class ControllableChar {
         jump_direction?: directions;
         /** The sound effect to play while jumping. */
         sfx_key?: string;
-        /** Whether the camera should follow this char while jumping or not. */
-        camera_follow?: boolean;
         /** Whether the char will bounce on jump finish. Only for vertical jumps. */
         bounce?: boolean;
         /** Whether the char shadow will remain hidden after jump. */
@@ -714,15 +712,10 @@ export abstract class ControllableChar {
     }) {
         const duration = options?.duration ?? 65;
         const jump_height = options?.jump_height ?? 12;
-        const camera_follow = options?.camera_follow ?? true;
         const keep_shadow_hidden = options?.keep_shadow_hidden ?? false;
         let promise_resolve;
         const promise = new Promise(resolve => (promise_resolve = resolve));
         this.data.audio.play_se(options?.sfx_key ?? "actions/jump");
-        let current_camera_target: Camera["target"];
-        if (!camera_follow) {
-            current_camera_target = this.data.camera.unfollow();
-        }
         if (options?.dest !== undefined) {
             //deals with jumps that have a different position from the current char position.
             const dest_char = {
@@ -782,17 +775,11 @@ export abstract class ControllableChar {
                         this.sprite.animations.currentAnim.onComplete.addOnce(() => {
                             this.toggle_collision(true);
                             this.jumping = false;
-                            if (!camera_follow) {
-                                this.data.camera.follow(current_camera_target);
-                            }
                             promise_resolve();
                         });
                     } else {
                         this.toggle_collision(true);
                         this.jumping = false;
-                        if (!camera_follow) {
-                            this.data.camera.follow(current_camera_target);
-                        }
                         promise_resolve();
                     }
                 }, this);
@@ -814,18 +801,12 @@ export abstract class ControllableChar {
                 tween.start();
                 bounce_tween.onComplete.addOnce(() => {
                     this.shadow_following = previous_shadow_state;
-                    if (!camera_follow) {
-                        this.data.camera.follow(current_camera_target);
-                    }
                     promise_resolve();
                 });
             } else {
                 tween.start();
                 tween.onComplete.addOnce(() => {
                     this.shadow_following = previous_shadow_state;
-                    if (!camera_follow) {
-                        this.data.camera.follow(current_camera_target);
-                    }
                     promise_resolve();
                 });
             }
