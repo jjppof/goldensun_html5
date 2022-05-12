@@ -1,3 +1,4 @@
+import {SpriteBase} from "../SpriteBase";
 import {GameEvent, event_types} from "./GameEvent";
 
 enum control_types {
@@ -133,7 +134,10 @@ export class GenericSpriteEvent extends GameEvent {
                 generic_sprite.rotation = this.rotation ?? generic_sprite.rotation;
                 generic_sprite.base_collision_layer = this.collision_layer ?? generic_sprite.base_collision_layer;
                 if (this.play) {
-                    const anim_key = `${this.action}/${this.animation}`;
+                    const sprite_key = SpriteBase.getKeyName(generic_sprite);
+                    const sprite_base = this.data.info.misc_sprite_base_list[sprite_key];
+                    const action = this.action ?? sprite_base.all_actions[0];
+                    const anim_key = sprite_base.getAnimationKey(action, this.animation);
                     const anim = generic_sprite.animations.getAnimation(anim_key);
                     anim.play(this.frame_rate, this.loop);
                 }

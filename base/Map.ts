@@ -1463,7 +1463,10 @@ export class Map {
             console.warn(`Generic sprite "${key_name}" already exists.`);
             return null;
         }
-        const generic_sprite = this.game.add.sprite(x, y, sprite_key, options?.frame, group);
+        const sprite_base = this.data.info.misc_sprite_base_list[sprite_key];
+        const action = options?.action ?? sprite_base.all_actions[0];
+        const misc_sprite_key = sprite_base.getSpriteKey(action);
+        const generic_sprite = this.game.add.sprite(x, y, misc_sprite_key, options?.frame, group);
         this.generic_sprites[key_name] = generic_sprite;
         generic_sprite.roundPx = true;
         generic_sprite.alpha = options?.alpha ?? generic_sprite.alpha;
@@ -1474,7 +1477,7 @@ export class Map {
         generic_sprite.rotation = options?.rotation ?? generic_sprite.rotation;
         generic_sprite.base_collision_layer = options?.collision_layer ?? this.collision_layer;
         if (options?.play) {
-            const anim_key = `${options.action}/${options.animation}`;
+            const anim_key = sprite_base.getAnimationKey(action, options.animation);
             const anim = generic_sprite.animations.getAnimation(anim_key);
             anim.play(options?.frame_rate, options?.loop);
         }

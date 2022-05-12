@@ -731,7 +731,7 @@ export class InteractableObjects {
         this._current_animation = animation;
         this._current_action = action ?? this._current_action;
 
-        if (this.sprite_info.getSpriteAction(this.sprite) !== this.current_action) {
+        if (SpriteBase.getSpriteAction(this.sprite) !== this.current_action) {
             const sprite_key = this.sprite_info.getSpriteKey(this.current_action);
             this.sprite.loadTexture(sprite_key);
         }

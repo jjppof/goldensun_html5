@@ -25,6 +25,10 @@ export class SpriteBase {
         }
     }
 
+    get all_actions() {
+        return Object.keys(this.actions).sort();
+    }
+
     setActionAnimations(action, animations, frame_counts) {
         this.actions[action].animations = new Array(animations.length);
         this.actions[action].frame_counts = new Array(animations.length);
@@ -152,8 +156,13 @@ export class SpriteBase {
         return `${action}${SpriteBase.ACTION_ANIM_SEPARATOR}${animation}`;
     }
 
-    getSpriteAction(sprite) {
-        const key = sprite.key;
+    static getSpriteAction(sprite) {
+        const key = sprite.key as string;
         return key.substring(key.lastIndexOf(SpriteBase.ACTION_ANIM_SEPARATOR) + 1, key.length);
+    }
+
+    static getKeyName(sprite) {
+        const key = sprite.key as string;
+        return key.substring(0, key.indexOf(SpriteBase.ACTION_ANIM_SEPARATOR));
     }
 }

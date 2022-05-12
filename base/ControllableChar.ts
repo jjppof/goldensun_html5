@@ -589,7 +589,7 @@ export abstract class ControllableChar {
                 animation = this.current_animation;
             }
         }
-        if (this.sprite_info.getSpriteAction(this.sprite) !== action) {
+        if (SpriteBase.getSpriteAction(this.sprite) !== action) {
             const sprite_key = this.sprite_info.getSpriteKey(action);
             this.sprite.loadTexture(sprite_key);
         }
