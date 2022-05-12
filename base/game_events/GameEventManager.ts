@@ -538,6 +538,7 @@ export class GameEventManager {
                     info.frame_rate,
                     info.loop,
                     info.stop_animation,
+                    info.reset_frame_on_stop,
                     info.finish_events
                 );
             case event_types.CHAR_ANIM_PLAY:
