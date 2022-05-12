@@ -719,8 +719,8 @@ export abstract class ControllableChar {
         if (options?.dest !== undefined) {
             //deals with jumps that have a different position from the current char position.
             const dest_char = {
-                x: options.dest.x ?? get_centered_pos_in_px(options.dest.tile_x, this.data.map.tile_width),
-                y: options.dest.y ?? get_centered_pos_in_px(options.dest.tile_y, this.data.map.tile_height),
+                x: options.dest.x ?? get_centered_pos_in_px(options.dest.tile_x, this.data.map.tile_width) ?? this.x,
+                y: options.dest.y ?? get_centered_pos_in_px(options.dest.tile_y, this.data.map.tile_height) ?? this.y,
             };
             const is_jump_over_x_axis =
                 (options.dest.tile_x ?? get_tile_position(dest_char.x, this.data.map.tile_width)) === this.tile_x_pos;
