@@ -41,6 +41,7 @@ export class GoldenSun {
     public particle_manager: Phaser.ParticleStorm = null;
     public loading_progress: string = "";
     public loading_what: string = "";
+    public fps_reduction_active: boolean = false;
 
     public electron_app: boolean;
     private ipcRenderer: any;
@@ -531,14 +532,38 @@ export class GoldenSun {
 
         this.camera.update();
 
-        //fps adjustment for faster monitors since requestAnimationFrame follows monitor frame rate
-        //(is this still necessary after Phaser update to 2.19?)
-        if (
-            this.game.time.fps > numbers.TARGET_FPS &&
-            Math.abs(this.game.time.suggestedFps - this.game.time.desiredFps) > 10
-        ) {
-            this.game.time.desiredFps = this.game.time.suggestedFps;
+        //checks whether it's necessary to keep fps at 60
+        if (!this.fps_reduction_active && this.game.time.suggestedFps > numbers.TARGET_FPS_DOUBLE) {
+            this.force_target_fps();
         }
+    }
+
+    private force_target_fps() {
+        if (this.fps_reduction_active) {
+            return;
+        }
+        this.fps_reduction_active = true;
+        const originalRequestAnimationFrame = window.requestAnimationFrame;
+        const fps_interval = 1000 / numbers.TARGET_FPS;
+        let then = window.performance.now();
+        let raf_callback;
+
+        const raf_controller = () => {
+            const now = window.performance.now();
+            const elapsed = now - then;
+            if (elapsed > fps_interval) {
+                then = now - (elapsed % fps_interval);
+                originalRequestAnimationFrame(raf_callback);
+            } else {
+                originalRequestAnimationFrame(raf_controller);
+            }
+        };
+
+        window.requestAnimationFrame = callback => {
+            raf_callback = callback;
+            raf_controller();
+            return null;
+        };
     }
 
     /**

@@ -1,6 +1,7 @@
 export const GAME_WIDTH = 240;
 export const GAME_HEIGHT = 160;
 export const TARGET_FPS = 60;
+export const TARGET_FPS_DOUBLE = TARGET_FPS << 1;
 export const HERO_BODY_RADIUS = 7.0;
 export const HERO_BODY_RADIUS_M7 = 6.5;
 export const INV_SQRT2 = 1 / Math.sqrt(2);

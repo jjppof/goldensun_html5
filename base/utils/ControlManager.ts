@@ -217,7 +217,7 @@ export class ControlManager {
                 ? gamepad_button[gamepad_button.length - 1]
                 : gamepad_button;
 
-            const binding_callback = (callback: Function) => {
+            const binding_callback = (callback: Function, sfx: string) => {
                 if (this.disabled) return;
                 if (Array.isArray(control.buttons)) {
                     if (!this.check_bt_sequence_is_down(control.buttons as Button[])) return;
@@ -228,7 +228,7 @@ export class ControlManager {
                 } else if (trigger_reset) {
                     this.reset();
                 }
-                if (control.sfx?.up) this.audio.play_se(control.sfx.up);
+                if (sfx) this.audio.play_se(sfx);
                 if (control.halt) {
                     if (Array.isArray(gamepad_button)) {
                         gamepad_button.forEach(bt => bt.on_up.halt());
@@ -242,9 +242,13 @@ export class ControlManager {
             if (control.on_up) {
                 let signal_binding: Phaser.SignalBinding;
                 if (call_once) {
-                    signal_binding = last_gamepad_bt.on_up.addOnce(binding_callback.bind(this, control.on_up));
+                    signal_binding = last_gamepad_bt.on_up.addOnce(
+                        binding_callback.bind(this, control.on_up, control.sfx?.up)
+                    );
                 } else {
-                    signal_binding = last_gamepad_bt.on_up.add(binding_callback.bind(this, control.on_up));
+                    signal_binding = last_gamepad_bt.on_up.add(
+                        binding_callback.bind(this, control.on_up, control.sfx?.up)
+                    );
                 }
                 register(signal_binding);
             }
@@ -287,9 +291,13 @@ export class ControlManager {
                 } else {
                     let signal_binding: Phaser.SignalBinding;
                     if (call_once) {
-                        signal_binding = last_gamepad_bt.on_down.addOnce(binding_callback.bind(this, control.on_down));
+                        signal_binding = last_gamepad_bt.on_down.addOnce(
+                            binding_callback.bind(this, control.on_down, control.sfx?.down)
+                        );
                     } else {
-                        signal_binding = last_gamepad_bt.on_down.add(binding_callback.bind(this, control.on_down));
+                        signal_binding = last_gamepad_bt.on_down.add(
+                            binding_callback.bind(this, control.on_down, control.sfx?.down)
+                        );
                     }
                     register(signal_binding);
                 }
