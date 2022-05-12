@@ -123,6 +123,10 @@ export class GenericSpriteEvent extends GameEvent {
                     console.warn(`Generic sprite "${this.generic_sprite_key_name}" doesn't exist.`);
                     break;
                 }
+                if (this.group !== generic_sprite.parent) {
+                    generic_sprite.parent.removeChild(generic_sprite);
+                    this.group.add(generic_sprite);
+                }
                 generic_sprite.frameName = this.frame ?? generic_sprite.frameName;
                 generic_sprite.x = this.x ?? generic_sprite.x;
                 generic_sprite.y = this.y ?? generic_sprite.y;
