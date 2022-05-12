@@ -13,7 +13,7 @@ export class GrantAbilityEvent extends GameEvent {
     _fire() {
         const char = this.data.info.main_char_list[this.char_key];
         if (!char) {
-            console.warn(`Could not set exp. for ${this.char_key} char. Check "char_key" property.`);
+            console.warn(`Could not grant ability for "${this.char_key}" char. Check "char_key" property.`);
             return;
         }
         char.learn_ability(this.ability, true);
