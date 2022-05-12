@@ -825,7 +825,7 @@ export class GameEventManager {
                     info.key_name,
                     info.control_type,
                     info.generic_sprite_key_name,
-                    info.sprite_key,
+                    info.misc_sprite_key,
                     info.x,
                     info.y,
                     info.group,

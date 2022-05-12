@@ -16,7 +16,7 @@ enum game_groups {
 export class GenericSpriteEvent extends GameEvent {
     private control_type: control_types;
     private generic_sprite_key_name: string;
-    private sprite_key: string;
+    private misc_sprite_key: string;
     private x: number;
     private y: number;
     private group: Phaser.Group;
@@ -41,7 +41,7 @@ export class GenericSpriteEvent extends GameEvent {
         key_name,
         control_type,
         generic_sprite_key_name,
-        sprite_key,
+        misc_sprite_key,
         x,
         y,
         group,
@@ -62,7 +62,7 @@ export class GenericSpriteEvent extends GameEvent {
         super(game, data, event_types.GENERIC_SPRITE, active, key_name);
         this.control_type = control_type;
         this.generic_sprite_key_name = generic_sprite_key_name;
-        this.sprite_key = sprite_key;
+        this.misc_sprite_key = misc_sprite_key;
         this.x = x;
         this.y = y;
         switch (group) {
@@ -96,7 +96,7 @@ export class GenericSpriteEvent extends GameEvent {
             case control_types.ADD:
                 this.data.map.add_generic_sprite(
                     this.generic_sprite_key_name,
-                    this.sprite_key,
+                    this.misc_sprite_key,
                     this.x,
                     this.y,
                     this.group,
