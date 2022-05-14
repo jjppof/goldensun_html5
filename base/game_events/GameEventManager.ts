@@ -362,8 +362,10 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.look,
-                    info.looker,
-                    info.target
+                    info.looker_is_npc,
+                    info.looker_npc_label,
+                    info.target_is_npc,
+                    info.target_npc_label
                 );
             case event_types.CHEST:
                 return new ChestEvent(
