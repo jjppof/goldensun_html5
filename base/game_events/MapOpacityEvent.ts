@@ -18,7 +18,7 @@ export class MapOpacityEvent extends GameEvent {
             });
         }
         this.opacity = opacity;
-        this.duration = duration;
+        this.duration = duration ?? 0;
     }
 
     async _fire() {
