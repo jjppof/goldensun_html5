@@ -2,7 +2,7 @@ import {GameEvent, event_types} from "./GameEvent";
 
 export class MapOpacityEvent extends GameEvent {
     private map_layer_name: string;
-    private finish_events: GameEvent[] = [];
+    private finish_events: GameEvent[];
     private map_layer: any;
     private opacity: number;
     private duration: number;
@@ -10,6 +10,7 @@ export class MapOpacityEvent extends GameEvent {
     constructor(game, data, active, key_name, map_layer_name, finish_events, opacity, duration) {
         super(game, data, event_types.MAP_OPACITY, active, key_name);
         this.map_layer_name = map_layer_name;
+        this.finish_events = [];
         if (finish_events !== undefined) {
             finish_events.forEach(event_info => {
                 const event = this.data.game_event_manager.get_event_instance(event_info);
@@ -20,12 +21,8 @@ export class MapOpacityEvent extends GameEvent {
         this.duration = duration;
     }
 
-    private get_map_layer() {
-        return this.data.map.get_layer(this.map_layer_name);
-    }
-
     async _fire() {
-        this.map_layer = this.get_map_layer();
+        this.map_layer = this.data.map.get_layer(this.map_layer_name);
 
         if (!this.map_layer || !this.map_layer.sprite) {
             return;
@@ -33,11 +30,11 @@ export class MapOpacityEvent extends GameEvent {
 
         ++this.data.game_event_manager.events_running_count;
 
-        if (this.duration > 0) {
+        if (this.duration > 30) {
             this.game.add
                 .tween(this.map_layer.sprite)
                 .to({alpha: this.opacity}, this.duration, Phaser.Easing.Linear.None, true)
-                .onComplete.add(() => {
+                .onComplete.addOnce(() => {
                     this.map_layer.visible = this.map_layer.sprite.alpha > 0;
                     this.finish();
                 });
