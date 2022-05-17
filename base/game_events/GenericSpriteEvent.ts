@@ -116,6 +116,7 @@ export class GenericSpriteEvent extends GameEvent {
                         collision_layer: this.collision_layer,
                     }
                 );
+                this.data.map.sort_sprites();
                 break;
             case control_types.UPDATE:
                 const generic_sprite = this.data.map.generic_sprites[this.generic_sprite_key_name];
@@ -145,6 +146,7 @@ export class GenericSpriteEvent extends GameEvent {
                     const anim = generic_sprite.animations.getAnimation(anim_key);
                     anim.play(this.frame_rate, this.loop);
                 }
+                this.data.map.sort_sprites();
                 break;
             case control_types.REMOVE:
                 this.data.map.remove_generic_sprite(this.generic_sprite_key_name);
