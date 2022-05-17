@@ -337,9 +337,10 @@ export class GameEventManager {
                     info.minimal_distance,
                     info.keep_npc_collision_disable,
                     info.deactive_char_on_end,
-                    info.keep_camera_follow,
+                    info.camera_unfollow_char_on_finish,
                     info.wait_after,
-                    info.update_initial_position
+                    info.update_initial_position,
+                    info.reset_previous_camera_target
                 );
             case event_types.DIALOG:
                 return new DialogEvent(

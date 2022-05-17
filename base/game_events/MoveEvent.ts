@@ -1,8 +1,9 @@
-import {EventValue, event_types, event_value_types, GameEvent} from "./GameEvent";
+import {EventValue, event_types, GameEvent} from "./GameEvent";
 import * as _ from "lodash";
 import {directions, get_centered_pos_in_px, get_sqr_distance} from "../utils";
 import {NPC} from "../NPC";
-import {ControllableChar} from "ControllableChar";
+import {Camera} from "../Camera";
+import {ControllableChar} from "../ControllableChar";
 
 export class MoveEvent extends GameEvent {
     private static readonly MINIMAL_DISTANCE = 3;
@@ -23,7 +24,9 @@ export class MoveEvent extends GameEvent {
     private previous_allow_char_to_move: boolean;
     private camera_follow: boolean;
     private camera_follow_duration: number;
-    private keep_camera_follow: boolean;
+    private camera_unfollow_char_on_finish: boolean;
+    private reset_previous_camera_target: boolean;
+    private previous_camera_target: Camera["target"];
     private follow_hero_on_finish: boolean;
 
     constructor(
@@ -44,9 +47,10 @@ export class MoveEvent extends GameEvent {
         minimal_distance,
         keep_npc_collision_disable,
         deactive_char_on_end,
-        keep_camera_follow,
+        camera_unfollow_char_on_finish,
         wait_after,
-        update_initial_position
+        update_initial_position,
+        reset_previous_camera_target
     ) {
         super(game, data, event_types.MOVE, active, key_name);
         this.dash = dash ?? false;
@@ -64,8 +68,10 @@ export class MoveEvent extends GameEvent {
         this.previous_allow_char_to_move = null;
         this.camera_follow = camera_follow ?? false;
         this.camera_follow_duration = camera_follow_duration ?? MoveEvent.CAMERA_TRANSITION_DURATION;
-        this.keep_camera_follow = keep_camera_follow ?? true;
+        this.camera_unfollow_char_on_finish = camera_unfollow_char_on_finish ?? false;
         this.follow_hero_on_finish = follow_hero_on_finish ?? false;
+        this.reset_previous_camera_target = reset_previous_camera_target ?? false;
+        this.previous_camera_target = null;
         this.finish_events = [];
         if (finish_events !== undefined) {
             finish_events.forEach(event_info => {
@@ -88,8 +94,12 @@ export class MoveEvent extends GameEvent {
     }
 
     async go_to_finish(char: ControllableChar) {
-        if (this.camera_follow && !this.keep_camera_follow) {
-            this.data.camera.unfollow();
+        if (this.camera_follow) {
+            if (this.reset_previous_camera_target) {
+                await this.data.camera.follow(this.previous_camera_target, this.camera_follow_duration);
+            } else if (this.camera_unfollow_char_on_finish) {
+                this.data.camera.unfollow();
+            }
         }
         if (this.follow_hero_on_finish) {
             await this.data.camera.follow(this.data.hero, this.camera_follow_duration);
@@ -129,6 +139,7 @@ export class MoveEvent extends GameEvent {
         };
 
         if (this.camera_follow) {
+            this.previous_camera_target = this.data.camera.target;
             await this.data.camera.follow(char, this.camera_follow_duration);
         }
 
@@ -169,6 +180,7 @@ export class MoveEvent extends GameEvent {
     }
 
     _destroy() {
+        this.previous_camera_target = null;
         this.finish_events.forEach(event => event.destroy());
     }
 }
