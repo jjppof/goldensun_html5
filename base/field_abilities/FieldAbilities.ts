@@ -507,29 +507,17 @@ export abstract class FieldAbilities {
                 }
             }
         }
-        let blink_counter = 16;
-        const blink_timer = game.time.create(false);
         const hue_timer = game.time.create(false);
-        blink_timer.loop(50, () => {
-            if (blink_counter % 2 === 0) {
-                char.color_filter.tint = [1, 1, 1];
-            } else {
-                char.color_filter.tint = [-1, -1, -1];
+        char.blink(8, 50, {keep_color_filter: true}).then(() => {
+            char.color_filter.gray = 0.4;
+            if (after_init !== undefined) {
+                after_init();
             }
-            --blink_counter;
-            if (blink_counter === 0) {
-                char.color_filter.gray = 0.4;
-                blink_timer.stop();
-                if (after_init !== undefined) {
-                    after_init();
-                }
-                hue_timer.start();
-            }
+            hue_timer.start();
         });
         hue_timer.loop(100, () => {
             char.color_filter.hue_adjust = Math.random() * 2 * Math.PI;
         });
-        blink_timer.start();
         const casting_aura_stop_function = async (reset_casting_psy_flag?: boolean, reset_map_tint?: boolean) => {
             char.casting_aura_stop_function = null;
             if (before_destroy !== undefined) {
@@ -537,11 +525,10 @@ export abstract class FieldAbilities {
             }
             stop_asked = true;
             hue_timer.stop();
-            blink_timer.stop();
             char.color_filter.tint = [-1, -1, -1];
             char.color_filter.gray = 0;
             char.color_filter.hue_adjust = 0;
-            sprite.filters = undefined;
+            char.manage_filter(char.color_filter, false);
             await Promise.all(promises);
             for (let i = 0; i < tweens.length; ++i) {
                 for (let j = 0; j < tweens[i].length; ++j) {

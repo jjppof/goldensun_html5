@@ -13,7 +13,6 @@ import {Footsteps} from "./utils/Footsteps";
 import {GoldenSun} from "./GoldenSun";
 import {SpriteBase} from "./SpriteBase";
 import {Map} from "./Map";
-import {Camera} from "./Camera";
 import {Pushable} from "./interactable_objects/Pushable";
 import {RollablePillar} from "./interactable_objects/RollingPillar";
 import {StoragePosition} from "./Storage";
@@ -1103,7 +1102,7 @@ export abstract class ControllableChar {
             g?: number;
             /** The blue color component of the outline. 0 to 1. Default 1. */
             b?: number;
-            /** If this property is true, the char will be transparent expect by the outline. Default false. */
+            /** If this property is true, the char will be transparent excepting the outline. Default false. */
             keep_transparent?: boolean;
         }
     ) {
@@ -1111,15 +1110,9 @@ export abstract class ControllableChar {
             this.manage_filter(this.outline_filter, true);
             this.outline_filter.texture_width = this.sprite.texture.baseTexture.width;
             this.outline_filter.texture_height = this.sprite.texture.baseTexture.height;
-            if (options?.r !== undefined) {
-                this.outline_filter.r = options.r;
-            }
-            if (options?.g !== undefined) {
-                this.outline_filter.g = options.g;
-            }
-            if (options?.b !== undefined) {
-                this.outline_filter.b = options.b;
-            }
+            this.outline_filter.r = options?.r ?? 1.0;
+            this.outline_filter.g = options?.g ?? 1.0;
+            this.outline_filter.b = options?.b ?? 1.0;
             if (options?.keep_transparent !== undefined) {
                 this.outline_filter.keep_transparent = options.keep_transparent;
             }
@@ -1151,6 +1144,8 @@ export abstract class ControllableChar {
                 /** The blue color component to tint. 0 to 1. Default 1. */
                 b: number;
             };
+            /** if true, will keep the color filter on blink finish. */
+            keep_color_filter?: boolean;
         }
     ) {
         const outline = options?.outline_blink ?? false;
@@ -1193,7 +1188,7 @@ export abstract class ControllableChar {
         blink_timer.start();
         await timer_promise;
         blink_timer.destroy();
-        if (!outline) {
+        if (!outline && !options?.keep_color_filter) {
             this.manage_filter(this.color_filter, false);
         }
     }
