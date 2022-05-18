@@ -16,7 +16,6 @@ export class MoveEvent extends GameEvent {
     private keep_npc_collision_disable: boolean;
     private deactive_char_on_end: boolean;
     private wait_after: number;
-    private update_initial_position: boolean;
     private is_npc: boolean;
     private npc_label: string;
     private finish_events: GameEvent[];
@@ -49,7 +48,6 @@ export class MoveEvent extends GameEvent {
         deactive_char_on_end,
         camera_unfollow_char_on_finish,
         wait_after,
-        update_initial_position,
         reset_previous_camera_target
     ) {
         super(game, data, event_types.MOVE, active, key_name);
@@ -61,7 +59,6 @@ export class MoveEvent extends GameEvent {
         this.keep_npc_collision_disable = keep_npc_collision_disable ?? false;
         this.deactive_char_on_end = deactive_char_on_end ?? false;
         this.final_direction = final_direction !== undefined ? directions[final_direction as string] : null;
-        this.update_initial_position = update_initial_position ?? false;
         this.is_npc = is_npc;
         this.npc_label = npc_label;
         this.previous_dash_value = null;
@@ -169,7 +166,7 @@ export class MoveEvent extends GameEvent {
         if (this.deactive_char_on_end) {
             char.toggle_active(false);
         }
-        if (this.update_initial_position && char.is_npc) {
+        if (char.is_npc) {
             (char as NPC).update_initial_position(char.x, char.y);
         }
         if (!this.keep_npc_collision_disable) {
