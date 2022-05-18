@@ -81,10 +81,10 @@ export class MoveEvent extends GameEvent {
         }
     }
 
-    on_position_reach(char: ControllableChar) {
+    async on_position_reach(char: ControllableChar) {
         char.stop_char();
         if (this.final_direction !== null) {
-            char.set_direction(this.final_direction, true);
+            await char.face_direction(this.final_direction);
         }
         if (this.wait_after) {
             this.game.time.events.add(this.wait_after, this.go_to_finish, this, char);
@@ -148,13 +148,13 @@ export class MoveEvent extends GameEvent {
         const minimal_distance_sqr = this.minimal_distance * this.minimal_distance;
 
         let previous_sqr_dist = Infinity;
-        const udpate_callback = () => {
+        const udpate_callback = async () => {
             char.update_movement(true);
             this.data.map.sort_sprites();
             const this_sqr_dist = get_sqr_distance(char.x, dest.x, char.y, dest.y);
             if (this_sqr_dist < minimal_distance_sqr || this_sqr_dist > previous_sqr_dist) {
                 this.data.game_event_manager.remove_callback(udpate_callback);
-                this.on_position_reach(char);
+                await this.on_position_reach(char);
             }
             previous_sqr_dist = this_sqr_dist;
         };
