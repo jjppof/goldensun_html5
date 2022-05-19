@@ -15,7 +15,7 @@ export class PartyJoinEvent extends GameEvent {
     constructor(game, data, active, key_name, char_key_name, join, show_dialog, finish_events) {
         super(game, data, event_types.PARTY_JOIN, active, key_name);
         this.char_key_name = char_key_name;
-        this.join = join;
+        this.join = join ?? true;
         this.show_dialog = show_dialog ?? true;
         this.control_key = null;
         this.control_enable = false;
