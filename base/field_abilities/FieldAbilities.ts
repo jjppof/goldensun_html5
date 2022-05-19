@@ -9,6 +9,7 @@ import {NPC} from "../NPC";
 import * as _ from "lodash";
 import {Button} from "../XGamepad";
 import {DialogManager} from "../utils/DialogManager";
+import {degree360} from "../magic_numbers";
 
 /**
  * Defines and manages the usage of field psynergy.
@@ -516,7 +517,7 @@ export abstract class FieldAbilities {
             hue_timer.start();
         });
         hue_timer.loop(100, () => {
-            char.color_filter.hue_adjust = Math.random() * 2 * Math.PI;
+            char.color_filter.hue_adjust = Math.random() * degree360;
         });
         const casting_aura_stop_function = async (reset_casting_psy_flag?: boolean, reset_map_tint?: boolean) => {
             char.casting_aura_stop_function = null;
@@ -525,7 +526,6 @@ export abstract class FieldAbilities {
             }
             stop_asked = true;
             hue_timer.stop();
-            char.color_filter.tint = [-1, -1, -1];
             char.color_filter.gray = 0;
             char.color_filter.hue_adjust = 0;
             char.manage_filter(char.color_filter, false);

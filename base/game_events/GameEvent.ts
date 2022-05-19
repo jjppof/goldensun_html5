@@ -109,16 +109,11 @@ export enum event_types {
 export abstract class GameEvent {
     public game: Phaser.Game;
     public data: GoldenSun;
-    /** The GameEvent type. */
-    public type: event_types;
-    /** The GameEvent id number. */
-    public id: number;
-    /** Whether this GameEvent is active or not. */
-    public active: boolean;
-    /** An unique label that identifies this GameEvent. This is optional. */
-    public key_name: string;
-    /** If this GameEvent was originated by a NPC, this var holds this NPC reference. */
-    public origin_npc: NPC = null;
+    private _type: event_types;
+    private _id: number;
+    private _active: boolean;
+    private _key_name: string;
+    private _origin_npc: NPC;
 
     /** The GameEvents id incrementer. */
     public static id_incrementer: number;
@@ -130,14 +125,36 @@ export abstract class GameEvent {
     constructor(game: Phaser.Game, data: GoldenSun, type: event_types, active: boolean, key_name: string) {
         this.game = game;
         this.data = data;
-        this.type = type;
-        this.active = active ?? true;
-        this.id = GameEvent.id_incrementer++;
+        this._type = type;
+        this._active = active ?? true;
+        this._id = GameEvent.id_incrementer++;
         GameEvent.events[this.id] = this;
-        this.key_name = key_name;
+        this._key_name = key_name;
         if (this.key_name) {
             GameEvent.labeled_events[this.key_name] = this;
         }
+        this._origin_npc = null;
+    }
+
+    /** The GameEvent type. */
+    get type() {
+        return this._type;
+    }
+    /** The GameEvent id number. */
+    get id() {
+        return this._id;
+    }
+    /** Whether this GameEvent is active or not. */
+    get active() {
+        return this._active;
+    }
+    /** An unique label that identifies this GameEvent. This is optional. */
+    get key_name() {
+        return this._key_name;
+    }
+    /** If this GameEvent was originated by a NPC, this var holds this NPC reference. */
+    get origin_npc() {
+        return this._origin_npc;
     }
 
     /** Check if "Reveal" is currently active. If yes, then cancel it. */
@@ -156,9 +173,9 @@ export abstract class GameEvent {
      * @returns if the child class has an async fire function, returns its Promise.
      */
     fire(origin_npc?: NPC) {
-        this.check_reveal();
         if (!this.active) return;
-        this.origin_npc = origin_npc;
+        this.check_reveal();
+        this._origin_npc = origin_npc;
         return this._fire();
     }
 
@@ -175,8 +192,8 @@ export abstract class GameEvent {
      */
     destroy() {
         this._destroy();
-        this.active = false;
-        this.origin_npc = null;
+        this._active = false;
+        this._origin_npc = null;
     }
 
     /**

@@ -6,30 +6,22 @@ import {MainChar} from "../MainChar";
 export class PartyJoinEvent extends GameEvent {
     private char_key_name: string;
     private join: boolean;
-    private dialog_manager: DialogManager = null;
-    private running: boolean = false;
-    private control_enable: boolean = true;
-    private finish_events: GameEvent[] = [];
+    private show_dialog: boolean;
+    private dialog_manager: DialogManager;
+    private control_enable: boolean;
+    private finish_events: GameEvent[];
     private control_key: number;
 
-    constructor(game, data, active, key_name, char_key_name, join, finish_events) {
+    constructor(game, data, active, key_name, char_key_name, join, show_dialog, finish_events) {
         super(game, data, event_types.PARTY_JOIN, active, key_name);
         this.char_key_name = char_key_name;
         this.join = join;
+        this.show_dialog = show_dialog ?? true;
+        this.control_key = null;
+        this.control_enable = false;
+        this.dialog_manager = null;
 
-        this.control_key = this.data.control_manager.add_controls(
-            [
-                {
-                    buttons: Button.A,
-                    on_down: () => {
-                        if (!this.running || !this.control_enable) return;
-                        this.next();
-                    },
-                },
-            ],
-            {persist: true}
-        );
-
+        this.finish_events = [];
         if (finish_events !== undefined) {
             finish_events.forEach(event_info => {
                 const event = this.data.game_event_manager.get_event_instance(event_info);
@@ -43,20 +35,42 @@ export class PartyJoinEvent extends GameEvent {
         this.dialog_manager.next(async finished => {
             this.control_enable = true;
             if (finished) {
-                this.running = false;
-                this.data.control_manager.detach_bindings(this.control_key);
-                --this.data.game_event_manager.events_running_count;
-                this.finish_events.forEach(event => event.fire(this.origin_npc));
+                this.finish();
             }
         });
     }
 
+    finish() {
+        this.data.control_manager.detach_bindings(this.control_key);
+        this.control_key = null;
+        this.dialog_manager?.destroy();
+        --this.data.game_event_manager.events_running_count;
+        this.finish_events.forEach(event => event.fire(this.origin_npc));
+    }
+
     async _fire() {
-        ++this.data.game_event_manager.events_running_count;
         const this_char = this.data.info.main_char_list[this.char_key_name];
         if (this.join) {
+            MainChar.add_member_to_party(this.data.info.party_data, this_char);
+            if (!this.show_dialog) {
+                this.finish_events.forEach(event => event.fire(this.origin_npc));
+                return;
+            }
+            ++this.data.game_event_manager.events_running_count;
             this.control_enable = false;
-            this.running = true;
+            this.control_key = this.data.control_manager.add_controls(
+                [
+                    {
+                        buttons: Button.A,
+                        on_down: () => {
+                            if (this.control_enable) {
+                                this.next();
+                            }
+                        },
+                    },
+                ],
+                {persist: true}
+            );
             this.dialog_manager = new DialogManager(this.game, this.data);
             const text = `${this_char.name} joined your party.`;
             this.dialog_manager.set_dialog(text, {
@@ -64,7 +78,6 @@ export class PartyJoinEvent extends GameEvent {
                 avatar_inside_window: true,
                 custom_max_dialog_width: 165,
             });
-            MainChar.add_member_to_party(this.data.info.party_data, this_char);
             this.data.audio.pause_bgm();
             this.data.audio.play_se("misc/party_join", () => {
                 this.data.audio.resume_bgm();
@@ -72,8 +85,6 @@ export class PartyJoinEvent extends GameEvent {
             this.next();
         } else {
             MainChar.remove_member_from_party(this.data.info.party_data, this_char);
-            this.data.control_manager.detach_bindings(this.control_key);
-            --this.data.game_event_manager.events_running_count;
             this.finish_events.forEach(event => event.fire(this.origin_npc));
         }
     }
@@ -81,6 +92,9 @@ export class PartyJoinEvent extends GameEvent {
     _destroy() {
         this.finish_events.forEach(event => event.destroy());
         this.dialog_manager?.destroy();
-        this.data.control_manager.detach_bindings(this.control_key);
+        if (this.control_key !== null) {
+            this.data.control_manager.detach_bindings(this.control_key);
+            this.control_key = null;
+        }
     }
 }

@@ -11,12 +11,11 @@ const ITEM_TEXT = (hero_name: string, item_name: string) => `${hero_name} got ${
 export class ChestEvent extends GameEvent {
     private item: Item;
     private quantity: number;
-    private running: boolean = false;
     private control_enable: boolean = true;
     private resolve: Function;
     private promise: Promise<any>;
     private dialog_manager: DialogManager;
-    private finish_events: GameEvent[] = [];
+    private finish_events: GameEvent[];
     private custom_init_text: string;
     private no_chest: boolean;
     private hide_on_finish: boolean;
@@ -40,20 +39,9 @@ export class ChestEvent extends GameEvent {
         this.no_chest = no_chest ?? false;
         this.custom_init_text = custom_init_text;
         this.hide_on_finish = hide_on_finish ?? false;
+        this.control_key = null;
 
-        this.control_key = this.data.control_manager.add_controls(
-            [
-                {
-                    buttons: Button.A,
-                    on_down: () => {
-                        if (!this.running || !this.control_enable) return;
-                        this.next();
-                    },
-                },
-            ],
-            {persist: true}
-        );
-
+        this.finish_events = [];
         finish_events?.forEach(event_info => {
             const event = this.data.game_event_manager.get_event_instance(event_info);
             this.finish_events.push(event);
@@ -73,7 +61,19 @@ export class ChestEvent extends GameEvent {
     async _fire() {
         ++this.data.game_event_manager.events_running_count;
         this.control_enable = false;
-        this.running = true;
+        this.control_key = this.data.control_manager.add_controls(
+            [
+                {
+                    buttons: Button.A,
+                    on_down: () => {
+                        if (this.control_enable) {
+                            this.next();
+                        }
+                    },
+                },
+            ],
+            {persist: true}
+        );
 
         const hero_name = this.data.info.party_data.members[0].name;
         this.dialog_manager = new DialogManager(this.game, this.data);
@@ -171,10 +171,11 @@ export class ChestEvent extends GameEvent {
         emitter.destroy();
         this.data.hero.play(base_actions.IDLE);
         MainChar.add_item_to_party(this.data.info.party_data, this.item, this.quantity);
-        this.running = false;
         this.control_enable = false;
         this.data.control_manager.detach_bindings(this.control_key);
+        this.control_key = null;
         this.data.game_event_manager.force_idle_action = true;
+        this.dialog_manager?.destroy();
         --this.data.game_event_manager.events_running_count;
         this.finish_events.forEach(event => event.fire(this.origin_npc));
     }
@@ -182,6 +183,9 @@ export class ChestEvent extends GameEvent {
     _destroy() {
         this.finish_events.forEach(event => event.destroy());
         this.dialog_manager?.destroy();
-        this.data.control_manager.detach_bindings(this.control_key);
+        if (this.control_key !== null) {
+            this.data.control_manager.detach_bindings(this.control_key);
+            this.control_key = null;
+        }
     }
 }

@@ -339,7 +339,9 @@ export class Effect {
             case effect_types.DEFENSE:
             case effect_types.AGILITY:
             case effect_types.LUCK:
-                return this.remove_buff ? this.remove_char_buffs(this.type) : null;
+                if (this.remove_buff) {
+                    return this.remove_char_buffs(this.type);
+                }
 
             case effect_types.MAX_HP:
             case effect_types.MAX_PP:

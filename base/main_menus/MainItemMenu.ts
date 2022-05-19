@@ -194,11 +194,11 @@ export class MainItemMenu {
                 text_obj: this.gear_overview_window.set_text_in_position("", 24, 32),
                 item_obj: this.gear_overview_window.make_item_obj("", {x: 112, y: 24}),
             },
-            body: {
+            chest: {
                 text_obj: this.gear_overview_window.set_text_in_position("", 24, 48),
                 item_obj: this.gear_overview_window.make_item_obj("", {x: 112, y: 40}),
             },
-            chest: {
+            body: {
                 text_obj: this.gear_overview_window.set_text_in_position("", 24, 64),
                 item_obj: this.gear_overview_window.make_item_obj("", {x: 112, y: 56}),
             },

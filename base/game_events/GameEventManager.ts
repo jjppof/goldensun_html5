@@ -398,6 +398,7 @@ export class GameEventManager {
                     info.key_name,
                     info.char_key_name,
                     info.join,
+                    info.show_dialog,
                     info.finish_events
                 );
             case event_types.SUMMON:
