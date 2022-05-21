@@ -10,31 +10,19 @@ const RECOVERY_TEXT = (hero_name: string) => `${hero_name}'s PP are maxed out!`;
 const DISAPPEAR_TEXT = `The Psynergy Stone disappeared...`;
 
 export class PsynergyStoneEvent extends GameEvent {
-    private control_enable: boolean = true;
-    private running: boolean = false;
+    private control_enable: boolean;
     private promise: Promise<void>;
     private aux_resolve: () => void;
     private dialog_manager: DialogManager;
-    private finish_events: GameEvent[] = [];
+    private finish_events: GameEvent[];
     private control_key: number;
 
     constructor(game, data, active, key_name, finish_events) {
         super(game, data, event_types.PSYNERGY_STONE, active, key_name);
+        this.control_enable = false;
+        this.dialog_manager = null;
 
-        this.control_key = this.data.control_manager.add_controls(
-            [
-                {
-                    buttons: Button.A,
-                    on_down: () => {
-                        if (!this.active || !this.running || !this.control_enable) return;
-                        this.control_enable = false;
-                        this.dialog_manager.kill_dialog(this.aux_resolve, false, true);
-                    },
-                },
-            ],
-            {persist: true}
-        );
-
+        this.finish_events = [];
         finish_events?.forEach(event_info => {
             const event = this.data.game_event_manager.get_event_instance(event_info);
             this.finish_events.push(event);
@@ -43,8 +31,22 @@ export class PsynergyStoneEvent extends GameEvent {
 
     async _fire() {
         ++this.data.game_event_manager.events_running_count;
+
         this.control_enable = false;
-        this.running = true;
+        this.control_key = this.data.control_manager.add_controls(
+            [
+                {
+                    buttons: Button.A,
+                    on_down: () => {
+                        if (this.control_enable) {
+                            this.control_enable = false;
+                            this.dialog_manager.kill_dialog(this.aux_resolve, false, true);
+                        }
+                    },
+                },
+            ],
+            {persist: true}
+        );
 
         //Initial Text
         const hero_name = this.data.info.main_char_list[this.data.hero.key_name].name;
@@ -118,9 +120,9 @@ export class PsynergyStoneEvent extends GameEvent {
         await this.set_text(DISAPPEAR_TEXT, false);
 
         this.data.hero.play(base_actions.IDLE);
-        this.running = false;
         this.control_enable = false;
         this.data.control_manager.detach_bindings(this.control_key);
+        this.dialog_manager?.destroy();
         this.data.game_event_manager.force_idle_action = true;
         --this.data.game_event_manager.events_running_count;
         this.finish_events.forEach(event => event.fire(this.origin_npc));
@@ -148,6 +150,10 @@ export class PsynergyStoneEvent extends GameEvent {
     _destroy() {
         this.finish_events.forEach(event => event.destroy());
         this.dialog_manager?.destroy();
-        this.data.control_manager.detach_bindings(this.control_key);
+        this.dialog_manager = null;
+        if (this.control_key !== null) {
+            this.data.control_manager.detach_bindings(this.control_key);
+            this.control_key = null;
+        }
     }
 }
