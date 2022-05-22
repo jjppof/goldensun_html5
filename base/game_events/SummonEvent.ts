@@ -17,34 +17,23 @@ export class SummonEvent extends GameEvent {
     private static readonly LETTER_PADDING_X = 12;
     private static readonly LETTER_PADDING_Y = 24;
     private summon: Summon;
-    private aux_promise: Promise<void>;
-    private aux_resolve: () => void;
-    private control_enable: boolean = false;
-    private running: boolean = false;
+    private control_enable: boolean;
+    private animate: boolean;
     private dialog: DialogManager;
     private emitter: Phaser.Particles.Arcade.Emitter;
     private letters: Phaser.Sprite[];
-    private finish_events: GameEvent[] = [];
+    private finish_events: GameEvent[];
     private control_key: number;
 
-    constructor(game, data, active, key_name, summon_key, finish_events) {
+    constructor(game, data, active, key_name, summon_key, animate, finish_events) {
         super(game, data, event_types.SUMMON, active, key_name);
         this.summon = this.data.info.summons_list[summon_key];
+        this.control_enable = false;
+        this.dialog = null;
+        this.control_key = null;
+        this.animate = animate ?? true;
 
-        this.control_key = this.data.control_manager.add_controls(
-            [
-                {
-                    buttons: Button.A,
-                    on_down: () => {
-                        if (!this.active || !this.running || !this.control_enable) return;
-                        this.control_enable = false;
-                        this.dialog.kill_dialog(this.aux_resolve, false, true);
-                    },
-                },
-            ],
-            {persist: true}
-        );
-
+        this.finish_events = [];
         finish_events?.forEach(event_info => {
             const event = this.data.game_event_manager.get_event_instance(event_info);
             this.finish_events.push(event);
@@ -92,20 +81,42 @@ export class SummonEvent extends GameEvent {
 
     finish() {
         this.summon.available = true;
-        this.running = false;
         this.control_enable = false;
         this.data.control_manager.detach_bindings(this.control_key);
+        this.control_enable = null;
         this.data.game_event_manager.force_idle_action = true;
         this.data.hero.play(base_actions.IDLE);
-        this.emitter.destroy();
+        this.emitter?.destroy();
+        this.dialog?.destroy();
+        this.emitter = null;
+        this.dialog = null;
+        this.letters = null;
         --this.data.game_event_manager.events_running_count;
         this.finish_events.forEach(event => event.fire(this.origin_npc));
     }
 
     async _fire() {
+        if (!this.animate) {
+            this.summon.available = true;
+            return;
+        }
         ++this.data.game_event_manager.events_running_count;
-        this.running = true;
         this.control_enable = false;
+        let aux_resolve;
+        this.control_key = this.data.control_manager.add_controls(
+            [
+                {
+                    buttons: Button.A,
+                    on_down: () => {
+                        if (this.control_enable) {
+                            this.control_enable = false;
+                            this.dialog.kill_dialog(aux_resolve, false, true);
+                        }
+                    },
+                },
+            ],
+            {persist: true}
+        );
 
         const x0 = this.game.camera.x;
         const y0 = this.game.camera.y;
@@ -115,7 +126,7 @@ export class SummonEvent extends GameEvent {
 
         const hero_name = this.data.info.main_char_list[this.data.hero.key_name].name;
         this.dialog = new DialogManager(this.game, this.data);
-        this.aux_promise = new Promise(resolve => (this.aux_resolve = resolve));
+        let aux_promise = new Promise(resolve => (aux_resolve = resolve));
         this.dialog.next_dialog(
             `${hero_name} examined the stone tablet...`,
             () => {
@@ -124,27 +135,27 @@ export class SummonEvent extends GameEvent {
             {show_crystal: true}
         );
 
-        await this.aux_promise;
+        await aux_promise;
         const reset_map = FieldAbilities.tint_map_layers(this.game, this.data.map);
         this.origin_npc.play(SummonEvent.ACTION, "stone_continuos");
-        this.aux_promise = new Promise(resolve => (this.aux_resolve = resolve));
+        aux_promise = new Promise(resolve => (aux_resolve = resolve));
         this.game.time.events.add(1000, () => {
             this.origin_npc.play(SummonEvent.ACTION, "stone_shining");
-            this.aux_resolve();
+            aux_resolve();
         });
 
-        await this.aux_promise;
-        this.aux_promise = new Promise(resolve => (this.aux_resolve = resolve));
+        await aux_promise;
+        aux_promise = new Promise(resolve => (aux_resolve = resolve));
         this.game.time.events.add(1000, () => {
             this.emitter.flow(1000, 20, 2, SummonEvent.PARTICLES_NUMBER);
-            this.aux_resolve();
+            aux_resolve();
         });
 
-        await this.aux_promise;
+        await aux_promise;
         const min_time = 300;
         const max_time = 500;
         for (let i = 0; i < 3; ++i) {
-            this.aux_promise = new Promise(resolve => (this.aux_resolve = resolve));
+            aux_promise = new Promise(resolve => (aux_resolve = resolve));
             for (let j = 0; j < 16; ++j) {
                 const dest_x = x0 + SummonEvent.LETTER_INIT_X + SummonEvent.LETTER_PADDING_X * j;
                 const dest_y = y0 + SummonEvent.LETTER_INIT_Y + SummonEvent.LETTER_PADDING_Y * i;
@@ -162,20 +173,20 @@ export class SummonEvent extends GameEvent {
                     true
                 );
             }
-            this.game.time.events.add(500, this.aux_resolve);
-            await this.aux_promise;
+            this.game.time.events.add(500, aux_resolve);
+            await aux_promise;
         }
 
         this.origin_npc.toggle_active(false);
 
         let counter = 0;
-        this.aux_promise = new Promise(resolve => (this.aux_resolve = resolve));
+        aux_promise = new Promise(resolve => (aux_resolve = resolve));
         const normal_color = 0xffffff;
         const blue_color = 0x0000ff;
         const sequence = 0b1100110000111;
         const letter_shine_update_callback = () => {
             if (counter === 32) {
-                this.aux_resolve();
+                aux_resolve();
                 return;
             }
             for (let i = 0; i < 3; ++i) {
@@ -197,7 +208,7 @@ export class SummonEvent extends GameEvent {
         };
         this.data.game_event_manager.add_callback(letter_shine_update_callback);
 
-        await this.aux_promise;
+        await aux_promise;
         this.data.game_event_manager.remove_callback(letter_shine_update_callback);
 
         await this.data.hero.face_direction(directions.down);
@@ -207,7 +218,7 @@ export class SummonEvent extends GameEvent {
         const total_phi = (Math.PI * 17) / 2;
         const total_time = 4000;
         const speed_factor = (total_phi * 1000) / this.game.time.fps / total_time;
-        this.aux_promise = new Promise(resolve => (this.aux_resolve = resolve));
+        aux_promise = new Promise(resolve => (aux_resolve = resolve));
         let ref_phi = 0;
         const PI = Math.PI;
         const delta = 0.1;
@@ -251,7 +262,7 @@ export class SummonEvent extends GameEvent {
                         letter.destroy();
                     }
                     if (i === SummonEvent.LETTERS_NUMBER - 1) {
-                        this.aux_resolve();
+                        aux_resolve();
                     }
                     continue;
                 }
@@ -278,12 +289,12 @@ export class SummonEvent extends GameEvent {
             this.data.hero.shake();
         });
 
-        await this.aux_promise;
+        await aux_promise;
         this.data.game_event_manager.remove_callback(letter_spiral_update_callback);
 
         reset_map();
         const summon_name = this.data.info.abilities_list[this.summon.key_name].name;
-        this.aux_promise = new Promise(resolve => (this.aux_resolve = resolve));
+        aux_promise = new Promise(resolve => (aux_resolve = resolve));
         this.dialog.next_dialog(
             `${hero_name} can now summon ${summon_name}!`,
             () => {
@@ -292,9 +303,9 @@ export class SummonEvent extends GameEvent {
             {show_crystal: true}
         );
 
-        await this.aux_promise;
+        await aux_promise;
 
-        this.aux_promise = new Promise(resolve => (this.aux_resolve = resolve));
+        aux_promise = new Promise(resolve => (aux_resolve = resolve));
         const requirements = [];
         ordered_elements.forEach(element => {
             const requirement = this.summon.requirements[element];
@@ -314,13 +325,19 @@ export class SummonEvent extends GameEvent {
             {show_crystal: false}
         );
 
-        await this.aux_promise;
+        await aux_promise;
         this.finish();
     }
 
     _destroy() {
         this.finish_events.forEach(event => event.destroy());
         this.dialog?.destroy();
-        this.data.control_manager.detach_bindings(this.control_key);
+        this.emitter?.destroy();
+        this.letters = null;
+        this.summon = null;
+        if (this.control_enable !== null) {
+            this.data.control_manager.detach_bindings(this.control_key);
+            this.control_enable = null;
+        }
     }
 }

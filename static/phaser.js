@@ -106488,7 +106488,9 @@ Phaser.Particles.Arcade.Emitter.prototype.resetParticle = function (particle, x,
  */
 Phaser.Particles.Arcade.Emitter.prototype.destroy = function ()
 {
-    this.game.particles.remove(this);
+    if (this.game) {
+        this.game.particles.remove(this);
+    }
 
     Phaser.Group.prototype.destroy.call(this, true, false);
 };

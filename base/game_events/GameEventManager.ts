@@ -408,6 +408,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.summon_key,
+                    info.animate,
                     info.finish_events
                 );
             case event_types.DJINN_GET:
