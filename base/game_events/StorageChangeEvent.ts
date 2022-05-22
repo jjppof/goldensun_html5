@@ -3,14 +3,15 @@ import {GameEvent, event_types} from "./GameEvent";
 
 export class StorageChangeEvent extends GameEvent {
     private keys: string[];
-    private change_events: GameEvent[] = [];
+    private change_events: GameEvent[];
     private callback_call_type: callback_call_types;
     private callback_ids: {[state_key: string]: number[]};
 
     constructor(game, data, active, key_name, keys, callback_call_type, change_events) {
         super(game, data, event_types.STORAGE_CHANGE, active, key_name);
-        this.keys = keys;
+        this.keys = Array.isArray(keys) ? keys : [keys];
         this.callback_call_type = callback_call_type ?? callback_call_types.ONCE;
+        this.change_events = [];
         change_events.forEach(event_info => {
             const event = this.data.game_event_manager.get_event_instance(event_info);
             this.change_events.push(event);
