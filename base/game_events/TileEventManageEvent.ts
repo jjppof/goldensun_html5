@@ -13,7 +13,7 @@ export class TileEventManageEvent extends GameEvent {
         this.tile_event_key = tile_event_key;
         this.activate_at = activate_at;
         this.pos = pos;
-        this.collision_layers = collision_layers;
+        this.collision_layers = Array.isArray(collision_layers) ? collision_layers : [collision_layers];
     }
 
     _fire() {
