@@ -27,7 +27,12 @@ export class TintCharEvent extends GameEvent {
 
         if (this.enable) {
             target_char.manage_filter(target_char.color_filter, true);
-            target_char.color_filter.tint = [this.color.r, this.color.g, this.color.b];
+            const current_tint = target_char.color_filter.tint;
+            target_char.color_filter.tint = [
+                this.color.r ?? current_tint[0],
+                this.color.g ?? current_tint[1],
+                this.color.b ?? current_tint[2],
+            ];
         } else {
             target_char.color_filter.tint = [-1, -1, -1];
             target_char.manage_filter(target_char.color_filter, false);
