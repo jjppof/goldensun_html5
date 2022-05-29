@@ -216,7 +216,6 @@ export class LiftFieldPsynergy extends FieldAbilities {
         await Promise.all([left_promise, right_promise]);
 
         if (this.target_found) {
-            this.target_object.manage_filter(this.target_object.color_filter, true);
             LiftFieldPsynergy.set_permanent_hue_effect(this.game, this.target_object);
         } else {
             this.left_hand_sprite.destroy();
@@ -326,8 +325,9 @@ export class LiftFieldPsynergy extends FieldAbilities {
 
     static set_permanent_hue_effect(game: Phaser.Game, target_object: LiftFieldPsynergy["target_object"]) {
         const target_hueshift_timer = game.time.create(false);
+        target_object.manage_filter(target_object.hue_filter, true);
         target_hueshift_timer.loop(5, () => {
-            target_object.color_filter.hue_adjust = Math.random() * degree360;
+            target_object.hue_filter.angle = Math.random() * degree360;
         });
         target_hueshift_timer.start();
         target_object.add_unset_callback(() => {

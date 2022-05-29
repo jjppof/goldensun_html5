@@ -413,7 +413,6 @@ export abstract class FieldAbilities {
         const ring_up_time = 750;
         const ring_up_time_half = ring_up_time >> 1;
         const step_time = (ring_up_time / 3) | 0;
-        char.manage_filter(char.color_filter, true);
         const auras_number = 2;
         const tweens = [];
         let stop_asked = false;
@@ -508,6 +507,8 @@ export abstract class FieldAbilities {
                 }
             }
         }
+        char.manage_filter(char.color_filter, true);
+        char.manage_filter(char.hue_filter, true);
         const hue_timer = game.time.create(false);
         char.blink(8, 50, {keep_color_filter: true}).then(() => {
             char.color_filter.gray = 0.4;
@@ -517,7 +518,7 @@ export abstract class FieldAbilities {
             hue_timer.start();
         });
         hue_timer.loop(100, () => {
-            char.color_filter.hue_adjust = Math.random() * degree360;
+            char.hue_filter.angle = Math.random() * degree360;
         });
         const casting_aura_stop_function = async (reset_casting_psy_flag?: boolean, reset_map_tint?: boolean) => {
             char.casting_aura_stop_function = null;
@@ -527,8 +528,9 @@ export abstract class FieldAbilities {
             stop_asked = true;
             hue_timer.stop();
             char.color_filter.gray = 0;
-            char.color_filter.hue_adjust = 0;
+            char.hue_filter.angle = 0;
             char.manage_filter(char.color_filter, false);
+            char.manage_filter(char.hue_filter, false);
             await Promise.all(promises);
             for (let i = 0; i < tweens.length; ++i) {
                 for (let j = 0; j < tweens[i].length; ++j) {

@@ -133,8 +133,9 @@ export abstract class ControllableChar {
     private _color_filter: Phaser.Filter.ColorFilters;
     private _levels_filter: Phaser.Filter.Levels;
     private _color_blend_filter: Phaser.Filter.ColorBlend;
-    private _active_filters: {[key in EngineFilters]: boolean};
+    private _hue_filter: Phaser.Filter.Hue;
     private _outline_filter: any;
+    private _active_filters: {[key in EngineFilters]: boolean};
     protected _push_timer: Phaser.Timer;
     private _footsteps: Footsteps;
     protected look_target: ControllableChar = null;
@@ -232,12 +233,14 @@ export abstract class ControllableChar {
         this._color_filter = this.game.add.filter("ColorFilters") as Phaser.Filter.ColorFilters;
         this._levels_filter = this.game.add.filter("Levels") as Phaser.Filter.Levels;
         this._color_blend_filter = this.game.add.filter("ColorBlend") as Phaser.Filter.ColorBlend;
+        this._hue_filter = this.game.add.filter("Hue") as Phaser.Filter.Hue;
         this._outline_filter = this.game.add.filter("Outline");
         this._active_filters = {
             [EngineFilters.COLORIZE]: false,
             [EngineFilters.OUTLINE]: false,
             [EngineFilters.LEVELS]: false,
             [EngineFilters.COLOR_BLEND]: false,
+            [EngineFilters.HUE]: false,
         };
         this.trying_to_push = false;
         this._trying_to_push_direction = null;
@@ -336,6 +339,10 @@ export abstract class ControllableChar {
     /** The Phaser.Filter that controls the blend of colors of the texture of this char sprite. */
     get color_blend_filter() {
         return this._color_blend_filter;
+    }
+    /** The Phaser.Filter that controls the hue of the texture of this char sprite. */
+    get hue_filter() {
+        return this._hue_filter;
     }
     /** An object containing which filters are active in this char. */
     get active_filters() {

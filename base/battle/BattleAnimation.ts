@@ -410,6 +410,8 @@ export class BattleAnimation {
             sprite.available_filters[levels_filter.key] = levels_filter;
             const color_blend_filter = this.game.add.filter("ColorBlend") as Phaser.Filter.ColorBlend;
             sprite.available_filters[color_blend_filter.key] = color_blend_filter;
+            const hue_filter = this.game.add.filter("Hue") as Phaser.Filter.Hue;
+            sprite.available_filters[hue_filter.key] = hue_filter;
         });
     }
 
@@ -421,12 +423,18 @@ export class BattleAnimation {
         this.play_number_property_sequence(this.x_ellipse_axis_factor_sequence, "ellipses_semi_major");
         this.play_number_property_sequence(this.y_ellipse_axis_factor_sequence, "ellipses_semi_minor");
         this.play_number_property_sequence(this.alpha_sequence, "alpha");
-        this.play_number_property_sequence(this.rotation_sequence, "rotation");
+        this.play_number_property_sequence(this.rotation_sequence, "rotation", undefined, {
+            rotational_property: true,
+            rotate_in_4h_quadrant: true,
+        });
         this.play_number_property_sequence(this.x_scale_sequence, "scale", "x");
         this.play_number_property_sequence(this.y_scale_sequence, "scale", "y");
         this.play_number_property_sequence(this.x_anchor_sequence, "anchor", "x");
         this.play_number_property_sequence(this.y_anchor_sequence, "anchor", "y");
-        // this.play_number_property_sequence(this.hue_angle_sequence, "filters", "hue_adjust");
+        this.play_number_property_sequence(this.hue_angle_sequence, "filters", "hue_adjust", {
+            rotational_property: true,
+            filter_property: true,
+        });
         // this.play_number_property_sequence(this.grayscale_sequence, "filters", "gray");
         this.play_sprite_sequence();
         this.play_blend_modes();
@@ -550,7 +558,16 @@ export class BattleAnimation {
         }
     }
 
-    play_number_property_sequence(sequence, target_property: keyof PlayerSprite, inner_property?) {
+    play_number_property_sequence(
+        sequence,
+        target_property: keyof PlayerSprite,
+        inner_property?,
+        options?: {
+            rotational_property?: boolean;
+            filter_property?: boolean;
+            rotate_in_4h_quadrant?: boolean;
+        }
+    ) {
         const chained_tweens = {};
         const auto_start_tween = {};
         const property_to_set = inner_property ?? target_property;
@@ -607,7 +624,7 @@ export class BattleAnimation {
                             to_value = numbers.GAME_WIDTH - to_value;
                         }
                     }
-                    if (["rotation", "hue_adjust"].includes(property_to_set)) {
+                    if (options?.rotational_property) {
                         this.sprites_prev_properties[uniq_key][property_to_set] = range_360(
                             this.sprites_prev_properties[uniq_key][property_to_set]
                         );
@@ -616,7 +633,7 @@ export class BattleAnimation {
                             this.sprites_prev_properties[uniq_key][property_to_set],
                             seq_to,
                             seq.direction,
-                            property_to_set === "rotation"
+                            options?.rotate_in_4h_quadrant
                         );
                         if (
                             Math.abs(this.sprites_prev_properties[uniq_key][property_to_set] - to_value) >
@@ -654,7 +671,7 @@ export class BattleAnimation {
                             if (["ellipses_semi_major", "ellipses_semi_minor"].includes(property_to_set)) {
                                 this.battle_stage.update_sprite_properties();
                             }
-                            if (seq.is_absolute && ["rotation", "hue_adjust"].includes(property_to_set)) {
+                            if (seq.is_absolute && options?.rotational_property) {
                                 this_sprite[property_to_set] = range_360(this_sprite[property_to_set]);
                             }
                             if (resolve_function !== undefined) {
@@ -685,7 +702,7 @@ export class BattleAnimation {
                             const this_promise = new Promise(resolve => (resolve_function = resolve));
                             this.promises.push(this_promise);
                             tween.onComplete.addOnce(() => {
-                                if (seq.is_absolute && ["rotation", "hue_adjust"].includes(property_to_set)) {
+                                if (seq.is_absolute && options?.rotational_property) {
                                     this_sprite[property_to_set] = range_360(this_sprite[property_to_set]);
                                 }
                                 resolve_function();

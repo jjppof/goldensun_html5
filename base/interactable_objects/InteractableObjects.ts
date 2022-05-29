@@ -77,6 +77,7 @@ export class InteractableObjects {
     private _color_filter: Phaser.Filter.ColorFilters;
     private _levels_filter: Phaser.Filter.Levels;
     private _color_blend_filter: Phaser.Filter.ColorBlend;
+    private _hue_filter: Phaser.Filter.Hue;
     private _enable: boolean;
     private _entangled_by_bush: boolean;
     private _sprite: Phaser.Sprite;
@@ -191,6 +192,7 @@ export class InteractableObjects {
         this._color_filter = this.game.add.filter("ColorFilters") as Phaser.Filter.ColorFilters;
         this._levels_filter = this.game.add.filter("Levels") as Phaser.Filter.Levels;
         this._color_blend_filter = this.game.add.filter("ColorBlend") as Phaser.Filter.ColorBlend;
+        this._hue_filter = this.game.add.filter("Hue") as Phaser.Filter.Hue;
         this.anchor_x = anchor_x;
         this.anchor_y = anchor_y;
         this.scale_x = scale_x;
@@ -234,6 +236,7 @@ export class InteractableObjects {
             [EngineFilters.OUTLINE]: false,
             [EngineFilters.LEVELS]: false,
             [EngineFilters.COLOR_BLEND]: false,
+            [EngineFilters.HUE]: false,
         };
     }
 
@@ -290,6 +293,9 @@ export class InteractableObjects {
     }
     get color_blend_filter() {
         return this._color_blend_filter;
+    }
+    get hue_filter() {
+        return this._hue_filter;
     }
     get collision_tiles_bodies() {
         return this._collision_tiles_bodies;
@@ -583,7 +589,6 @@ export class InteractableObjects {
                     this.color_filter.colorize_intensity =
                         this.snapshot_info.filter_settings.colorize.colorize_intensity;
                     this.color_filter.colorize = this.snapshot_info.filter_settings.colorize.colorize;
-                    this.color_filter.hue_adjust = this.snapshot_info.filter_settings.colorize.hue_adjust;
                     this.color_filter.tint = this.snapshot_info.filter_settings.colorize.tint;
                     this.color_filter.flame = this.snapshot_info.filter_settings.colorize.flame;
                 }
@@ -598,6 +603,10 @@ export class InteractableObjects {
                     this.color_blend_filter.r = this.snapshot_info.filter_settings.color_blend.r;
                     this.color_blend_filter.g = this.snapshot_info.filter_settings.color_blend.g;
                     this.color_blend_filter.b = this.snapshot_info.filter_settings.color_blend.b;
+                }
+                if (active_filters[EngineFilters.HUE]) {
+                    this.manage_filter(this.hue_filter, true);
+                    this.hue_filter.angle = this.snapshot_info.filter_settings.hue.angle;
                 }
             }
         }

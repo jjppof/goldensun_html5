@@ -7,7 +7,6 @@ Phaser.Filter.ColorFilters = function (game) {
     this.uniforms.r_colorize = { type: '1f', value: 1.0 };
     this.uniforms.g_colorize = { type: '1f', value: 1.0 };
     this.uniforms.b_colorize = { type: '1f', value: 1.0 };
-    this.uniforms.hue_adjust = { type: '1f', value: 0.0 };
     this.uniforms.r_tint = { type: '1f', value: -1.0 };
     this.uniforms.g_tint = { type: '1f', value: -1.0 };
     this.uniforms.b_tint = { type: '1f', value: -1.0 };
@@ -23,7 +22,6 @@ Phaser.Filter.ColorFilters = function (game) {
         "uniform float      r_colorize;",
         "uniform float      g_colorize;",
         "uniform float      b_colorize;",
-        "uniform float      hue_adjust;",
         "uniform float      r_tint;",
         "uniform float      g_tint;",
         "uniform float      b_tint;",
@@ -45,12 +43,6 @@ Phaser.Filter.ColorFilters = function (game) {
 
             "if (r_colorize != 1.0 || g_colorize != 1.0 || b_colorize != 1.0) {",
                 "gl_FragColor.rgb = vec3(colorize_intensity * r_colorize * gl_FragColor.r + gl_FragColor.r * (1.0 - colorize_intensity), colorize_intensity * g_colorize * gl_FragColor.g + gl_FragColor.g * (1.0 - colorize_intensity), colorize_intensity * b_colorize * gl_FragColor.b + gl_FragColor.b * (1.0 - colorize_intensity));",
-            "}",
-
-            "if (hue_adjust != 0.0) {",
-                "const vec3 k = vec3(0.57735, 0.57735, 0.57735);",
-                "float cosAngle = cos(hue_adjust);",
-                "gl_FragColor.rgb = vec3(gl_FragColor.rgb * cosAngle + cross(k, gl_FragColor.rgb) * sin(hue_adjust) + k * dot(k, gl_FragColor.rgb) * (1.0 - cosAngle));",
             "}",
         "}"
     ];
@@ -121,14 +113,6 @@ Object.defineProperty(Phaser.Filter.ColorFilters.prototype, 'colorize', {
         if (value > 1) value = 1;
         this.uniforms.colorize.value = value;
         this.set_colorize_values(value);
-    }
-});
-Object.defineProperty(Phaser.Filter.ColorFilters.prototype, 'hue_adjust', {
-    get: function() {
-        return this.uniforms.hue_adjust.value;
-    },
-    set: function(value) {
-        this.uniforms.hue_adjust.value = value;
     }
 });
 Object.defineProperty(Phaser.Filter.ColorFilters.prototype, 'tint', {

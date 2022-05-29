@@ -135,6 +135,7 @@ export class FrostFieldPsynergy extends FieldAbilities {
             }
             --blink_counter;
             if (blink_counter === 0) {
+                this.target_object.manage_filter(this.target_object.color_filter, false);
                 blink_timer.stop();
                 this.grow_pillar();
             }
@@ -156,10 +157,11 @@ export class FrostFieldPsynergy extends FieldAbilities {
     /*Enables the pillar's blinking state*/
     static set_permanent_blink(game: Phaser.Game, target_object: FrostFieldPsynergy["target_object"]) {
         const blink_timer = game.time.create(false);
+        target_object.manage_filter(target_object.hue_filter, true);
         blink_timer.loop(150, () => {
-            target_object.color_filter.hue_adjust = 5.3;
+            target_object.hue_filter.angle = 5.3;
             const timer_event = game.time.events.add(20, () => {
-                target_object.color_filter.hue_adjust = 0;
+                target_object.hue_filter.angle = 0;
             });
             timer_event.timer.start();
         });

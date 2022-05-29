@@ -1207,6 +1207,10 @@ declare module Phaser {
 
     module Filter {
 
+        class Hue extends Phaser.Filter {
+            angle: number;
+        }
+
         class ColorBlend extends Phaser.Filter {
             r: number;
             g: number;
@@ -1223,7 +1227,6 @@ declare module Phaser {
             gray: number;
             colorize_intensity: number;
             colorize: number;
-            hue_adjust: number;
             tint: [number, number, number];
             flame: boolean;
         }
