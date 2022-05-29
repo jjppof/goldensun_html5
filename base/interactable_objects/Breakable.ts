@@ -109,7 +109,7 @@ export class Breakable extends InteractableObjects {
         char.play(base_actions.IDLE);
         this.play("to_break", Breakable.ACTION_KEY);
 
-        this.set_color_filter();
+        this.manage_filter(this.color_filter, true);
         let blink_counter = 4;
         const blink_timer = this.game.time.create(false);
         blink_timer.loop(50, async () => {
@@ -124,7 +124,7 @@ export class Breakable extends InteractableObjects {
                 blink_timer.destroy();
                 await this.down_dust_animation(char);
                 char.misc_busy = false;
-                this.unset_color_filter();
+                this.manage_filter(this.color_filter, false);
             }
         });
         blink_timer.start();

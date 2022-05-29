@@ -216,7 +216,7 @@ export class LiftFieldPsynergy extends FieldAbilities {
         await Promise.all([left_promise, right_promise]);
 
         if (this.target_found) {
-            this.target_object.set_color_filter();
+            this.target_object.manage_filter(this.target_object.color_filter, true);
             LiftFieldPsynergy.set_permanent_hue_effect(this.game, this.target_object);
         } else {
             this.left_hand_sprite.destroy();

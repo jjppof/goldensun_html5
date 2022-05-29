@@ -10,7 +10,7 @@ import {
     get_tile_position,
 } from "./utils";
 import {Footsteps} from "./utils/Footsteps";
-import {GoldenSun} from "./GoldenSun";
+import {EngineFilters, GoldenSun} from "./GoldenSun";
 import {SpriteBase} from "./SpriteBase";
 import {Map} from "./Map";
 import {Pushable} from "./interactable_objects/Pushable";
@@ -131,7 +131,9 @@ export abstract class ControllableChar {
     public shadow_following: boolean;
 
     private _color_filter: Phaser.Filter.ColorFilters;
-    private _color_filter_active: boolean;
+    private _levels_filter: Phaser.Filter.Levels;
+    private _color_blend_filter: Phaser.Filter.ColorBlend;
+    private _active_filters: {[key in EngineFilters]: boolean};
     private _outline_filter: any;
     protected _push_timer: Phaser.Timer;
     private _footsteps: Footsteps;
@@ -228,8 +230,15 @@ export abstract class ControllableChar {
         this._transition_direction = this.current_direction;
         this._ice_slide_direction = null;
         this._color_filter = this.game.add.filter("ColorFilters") as Phaser.Filter.ColorFilters;
-        this._color_filter_active = false;
+        this._levels_filter = this.game.add.filter("Levels") as Phaser.Filter.Levels;
+        this._color_blend_filter = this.game.add.filter("ColorBlend") as Phaser.Filter.ColorBlend;
         this._outline_filter = this.game.add.filter("Outline");
+        this._active_filters = {
+            [EngineFilters.COLORIZE]: false,
+            [EngineFilters.OUTLINE]: false,
+            [EngineFilters.LEVELS]: false,
+            [EngineFilters.COLOR_BLEND]: false,
+        };
         this.trying_to_push = false;
         this._trying_to_push_direction = null;
         this._push_timer = null;
@@ -316,13 +325,21 @@ export abstract class ControllableChar {
     get sprite_info() {
         return this._sprite_info;
     }
-    /** The Phaser.Filter that controls the color texture of this char sprite. */
+    /** The Phaser.Filter that controls the colors of the texture of this char sprite. */
     get color_filter() {
         return this._color_filter;
     }
-    /** Whether this char has its color filter active. */
-    get color_filter_active() {
-        return this._color_filter_active;
+    /** The Phaser.Filter that controls the color levels of the texture of this char sprite. */
+    get levels_filter() {
+        return this._levels_filter;
+    }
+    /** The Phaser.Filter that controls the blend of colors of the texture of this char sprite. */
+    get color_blend_filter() {
+        return this._color_blend_filter;
+    }
+    /** An object containing which filters are active in this char. */
+    get active_filters() {
+        return this._active_filters;
     }
     /** The Phaser.Filter that avtivates an oouotline in this char sprite. */
     get outline_filter() {
@@ -1069,10 +1086,10 @@ export abstract class ControllableChar {
      * @param set whether it's to set or unset the filter.
      */
     manage_filter(filter: Phaser.Filter, set: boolean) {
-        this._color_filter_active = filter instanceof Phaser.Filter.ColorFilters ? set : this._color_filter_active;
+        this.active_filters[filter.key] = set;
         if (set) {
             if (this.sprite.filters && !this.sprite.filters.includes(filter)) {
-                this.sprite.filters.push(filter);
+                this.sprite.filters = [...this.sprite.filters, filter];
             } else if (!this.sprite.filters) {
                 this.sprite.filters = [filter];
             }

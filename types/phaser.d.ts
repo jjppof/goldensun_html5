@@ -1207,6 +1207,18 @@ declare module Phaser {
 
     module Filter {
 
+        class ColorBlend extends Phaser.Filter {
+            r: number;
+            g: number;
+            b: number;
+        }
+
+        class Levels extends Phaser.Filter {
+            min_input: number;
+            max_input: number;
+            gamma: number;
+        }
+
         class ColorFilters extends Phaser.Filter {
             gray: number;
             colorize_intensity: number;
@@ -1214,8 +1226,6 @@ declare module Phaser {
             hue_adjust: number;
             tint: [number, number, number];
             flame: boolean;
-            levels: [number, number, number];
-            color_blend: [number, number, number];
         }
 
         class BinarySerpents extends Phaser.Filter {

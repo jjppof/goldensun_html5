@@ -191,6 +191,20 @@ export class BattleStage {
         return this._battle_bg2;
     }
 
+    set_filters() {
+        const color_filter = this.game.add.filter("ColorFilters") as Phaser.Filter.ColorFilters;
+        const levels_filter = this.game.add.filter("Levels") as Phaser.Filter.Levels;
+        const color_blend_filter = this.game.add.filter("ColorBlend") as Phaser.Filter.ColorBlend;
+
+        this.battle_bg.available_filters[color_filter.key] = color_filter;
+        this.battle_bg.available_filters[levels_filter.key] = levels_filter;
+        this.battle_bg.available_filters[color_blend_filter.key] = color_blend_filter;
+
+        this.battle_bg2.available_filters[color_filter.key] = color_filter;
+        this.battle_bg2.available_filters[levels_filter.key] = levels_filter;
+        this.battle_bg2.available_filters[color_blend_filter.key] = color_blend_filter;
+    }
+
     initialize_sprites() {
         this.black_bg = this.game.add.graphics(0, 0);
         this.battle_group.add(this.black_bg);
@@ -216,9 +230,7 @@ export class BattleStage {
             this.background_key
         );
 
-        const bg_filter = this.game.add.filter("ColorFilters");
-        this.battle_bg.filters = [bg_filter];
-        this.battle_bg2.filters = [bg_filter];
+        this.set_filters();
 
         this.bg_height = this.battle_bg.height;
 

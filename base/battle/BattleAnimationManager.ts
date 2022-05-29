@@ -61,6 +61,8 @@ export class BattleAnimationManager {
             animation_recipe.play_sequence,
             animation_recipe.set_frame_sequence,
             animation_recipe.blend_mode_sequence,
+            animation_recipe.levels_filter_sequence,
+            animation_recipe.color_blend_filter_sequence,
             animation_recipe.particles_sequence,
             animation_recipe.cast_type,
             animation_recipe.wait_for_cast_animation,

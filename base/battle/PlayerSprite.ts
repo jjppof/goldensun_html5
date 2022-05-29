@@ -73,7 +73,6 @@ export class PlayerSprite {
     private on_status_change_obs: Observable<Player["on_status_change"] extends Subject<infer T> ? T : never>;
     private on_status_change_subs: Subscription;
     public player_instance: MainChar | Enemy;
-    private color_filter: any;
     private _active: boolean;
     public force_stage_update: boolean;
 
@@ -166,11 +165,25 @@ export class PlayerSprite {
         this.group.alpha = alpha;
     }
 
+    get blendMode() {
+        return this.char_sprite.blendMode;
+    }
+    set blendMode(blendMode) {
+        this.char_sprite.blendMode = blendMode;
+    }
+
     get filters() {
         return this.char_sprite.filters;
     }
     set filters(filters) {
         this.char_sprite.filters = filters;
+    }
+
+    get available_filters() {
+        return this.char_sprite.available_filters;
+    }
+    set available_filters(available_filters) {
+        this.char_sprite.available_filters = available_filters;
     }
 
     get action() {
@@ -205,8 +218,13 @@ export class PlayerSprite {
         this.char_sprite = this.group.create(0, 0, this.player_info.sprite_key);
         this.char_sprite.anchor.setTo(0.5, 1);
         this.char_sprite.scale.setTo(this.player_instance.battle_scale, this.player_instance.battle_scale);
-        this.color_filter = this.game.add.filter("ColorFilters");
-        this.char_sprite.filters = [this.color_filter];
+
+        const color_filter = this.game.add.filter("ColorFilters") as Phaser.Filter.ColorFilters;
+        this.char_sprite.available_filters[color_filter.key] = color_filter;
+        const levels_filter = this.game.add.filter("Levels") as Phaser.Filter.Levels;
+        this.char_sprite.available_filters[levels_filter.key] = levels_filter;
+        const color_blend_filter = this.game.add.filter("ColorBlend") as Phaser.Filter.ColorBlend;
+        this.char_sprite.available_filters[color_blend_filter.key] = color_blend_filter;
 
         if (this.is_ally) {
             const player = this.player_instance as MainChar;

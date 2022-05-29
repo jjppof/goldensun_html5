@@ -15114,6 +15114,8 @@ PIXI.DisplayObject = function ()
      * @private
      */
     this._cacheIsDirty = false;
+
+    this.available_filters = {};
 };
 
 PIXI.DisplayObject.prototype = {

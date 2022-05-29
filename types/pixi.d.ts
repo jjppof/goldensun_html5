@@ -156,6 +156,7 @@ declare module PIXI {
 
         constructor(fragmentSrc: string | string[], uniforms: any);
 
+        key: string;
         dirty: boolean;
         padding: number;
         uniforms: any;
@@ -270,9 +271,11 @@ declare module PIXI {
         bodyAttached: boolean;
         buttonMode: boolean;
         cacheAsBitmap: boolean;
+        data: any;
         defaultCursor: string;
         filterArea: Rectangle;
         filters: AbstractFilter[];
+        available_filters: {[key_name: string]: AbstractFilter};
         hitArea: HitArea;
         interactive: boolean;
         is_tilemap_layer: boolean;

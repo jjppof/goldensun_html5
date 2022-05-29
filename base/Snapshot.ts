@@ -1,5 +1,5 @@
 import {djinn_status} from "./Djinn";
-import {GoldenSun} from "./GoldenSun";
+import {EngineFilters, GoldenSun} from "./GoldenSun";
 import {GameInfo} from "./initializers/initialize_info";
 import {InteractableObjects} from "./interactable_objects/InteractableObjects";
 import {ItemSlot} from "./MainChar";
@@ -15,15 +15,25 @@ import {RollablePillar} from "./interactable_objects/RollingPillar";
 import {RevealFieldPsynergy} from "./field_abilities/RevealFieldPsynergy";
 import {RopeDock} from "./interactable_objects/RopeDock";
 
-type ColorFilterSettings = {
-    gray: Phaser.Filter.ColorFilters["gray"];
-    colorize_intensity: Phaser.Filter.ColorFilters["colorize_intensity"];
-    colorize: Phaser.Filter.ColorFilters["colorize"];
-    hue_adjust: Phaser.Filter.ColorFilters["hue_adjust"];
-    tint: Phaser.Filter.ColorFilters["tint"];
-    flame: Phaser.Filter.ColorFilters["flame"];
-    levels: Phaser.Filter.ColorFilters["levels"];
-    color_blend: Phaser.Filter.ColorFilters["color_blend"];
+type FilterSettings = {
+    [EngineFilters.COLORIZE]?: {
+        gray: Phaser.Filter.ColorFilters["gray"];
+        colorize_intensity: Phaser.Filter.ColorFilters["colorize_intensity"];
+        colorize: Phaser.Filter.ColorFilters["colorize"];
+        hue_adjust: Phaser.Filter.ColorFilters["hue_adjust"];
+        tint: Phaser.Filter.ColorFilters["tint"];
+        flame: Phaser.Filter.ColorFilters["flame"];
+    };
+    [EngineFilters.LEVELS]?: {
+        min_input: number;
+        max_input: number;
+        gamma: number;
+    };
+    [EngineFilters.COLOR_BLEND]?: {
+        r: number;
+        g: number;
+        b: number;
+    };
 };
 
 export type SnapshotData = {
@@ -96,8 +106,8 @@ export type SnapshotData = {
             movement_type: npc_movement_types;
             body_in_map: boolean;
             shapes_collision_active: boolean;
-            color_filter_active: boolean;
-            color_filter_settings?: ColorFilterSettings;
+            active_filters: {[key: string]: boolean};
+            filter_settings?: FilterSettings;
         }[];
         interactable_objects: {
             key_name: string;
@@ -150,8 +160,8 @@ export type SnapshotData = {
             allow_jumping_through_it: boolean;
             body_in_map: boolean;
             shapes_collision_active: boolean;
-            color_filter_active: boolean;
-            color_filter_settings?: ColorFilterSettings;
+            active_filters: {[key in EngineFilters]: boolean};
+            filter_settings?: FilterSettings;
         }[];
         tile_events: {
             [id: number]: {
@@ -277,19 +287,33 @@ export class Snapshot {
                         movement_type: npc.movement_type,
                         body_in_map: this.data.map.body_in_map(npc),
                         shapes_collision_active: npc.shapes_collision_active,
-                        color_filter_active: npc.color_filter_active,
-                        ...(npc.color_filter_active && {
-                            color_filter_settings: {
-                                gray: npc.color_filter.gray,
-                                colorize_intensity: npc.color_filter.colorize_intensity,
-                                colorize: npc.color_filter.colorize,
-                                hue_adjust: npc.color_filter.hue_adjust,
-                                tint: npc.color_filter.tint,
-                                flame: npc.color_filter.flame,
-                                levels: npc.color_filter.levels,
-                                color_blend: npc.color_filter.color_blend,
-                            },
-                        }),
+                        active_filters: npc.active_filters,
+                        filter_settings: {
+                            ...(npc.active_filters.colorize && {
+                                colorize: {
+                                    gray: npc.color_filter.gray,
+                                    colorize_intensity: npc.color_filter.colorize_intensity,
+                                    colorize: npc.color_filter.colorize,
+                                    hue_adjust: npc.color_filter.hue_adjust,
+                                    tint: npc.color_filter.tint,
+                                    flame: npc.color_filter.flame,
+                                },
+                            }),
+                            ...(npc.active_filters.levels && {
+                                levels: {
+                                    min_input: npc.levels_filter.min_input,
+                                    max_input: npc.levels_filter.max_input,
+                                    gamma: npc.levels_filter.gamma,
+                                },
+                            }),
+                            ...(npc.active_filters.color_blend && {
+                                color_blend: {
+                                    r: npc.color_blend_filter.r,
+                                    g: npc.color_blend_filter.g,
+                                    b: npc.color_blend_filter.b,
+                                },
+                            }),
+                        },
                     };
                 }),
                 interactable_objects: this.data.map.interactable_objects.map((io, index) => {
@@ -350,19 +374,33 @@ export class Snapshot {
                         allow_jumping_through_it: io.allow_jumping_through_it,
                         body_in_map: this.data.map.body_in_map(io),
                         shapes_collision_active: io.shapes_collision_active,
-                        color_filter_active: io.color_filter_active,
-                        ...(io.color_filter_active && {
-                            color_filter_settings: {
-                                gray: io.color_filter.gray,
-                                colorize_intensity: io.color_filter.colorize_intensity,
-                                colorize: io.color_filter.colorize,
-                                hue_adjust: io.color_filter.hue_adjust,
-                                tint: io.color_filter.tint,
-                                flame: io.color_filter.flame,
-                                levels: io.color_filter.levels,
-                                color_blend: io.color_filter.color_blend,
-                            },
-                        }),
+                        active_filters: io.active_filters,
+                        filter_settings: {
+                            ...(io.active_filters.colorize && {
+                                colorize: {
+                                    gray: io.color_filter.gray,
+                                    colorize_intensity: io.color_filter.colorize_intensity,
+                                    colorize: io.color_filter.colorize,
+                                    hue_adjust: io.color_filter.hue_adjust,
+                                    tint: io.color_filter.tint,
+                                    flame: io.color_filter.flame,
+                                },
+                            }),
+                            ...(io.active_filters.levels && {
+                                levels: {
+                                    min_input: io.levels_filter.min_input,
+                                    max_input: io.levels_filter.max_input,
+                                    gamma: io.levels_filter.gamma,
+                                },
+                            }),
+                            ...(io.active_filters.color_blend && {
+                                color_blend: {
+                                    r: io.color_blend_filter.r,
+                                    g: io.color_blend_filter.g,
+                                    b: io.color_blend_filter.b,
+                                },
+                            }),
+                        },
                     };
                 }),
                 tile_events: _.mapValues(TileEvent.events, event => {

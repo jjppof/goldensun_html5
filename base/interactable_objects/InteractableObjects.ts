@@ -13,7 +13,7 @@ import {
 } from "../utils";
 import {JumpEvent} from "../tile_events/JumpEvent";
 import {ClimbEvent} from "../tile_events/ClimbEvent";
-import {GoldenSun} from "../GoldenSun";
+import {EngineFilters, GoldenSun} from "../GoldenSun";
 import {Map} from "../Map";
 import {RopeEvent} from "../tile_events/RopeEvent";
 import {GameEvent} from "../game_events/GameEvent";
@@ -75,6 +75,8 @@ export class InteractableObjects {
     private _tile_y_pos: number;
     private _collision_tiles_bodies: Phaser.Physics.P2.Body[];
     private _color_filter: Phaser.Filter.ColorFilters;
+    private _levels_filter: Phaser.Filter.Levels;
+    private _color_blend_filter: Phaser.Filter.ColorBlend;
     private _enable: boolean;
     private _entangled_by_bush: boolean;
     private _sprite: Phaser.Sprite;
@@ -124,7 +126,7 @@ export class InteractableObjects {
     private _current_action: string;
     private _snapshot_info: SnapshotData["map_data"]["interactable_objects"][0];
     private _shapes_collision_active: boolean;
-    private _color_filter_active: boolean;
+    private _active_filters: {[key in EngineFilters]: boolean};
 
     constructor(
         game,
@@ -187,6 +189,8 @@ export class InteractableObjects {
         this._collision_tiles_bodies = [];
         this.collision_change_functions = [];
         this._color_filter = this.game.add.filter("ColorFilters") as Phaser.Filter.ColorFilters;
+        this._levels_filter = this.game.add.filter("Levels") as Phaser.Filter.Levels;
+        this._color_blend_filter = this.game.add.filter("ColorBlend") as Phaser.Filter.ColorBlend;
         this.anchor_x = anchor_x;
         this.anchor_y = anchor_y;
         this.scale_x = scale_x;
@@ -225,7 +229,12 @@ export class InteractableObjects {
         this._current_animation = animation;
         this._current_action = action;
         this._shapes_collision_active = false;
-        this._color_filter_active = false;
+        this._active_filters = {
+            [EngineFilters.COLORIZE]: false,
+            [EngineFilters.OUTLINE]: false,
+            [EngineFilters.LEVELS]: false,
+            [EngineFilters.COLOR_BLEND]: false,
+        };
     }
 
     get key_name() {
@@ -275,6 +284,12 @@ export class InteractableObjects {
     }
     get color_filter() {
         return this._color_filter;
+    }
+    get levels_filter() {
+        return this._levels_filter;
+    }
+    get color_blend_filter() {
+        return this._color_blend_filter;
     }
     get collision_tiles_bodies() {
         return this._collision_tiles_bodies;
@@ -342,9 +357,9 @@ export class InteractableObjects {
     get shapes_collision_active() {
         return this._shapes_collision_active;
     }
-    /** Whether this IO has its color filter active. */
-    get color_filter_active() {
-        return this._color_filter_active;
+    /** An object containing which filters are active in this IO. */
+    get active_filters() {
+        return this._active_filters;
     }
 
     position_allowed(x: number, y: number) {
@@ -560,16 +575,30 @@ export class InteractableObjects {
             if (this.snapshot_info && this.snapshot_info.visible !== null) {
                 this.sprite.visible = this.snapshot_info.visible;
             }
-            if (this.snapshot_info?.color_filter_active) {
-                this.set_color_filter();
-                this.color_filter.gray = this.snapshot_info.color_filter_settings.gray;
-                this.color_filter.colorize_intensity = this.snapshot_info.color_filter_settings.colorize_intensity;
-                this.color_filter.colorize = this.snapshot_info.color_filter_settings.colorize;
-                this.color_filter.hue_adjust = this.snapshot_info.color_filter_settings.hue_adjust;
-                this.color_filter.tint = this.snapshot_info.color_filter_settings.tint;
-                this.color_filter.flame = this.snapshot_info.color_filter_settings.flame;
-                this.color_filter.levels = this.snapshot_info.color_filter_settings.levels;
-                this.color_filter.color_blend = this.snapshot_info.color_filter_settings.color_blend;
+            if (this.snapshot_info?.active_filters) {
+                const active_filters = this.snapshot_info.active_filters;
+                if (active_filters[EngineFilters.COLORIZE]) {
+                    this.manage_filter(this.color_filter, true);
+                    this.color_filter.gray = this.snapshot_info.filter_settings.colorize.gray;
+                    this.color_filter.colorize_intensity =
+                        this.snapshot_info.filter_settings.colorize.colorize_intensity;
+                    this.color_filter.colorize = this.snapshot_info.filter_settings.colorize.colorize;
+                    this.color_filter.hue_adjust = this.snapshot_info.filter_settings.colorize.hue_adjust;
+                    this.color_filter.tint = this.snapshot_info.filter_settings.colorize.tint;
+                    this.color_filter.flame = this.snapshot_info.filter_settings.colorize.flame;
+                }
+                if (active_filters[EngineFilters.LEVELS]) {
+                    this.manage_filter(this.levels_filter, true);
+                    this.levels_filter.min_input = this.snapshot_info.filter_settings.levels.min_input;
+                    this.levels_filter.max_input = this.snapshot_info.filter_settings.levels.max_input;
+                    this.levels_filter.gamma = this.snapshot_info.filter_settings.levels.gamma;
+                }
+                if (active_filters[EngineFilters.COLOR_BLEND]) {
+                    this.manage_filter(this.color_blend_filter, true);
+                    this.color_blend_filter.r = this.snapshot_info.filter_settings.color_blend.r;
+                    this.color_blend_filter.g = this.snapshot_info.filter_settings.color_blend.g;
+                    this.color_blend_filter.b = this.snapshot_info.filter_settings.color_blend.b;
+                }
             }
         }
         if (this.entangled_by_bush) {
@@ -671,14 +700,28 @@ export class InteractableObjects {
         this._extra_sprites.push(this._bush_sprite);
     }
 
-    set_color_filter() {
-        this.sprite.filters = [this.color_filter];
-        this._color_filter_active = true;
-    }
-
-    unset_color_filter() {
-        this.sprite.filters = undefined;
-        this._color_filter_active = false;
+    /**
+     * Sets or unsets a Phaser.Filter in this char.
+     * @param filter the filter you want to set.
+     * @param set whether it's to set or unset the filter.
+     */
+    manage_filter(filter: Phaser.Filter, set: boolean) {
+        this.active_filters[filter.key] = set;
+        if (set) {
+            if (this.sprite.filters && !this.sprite.filters.includes(filter)) {
+                this.sprite.filters = [...this.sprite.filters, filter];
+            } else if (!this.sprite.filters) {
+                this.sprite.filters = [filter];
+            }
+        } else {
+            if (this.sprite.filters.includes(filter)) {
+                if (this.sprite.filters.length === 1) {
+                    this.sprite.filters = undefined;
+                } else {
+                    this.sprite.filters = this.sprite.filters.filter(f => f !== filter);
+                }
+            }
+        }
     }
 
     /**

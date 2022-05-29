@@ -260,7 +260,7 @@ export class MoveFieldPsynergy extends FieldAbilities {
                 );
                 this.hand_sprite.animations.play(anim_key);
                 if (this.target_found) {
-                    this.target_object.set_color_filter();
+                    this.target_object.manage_filter(this.target_object.color_filter, true);
                     this.target_hueshift_timer = this.game.time.create(false);
                     this.target_hueshift_timer.loop(5, () => {
                         this.target_object.color_filter.hue_adjust = Math.random() * 2 * Math.PI;
@@ -375,7 +375,7 @@ export class MoveFieldPsynergy extends FieldAbilities {
 
     unset_hue_shifter() {
         if (this.target_found) {
-            this.target_object.unset_color_filter();
+            this.target_object.manage_filter(this.target_object.color_filter, false);
             this.target_hueshift_timer.stop();
         }
     }

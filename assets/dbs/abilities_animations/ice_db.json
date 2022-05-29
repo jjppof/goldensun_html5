@@ -117,26 +117,27 @@
         "is_absolute": true,
         "tween": "initial"
     }],
-    "custom_filter_sequence": [{
+    "color_blend_filter_sequence": [{
         "start_delay": 1700, 
         "sprite_index": "targets", 
-        "filter": "color_blend", 
-        "value": [0.5, 0.6, 2.3]
+        "r": 0.5,
+        "g": 0.6,
+        "b": 2.3
     },{
         "start_delay": 3800, 
         "sprite_index": "targets", 
-        "filter": "color_blend", 
-        "value": [-1, -1, -1]
-    },{
+        "remove": true
+    }],
+    "levels_filter_sequence": [{
         "start_delay": 1700, 
         "sprite_index": "targets", 
-        "filter": "levels", 
-        "value": [0.1, 0.8, 0.7]
+        "min_input": 0.1,
+        "max_input": 0.8,
+        "gamma": 0.7
     },{
         "start_delay": 3800, 
         "sprite_index": "targets", 
-        "filter": "levels", 
-        "value": [-1, -1, -1]
+        "remove": true
     }],
     "play_sequence": [{
         "animation_key": "icicle",

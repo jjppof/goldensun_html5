@@ -12,12 +12,6 @@ Phaser.Filter.ColorFilters = function (game) {
     this.uniforms.g_tint = { type: '1f', value: -1.0 };
     this.uniforms.b_tint = { type: '1f', value: -1.0 };
     this.uniforms.flame = { type: '1f', value: 0.0 };
-    this.uniforms.min_input = { type: '1f', value: -1.0 };
-    this.uniforms.max_input = { type: '1f', value: -1.0 };
-    this.uniforms.gamma = { type: '1f', value: -1.0 };
-    this.uniforms.r_blend = { type: '1f', value: -1.0 };
-    this.uniforms.g_blend = { type: '1f', value: -1.0 };
-    this.uniforms.b_blend = { type: '1f', value: -1.0 };
 
     this.fragmentSrc = [
         "precision mediump float;",
@@ -34,33 +28,11 @@ Phaser.Filter.ColorFilters = function (game) {
         "uniform float      g_tint;",
         "uniform float      b_tint;",
         "uniform float      flame;",
-        "uniform float      min_input;",
-        "uniform float      max_input;",
-        "uniform float      gamma;",
-        "uniform float      r_blend;",
-        "uniform float      g_blend;",
-        "uniform float      b_blend;",
-
-        "vec3 gammaCorrect(vec3 color, float gamma, float alpha){",
-            "return pow(color, alpha * vec3(1.0/gamma));",
-        "}",
-
-        "vec3 levelRange(vec3 color, float minInput, float maxInput, float alpha){",
-            "return min(max(color - alpha*vec3(minInput), vec3(0.0)) / (vec3(maxInput) - vec3(minInput)), vec3(1.0));",
-        "}",
-
-        "vec3 finalLevels(vec3 color, float minInput, float gamma, float maxInput, float alpha){",
-            "return gammaCorrect(levelRange(color, minInput, maxInput, alpha), gamma, alpha);",
-        "}",
 
         "void main(void) {",
             "gl_FragColor = texture2D(uSampler, vTextureCoord);",
             "if (gray != 0.0) {",
                 "gl_FragColor.rgb = mix(gl_FragColor.rgb, vec3(0.2126 * gl_FragColor.r + 0.7152 * gl_FragColor.g + 0.0722 * gl_FragColor.b), gray);",
-            "}",
-
-            "if (r_blend != -1.0 || g_blend != -1.0 || b_blend != -1.0) {",
-                "gl_FragColor.rgb = finalLevels(gl_FragColor.rgb, min_input, gamma, max_input, gl_FragColor.a);",
             "}",
 
             "if (r_tint != -1.0 && g_tint != -1.0 && b_tint != -1.0) {",
@@ -69,10 +41,6 @@ Phaser.Filter.ColorFilters = function (game) {
 
             "if (flame == 1.0) {",
                 "gl_FragColor.rgb = vec3(gl_FragColor.a, (gl_FragColor.r + gl_FragColor.g + gl_FragColor.b)/3.0, 0);",
-            "}",
-
-            "if (r_blend != -1.0 || g_blend != -1.0 || b_blend != -1.0) {",
-                "gl_FragColor.rgb = vec3((gl_FragColor.r + gl_FragColor.a*r_blend)/2.0, (gl_FragColor.g + gl_FragColor.a*g_blend)/2.0, (gl_FragColor.b + gl_FragColor.a*b_blend)/2.0);",
             "}",
 
             "if (r_colorize != 1.0 || g_colorize != 1.0 || b_colorize != 1.0) {",
@@ -90,6 +58,8 @@ Phaser.Filter.ColorFilters = function (game) {
 
 Phaser.Filter.ColorFilters.prototype = Object.create(Phaser.Filter.prototype);
 Phaser.Filter.ColorFilters.prototype.constructor = Phaser.Filter.ColorFilters;
+Phaser.Filter.ColorFilters.prototype.key = "colorize";
+
 Phaser.Filter.ColorFilters.prototype.set_colorize_values = function(value) {
     if (value >= 0 && value < 1/6) {
         this.uniforms.r_colorize.value = value*6;
@@ -177,43 +147,5 @@ Object.defineProperty(Phaser.Filter.ColorFilters.prototype, 'flame', {
     },
     set: function(value) {
         this.uniforms.flame.value = +value;
-    }
-});
-Phaser.Filter.ColorFilters.prototype.set_levels = function(min_input, max_input, gamma) {
-    this.uniforms.min_input.value = min_input;
-    this.uniforms.max_input.value = max_input;
-    this.uniforms.gamma.value = gamma;
-};
-Object.defineProperty(Phaser.Filter.ColorFilters.prototype, 'levels', {
-    get: function() {
-        return {
-            min_input: this.uniforms.min_input.value,
-            max_input: this.uniforms.max_input.value,
-            gamma: this.uniforms.gamma.value
-        }
-    },
-    set: function(value) {
-        this.uniforms.min_input.value = value[0];
-        this.uniforms.max_input.value = value[1];
-        this.uniforms.gamma.value = value[2];
-    }
-});
-Phaser.Filter.ColorFilters.prototype.set_color_blend = function(r, g, b) {
-    this.uniforms.r_blend.value = r;
-    this.uniforms.g_blend.value = g;
-    this.uniforms.b_blend.value = b;
-};
-Object.defineProperty(Phaser.Filter.ColorFilters.prototype, 'color_blend', {
-    get: function() {
-        return [
-            this.uniforms.r_blend.value,
-            this.uniforms.g_blend.value,
-            this.uniforms.b_blend.value
-        ]
-    },
-    set: function(value) {
-        this.uniforms.r_blend.value = value[0];
-        this.uniforms.g_blend.value = value[1];
-        this.uniforms.b_blend.value = value[2];
     }
 });

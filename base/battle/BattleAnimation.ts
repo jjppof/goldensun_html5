@@ -1,4 +1,4 @@
-import {GoldenSun} from "../GoldenSun";
+import {EngineFilters, GoldenSun} from "../GoldenSun";
 import * as numbers from "../magic_numbers";
 import {elements, element_colors_in_battle, hex2rgb, range_360} from "../utils";
 import {BattleStage, DEFAULT_POS_ANGLE} from "./BattleStage";
@@ -26,6 +26,12 @@ type DefaultAttr = {
     shift?: number | number[];
     shift_direction?: ("in_center" | "out_center") | ("in_center" | "out_center")[];
     direction?: string;
+};
+
+type GeneralFilterAttr = {
+    start_delay: number | number[];
+    sprite_index: string | number | number[];
+    remove: boolean;
 };
 
 enum sprite_types {
@@ -89,6 +95,16 @@ export class BattleAnimation {
         filter: string;
         value: any;
     }[] = [];
+    public levels_filter_sequence: (GeneralFilterAttr & {
+        min_input: number;
+        max_input: number;
+        gamma: number;
+    })[] = [];
+    public color_blend_filter_sequence: (GeneralFilterAttr & {
+        r: number;
+        g: number;
+        b: number;
+    })[] = [];
     public play_sequence: {
         start_delay: number | number[];
         sprite_index: string | number | number[];
@@ -135,10 +151,6 @@ export class BattleAnimation {
     public battle_stage: BattleStage;
     public trails_objs: Phaser.Image[];
     public trails_bmps: Phaser.BitmapData[];
-    public caster_filter: any;
-    public targets_filters: any[];
-    public background_filter: any;
-    public sprites_filters: any[];
     public promises: Promise<any>[];
     public render_callbacks: {[callback_key: string]: Function};
     public mirrored: boolean;
@@ -181,6 +193,8 @@ export class BattleAnimation {
         play_sequence, //{start_delay: value, sprite_index: index, reverse: bool, frame_rate: value, repeat: bool, animation_key: key, wait: bool, hide_on_complete: bool}
         set_frame_sequence, //{start_delay: value, frame: string, sprite_index: index}
         blend_mode_sequence, //{start_delay: value, mode: type, sprite_index: index}
+        levels_filter_sequence,
+        color_blend_filter_sequence,
         particles_sequence,
         cast_type,
         wait_for_cast_animation,
@@ -208,6 +222,8 @@ export class BattleAnimation {
         this.grayscale_sequence = grayscale_sequence ?? [];
         this.colorize_sequence = colorize_sequence ?? [];
         this.custom_filter_sequence = custom_filter_sequence ?? [];
+        this.levels_filter_sequence = levels_filter_sequence ?? [];
+        this.color_blend_filter_sequence = color_blend_filter_sequence ?? [];
         this.play_sequence = play_sequence ?? [];
         this.set_frame_sequence = set_frame_sequence ?? [];
         this.blend_mode_sequence = blend_mode_sequence ?? [];
@@ -368,17 +384,32 @@ export class BattleAnimation {
         this.set_filters();
     }
 
+    manage_filter(filter: Phaser.Filter, sprite: PlayerSprite | PIXI.DisplayObject, remove: boolean) {
+        if (remove) {
+            if (sprite.filters) {
+                const index = sprite.filters.indexOf(filter);
+                sprite.filters.splice(index, 1);
+                if (sprite.filters.length === 0) {
+                    sprite.filters = undefined;
+                }
+            }
+        } else {
+            if (sprite.filters) {
+                sprite.filters = [...sprite.filters, filter];
+            } else {
+                sprite.filters = [filter];
+            }
+        }
+    }
+
     set_filters() {
-        this.background_filter = this.background_sprites[0].filters[0];
-        this.sprites_filters = [];
-        this.caster_filter = this.caster_sprite.filters[0];
-        this.targets_filters = [];
-        this.targets_sprites.forEach(sprite => {
-            this.targets_filters.push(sprite.filters[0]);
-        });
-        this.sprites.forEach((sprite, index) => {
-            this.sprites_filters.push(this.game.add.filter("ColorFilters"));
-            sprite.filters = [this.sprites_filters[index]];
+        this.sprites.forEach(sprite => {
+            const color_filter = this.game.add.filter("ColorFilters") as Phaser.Filter.ColorFilters;
+            sprite.available_filters[color_filter.key] = color_filter;
+            const levels_filter = this.game.add.filter("Levels") as Phaser.Filter.Levels;
+            sprite.available_filters[levels_filter.key] = levels_filter;
+            const color_blend_filter = this.game.add.filter("ColorBlend") as Phaser.Filter.ColorBlend;
+            sprite.available_filters[color_blend_filter.key] = color_blend_filter;
         });
     }
 
@@ -395,13 +426,15 @@ export class BattleAnimation {
         this.play_number_property_sequence(this.y_scale_sequence, "scale", "y");
         this.play_number_property_sequence(this.x_anchor_sequence, "anchor", "x");
         this.play_number_property_sequence(this.y_anchor_sequence, "anchor", "y");
-        this.play_number_property_sequence(this.hue_angle_sequence, "filters", "hue_adjust");
-        this.play_number_property_sequence(this.grayscale_sequence, "filters", "gray");
+        // this.play_number_property_sequence(this.hue_angle_sequence, "filters", "hue_adjust");
+        // this.play_number_property_sequence(this.grayscale_sequence, "filters", "gray");
         this.play_sprite_sequence();
         this.play_blend_modes();
         this.play_filter_property(this.tint_sequence, "tint");
         this.play_filter_property(this.colorize_sequence, "colorize", "colorize_intensity");
         this.play_filter_property(this.custom_filter_sequence);
+        this.play_levels_filter(this.levels_filter_sequence);
+        this.play_color_blend_filter(this.color_blend_filter_sequence);
         this.play_stage_angle_sequence();
         this.play_particles();
         this.unmount_animation(finish_callback);
@@ -409,10 +442,6 @@ export class BattleAnimation {
 
     unmount_animation(finish_callback) {
         Promise.all(this.promises).then(() => {
-            this.caster_filter = null;
-            this.targets_filters = null;
-            this.background_filter = null;
-            this.sprites_filters = [];
             this.sprites.forEach(sprite => {
                 sprite.destroy();
             });
@@ -432,52 +461,91 @@ export class BattleAnimation {
         });
     }
 
-    get_sprites(seq, obj_propety?: keyof PlayerSprite) {
+    get_sprites(
+        seq,
+        obj_propety?: keyof PlayerSprite
+    ): {
+        [key: string]: {
+            obj: PIXI.DisplayObject | PlayerSprite | keyof PlayerSprite;
+            index: number;
+        };
+    } {
         if (obj_propety) {
             if (seq.sprite_index === "background") {
-                if (obj_propety === "filters") {
-                    return [this.background_filter];
-                } else {
-                    return this.background_sprites.map(sprite => sprite[obj_propety]);
-                }
+                return this.background_sprites.reduce((prev, cur, index) => {
+                    prev[`${cur.key}/${index}`] = {
+                        obj: cur[obj_propety],
+                        index: index,
+                    };
+                    return prev;
+                }, {});
             } else if (seq.sprite_index === "caster") {
-                if (obj_propety === "filters") {
-                    return [this.caster_filter];
-                } else {
-                    return [this.caster_sprite[obj_propety]];
-                }
+                return {
+                    [this.caster_sprite.key]: {
+                        obj: this.caster_sprite[obj_propety] as keyof PlayerSprite,
+                        index: 0,
+                    },
+                };
             } else if (seq.sprite_index === "targets") {
-                if (obj_propety === "filters") {
-                    return this.targets_filters;
-                } else {
-                    return this.targets_sprites.map(sprite => sprite[obj_propety]);
-                }
+                return this.targets_sprites.reduce((prev, cur, index) => {
+                    prev[`${cur.key}/${index}`] = {
+                        obj: cur[obj_propety],
+                        index: index,
+                    };
+                    return prev;
+                }, {});
             } else {
-                if (obj_propety === "filters") {
-                    if (Array.isArray(seq.sprite_index)) {
-                        return seq.sprite_index.map(index => this.sprites_filters[index]);
-                    } else {
-                        return [this.sprites_filters[seq.sprite_index]];
-                    }
+                if (Array.isArray(seq.sprite_index)) {
+                    return seq.sprite_index.reduce((prev, cur, index) => {
+                        prev[this.sprites[cur].data.custom_key] = {
+                            obj: this.sprites[cur][obj_propety],
+                            index: index,
+                        };
+                        return prev;
+                    }, {});
                 } else {
-                    if (Array.isArray(seq.sprite_index)) {
-                        return seq.sprite_index.map(index => this.sprites[index][obj_propety]);
-                    } else {
-                        return [this.sprites[seq.sprite_index][obj_propety]];
-                    }
+                    return {
+                        [this.sprites[seq.sprite_index].data.custom_key]: {
+                            obj: this.sprites[seq.sprite_index][obj_propety],
+                            index: 0,
+                        },
+                    };
                 }
             }
         } else {
             if (seq.sprite_index === "background") {
-                return this.background_sprites;
+                return this.background_sprites.reduce((prev, cur, index) => {
+                    prev[`${cur.key}/${index}`] = {
+                        obj: cur,
+                        index: index,
+                    };
+                    return prev;
+                }, {});
             } else if (seq.sprite_index === "caster") {
-                return [this.caster_sprite];
+                return {[this.caster_sprite.key]: {obj: this.caster_sprite, index: 0}};
             } else if (seq.sprite_index === "targets") {
-                return this.targets_sprites;
+                return this.targets_sprites.reduce((prev, cur, index) => {
+                    prev[`${cur.key}/${index}`] = {
+                        obj: cur,
+                        index: index,
+                    };
+                    return prev;
+                }, {});
             } else if (Array.isArray(seq.sprite_index)) {
-                return seq.sprite_index.map(index => this.sprites[index]);
+                return seq.sprite_index.reduce((prev, cur, index) => {
+                    prev[this.sprites[cur].data.custom_key] = {
+                        obj: this.sprites[cur],
+                        index: index,
+                    };
+                    return prev;
+                }, {});
             } else {
-                return [this.sprites[seq.sprite_index]];
+                return {
+                    [this.sprites[seq.sprite_index].data.custom_key]: {
+                        obj: this.sprites[seq.sprite_index],
+                        index: 0,
+                    },
+                };
             }
         }
     }
@@ -490,13 +558,9 @@ export class BattleAnimation {
             const seq = sequence[i];
             const sprites = this.get_sprites(seq, inner_property !== undefined ? target_property : undefined);
             let promises_set = false;
-            sprites.forEach((this_sprite, index) => {
-                let uniq_key;
-                if (this_sprite.data && this_sprite.data.hasOwnProperty("custom_key")) {
-                    uniq_key = this_sprite.data.custom_key;
-                } else {
-                    uniq_key = `${this_sprite.key}/${index}`; //perhaps a bug in the case of inner properties
-                }
+            _.forEach(sprites, (sprite_info, key) => {
+                const this_sprite = sprite_info.obj;
+                const uniq_key: string = key;
                 const property_uniq_key = `${uniq_key}/${target_property}/${inner_property ?? ""}`;
                 if (!(property_uniq_key in auto_start_tween)) {
                     auto_start_tween[property_uniq_key] = true;
@@ -511,7 +575,7 @@ export class BattleAnimation {
                     if (this.sprites_prev_properties[uniq_key][property_to_set] === undefined) {
                         this.sprites_prev_properties[uniq_key][property_to_set] = this_sprite[property_to_set];
                     }
-                    const seq_to = Array.isArray(seq.to) ? seq.to[index] : seq.to;
+                    const seq_to = Array.isArray(seq.to) ? seq.to[sprite_info.index] : seq.to;
                     let to_value = seq_to;
                     if (["targets", "caster"].includes(seq_to)) {
                         let player_sprite = this.caster_sprite;
@@ -525,7 +589,7 @@ export class BattleAnimation {
                                 y: numbers.GAME_HEIGHT >> 1,
                             };
                             const shift_direction: DefaultAttr["shift_direction"] = Array.isArray(seq.shift_direction)
-                                ? seq.shift_direction[index]
+                                ? seq.shift_direction[sprite_info.index]
                                 : seq.shift_direction;
                             if (
                                 (shift_direction === "in_center" &&
@@ -536,7 +600,8 @@ export class BattleAnimation {
                                 shift_sign = -1;
                             }
                         }
-                        const shift = ((Array.isArray(seq.shift) ? seq.shift[index] : seq.shift) ?? 0) * shift_sign;
+                        const shift =
+                            ((Array.isArray(seq.shift) ? seq.shift[sprite_info.index] : seq.shift) ?? 0) * shift_sign;
                         to_value = player_sprite[property_to_set] + shift;
                         if (this.mirrored && property_to_set === "x") {
                             to_value = numbers.GAME_WIDTH - to_value;
@@ -572,7 +637,9 @@ export class BattleAnimation {
                     if (!(property_uniq_key in chained_tweens)) {
                         chained_tweens[property_uniq_key] = [];
                     }
-                    const start_delay = Array.isArray(seq.start_delay) ? seq.start_delay[index] : seq.start_delay;
+                    const start_delay = Array.isArray(seq.start_delay)
+                        ? seq.start_delay[sprite_info.index]
+                        : seq.start_delay;
                     if (seq.duration === "instantly") {
                         let resolve_function;
                         if (!promises_set) {
@@ -597,7 +664,7 @@ export class BattleAnimation {
                     } else {
                         const tween = this.game.add.tween(this_sprite).to(
                             {[property_to_set]: get_to_value},
-                            Array.isArray(seq.duration) ? seq.duration[index] : seq.duration,
+                            Array.isArray(seq.duration) ? seq.duration[sprite_info.index] : seq.duration,
                             seq.tween.split(".").reduce((p, prop) => p[prop], Phaser.Easing),
                             auto_start_tween[property_uniq_key],
                             start_delay,
@@ -645,7 +712,9 @@ export class BattleAnimation {
         for (let i = 0; i < this.play_sequence.length; ++i) {
             const play_seq = this.play_sequence[i];
             const sprites = this.get_sprites(play_seq);
-            sprites.forEach((sprite: Phaser.Sprite | PlayerSprite, index) => {
+            const sprites_length = Object.keys(sprites).length;
+            _.forEach(sprites, sprite_info => {
+                const sprite = sprite_info.obj as PlayerSprite | Phaser.Sprite;
                 let resolve_function;
                 const this_promise = new Promise(resolve => (resolve_function = resolve));
                 this.promises.push(this_promise);
@@ -679,7 +748,7 @@ export class BattleAnimation {
                             if (play_seq.hide_on_complete) {
                                 sprite.alpha = 0;
                             }
-                            if (index === sprites.length - 1) {
+                            if (sprite_info.index === sprites_length - 1) {
                                 index_promises_resolve[i]();
                             }
                             if (play_seq.wait) {
@@ -690,14 +759,14 @@ export class BattleAnimation {
                             resolve_function();
                         }
                     } else {
-                        if (index === sprites.length - 1) {
+                        if (sprite_info.index === sprites_length - 1) {
                             index_promises_resolve[i]();
                         }
                         resolve_function();
                     }
                 };
                 const start_delay = Array.isArray(play_seq.start_delay)
-                    ? play_seq.start_delay[index]
+                    ? play_seq.start_delay[sprite_info.index]
                     : play_seq.start_delay;
                 if (start_delay) {
                     this.game.time.events.add(start_delay, start);
@@ -711,15 +780,16 @@ export class BattleAnimation {
     play_blend_modes() {
         for (let i = 0; i < this.blend_mode_sequence.length; ++i) {
             const blend_mode_seq = this.blend_mode_sequence[i];
-            let sprites = this.get_sprites(blend_mode_seq);
-            sprites.forEach((sprite, index) => {
+            const sprites = this.get_sprites(blend_mode_seq);
+            _.forEach(sprites, sprite_info => {
+                const sprite = sprite_info.obj as PlayerSprite | Phaser.Sprite;
                 let resolve_function;
                 let this_promise = new Promise(resolve => {
                     resolve_function = resolve;
                 });
                 this.promises.push(this_promise);
                 const start_delay = Array.isArray(blend_mode_seq.start_delay)
-                    ? blend_mode_seq.start_delay[index]
+                    ? blend_mode_seq.start_delay[sprite_info.index]
                     : blend_mode_seq.start_delay;
                 this.game.time.events.add(start_delay, () => {
                     switch (blend_mode_seq.mode) {
@@ -736,18 +806,71 @@ export class BattleAnimation {
         }
     }
 
+    play_general_filter(
+        sequence: GeneralFilterAttr[],
+        filter_key: EngineFilters,
+        set_filter: (sequence: GeneralFilterAttr, filter: Phaser.Filter) => void
+    ) {
+        for (let i = 0; i < sequence.length; ++i) {
+            const filter_seq = sequence[i];
+            const sprites = this.get_sprites(filter_seq);
+            _.forEach(sprites, sprite_info => {
+                const sprite = sprite_info.obj as PlayerSprite | Phaser.Sprite;
+                let resolve_function;
+                const this_promise = new Promise(resolve => (resolve_function = resolve));
+                this.promises.push(this_promise);
+                const start_delay = Array.isArray(filter_seq.start_delay)
+                    ? filter_seq.start_delay[sprite_info.index]
+                    : filter_seq.start_delay;
+                this.game.time.events.add(start_delay, () => {
+                    const filter = sprite.available_filters[filter_key];
+                    this.manage_filter(filter as Phaser.Filter, sprite, filter_seq.remove);
+                    if (!filter_seq.remove) {
+                        set_filter(filter_seq, filter as Phaser.Filter);
+                    }
+                });
+                resolve_function();
+            });
+        }
+    }
+
+    play_levels_filter(sequence: BattleAnimation["levels_filter_sequence"]) {
+        this.play_general_filter(
+            sequence,
+            EngineFilters.LEVELS,
+            (filter_seq: BattleAnimation["levels_filter_sequence"][0], filter: Phaser.Filter.Levels) => {
+                filter.min_input = filter_seq.min_input ?? filter.min_input;
+                filter.max_input = filter_seq.max_input ?? filter.max_input;
+                filter.gamma = filter_seq.gamma ?? filter.gamma;
+            }
+        );
+    }
+
+    play_color_blend_filter(sequence: BattleAnimation["color_blend_filter_sequence"]) {
+        this.play_general_filter(
+            sequence,
+            EngineFilters.COLOR_BLEND,
+            (filter_seq: BattleAnimation["color_blend_filter_sequence"][0], filter: Phaser.Filter.ColorBlend) => {
+                filter.r = filter_seq.r ?? filter.r;
+                filter.g = filter_seq.g ?? filter.g;
+                filter.b = filter_seq.b ?? filter.b;
+            }
+        );
+    }
+
     play_filter_property(sequence, property?, ...secondary_properties) {
         for (let i = 0; i < sequence.length; ++i) {
             const filter_seq = sequence[i];
             let sprites = this.get_sprites(filter_seq);
-            sprites.forEach((sprite, index) => {
+            _.forEach(sprites, sprite_info => {
+                const sprite = sprite_info.obj as PlayerSprite | Phaser.Sprite;
                 let resolve_function;
                 let this_promise = new Promise(resolve => {
                     resolve_function = resolve;
                 });
                 this.promises.push(this_promise);
                 const start_delay = Array.isArray(filter_seq.start_delay)
-                    ? filter_seq.start_delay[index]
+                    ? filter_seq.start_delay[sprite_info.index]
                     : filter_seq.start_delay;
                 this.game.time.events.add(start_delay, () => {
                     const this_property = filter_seq.filter ?? property;
