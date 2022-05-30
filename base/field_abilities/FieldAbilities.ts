@@ -510,7 +510,7 @@ export abstract class FieldAbilities {
         char.manage_filter(char.color_filter, true);
         char.manage_filter(char.hue_filter, true);
         const hue_timer = game.time.create(false);
-        char.blink(8, 50, {keep_color_filter: true}).then(() => {
+        char.blink(8, 50).then(() => {
             char.color_filter.gray = 0.4;
             if (after_init !== undefined) {
                 after_init();

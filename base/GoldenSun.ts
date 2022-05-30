@@ -31,6 +31,7 @@ export enum EngineFilters {
     LEVELS = "levels",
     COLOR_BLEND = "color_blend",
     HUE = "hue",
+    TINT = "tint",
 }
 
 /**

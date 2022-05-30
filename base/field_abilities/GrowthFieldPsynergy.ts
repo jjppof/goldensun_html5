@@ -16,7 +16,7 @@ export class GrowthFieldPsynergy extends FieldAbilities {
 
     private increase_duration: number;
     private emitter: Phaser.Particles.Arcade.Emitter;
-    private particle_filter: any;
+    private particle_filter: Phaser.Filter.Hue;
     private sprite_base: SpriteBase;
 
     protected target_object: InteractableObjects;
@@ -90,8 +90,8 @@ export class GrowthFieldPsynergy extends FieldAbilities {
         this.emitter.gravity = 0;
         this.emitter.width = emitter_width;
         this.emitter.height = emitter_height;
-        this.particle_filter = this.game.add.filter("ColorFilters");
-        this.particle_filter.hue_adjust = 3;
+        this.particle_filter = this.game.add.filter("Hue") as Phaser.Filter.Hue;
+        this.particle_filter.angle = 3;
         this.emitter.maxParticleScale = 0.5;
         this.emitter.minParticleScale = 0.4;
         this.emitter.forEach(particle => {

@@ -78,11 +78,11 @@ export class BattleAnimation {
     public rotation_sequence: DefaultAttr[] = [];
     public stage_angle_sequence: DefaultAttr[] = [];
     public hue_angle_sequence: DefaultAttr[] = [];
-    public tint_sequence: {
-        start_delay: number | number[];
-        sprite_index: string | number | number[];
-        value: [r: number, g: number, b: number];
-    }[] = [];
+    public tint_sequence: (GeneralFilterAttr & {
+        r: number;
+        g: number;
+        b: number;
+    })[] = [];
     public grayscale_sequence: DefaultAttr[] = [];
     public colorize_sequence: {
         start_delay: number | number[];
@@ -386,15 +386,15 @@ export class BattleAnimation {
     }
 
     manage_filter(filter: Phaser.Filter, sprite: PlayerSprite | PIXI.DisplayObject, remove: boolean) {
+        const index = sprite.filters ? sprite.filters.indexOf(filter) : -1;
         if (remove) {
             if (sprite.filters) {
-                const index = sprite.filters.indexOf(filter);
                 sprite.filters.splice(index, 1);
                 if (sprite.filters.length === 0) {
                     sprite.filters = undefined;
                 }
             }
-        } else {
+        } else if (index === -1) {
             if (sprite.filters) {
                 sprite.filters = [...sprite.filters, filter];
             } else {
@@ -413,6 +413,8 @@ export class BattleAnimation {
             sprite.available_filters[color_blend_filter.key] = color_blend_filter;
             const hue_filter = this.game.add.filter("Hue") as Phaser.Filter.Hue;
             sprite.available_filters[hue_filter.key] = hue_filter;
+            const tint_filter = this.game.add.filter("Tint") as Phaser.Filter.Tint;
+            sprite.available_filters[tint_filter.key] = tint_filter;
         });
     }
 
@@ -439,9 +441,9 @@ export class BattleAnimation {
         // this.play_number_property_sequence(this.grayscale_sequence, "filters", "gray");
         this.play_sprite_sequence();
         this.play_blend_modes();
-        this.play_filter_property(this.tint_sequence, "tint");
-        this.play_filter_property(this.colorize_sequence, "colorize", "colorize_intensity");
-        this.play_filter_property(this.custom_filter_sequence);
+        // this.play_filter_property(this.colorize_sequence, "colorize", "colorize_intensity");
+        // this.play_filter_property(this.custom_filter_sequence);
+        this.play_tint_filter(this.tint_sequence);
         this.play_levels_filter(this.levels_filter_sequence);
         this.play_color_blend_filter(this.color_blend_filter_sequence);
         this.play_stage_angle_sequence();
@@ -886,6 +888,18 @@ export class BattleAnimation {
             sequence,
             EngineFilters.COLOR_BLEND,
             (filter_seq: BattleAnimation["color_blend_filter_sequence"][0], filter: Phaser.Filter.ColorBlend) => {
+                filter.r = filter_seq.r ?? filter.r;
+                filter.g = filter_seq.g ?? filter.g;
+                filter.b = filter_seq.b ?? filter.b;
+            }
+        );
+    }
+
+    play_tint_filter(sequence: BattleAnimation["tint_sequence"]) {
+        this.play_general_filter(
+            sequence,
+            EngineFilters.TINT,
+            (filter_seq: BattleAnimation["tint_sequence"][0], filter: Phaser.Filter.Tint) => {
                 filter.r = filter_seq.r ?? filter.r;
                 filter.g = filter_seq.g ?? filter.g;
                 filter.b = filter_seq.b ?? filter.b;

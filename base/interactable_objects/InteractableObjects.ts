@@ -78,6 +78,7 @@ export class InteractableObjects {
     private _levels_filter: Phaser.Filter.Levels;
     private _color_blend_filter: Phaser.Filter.ColorBlend;
     private _hue_filter: Phaser.Filter.Hue;
+    private _tint_filter: Phaser.Filter.Tint;
     private _enable: boolean;
     private _entangled_by_bush: boolean;
     private _sprite: Phaser.Sprite;
@@ -193,6 +194,7 @@ export class InteractableObjects {
         this._levels_filter = this.game.add.filter("Levels") as Phaser.Filter.Levels;
         this._color_blend_filter = this.game.add.filter("ColorBlend") as Phaser.Filter.ColorBlend;
         this._hue_filter = this.game.add.filter("Hue") as Phaser.Filter.Hue;
+        this._tint_filter = this.game.add.filter("Tint") as Phaser.Filter.Tint;
         this.anchor_x = anchor_x;
         this.anchor_y = anchor_y;
         this.scale_x = scale_x;
@@ -237,6 +239,7 @@ export class InteractableObjects {
             [EngineFilters.LEVELS]: false,
             [EngineFilters.COLOR_BLEND]: false,
             [EngineFilters.HUE]: false,
+            [EngineFilters.TINT]: false,
         };
     }
 
@@ -296,6 +299,9 @@ export class InteractableObjects {
     }
     get hue_filter() {
         return this._hue_filter;
+    }
+    get tint_filter() {
+        return this._tint_filter;
     }
     get collision_tiles_bodies() {
         return this._collision_tiles_bodies;
@@ -589,7 +595,6 @@ export class InteractableObjects {
                     this.color_filter.colorize_intensity =
                         this.snapshot_info.filter_settings.colorize.colorize_intensity;
                     this.color_filter.colorize = this.snapshot_info.filter_settings.colorize.colorize;
-                    this.color_filter.tint = this.snapshot_info.filter_settings.colorize.tint;
                     this.color_filter.flame = this.snapshot_info.filter_settings.colorize.flame;
                 }
                 if (active_filters[EngineFilters.LEVELS]) {
@@ -607,6 +612,12 @@ export class InteractableObjects {
                 if (active_filters[EngineFilters.HUE]) {
                     this.manage_filter(this.hue_filter, true);
                     this.hue_filter.angle = this.snapshot_info.filter_settings.hue.angle;
+                }
+                if (active_filters[EngineFilters.TINT]) {
+                    this.manage_filter(this.tint_filter, true);
+                    this.tint_filter.r = this.snapshot_info.filter_settings.tint.r;
+                    this.tint_filter.g = this.snapshot_info.filter_settings.tint.g;
+                    this.tint_filter.b = this.snapshot_info.filter_settings.tint.b;
                 }
             }
         }

@@ -82,14 +82,14 @@ export class AvoidFieldPsynergy extends FieldAbilities {
         const start_y = this.controllable_char.y - (this.controllable_char.height << 1) + 10;
         const end_x = start_x;
         let end_y = this.controllable_char.y + 10;
-        const color_filter_arr = [this.game.add.filter("ColorFilters") as any];
-        color_filter_arr[0].hue_adjust = Phaser.Math.degToRad(242);
+        const hue_filter = this.game.add.filter("Hue") as Phaser.Filter.Hue;
+        hue_filter.angle = Phaser.Math.degToRad(242);
         for (let i = 0; i < auras_count; ++i) {
             const start_delay = delta_time * i;
             for (let j = 0; j < 2; ++j) {
                 const y_delta = +(j === 0);
                 const aura = this.data.overlayer_group.create(start_x, start_y + y_delta, "psynergy_aura");
-                aura.filters = color_filter_arr;
+                aura.filters = [hue_filter];
                 aura.scale.setTo(0, 0);
                 aura.anchor.setTo(0.5, 0);
                 this.game.add

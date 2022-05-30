@@ -615,7 +615,6 @@ export class NPC extends ControllableChar {
                 this.color_filter.gray = this.snapshot_info.filter_settings.colorize.gray;
                 this.color_filter.colorize_intensity = this.snapshot_info.filter_settings.colorize.colorize_intensity;
                 this.color_filter.colorize = this.snapshot_info.filter_settings.colorize.colorize;
-                this.color_filter.tint = this.snapshot_info.filter_settings.colorize.tint;
                 this.color_filter.flame = this.snapshot_info.filter_settings.colorize.flame;
             }
             if (active_filters[EngineFilters.LEVELS]) {
@@ -633,6 +632,12 @@ export class NPC extends ControllableChar {
             if (active_filters[EngineFilters.HUE]) {
                 this.manage_filter(this.hue_filter, true);
                 this.hue_filter.angle = this.snapshot_info.filter_settings.hue.angle;
+            }
+            if (active_filters[EngineFilters.TINT]) {
+                this.manage_filter(this.tint_filter, true);
+                this.tint_filter.r = this.snapshot_info.filter_settings.tint.r;
+                this.tint_filter.g = this.snapshot_info.filter_settings.tint.g;
+                this.tint_filter.b = this.snapshot_info.filter_settings.tint.b;
             }
         }
     }

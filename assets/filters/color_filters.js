@@ -7,9 +7,6 @@ Phaser.Filter.ColorFilters = function (game) {
     this.uniforms.r_colorize = { type: '1f', value: 1.0 };
     this.uniforms.g_colorize = { type: '1f', value: 1.0 };
     this.uniforms.b_colorize = { type: '1f', value: 1.0 };
-    this.uniforms.r_tint = { type: '1f', value: -1.0 };
-    this.uniforms.g_tint = { type: '1f', value: -1.0 };
-    this.uniforms.b_tint = { type: '1f', value: -1.0 };
     this.uniforms.flame = { type: '1f', value: 0.0 };
 
     this.fragmentSrc = [
@@ -22,19 +19,12 @@ Phaser.Filter.ColorFilters = function (game) {
         "uniform float      r_colorize;",
         "uniform float      g_colorize;",
         "uniform float      b_colorize;",
-        "uniform float      r_tint;",
-        "uniform float      g_tint;",
-        "uniform float      b_tint;",
         "uniform float      flame;",
 
         "void main(void) {",
             "gl_FragColor = texture2D(uSampler, vTextureCoord);",
             "if (gray != 0.0) {",
                 "gl_FragColor.rgb = mix(gl_FragColor.rgb, vec3(0.2126 * gl_FragColor.r + 0.7152 * gl_FragColor.g + 0.0722 * gl_FragColor.b), gray);",
-            "}",
-
-            "if (r_tint != -1.0 && g_tint != -1.0 && b_tint != -1.0) {",
-                "gl_FragColor.rgb = vec3(r_tint * gl_FragColor.a, g_tint * gl_FragColor.a, b_tint * gl_FragColor.a);",
             "}",
 
             "if (flame == 1.0) {",
@@ -113,16 +103,6 @@ Object.defineProperty(Phaser.Filter.ColorFilters.prototype, 'colorize', {
         if (value > 1) value = 1;
         this.uniforms.colorize.value = value;
         this.set_colorize_values(value);
-    }
-});
-Object.defineProperty(Phaser.Filter.ColorFilters.prototype, 'tint', {
-    get: function() {
-        return [this.uniforms.r_tint.value, this.uniforms.g_tint.value, this.uniforms.b_tint.value];
-    },
-    set: function(value) {
-        this.uniforms.r_tint.value = value[0];
-        this.uniforms.g_tint.value = value[1];
-        this.uniforms.b_tint.value = value[2];
     }
 });
 Object.defineProperty(Phaser.Filter.ColorFilters.prototype, 'flame', {

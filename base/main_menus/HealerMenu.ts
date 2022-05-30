@@ -527,11 +527,11 @@ export class HealerMenu {
     private async cure_animation() {
         const char_sprite = this.chars_menu.selected_char_sprite;
         char_sprite.animations.stop(char_sprite.animations.currentAnim.name, false);
-        const color_filter = this.game.add.filter("ColorFilters") as any;
+        const color_filter = this.game.add.filter("Hue") as Phaser.Filter.Hue;
         char_sprite.filters = [color_filter];
         const hueshift_timer = this.game.time.create(false);
         hueshift_timer.loop(10, () => {
-            color_filter.hue_adjust = Math.random() * degree360;
+            color_filter.angle = Math.random() * degree360;
         });
         hueshift_timer.start();
         const emitter = this.start_particles_emitter(char_sprite);

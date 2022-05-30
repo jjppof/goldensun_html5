@@ -26,16 +26,15 @@ export class TintCharEvent extends GameEvent {
             }) ?? this.origin_npc;
 
         if (this.enable) {
-            target_char.manage_filter(target_char.color_filter, true);
-            const current_tint = target_char.color_filter.tint;
-            target_char.color_filter.tint = [
-                this.color.r ?? current_tint[0],
-                this.color.g ?? current_tint[1],
-                this.color.b ?? current_tint[2],
-            ];
+            target_char.manage_filter(target_char.tint_filter, true);
+            target_char.tint_filter.r = this.color.r ?? target_char.tint_filter.r;
+            target_char.tint_filter.g = this.color.g ?? target_char.tint_filter.g;
+            target_char.tint_filter.b = this.color.b ?? target_char.tint_filter.b;
         } else {
-            target_char.color_filter.tint = [-1, -1, -1];
-            target_char.manage_filter(target_char.color_filter, false);
+            target_char.tint_filter.r = -1;
+            target_char.tint_filter.g = -1;
+            target_char.tint_filter.b = -1;
+            target_char.manage_filter(target_char.tint_filter, false);
         }
     }
 

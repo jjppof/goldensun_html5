@@ -110,7 +110,6 @@ export class FrostFieldPsynergy extends FieldAbilities {
     /*Changes the pool into a pillar
     Will change its properties and animation*/
     init_pillar() {
-        this.target_object.manage_filter(this.target_object.color_filter, true);
         this.target_object.get_events().forEach((event: JumpEvent) => {
             if (event.is_active() >= 0) {
                 event.deactivate();
@@ -125,17 +124,23 @@ export class FrostFieldPsynergy extends FieldAbilities {
         this.target_object.sprite.send_to_back = false;
         this.data.map.sort_sprites();
         this.data.audio.play_se("psynergy/4");
+
+        this.target_object.manage_filter(this.target_object.tint_filter, true);
         let blink_counter = 16;
         const blink_timer = this.game.time.create(false);
         blink_timer.loop(50, () => {
             if (blink_counter % 2 === 0) {
-                this.target_object.color_filter.tint = [1, 1, 1];
+                this.target_object.tint_filter.r = 1;
+                this.target_object.tint_filter.g = 1;
+                this.target_object.tint_filter.b = 1;
             } else {
-                this.target_object.color_filter.tint = [-1, -1, -1];
+                this.target_object.tint_filter.r = -1;
+                this.target_object.tint_filter.g = -1;
+                this.target_object.tint_filter.b = -1;
             }
             --blink_counter;
             if (blink_counter === 0) {
-                this.target_object.manage_filter(this.target_object.color_filter, false);
+                this.target_object.manage_filter(this.target_object.tint_filter, false);
                 blink_timer.stop();
                 this.grow_pillar();
             }

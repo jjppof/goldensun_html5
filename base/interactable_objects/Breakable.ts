@@ -109,14 +109,18 @@ export class Breakable extends InteractableObjects {
         char.play(base_actions.IDLE);
         this.play("to_break", Breakable.ACTION_KEY);
 
-        this.manage_filter(this.color_filter, true);
+        this.manage_filter(this.tint_filter, true);
         let blink_counter = 4;
         const blink_timer = this.game.time.create(false);
         blink_timer.loop(50, async () => {
             if (blink_counter % 2 === 0) {
-                this.color_filter.tint = [1, 1, 1];
+                this.tint_filter.r = 1;
+                this.tint_filter.g = 1;
+                this.tint_filter.b = 1;
             } else {
-                this.color_filter.tint = [-1, -1, -1];
+                this.tint_filter.r = -1;
+                this.tint_filter.g = -1;
+                this.tint_filter.b = -1;
             }
             --blink_counter;
             if (blink_counter === 0) {
@@ -124,7 +128,7 @@ export class Breakable extends InteractableObjects {
                 blink_timer.destroy();
                 await this.down_dust_animation(char);
                 char.misc_busy = false;
-                this.manage_filter(this.color_filter, false);
+                this.manage_filter(this.tint_filter, false);
             }
         });
         blink_timer.start();

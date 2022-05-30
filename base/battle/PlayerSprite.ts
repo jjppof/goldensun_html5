@@ -227,6 +227,8 @@ export class PlayerSprite {
         this.char_sprite.available_filters[color_blend_filter.key] = color_blend_filter;
         const hue_filter = this.game.add.filter("Hue") as Phaser.Filter.Hue;
         this.char_sprite.available_filters[hue_filter.key] = hue_filter;
+        const tint_filter = this.game.add.filter("Tint") as Phaser.Filter.Tint;
+        this.char_sprite.available_filters[tint_filter.key] = tint_filter;
 
         if (this.is_ally) {
             const player = this.player_instance as MainChar;

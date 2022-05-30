@@ -115,27 +115,37 @@
     "tint_sequence": [{
         "sprite_index": "targets",
         "start_delay": 1500,
-        "value": [1,1,1]
+        "r": 1,
+        "g": 1,
+        "b": 1
     },{
         "sprite_index": "targets",
         "start_delay": 1650,
-        "value": [-1,-1,-1]
+        "r": -1,
+        "g": -1,
+        "b": -1
     },{
         "sprite_index": "targets",
         "start_delay": 1900,
-        "value": [1,1,1]
+        "r": 1,
+        "g": 1,
+        "b": 1
     },{
         "sprite_index": "targets",
         "start_delay": 1930,
-        "value": [-1,-1,-1]
+        "r": -1,
+        "g": -1,
+        "b": -1
     },{
         "sprite_index": "targets",
         "start_delay": 1960,
-        "value": [1,1,1]
+        "r": 1,
+        "g": 1,
+        "b": 1
     },{
         "sprite_index": "targets",
         "start_delay": 1990,
-        "value": [-1,-1,-1]
+        "remove": true
     }],
     "cast_type": "psynergy_cast",
     "wait_for_cast_animation": false,

@@ -20,7 +20,6 @@ type FilterSettings = {
         gray: Phaser.Filter.ColorFilters["gray"];
         colorize_intensity: Phaser.Filter.ColorFilters["colorize_intensity"];
         colorize: Phaser.Filter.ColorFilters["colorize"];
-        tint: Phaser.Filter.ColorFilters["tint"];
         flame: Phaser.Filter.ColorFilters["flame"];
     };
     [EngineFilters.LEVELS]?: {
@@ -29,6 +28,11 @@ type FilterSettings = {
         gamma: number;
     };
     [EngineFilters.COLOR_BLEND]?: {
+        r: number;
+        g: number;
+        b: number;
+    };
+    [EngineFilters.TINT]?: {
         r: number;
         g: number;
         b: number;
@@ -296,7 +300,6 @@ export class Snapshot {
                                     gray: npc.color_filter.gray,
                                     colorize_intensity: npc.color_filter.colorize_intensity,
                                     colorize: npc.color_filter.colorize,
-                                    tint: npc.color_filter.tint,
                                     flame: npc.color_filter.flame,
                                 },
                             }),
@@ -312,6 +315,13 @@ export class Snapshot {
                                     r: npc.color_blend_filter.r,
                                     g: npc.color_blend_filter.g,
                                     b: npc.color_blend_filter.b,
+                                },
+                            }),
+                            ...(npc.active_filters.tint && {
+                                tint: {
+                                    r: npc.tint_filter.r,
+                                    g: npc.tint_filter.g,
+                                    b: npc.tint_filter.b,
                                 },
                             }),
                             ...(npc.active_filters.hue && {
@@ -387,7 +397,6 @@ export class Snapshot {
                                     gray: io.color_filter.gray,
                                     colorize_intensity: io.color_filter.colorize_intensity,
                                     colorize: io.color_filter.colorize,
-                                    tint: io.color_filter.tint,
                                     flame: io.color_filter.flame,
                                 },
                             }),
@@ -403,6 +412,13 @@ export class Snapshot {
                                     r: io.color_blend_filter.r,
                                     g: io.color_blend_filter.g,
                                     b: io.color_blend_filter.b,
+                                },
+                            }),
+                            ...(io.active_filters.tint && {
+                                tint: {
+                                    r: io.tint_filter.r,
+                                    g: io.tint_filter.g,
+                                    b: io.tint_filter.b,
                                 },
                             }),
                             ...(io.active_filters.hue && {

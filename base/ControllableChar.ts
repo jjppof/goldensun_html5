@@ -134,6 +134,7 @@ export abstract class ControllableChar {
     private _levels_filter: Phaser.Filter.Levels;
     private _color_blend_filter: Phaser.Filter.ColorBlend;
     private _hue_filter: Phaser.Filter.Hue;
+    private _tint_filter: Phaser.Filter.Tint;
     private _outline_filter: any;
     private _active_filters: {[key in EngineFilters]: boolean};
     protected _push_timer: Phaser.Timer;
@@ -234,6 +235,7 @@ export abstract class ControllableChar {
         this._levels_filter = this.game.add.filter("Levels") as Phaser.Filter.Levels;
         this._color_blend_filter = this.game.add.filter("ColorBlend") as Phaser.Filter.ColorBlend;
         this._hue_filter = this.game.add.filter("Hue") as Phaser.Filter.Hue;
+        this._tint_filter = this.game.add.filter("Tint") as Phaser.Filter.Tint;
         this._outline_filter = this.game.add.filter("Outline");
         this._active_filters = {
             [EngineFilters.COLORIZE]: false,
@@ -241,6 +243,7 @@ export abstract class ControllableChar {
             [EngineFilters.LEVELS]: false,
             [EngineFilters.COLOR_BLEND]: false,
             [EngineFilters.HUE]: false,
+            [EngineFilters.TINT]: false,
         };
         this.trying_to_push = false;
         this._trying_to_push_direction = null;
@@ -343,6 +346,10 @@ export abstract class ControllableChar {
     /** The Phaser.Filter that controls the hue of the texture of this char sprite. */
     get hue_filter() {
         return this._hue_filter;
+    }
+    /** The Phaser.Filter that tints the texture of this char sprite. */
+    get tint_filter() {
+        return this._tint_filter;
     }
     /** An object containing which filters are active in this char. */
     get active_filters() {
@@ -1169,13 +1176,13 @@ export abstract class ControllableChar {
                 b: number;
             };
             /** if true, will keep the color filter on blink finish. */
-            keep_color_filter?: boolean;
+            keep_filter?: boolean;
         }
     ) {
         const outline = options?.outline_blink ?? false;
         const transparent_outline = options?.transparent_outline ?? true;
         if (!outline) {
-            this.manage_filter(this.color_filter, true);
+            this.manage_filter(this.tint_filter, true);
         }
         let counter = count << 1;
         const blink_timer = this.game.time.create(false);
@@ -1194,13 +1201,17 @@ export abstract class ControllableChar {
                         b: b,
                     });
                 } else {
-                    this.color_filter.tint = [r, g, b];
+                    this.tint_filter.r = r;
+                    this.tint_filter.g = g;
+                    this.tint_filter.b = b;
                 }
             } else {
                 if (outline) {
                     this.set_outline(false);
                 } else {
-                    this.color_filter.tint = [-1, -1, -1];
+                    this.tint_filter.r = -1;
+                    this.tint_filter.g = -1;
+                    this.tint_filter.b = -1;
                 }
             }
             --counter;
@@ -1212,8 +1223,8 @@ export abstract class ControllableChar {
         blink_timer.start();
         await timer_promise;
         blink_timer.destroy();
-        if (!outline && !options?.keep_color_filter) {
-            this.manage_filter(this.color_filter, false);
+        if (!outline && !options?.keep_filter) {
+            this.manage_filter(this.tint_filter, false);
         }
     }
 
