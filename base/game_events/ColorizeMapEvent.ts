@@ -1,6 +1,6 @@
 import {GameEvent, event_types} from "./GameEvent";
 
-export class TintMapEvent extends GameEvent {
+export class ColorizeMapEvent extends GameEvent {
     private finish_events: GameEvent[];
     private color_key: number;
     private intensity: number;
@@ -8,7 +8,7 @@ export class TintMapEvent extends GameEvent {
     private duration: number;
 
     constructor(game, data, active, key_name, color_key, intensity, gray, duration, finish_events) {
-        super(game, data, event_types.TINT_MAP, active, key_name);
+        super(game, data, event_types.COLORIZE_MAP, active, key_name);
         this.color_key = color_key;
         this.intensity = intensity;
         this.gray = gray;
@@ -27,19 +27,33 @@ export class TintMapEvent extends GameEvent {
 
         const color_key = this.color_key ?? this.data.map.color_filter.colorize;
         const intensity = this.intensity ?? this.data.map.color_filter.colorize_intensity;
-        const gray = this.gray ?? this.data.map.color_filter.gray;
+        const gray = this.gray ?? this.data.map.gray_filter.intensity;
 
         this.data.map.color_filter.colorize = color_key;
+
+        if (gray) {
+            this.data.map.manage_filter(this.data.map.gray_filter, true);
+        }
+        if (intensity) {
+            this.data.map.manage_filter(this.data.map.color_filter, true);
+        }
 
         if (this.duration > 30) {
             let promise_resolve;
             const promise = new Promise(resolve => (promise_resolve = resolve));
+            this.game.add.tween(this.data.map.gray_filter).to(
+                {
+                    intensity: gray,
+                },
+                this.duration,
+                Phaser.Easing.Linear.None,
+                true
+            );
             this.game.add
                 .tween(this.data.map.color_filter)
                 .to(
                     {
                         colorize_intensity: intensity,
-                        gray: gray,
                     },
                     this.duration,
                     Phaser.Easing.Linear.None,
@@ -50,11 +64,16 @@ export class TintMapEvent extends GameEvent {
             await promise;
         } else {
             this.data.map.color_filter.colorize_intensity = intensity;
-            this.data.map.color_filter.gray = gray;
+            this.data.map.gray_filter.intensity = gray;
         }
 
         if (intensity === 0) {
             this.data.map.color_filter.colorize = -1;
+            this.data.map.manage_filter(this.data.map.color_filter, false);
+        }
+
+        if (gray === 0) {
+            this.data.map.manage_filter(this.data.map.gray_filter, false);
         }
 
         --this.data.game_event_manager.events_running_count;

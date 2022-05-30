@@ -73,7 +73,8 @@ export class RevealFieldPsynergy extends FieldAbilities {
         this.controllable_char.on_reveal = false;
         this.controllable_char.casting_psynergy = true;
         this.toggle_reveal();
-        this.data.map.color_filter.gray = 0;
+        this.data.map.gray_filter.intensity = 0;
+        this.data.map.manage_filter(this.data.map.gray_filter, false);
         this.end_timer.destroy();
         if (!force) {
             this.game.camera.flash(0x0, 750, true);
@@ -131,7 +132,8 @@ export class RevealFieldPsynergy extends FieldAbilities {
         this.data.super_group.mask.drawRect(0, 0, numbers.GAME_WIDTH, numbers.GAME_HEIGHT);
         this.data.super_group.mask.endFill();
 
-        this.data.map.color_filter.gray = 1;
+        this.data.map.manage_filter(this.data.map.gray_filter, true);
+        this.data.map.gray_filter.intensity = 1;
 
         this.toggle_reveal();
 

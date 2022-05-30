@@ -51,6 +51,7 @@ Phaser.Filter.Mode7 = function (game) {
 
 Phaser.Filter.Mode7.prototype = Object.create(Phaser.Filter.prototype);
 Phaser.Filter.Mode7.prototype.constructor = Phaser.Filter.Mode7;
+Phaser.Filter.Mode7.prototype.key = "mode7";
 
 Object.defineProperty(Phaser.Filter.Mode7.prototype, 'angle', {
     get: function() {

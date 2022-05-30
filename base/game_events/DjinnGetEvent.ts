@@ -118,7 +118,7 @@ export class DjinnGetEvent extends GameEvent {
 
     async venus_djinn() {
         this.aux_promise = new Promise(resolve => (this.aux_resolve = resolve));
-        const reset_map = FieldAbilities.tint_map_layers(this.game, this.data.map, {
+        const reset_map = FieldAbilities.colorize_map_layers(this.game, this.data.map, {
             color: 0.65,
             intensity: 1,
             after_colorize: this.aux_resolve,
@@ -288,7 +288,7 @@ export class DjinnGetEvent extends GameEvent {
 
     async mercury_djinn() {
         this.aux_promise = new Promise(resolve => (this.aux_resolve = resolve));
-        const reset_map = FieldAbilities.tint_map_layers(this.game, this.data.map, {
+        const reset_map = FieldAbilities.colorize_map_layers(this.game, this.data.map, {
             color: 0.95,
             intensity: 1,
             after_colorize: this.aux_resolve,
@@ -429,7 +429,7 @@ export class DjinnGetEvent extends GameEvent {
 
     async mars_djinn() {
         this.aux_promise = new Promise(resolve => (this.aux_resolve = resolve));
-        const reset_map = FieldAbilities.tint_map_layers(this.game, this.data.map, {
+        const reset_map = FieldAbilities.colorize_map_layers(this.game, this.data.map, {
             color: 0.35,
             intensity: 1,
             after_colorize: this.aux_resolve,
@@ -532,7 +532,7 @@ export class DjinnGetEvent extends GameEvent {
 
     async jupiter_djinn() {
         this.aux_promise = new Promise(resolve => (this.aux_resolve = resolve));
-        const reset_map = FieldAbilities.tint_map_layers(this.game, this.data.map, {
+        const reset_map = FieldAbilities.colorize_map_layers(this.game, this.data.map, {
             color: 0.1,
             intensity: 0.7,
             after_colorize: this.aux_resolve,

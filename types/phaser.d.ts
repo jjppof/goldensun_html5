@@ -1207,6 +1207,10 @@ declare module Phaser {
 
     module Filter {
 
+        class Gray extends Phaser.Filter {
+            intensity: number;
+        }
+
         class Hue extends Phaser.Filter {
             angle: number;
         }
@@ -1230,7 +1234,6 @@ declare module Phaser {
         }
 
         class ColorFilters extends Phaser.Filter {
-            gray: number;
             colorize_intensity: number;
             colorize: number;
             flame: boolean;
@@ -1298,12 +1301,6 @@ declare module Phaser {
             speed: number;
 
             init(width: number, height: number, alpha?: number, shift?: number): void;
-
-        }
-
-        class Gray extends Phaser.Filter {
-
-            gray: number;
 
         }
 

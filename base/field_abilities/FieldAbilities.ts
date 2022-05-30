@@ -23,7 +23,7 @@ export abstract class FieldAbilities {
     private target_max_range: number | ((target: FieldAbilities["target_object"]) => number);
     private action_key_name: string;
     private need_target: boolean;
-    private tint_map: boolean;
+    private colorize_map: boolean;
     private bootstrap_method: Function;
     private cast_finisher: Function;
     protected controllable_char: ControllableChar;
@@ -54,7 +54,7 @@ export abstract class FieldAbilities {
      * @param ability_key_name The ability key_name.
      * @param action_key_name The action that the char will assume when casting this ability.
      * @param need_target Whether this ability need a target or not.
-     * @param tint_map Whether this ability will tint the map when casting.
+     * @param colorize_map Whether this ability will tint the map when casting.
      * @param target_max_range If this ability need a target, the max distance range from the caster to find a target.
      * This can also be a function that receives a target candidate, this function must return a range.
      * @param field_color A custom color to tint the map.
@@ -72,7 +72,7 @@ export abstract class FieldAbilities {
         ability_key_name: string,
         action_key_name: string,
         need_target: boolean,
-        tint_map?: boolean,
+        colorize_map?: boolean,
         target_max_range?: FieldAbilities["target_max_range"],
         field_color?: number,
         field_intensity?: number,
@@ -88,7 +88,7 @@ export abstract class FieldAbilities {
         this.target_max_range = target_max_range ?? FieldAbilities.DEFAULT_RANGE;
         this.action_key_name = action_key_name;
         this.need_target = need_target;
-        this.tint_map = tint_map ?? true;
+        this.colorize_map = colorize_map ?? true;
         this.bootstrap_method = () => {};
         this.cast_finisher = () => {};
         this.controllable_char = null;
@@ -277,8 +277,8 @@ export abstract class FieldAbilities {
             this.controllable_char,
             //after_init
             () => {
-                if (this.tint_map && !this.controllable_char.on_reveal) {
-                    this.reset_map = FieldAbilities.tint_map_layers(this.game, this.data.map, {
+                if (this.colorize_map && !this.controllable_char.on_reveal) {
+                    this.reset_map = FieldAbilities.colorize_map_layers(this.game, this.data.map, {
                         color: this.field_color,
                         intensity: this.field_intensity,
                         map_colors_sequence: this.map_colors_sequence,
@@ -507,11 +507,11 @@ export abstract class FieldAbilities {
                 }
             }
         }
-        char.manage_filter(char.color_filter, true);
+        char.manage_filter(char.gray_filter, true);
         char.manage_filter(char.hue_filter, true);
         const hue_timer = game.time.create(false);
         char.blink(8, 50).then(() => {
-            char.color_filter.gray = 0.4;
+            char.gray_filter.intensity = 0.4;
             if (after_init !== undefined) {
                 after_init();
             }
@@ -527,10 +527,10 @@ export abstract class FieldAbilities {
             }
             stop_asked = true;
             hue_timer.stop();
-            char.color_filter.gray = 0;
+            char.gray_filter.intensity = 0;
             char.hue_filter.angle = 0;
-            char.manage_filter(char.color_filter, false);
             char.manage_filter(char.hue_filter, false);
+            char.manage_filter(char.gray_filter, false);
             await Promise.all(promises);
             for (let i = 0; i < tweens.length; ++i) {
                 for (let j = 0; j < tweens[i].length; ++j) {
@@ -550,7 +550,7 @@ export abstract class FieldAbilities {
         return casting_aura_stop_function;
     }
 
-    static tint_map_layers(
+    static colorize_map_layers(
         game: Phaser.Game,
         map: Map,
         options?: {
@@ -561,18 +561,27 @@ export abstract class FieldAbilities {
             map_colors_sequence?: boolean;
         }
     ) {
-        const filter = map.color_filter;
+        const gray_was_active = map.active_filters.gray;
+        map.manage_filter(map.gray_filter, true);
+        map.manage_filter(map.color_filter, true);
         const target_intensity = options?.intensity ?? 0.4;
-        filter.colorize_intensity = 0;
-        filter.gray = 0;
-        filter.colorize = options?.color ?? Math.random();
+        map.color_filter.colorize_intensity = 0;
+        map.color_filter.colorize = options?.color ?? Math.random();
+        map.gray_filter.intensity = 0;
         let random_color_running: boolean = false;
+        game.add.tween(map.gray_filter).to(
+            {
+                intensity: 1,
+            },
+            Phaser.Timer.QUARTER,
+            Phaser.Easing.Linear.None,
+            true
+        );
         game.add
-            .tween(filter)
+            .tween(map.color_filter)
             .to(
                 {
                     colorize_intensity: target_intensity,
-                    gray: 1,
                 },
                 Phaser.Timer.QUARTER,
                 Phaser.Easing.Linear.None,
@@ -589,7 +598,7 @@ export abstract class FieldAbilities {
                             return;
                         }
                         game.add
-                            .tween(filter)
+                            .tween(map.color_filter)
                             .to(
                                 {
                                     colorize: colors[color_index],
@@ -605,24 +614,37 @@ export abstract class FieldAbilities {
                     };
 
                     random_color_running = true;
-                    tween_factory(colors.findIndex(v => v > filter.colorize));
+                    tween_factory(colors.findIndex(v => v > map.color_filter.colorize));
                 }
             });
         return () => {
             random_color_running = false;
             game.add
-                .tween(filter)
+                .tween(map.gray_filter)
                 .to(
                     {
-                        colorize_intensity: 0,
-                        gray: 0,
+                        intensity: 0,
                     },
                     Phaser.Timer.QUARTER,
                     Phaser.Easing.Linear.None,
                     true
                 )
                 .onComplete.addOnce(() => {
-                    filter.colorize = -1;
+                    map.manage_filter(map.gray_filter, false);
+                });
+            game.add
+                .tween(map.color_filter)
+                .to(
+                    {
+                        colorize_intensity: 0,
+                    },
+                    Phaser.Timer.QUARTER,
+                    Phaser.Easing.Linear.None,
+                    true
+                )
+                .onComplete.addOnce(() => {
+                    map.color_filter.colorize = -1;
+                    map.manage_filter(map.color_filter, false);
                     if (options?.after_destroy !== undefined) {
                         options.after_destroy();
                     }

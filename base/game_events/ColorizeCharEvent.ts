@@ -25,18 +25,22 @@ export class ColorizeCharEvent extends GameEvent {
 
         const color_key = this.color_key ?? target_char.color_filter.colorize;
         const intensity = this.intensity ?? target_char.color_filter.colorize_intensity;
-        const gray = this.gray ?? target_char.color_filter.gray;
+        const gray = this.gray ?? target_char.gray_filter.intensity;
 
         if (this.intensity || this.gray) {
+            if (gray) {
+                target_char.manage_filter(target_char.gray_filter, true);
+                target_char.gray_filter.intensity = gray;
+            }
             target_char.manage_filter(target_char.color_filter, true);
             target_char.color_filter.colorize_intensity = intensity;
             target_char.color_filter.colorize = color_key;
-            target_char.color_filter.gray = gray;
         } else {
             target_char.color_filter.colorize_intensity = 0;
             target_char.color_filter.colorize = -1;
-            target_char.color_filter.gray = 0;
+            target_char.gray_filter.intensity = 0;
             target_char.manage_filter(target_char.color_filter, false);
+            target_char.manage_filter(target_char.gray_filter, false);
         }
     }
 

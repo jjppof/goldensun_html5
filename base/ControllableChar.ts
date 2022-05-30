@@ -135,8 +135,9 @@ export abstract class ControllableChar {
     private _color_blend_filter: Phaser.Filter.ColorBlend;
     private _hue_filter: Phaser.Filter.Hue;
     private _tint_filter: Phaser.Filter.Tint;
+    private _gray_filter: Phaser.Filter.Gray;
     private _outline_filter: any;
-    private _active_filters: {[key in EngineFilters]: boolean};
+    private _active_filters: {[key in EngineFilters]?: boolean};
     protected _push_timer: Phaser.Timer;
     private _footsteps: Footsteps;
     protected look_target: ControllableChar = null;
@@ -236,6 +237,7 @@ export abstract class ControllableChar {
         this._color_blend_filter = this.game.add.filter("ColorBlend") as Phaser.Filter.ColorBlend;
         this._hue_filter = this.game.add.filter("Hue") as Phaser.Filter.Hue;
         this._tint_filter = this.game.add.filter("Tint") as Phaser.Filter.Tint;
+        this._gray_filter = this.game.add.filter("Gray") as Phaser.Filter.Gray;
         this._outline_filter = this.game.add.filter("Outline");
         this._active_filters = {
             [EngineFilters.COLORIZE]: false,
@@ -244,6 +246,7 @@ export abstract class ControllableChar {
             [EngineFilters.COLOR_BLEND]: false,
             [EngineFilters.HUE]: false,
             [EngineFilters.TINT]: false,
+            [EngineFilters.GRAY]: false,
         };
         this.trying_to_push = false;
         this._trying_to_push_direction = null;
@@ -350,6 +353,10 @@ export abstract class ControllableChar {
     /** The Phaser.Filter that tints the texture of this char sprite. */
     get tint_filter() {
         return this._tint_filter;
+    }
+    /** The Phaser.Filter that controls the saturation of the texture of this char sprite. */
+    get gray_filter() {
+        return this._gray_filter;
     }
     /** An object containing which filters are active in this char. */
     get active_filters() {
@@ -1108,7 +1115,7 @@ export abstract class ControllableChar {
                 this.sprite.filters = [filter];
             }
         } else {
-            if (this.sprite.filters.includes(filter)) {
+            if (this.sprite.filters?.includes(filter)) {
                 if (this.sprite.filters.length === 1) {
                     this.sprite.filters = undefined;
                 } else {

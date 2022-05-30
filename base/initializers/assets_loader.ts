@@ -90,6 +90,7 @@ function load_filters(game) {
     game.load.script("color_blend", "assets/filters/color_blend.js");
     game.load.script("hue", "assets/filters/hue.js");
     game.load.script("tint", "assets/filters/tint.js");
+    game.load.script("gray", "assets/filters/gray.js");
     game.load.script("outline", "assets/filters/outline.js");
     game.load.script("mode7", "assets/filters/mode7.js");
     game.load.script("reveal", "assets/filters/reveal.js");

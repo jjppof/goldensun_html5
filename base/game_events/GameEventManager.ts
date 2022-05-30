@@ -39,7 +39,7 @@ import {CharItemManipulationEvent} from "./CharItemManipulationEvent";
 import {CameraShakeEvent} from "./CameraShakeEvent";
 import {CameraMoveEvent} from "./CameraMoveEvent";
 import {CameraFadeEvent} from "./CameraFadeEvent";
-import {TintMapEvent} from "./TintMapEvent";
+import {ColorizeMapEvent} from "./ColorizeMapEvent";
 import {ColorizeCharEvent} from "./ColorizeCharEvent";
 import {TintCharEvent} from "./TintCharEvent";
 import {OutlineCharEvent} from "./OutlineCharEvent";
@@ -644,8 +644,8 @@ export class GameEventManager {
                     info.duration,
                     info.finish_events
                 );
-            case event_types.TINT_MAP:
-                return new TintMapEvent(
+            case event_types.COLORIZE_MAP:
+                return new ColorizeMapEvent(
                     this.game,
                     this.data,
                     info.active,

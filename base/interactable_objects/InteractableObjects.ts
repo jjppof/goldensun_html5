@@ -79,6 +79,7 @@ export class InteractableObjects {
     private _color_blend_filter: Phaser.Filter.ColorBlend;
     private _hue_filter: Phaser.Filter.Hue;
     private _tint_filter: Phaser.Filter.Tint;
+    private _gray_filter: Phaser.Filter.Gray;
     private _enable: boolean;
     private _entangled_by_bush: boolean;
     private _sprite: Phaser.Sprite;
@@ -128,7 +129,7 @@ export class InteractableObjects {
     private _current_action: string;
     private _snapshot_info: SnapshotData["map_data"]["interactable_objects"][0];
     private _shapes_collision_active: boolean;
-    private _active_filters: {[key in EngineFilters]: boolean};
+    private _active_filters: {[key in EngineFilters]?: boolean};
 
     constructor(
         game,
@@ -195,6 +196,7 @@ export class InteractableObjects {
         this._color_blend_filter = this.game.add.filter("ColorBlend") as Phaser.Filter.ColorBlend;
         this._hue_filter = this.game.add.filter("Hue") as Phaser.Filter.Hue;
         this._tint_filter = this.game.add.filter("Tint") as Phaser.Filter.Tint;
+        this._gray_filter = this.game.add.filter("Gray") as Phaser.Filter.Gray;
         this.anchor_x = anchor_x;
         this.anchor_y = anchor_y;
         this.scale_x = scale_x;
@@ -240,6 +242,7 @@ export class InteractableObjects {
             [EngineFilters.COLOR_BLEND]: false,
             [EngineFilters.HUE]: false,
             [EngineFilters.TINT]: false,
+            [EngineFilters.GRAY]: false,
         };
     }
 
@@ -302,6 +305,9 @@ export class InteractableObjects {
     }
     get tint_filter() {
         return this._tint_filter;
+    }
+    get gray_filter() {
+        return this._gray_filter;
     }
     get collision_tiles_bodies() {
         return this._collision_tiles_bodies;
@@ -591,7 +597,6 @@ export class InteractableObjects {
                 const active_filters = this.snapshot_info.active_filters;
                 if (active_filters[EngineFilters.COLORIZE]) {
                     this.manage_filter(this.color_filter, true);
-                    this.color_filter.gray = this.snapshot_info.filter_settings.colorize.gray;
                     this.color_filter.colorize_intensity =
                         this.snapshot_info.filter_settings.colorize.colorize_intensity;
                     this.color_filter.colorize = this.snapshot_info.filter_settings.colorize.colorize;
@@ -612,6 +617,10 @@ export class InteractableObjects {
                 if (active_filters[EngineFilters.HUE]) {
                     this.manage_filter(this.hue_filter, true);
                     this.hue_filter.angle = this.snapshot_info.filter_settings.hue.angle;
+                }
+                if (active_filters[EngineFilters.GRAY]) {
+                    this.manage_filter(this.gray_filter, true);
+                    this.gray_filter.intensity = this.snapshot_info.filter_settings.gray.intensity;
                 }
                 if (active_filters[EngineFilters.TINT]) {
                     this.manage_filter(this.tint_filter, true);
@@ -734,7 +743,7 @@ export class InteractableObjects {
                 this.sprite.filters = [filter];
             }
         } else {
-            if (this.sprite.filters.includes(filter)) {
+            if (this.sprite.filters?.includes(filter)) {
                 if (this.sprite.filters.length === 1) {
                     this.sprite.filters = undefined;
                 } else {

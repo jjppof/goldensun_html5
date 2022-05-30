@@ -17,7 +17,6 @@ import {RopeDock} from "./interactable_objects/RopeDock";
 
 type FilterSettings = {
     [EngineFilters.COLORIZE]?: {
-        gray: Phaser.Filter.ColorFilters["gray"];
         colorize_intensity: Phaser.Filter.ColorFilters["colorize_intensity"];
         colorize: Phaser.Filter.ColorFilters["colorize"];
         flame: Phaser.Filter.ColorFilters["flame"];
@@ -39,6 +38,9 @@ type FilterSettings = {
     };
     [EngineFilters.HUE]?: {
         angle: number;
+    };
+    [EngineFilters.GRAY]?: {
+        intensity: number;
     };
 };
 
@@ -166,7 +168,7 @@ export type SnapshotData = {
             allow_jumping_through_it: boolean;
             body_in_map: boolean;
             shapes_collision_active: boolean;
-            active_filters: {[key in EngineFilters]: boolean};
+            active_filters: {[key in EngineFilters]?: boolean};
             filter_settings?: FilterSettings;
         }[];
         tile_events: {
@@ -297,7 +299,6 @@ export class Snapshot {
                         filter_settings: {
                             ...(npc.active_filters.colorize && {
                                 colorize: {
-                                    gray: npc.color_filter.gray,
                                     colorize_intensity: npc.color_filter.colorize_intensity,
                                     colorize: npc.color_filter.colorize,
                                     flame: npc.color_filter.flame,
@@ -327,6 +328,11 @@ export class Snapshot {
                             ...(npc.active_filters.hue && {
                                 hue: {
                                     angle: npc.hue_filter.angle,
+                                },
+                            }),
+                            ...(npc.active_filters.gray && {
+                                gray: {
+                                    intensity: npc.gray_filter.intensity,
                                 },
                             }),
                         },
@@ -394,7 +400,6 @@ export class Snapshot {
                         filter_settings: {
                             ...(io.active_filters.colorize && {
                                 colorize: {
-                                    gray: io.color_filter.gray,
                                     colorize_intensity: io.color_filter.colorize_intensity,
                                     colorize: io.color_filter.colorize,
                                     flame: io.color_filter.flame,
@@ -424,6 +429,11 @@ export class Snapshot {
                             ...(io.active_filters.hue && {
                                 hue: {
                                     angle: io.hue_filter.angle,
+                                },
+                            }),
+                            ...(io.active_filters.gray && {
+                                gray: {
+                                    intensity: io.gray_filter.intensity,
                                 },
                             }),
                         },

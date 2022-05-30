@@ -32,6 +32,8 @@ export enum EngineFilters {
     COLOR_BLEND = "color_blend",
     HUE = "hue",
     TINT = "tint",
+    GRAY = "gray",
+    MODE7 = "mode7",
 }
 
 /**

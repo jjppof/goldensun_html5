@@ -1,7 +1,6 @@
 Phaser.Filter.ColorFilters = function (game) {
     Phaser.Filter.call(this, game);
 
-    this.uniforms.gray = { type: '1f', value: 0.0 };
     this.uniforms.colorize = { type: '1f', value: -1.0 };
     this.uniforms.colorize_intensity = { type: '1f', value: 0.0 };
     this.uniforms.r_colorize = { type: '1f', value: 1.0 };
@@ -14,7 +13,6 @@ Phaser.Filter.ColorFilters = function (game) {
 
         "varying vec2       vTextureCoord;",
         "uniform sampler2D  uSampler;",
-        "uniform float      gray;",
         "uniform float      colorize_intensity;",
         "uniform float      r_colorize;",
         "uniform float      g_colorize;",
@@ -23,9 +21,6 @@ Phaser.Filter.ColorFilters = function (game) {
 
         "void main(void) {",
             "gl_FragColor = texture2D(uSampler, vTextureCoord);",
-            "if (gray != 0.0) {",
-                "gl_FragColor.rgb = mix(gl_FragColor.rgb, vec3(0.2126 * gl_FragColor.r + 0.7152 * gl_FragColor.g + 0.0722 * gl_FragColor.b), gray);",
-            "}",
 
             "if (flame == 1.0) {",
                 "gl_FragColor.rgb = vec3(gl_FragColor.a, (gl_FragColor.r + gl_FragColor.g + gl_FragColor.b)/3.0, 0);",
@@ -70,15 +65,6 @@ Phaser.Filter.ColorFilters.prototype.set_colorize_values = function(value) {
     }
 }
 
-Object.defineProperty(Phaser.Filter.ColorFilters.prototype, 'gray', {
-    get: function() {
-        return this.uniforms.gray.value;
-    },
-    set: function(value) {
-        this.uniforms.gray.value = value;
-    }
-
-});
 Object.defineProperty(Phaser.Filter.ColorFilters.prototype, 'colorize_intensity', {
     get: function() {
         return this.uniforms.colorize_intensity.value;

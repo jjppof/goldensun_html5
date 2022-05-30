@@ -3,7 +3,7 @@ import {InteractableObjects} from "./interactable_objects/InteractableObjects";
 import {IntegerPairKey, TileEvent} from "./tile_events/TileEvent";
 import * as numbers from "./magic_numbers";
 import {event_types, GameEvent} from "./game_events/GameEvent";
-import {GoldenSun} from "./GoldenSun";
+import {EngineFilters, GoldenSun} from "./GoldenSun";
 import * as _ from "lodash";
 import {ControllableChar} from "./ControllableChar";
 import {base_actions, directions, get_px_position, parse_blend_mode} from "./utils";
@@ -41,7 +41,8 @@ export class Map {
     private _collision_layers_number: number;
     private _collision_sprite: Phaser.Sprite;
     private _color_filter: Phaser.Filter.ColorFilters;
-    private mode7_filter: any;
+    private _gray_filter: Phaser.Filter.Gray;
+    private _mode7_filter: any;
     private _collision_layer: number;
     private _show_footsteps: boolean;
     private assets_loaded: boolean;
@@ -79,6 +80,7 @@ export class Map {
     };
     private _paused: boolean;
     private _generic_sprites: {[key_name: string]: Phaser.Sprite};
+    private _active_filters: {[key in EngineFilters]?: boolean};
 
     /** If true, sprites in middlelayer_group won't be sorted. */
     public sprites_sort_paused: boolean;
@@ -121,7 +123,8 @@ export class Map {
         this._collision_sprite = this.game.add.sprite(0, 0);
         this._collision_sprite.width = this.collision_sprite.height = 0;
         this._color_filter = this.game.add.filter("ColorFilters") as Phaser.Filter.ColorFilters;
-        this.mode7_filter = this.game.add.filter("Mode7");
+        this._gray_filter = this.game.add.filter("Gray") as Phaser.Filter.Gray;
+        this._mode7_filter = this.game.add.filter("Mode7");
         this._collision_layer = null;
         this._show_footsteps = false;
         this.assets_loaded = false;
@@ -141,6 +144,11 @@ export class Map {
         this._paused = false;
         this.sprites_sort_paused = false;
         this._generic_sprites = {};
+        this._active_filters = {
+            [EngineFilters.COLORIZE]: false,
+            [EngineFilters.GRAY]: false,
+            [EngineFilters.MODE7]: false,
+        };
     }
 
     /** The list of TileEvents of this map. */
@@ -195,6 +203,14 @@ export class Map {
     get color_filter() {
         return this._color_filter;
     }
+    /** The Phaser.Filter object responsible for this map saturation control. */
+    get gray_filter() {
+        return this._gray_filter;
+    }
+    /** The Phaser.Filter object responsible for this map mode7. */
+    get mode7_filter() {
+        return this._mode7_filter;
+    }
     /** The map name. */
     get name() {
         return this._name;
@@ -234,6 +250,10 @@ export class Map {
     /** An object of generic sprites that can be created by Game Events. */
     get generic_sprites() {
         return this._generic_sprites;
+    }
+    /** An object containing which filters are active in this char. */
+    get active_filters() {
+        return this._active_filters;
     }
 
     /**
@@ -1647,7 +1667,7 @@ export class Map {
     private config_world_map() {
         let next_body_radius = numbers.HERO_BODY_RADIUS;
         if (this.is_world_map) {
-            this.layers.forEach(l => (l.sprite.filters = [this.mode7_filter, this.color_filter]));
+            this.manage_filter(this.mode7_filter, true);
             this.game.camera.bounds = null;
             this.npcs.forEach(npc => {
                 if (!npc.ignore_world_map_scale) {
@@ -1666,7 +1686,6 @@ export class Map {
             this.interactable_objects.forEach(obj => (obj.sprite.data.mode7 = true));
             next_body_radius = numbers.HERO_BODY_RADIUS_M7;
         } else {
-            this.layers.forEach(l => (l.sprite.filters = [this.color_filter]));
             this.game.camera.bounds = new Phaser.Rectangle();
             this.game.camera.bounds.copyFrom(this.game.world.bounds);
         }
@@ -1690,9 +1709,45 @@ export class Map {
     }
 
     /**
+     * Sets or unsets a Phaser.Filter in this map.
+     * @param filter the filter you want to set.
+     * @param set whether it's to set or unset the filter.
+     */
+    manage_filter(filter: Phaser.Filter, set: boolean) {
+        this.active_filters[filter.key] = set;
+        const test_sprite = this.layers[0].sprite;
+        if (set) {
+            if (test_sprite.filters && !test_sprite.filters.includes(filter)) {
+                this.layers.forEach(l => (l.sprite.filters = [...l.sprite.filters, filter]));
+            } else if (!test_sprite.filters) {
+                this.layers.forEach(l => (l.sprite.filters = [filter]));
+            }
+        } else {
+            if (test_sprite.filters?.includes(filter)) {
+                if (test_sprite.filters.length === 1) {
+                    this.layers.forEach(l => (l.sprite.filters = undefined));
+                } else {
+                    this.layers.forEach(l => (l.sprite.filters = l.sprite.filters.filter(f => f !== filter)));
+                }
+            }
+        }
+    }
+
+    /**
+     * Unsets all filters in this map.
+     */
+    unset_all_filters() {
+        for (let key in this.active_filters) {
+            this.active_filters[key] = false;
+        }
+        this.layers.forEach(l => (l.sprite.filters = undefined));
+    }
+
+    /**
      * Unsets this map.
      */
     unset_map() {
+        this.unset_all_filters();
         this.layers.forEach(layer => layer.sprite.destroy());
         this.sprite.destroy();
         this.data.underlayer_group.removeAll();

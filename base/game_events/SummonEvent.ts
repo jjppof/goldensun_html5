@@ -136,7 +136,7 @@ export class SummonEvent extends GameEvent {
         );
 
         await aux_promise;
-        const reset_map = FieldAbilities.tint_map_layers(this.game, this.data.map);
+        const reset_map = FieldAbilities.colorize_map_layers(this.game, this.data.map);
         this.origin_npc.play(SummonEvent.ACTION, "stone_continuos");
         aux_promise = new Promise(resolve => (aux_resolve = resolve));
         this.game.time.events.add(1000, () => {

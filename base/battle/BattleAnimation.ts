@@ -415,6 +415,8 @@ export class BattleAnimation {
             sprite.available_filters[hue_filter.key] = hue_filter;
             const tint_filter = this.game.add.filter("Tint") as Phaser.Filter.Tint;
             sprite.available_filters[tint_filter.key] = tint_filter;
+            const gray_filter = this.game.add.filter("Gray") as Phaser.Filter.Gray;
+            sprite.available_filters[gray_filter.key] = gray_filter;
         });
     }
 
@@ -438,7 +440,9 @@ export class BattleAnimation {
             rotational_property: true,
             filter_key: "hue",
         });
-        // this.play_number_property_sequence(this.grayscale_sequence, "filters", "gray");
+        this.play_number_property_sequence(this.grayscale_sequence, "available_filters.gray.intensity", {
+            filter_key: "gray",
+        });
         this.play_sprite_sequence();
         this.play_blend_modes();
         // this.play_filter_property(this.colorize_sequence, "colorize", "colorize_intensity");

@@ -612,7 +612,6 @@ export class NPC extends ControllableChar {
             const active_filters = this.snapshot_info.active_filters;
             if (active_filters[EngineFilters.COLORIZE]) {
                 this.manage_filter(this.color_filter, true);
-                this.color_filter.gray = this.snapshot_info.filter_settings.colorize.gray;
                 this.color_filter.colorize_intensity = this.snapshot_info.filter_settings.colorize.colorize_intensity;
                 this.color_filter.colorize = this.snapshot_info.filter_settings.colorize.colorize;
                 this.color_filter.flame = this.snapshot_info.filter_settings.colorize.flame;
@@ -632,6 +631,10 @@ export class NPC extends ControllableChar {
             if (active_filters[EngineFilters.HUE]) {
                 this.manage_filter(this.hue_filter, true);
                 this.hue_filter.angle = this.snapshot_info.filter_settings.hue.angle;
+            }
+            if (active_filters[EngineFilters.GRAY]) {
+                this.manage_filter(this.gray_filter, true);
+                this.gray_filter.intensity = this.snapshot_info.filter_settings.gray.intensity;
             }
             if (active_filters[EngineFilters.TINT]) {
                 this.manage_filter(this.tint_filter, true);
