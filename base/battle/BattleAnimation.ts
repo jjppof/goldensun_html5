@@ -20,12 +20,13 @@ type DefaultAttr = {
     to: string | number | number[];
     is_absolute: boolean;
     tween: string;
-    duration: number;
+    duration: number | string;
     sprite_index?: string | number | number[];
     yoyo?: boolean;
     shift?: number | number[];
     shift_direction?: ("in_center" | "out_center") | ("in_center" | "out_center")[];
     direction?: string;
+    remove?: boolean;
 };
 
 type GeneralFilterAttr = {
@@ -423,17 +424,17 @@ export class BattleAnimation {
         this.play_number_property_sequence(this.x_ellipse_axis_factor_sequence, "ellipses_semi_major");
         this.play_number_property_sequence(this.y_ellipse_axis_factor_sequence, "ellipses_semi_minor");
         this.play_number_property_sequence(this.alpha_sequence, "alpha");
-        this.play_number_property_sequence(this.rotation_sequence, "rotation", undefined, {
+        this.play_number_property_sequence(this.rotation_sequence, "rotation", {
             rotational_property: true,
             rotate_in_4h_quadrant: true,
         });
-        this.play_number_property_sequence(this.x_scale_sequence, "scale", "x");
-        this.play_number_property_sequence(this.y_scale_sequence, "scale", "y");
-        this.play_number_property_sequence(this.x_anchor_sequence, "anchor", "x");
-        this.play_number_property_sequence(this.y_anchor_sequence, "anchor", "y");
-        this.play_number_property_sequence(this.hue_angle_sequence, "filters", "hue_adjust", {
+        this.play_number_property_sequence(this.x_scale_sequence, "scale.x");
+        this.play_number_property_sequence(this.y_scale_sequence, "scale.y");
+        this.play_number_property_sequence(this.x_anchor_sequence, "anchor.x");
+        this.play_number_property_sequence(this.y_anchor_sequence, "anchor.y");
+        this.play_number_property_sequence(this.hue_angle_sequence, "available_filters.hue.angle", {
             rotational_property: true,
-            filter_property: true,
+            filter_key: "hue",
         });
         // this.play_number_property_sequence(this.grayscale_sequence, "filters", "gray");
         this.play_sprite_sequence();
@@ -471,10 +472,11 @@ export class BattleAnimation {
 
     get_sprites(
         seq,
-        obj_propety?: keyof PlayerSprite
+        obj_propety?: string
     ): {
         [key: string]: {
-            obj: PIXI.DisplayObject | PlayerSprite | keyof PlayerSprite;
+            obj: PIXI.DisplayObject | PlayerSprite | keyof PlayerSprite | Phaser.Filter;
+            sprite?: PIXI.DisplayObject | PlayerSprite;
             index: number;
         };
     } {
@@ -482,7 +484,8 @@ export class BattleAnimation {
             if (seq.sprite_index === "background") {
                 return this.background_sprites.reduce((prev, cur, index) => {
                     prev[`${cur.key}/${index}`] = {
-                        obj: cur[obj_propety],
+                        obj: _.get(cur, obj_propety),
+                        sprite: cur,
                         index: index,
                     };
                     return prev;
@@ -490,14 +493,16 @@ export class BattleAnimation {
             } else if (seq.sprite_index === "caster") {
                 return {
                     [this.caster_sprite.key]: {
-                        obj: this.caster_sprite[obj_propety] as keyof PlayerSprite,
+                        obj: _.get(this.caster_sprite, obj_propety) as keyof PlayerSprite,
+                        sprite: this.caster_sprite,
                         index: 0,
                     },
                 };
             } else if (seq.sprite_index === "targets") {
                 return this.targets_sprites.reduce((prev, cur, index) => {
                     prev[`${cur.key}/${index}`] = {
-                        obj: cur[obj_propety],
+                        obj: _.get(cur, obj_propety),
+                        sprite: cur,
                         index: index,
                     };
                     return prev;
@@ -506,7 +511,8 @@ export class BattleAnimation {
                 if (Array.isArray(seq.sprite_index)) {
                     return seq.sprite_index.reduce((prev, cur, index) => {
                         prev[this.sprites[cur].data.custom_key] = {
-                            obj: this.sprites[cur][obj_propety],
+                            obj: _.get(this.sprites[cur], obj_propety),
+                            sprite: this.sprites[cur],
                             index: index,
                         };
                         return prev;
@@ -514,7 +520,8 @@ export class BattleAnimation {
                 } else {
                     return {
                         [this.sprites[seq.sprite_index].data.custom_key]: {
-                            obj: this.sprites[seq.sprite_index][obj_propety],
+                            obj: _.get(this.sprites[seq.sprite_index], obj_propety),
+                            sprite: this.sprites[seq.sprite_index],
                             index: 0,
                         },
                     };
@@ -559,26 +566,37 @@ export class BattleAnimation {
     }
 
     play_number_property_sequence(
-        sequence,
-        target_property: keyof PlayerSprite,
-        inner_property?,
+        sequence: DefaultAttr[],
+        target_property: string,
         options?: {
             rotational_property?: boolean;
-            filter_property?: boolean;
+            filter_key?: string;
             rotate_in_4h_quadrant?: boolean;
         }
     ) {
         const chained_tweens = {};
         const auto_start_tween = {};
-        const property_to_set = inner_property ?? target_property;
+
+        const dot_index = target_property.lastIndexOf(".");
+        const obj_propety = dot_index >= 0 ? target_property.slice(0, dot_index) : null;
+        const property_to_set =
+            dot_index >= 0 ? target_property.slice(dot_index + 1, target_property.length) : target_property;
         for (let i = 0; i < sequence.length; ++i) {
             const seq = sequence[i];
-            const sprites = this.get_sprites(seq, inner_property !== undefined ? target_property : undefined);
+            const sprites = this.get_sprites(seq, obj_propety);
             let promises_set = false;
             _.forEach(sprites, (sprite_info, key) => {
                 const this_sprite = sprite_info.obj;
+                if (options?.filter_key) {
+                    const filter = this_sprite as Phaser.Filter;
+                    const remove = seq.remove ?? false;
+                    this.manage_filter(filter, sprite_info.sprite, remove);
+                    if (remove) {
+                        return;
+                    }
+                }
                 const uniq_key: string = key;
-                const property_uniq_key = `${uniq_key}/${target_property}/${inner_property ?? ""}`;
+                const property_uniq_key = `${uniq_key}/${target_property}`;
                 if (!(property_uniq_key in auto_start_tween)) {
                     auto_start_tween[property_uniq_key] = true;
                 }
@@ -593,8 +611,8 @@ export class BattleAnimation {
                         this.sprites_prev_properties[uniq_key][property_to_set] = this_sprite[property_to_set];
                     }
                     const seq_to = Array.isArray(seq.to) ? seq.to[sprite_info.index] : seq.to;
-                    let to_value = seq_to;
-                    if (["targets", "caster"].includes(seq_to)) {
+                    let to_value: number = seq_to as number;
+                    if (["targets", "caster"].includes(seq_to as string)) {
                         let player_sprite = this.caster_sprite;
                         if (seq_to === "targets") {
                             player_sprite = this.targets_sprites[this.targets_sprites.length >> 1];
@@ -937,7 +955,7 @@ export class BattleAnimation {
             } else {
                 const tween = this.game.add.tween(this.battle_stage.camera_angle).to(
                     {rad: to_value},
-                    stage_angle_seq.duration,
+                    stage_angle_seq.duration as number,
                     stage_angle_seq.tween.split(".").reduce((p, prop) => p[prop], Phaser.Easing),
                     chained_tweens.length === 0,
                     stage_angle_seq.start_delay as number

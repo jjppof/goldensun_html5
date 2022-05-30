@@ -1,7 +1,7 @@
 Phaser.Filter.Hue = function (game) {
     Phaser.Filter.call(this, game);
 
-    this.uniforms.angle = { type: '1f', value: -1.0 };
+    this.uniforms.angle = { type: '1f', value: 0.0 };
 
     this.fragmentSrc = [
         "precision mediump float;",
