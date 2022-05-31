@@ -219,8 +219,8 @@ export class PlayerSprite {
         this.char_sprite.anchor.setTo(0.5, 1);
         this.char_sprite.scale.setTo(this.player_instance.battle_scale, this.player_instance.battle_scale);
 
-        const color_filter = this.game.add.filter("ColorFilters") as Phaser.Filter.ColorFilters;
-        this.char_sprite.available_filters[color_filter.key] = color_filter;
+        const colorize_filter = this.game.add.filter("Colorize") as Phaser.Filter.Colorize;
+        this.char_sprite.available_filters[colorize_filter.key] = colorize_filter;
         const levels_filter = this.game.add.filter("Levels") as Phaser.Filter.Levels;
         this.char_sprite.available_filters[levels_filter.key] = levels_filter;
         const color_blend_filter = this.game.add.filter("ColorBlend") as Phaser.Filter.ColorBlend;

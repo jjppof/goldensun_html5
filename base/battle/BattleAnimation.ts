@@ -1,6 +1,6 @@
 import {EngineFilters, GoldenSun} from "../GoldenSun";
 import * as numbers from "../magic_numbers";
-import {elements, element_colors_in_battle, hex2rgb, range_360} from "../utils";
+import {elements, element_colors_in_battle, range_360} from "../utils";
 import {BattleStage, DEFAULT_POS_ANGLE} from "./BattleStage";
 import * as _ from "lodash";
 import {battle_actions, PlayerSprite} from "./PlayerSprite";
@@ -84,22 +84,14 @@ export class BattleAnimation {
         b: number;
     })[] = [];
     public grayscale_sequence: DefaultAttr[] = [];
-    public colorize_sequence: {
-        start_delay: number | number[];
-        sprite_index: string | number | number[];
-        value: number;
-        colorize_intensity: number;
-    }[] = [];
-    public custom_filter_sequence: {
-        start_delay: number | number[];
-        sprite_index: string | number | number[];
-        filter: string;
-        value: any;
-    }[] = [];
     public levels_filter_sequence: (GeneralFilterAttr & {
         min_input: number;
         max_input: number;
         gamma: number;
+    })[] = [];
+    public colorize_sequence: (GeneralFilterAttr & {
+        color: number;
+        intensity: number;
     })[] = [];
     public color_blend_filter_sequence: (GeneralFilterAttr & {
         r: number;
@@ -190,8 +182,7 @@ export class BattleAnimation {
         hue_angle_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, yoyo: bool, duration: value, direction: value, shift: value}
         tint_sequence, //{start_delay: value, sprite_index: index, value: %rgb array}
         grayscale_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, yoyo: bool, duration: value, shift: value}
-        colorize_sequence, //{start_delay: value, sprite_index: index, value: value, colorize_intensity: value}
-        custom_filter_sequence, //{start_delay: value, sprite_index: index, filter: key, value: value}
+        colorize_sequence,
         play_sequence, //{start_delay: value, sprite_index: index, reverse: bool, frame_rate: value, repeat: bool, animation_key: key, wait: bool, hide_on_complete: bool}
         set_frame_sequence, //{start_delay: value, frame: string, sprite_index: index}
         blend_mode_sequence, //{start_delay: value, mode: type, sprite_index: index}
@@ -224,7 +215,6 @@ export class BattleAnimation {
         this.tint_sequence = tint_sequence ?? [];
         this.grayscale_sequence = grayscale_sequence ?? [];
         this.colorize_sequence = colorize_sequence ?? [];
-        this.custom_filter_sequence = custom_filter_sequence ?? [];
         this.levels_filter_sequence = levels_filter_sequence ?? [];
         this.color_blend_filter_sequence = color_blend_filter_sequence ?? [];
         this.flame_filter_sequence = flame_filter_sequence ?? [];
@@ -408,8 +398,8 @@ export class BattleAnimation {
 
     set_filters() {
         this.sprites.forEach(sprite => {
-            const color_filter = this.game.add.filter("ColorFilters") as Phaser.Filter.ColorFilters;
-            sprite.available_filters[color_filter.key] = color_filter;
+            const colorize_filter = this.game.add.filter("Colorize") as Phaser.Filter.Colorize;
+            sprite.available_filters[colorize_filter.key] = colorize_filter;
             const levels_filter = this.game.add.filter("Levels") as Phaser.Filter.Levels;
             sprite.available_filters[levels_filter.key] = levels_filter;
             const color_blend_filter = this.game.add.filter("ColorBlend") as Phaser.Filter.ColorBlend;
@@ -450,8 +440,7 @@ export class BattleAnimation {
         });
         this.play_sprite_sequence();
         this.play_blend_modes();
-        // this.play_filter_property(this.colorize_sequence, "colorize", "colorize_intensity");
-        // this.play_filter_property(this.custom_filter_sequence);
+        this.play_colorize_filter(this.colorize_sequence);
         this.play_tint_filter(this.tint_sequence);
         this.play_levels_filter(this.levels_filter_sequence);
         this.play_color_blend_filter(this.color_blend_filter_sequence);
@@ -847,8 +836,8 @@ export class BattleAnimation {
                             sprite.blendMode = PIXI.blendModes.NORMAL;
                             break;
                     }
+                    resolve_function();
                 });
-                resolve_function();
             });
         }
     }
@@ -877,8 +866,8 @@ export class BattleAnimation {
                             set_filter(filter_seq, filter as Phaser.Filter);
                         }
                     }
+                    resolve_function();
                 });
-                resolve_function();
             });
         }
     }
@@ -923,30 +912,15 @@ export class BattleAnimation {
         );
     }
 
-    play_filter_property(sequence, property?, ...secondary_properties) {
-        for (let i = 0; i < sequence.length; ++i) {
-            const filter_seq = sequence[i];
-            let sprites = this.get_sprites(filter_seq);
-            _.forEach(sprites, sprite_info => {
-                const sprite = sprite_info.obj as PlayerSprite | Phaser.Sprite;
-                let resolve_function;
-                let this_promise = new Promise(resolve => {
-                    resolve_function = resolve;
-                });
-                this.promises.push(this_promise);
-                const start_delay = Array.isArray(filter_seq.start_delay)
-                    ? filter_seq.start_delay[sprite_info.index]
-                    : filter_seq.start_delay;
-                this.game.time.events.add(start_delay, () => {
-                    const this_property = filter_seq.filter ?? property;
-                    sprite.filters[0][this_property] = filter_seq.value;
-                    secondary_properties.forEach(secondary_property => {
-                        sprite.filters[0][secondary_property] = filter_seq[secondary_property];
-                    });
-                });
-                resolve_function();
-            });
-        }
+    play_colorize_filter(sequence: BattleAnimation["colorize_sequence"]) {
+        this.play_general_filter(
+            sequence,
+            EngineFilters.COLORIZE,
+            (filter_seq: BattleAnimation["colorize_sequence"][0], filter: Phaser.Filter.Colorize) => {
+                filter.color = filter_seq.color ?? filter.color;
+                filter.intensity = filter_seq.intensity ?? filter.intensity;
+            }
+        );
     }
 
     play_stage_angle_sequence() {

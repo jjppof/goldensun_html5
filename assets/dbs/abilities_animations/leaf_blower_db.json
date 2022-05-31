@@ -57,13 +57,12 @@
     "colorize_sequence": [{
         "sprite_index": "background",
         "start_delay": 700,
-        "value": 0.65,
-        "colorize_intensity": 0.1
+        "color": 0.65,
+        "intensity": 0.1
     },{
         "sprite_index": "background",
         "start_delay": 3800,
-        "value": -1,
-        "colorize_intensity": 0
+        "remove": true
     }],
     "alpha_sequence": [{
         "start_delay": 700,

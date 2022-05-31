@@ -130,7 +130,7 @@ export abstract class ControllableChar {
     /** Whether the shadow is following or not this char. */
     public shadow_following: boolean;
 
-    private _color_filter: Phaser.Filter.ColorFilters;
+    private _colorize_filter: Phaser.Filter.Colorize;
     private _levels_filter: Phaser.Filter.Levels;
     private _color_blend_filter: Phaser.Filter.ColorBlend;
     private _hue_filter: Phaser.Filter.Hue;
@@ -233,7 +233,7 @@ export abstract class ControllableChar {
         this._required_direction = null;
         this._transition_direction = this.current_direction;
         this._ice_slide_direction = null;
-        this._color_filter = this.game.add.filter("ColorFilters") as Phaser.Filter.ColorFilters;
+        this._colorize_filter = this.game.add.filter("Colorize") as Phaser.Filter.Colorize;
         this._levels_filter = this.game.add.filter("Levels") as Phaser.Filter.Levels;
         this._color_blend_filter = this.game.add.filter("ColorBlend") as Phaser.Filter.ColorBlend;
         this._hue_filter = this.game.add.filter("Hue") as Phaser.Filter.Hue;
@@ -338,8 +338,8 @@ export abstract class ControllableChar {
         return this._sprite_info;
     }
     /** The Phaser.Filter that controls the colors of the texture of this char sprite. */
-    get color_filter() {
-        return this._color_filter;
+    get colorize_filter() {
+        return this._colorize_filter;
     }
     /** The Phaser.Filter that controls the color levels of the texture of this char sprite. */
     get levels_filter() {

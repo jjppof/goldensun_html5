@@ -23,8 +23,8 @@ export class ColorizeCharEvent extends GameEvent {
                 npc_label: this.npc_label,
             }) ?? this.origin_npc;
 
-        const color_key = this.color_key ?? target_char.color_filter.colorize;
-        const intensity = this.intensity ?? target_char.color_filter.colorize_intensity;
+        const color_key = this.color_key ?? target_char.colorize_filter.color;
+        const intensity = this.intensity ?? target_char.colorize_filter.intensity;
         const gray = this.gray ?? target_char.gray_filter.intensity;
 
         if (this.intensity || this.gray) {
@@ -32,14 +32,14 @@ export class ColorizeCharEvent extends GameEvent {
                 target_char.manage_filter(target_char.gray_filter, true);
                 target_char.gray_filter.intensity = gray;
             }
-            target_char.manage_filter(target_char.color_filter, true);
-            target_char.color_filter.colorize_intensity = intensity;
-            target_char.color_filter.colorize = color_key;
+            target_char.manage_filter(target_char.colorize_filter, true);
+            target_char.colorize_filter.intensity = intensity;
+            target_char.colorize_filter.color = color_key;
         } else {
-            target_char.color_filter.colorize_intensity = 0;
-            target_char.color_filter.colorize = -1;
+            target_char.colorize_filter.intensity = 0;
+            target_char.colorize_filter.color = -1;
             target_char.gray_filter.intensity = 0;
-            target_char.manage_filter(target_char.color_filter, false);
+            target_char.manage_filter(target_char.colorize_filter, false);
             target_char.manage_filter(target_char.gray_filter, false);
         }
     }

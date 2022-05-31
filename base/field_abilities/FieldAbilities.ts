@@ -283,6 +283,8 @@ export abstract class FieldAbilities {
                         intensity: this.field_intensity,
                         map_colors_sequence: this.map_colors_sequence,
                     });
+                } else {
+                    this.reset_map = null;
                 }
                 if (this.target_found && this.target_object.is_interactable_object) {
                     const events = (this.target_object as InteractableObjects).before_psynergy_cast_events[
@@ -563,10 +565,10 @@ export abstract class FieldAbilities {
     ) {
         const gray_was_active = map.active_filters.gray;
         map.manage_filter(map.gray_filter, true);
-        map.manage_filter(map.color_filter, true);
+        map.manage_filter(map.colorize_filter, true);
         const target_intensity = options?.intensity ?? 0.4;
-        map.color_filter.colorize_intensity = 0;
-        map.color_filter.colorize = options?.color ?? Math.random();
+        map.colorize_filter.intensity = 0;
+        map.colorize_filter.color = options?.color ?? Math.random();
         map.gray_filter.intensity = 0;
         let random_color_running: boolean = false;
         game.add.tween(map.gray_filter).to(
@@ -578,10 +580,10 @@ export abstract class FieldAbilities {
             true
         );
         game.add
-            .tween(map.color_filter)
+            .tween(map.colorize_filter)
             .to(
                 {
-                    colorize_intensity: target_intensity,
+                    intensity: target_intensity,
                 },
                 Phaser.Timer.QUARTER,
                 Phaser.Easing.Linear.None,
@@ -598,10 +600,10 @@ export abstract class FieldAbilities {
                             return;
                         }
                         game.add
-                            .tween(map.color_filter)
+                            .tween(map.colorize_filter)
                             .to(
                                 {
-                                    colorize: colors[color_index],
+                                    color: colors[color_index],
                                 },
                                 Phaser.Timer.SECOND,
                                 Phaser.Easing.Linear.None,
@@ -614,7 +616,7 @@ export abstract class FieldAbilities {
                     };
 
                     random_color_running = true;
-                    tween_factory(colors.findIndex(v => v > map.color_filter.colorize));
+                    tween_factory(colors.findIndex(v => v > map.colorize_filter.color));
                 }
             });
         return () => {
@@ -633,18 +635,18 @@ export abstract class FieldAbilities {
                     map.manage_filter(map.gray_filter, false);
                 });
             game.add
-                .tween(map.color_filter)
+                .tween(map.colorize_filter)
                 .to(
                     {
-                        colorize_intensity: 0,
+                        intensity: 0,
                     },
                     Phaser.Timer.QUARTER,
                     Phaser.Easing.Linear.None,
                     true
                 )
                 .onComplete.addOnce(() => {
-                    map.color_filter.colorize = -1;
-                    map.manage_filter(map.color_filter, false);
+                    map.colorize_filter.color = -1;
+                    map.manage_filter(map.colorize_filter, false);
                     if (options?.after_destroy !== undefined) {
                         options.after_destroy();
                     }

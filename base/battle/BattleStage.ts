@@ -192,7 +192,7 @@ export class BattleStage {
     }
 
     set_filters() {
-        const color_filter = this.game.add.filter("ColorFilters") as Phaser.Filter.ColorFilters;
+        const colorize_filter = this.game.add.filter("Colorize") as Phaser.Filter.Colorize;
         const levels_filter = this.game.add.filter("Levels") as Phaser.Filter.Levels;
         const color_blend_filter = this.game.add.filter("ColorBlend") as Phaser.Filter.ColorBlend;
         const hue_filter = this.game.add.filter("Hue") as Phaser.Filter.Hue;
@@ -200,7 +200,7 @@ export class BattleStage {
         const gray_filter = this.game.add.filter("Gray") as Phaser.Filter.Gray;
         const flame_filter = this.game.add.filter("Flame") as Phaser.Filter.Flame;
 
-        this.battle_bg.available_filters[color_filter.key] = color_filter;
+        this.battle_bg.available_filters[colorize_filter.key] = colorize_filter;
         this.battle_bg.available_filters[levels_filter.key] = levels_filter;
         this.battle_bg.available_filters[color_blend_filter.key] = color_blend_filter;
         this.battle_bg.available_filters[hue_filter.key] = hue_filter;
@@ -208,7 +208,7 @@ export class BattleStage {
         this.battle_bg.available_filters[gray_filter.key] = gray_filter;
         this.battle_bg.available_filters[flame_filter.key] = flame_filter;
 
-        this.battle_bg2.available_filters[color_filter.key] = color_filter;
+        this.battle_bg2.available_filters[colorize_filter.key] = colorize_filter;
         this.battle_bg2.available_filters[levels_filter.key] = levels_filter;
         this.battle_bg2.available_filters[color_blend_filter.key] = color_blend_filter;
         this.battle_bg2.available_filters[hue_filter.key] = hue_filter;

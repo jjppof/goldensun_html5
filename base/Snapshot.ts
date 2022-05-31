@@ -17,8 +17,8 @@ import {RopeDock} from "./interactable_objects/RopeDock";
 
 type FilterSettings = {
     [EngineFilters.COLORIZE]?: {
-        colorize_intensity: Phaser.Filter.ColorFilters["colorize_intensity"];
-        colorize: Phaser.Filter.ColorFilters["colorize"];
+        intensity: Phaser.Filter.Colorize["intensity"];
+        color: Phaser.Filter.Colorize["color"];
     };
     [EngineFilters.LEVELS]?: {
         min_input: number;
@@ -298,8 +298,8 @@ export class Snapshot {
                         filter_settings: {
                             ...(npc.active_filters.colorize && {
                                 colorize: {
-                                    colorize_intensity: npc.color_filter.colorize_intensity,
-                                    colorize: npc.color_filter.colorize,
+                                    intensity: npc.colorize_filter.intensity,
+                                    color: npc.colorize_filter.color,
                                 },
                             }),
                             ...(npc.active_filters.levels && {
@@ -398,8 +398,8 @@ export class Snapshot {
                         filter_settings: {
                             ...(io.active_filters.colorize && {
                                 colorize: {
-                                    colorize_intensity: io.color_filter.colorize_intensity,
-                                    colorize: io.color_filter.colorize,
+                                    intensity: io.colorize_filter.intensity,
+                                    color: io.colorize_filter.color,
                                 },
                             }),
                             ...(io.active_filters.levels && {

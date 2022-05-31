@@ -1235,9 +1235,9 @@ declare module Phaser {
             gamma: number;
         }
 
-        class ColorFilters extends Phaser.Filter {
-            colorize_intensity: number;
-            colorize: number;
+        class Colorize extends Phaser.Filter {
+            intensity: number;
+            color: number;
         }
 
         class BinarySerpents extends Phaser.Filter {

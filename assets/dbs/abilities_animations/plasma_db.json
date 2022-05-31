@@ -96,13 +96,12 @@
     "colorize_sequence": [{
         "sprite_index": "background",
         "start_delay": 1470,
-        "value": 0.1,
-        "colorize_intensity": 0.3
+        "color": 0.1,
+        "intensity": 0.3
     },{
         "sprite_index": "background",
         "start_delay": 1650,
-        "value": -1,
-        "colorize_intensity": 0
+        "remove": true
     }],
     "x_ellipse_axis_factor_sequence": [{
         "start_delay": 1500,

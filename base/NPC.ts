@@ -611,9 +611,9 @@ export class NPC extends ControllableChar {
         if (this.snapshot_info?.active_filters) {
             const active_filters = this.snapshot_info.active_filters;
             if (active_filters[EngineFilters.COLORIZE]) {
-                this.manage_filter(this.color_filter, true);
-                this.color_filter.colorize_intensity = this.snapshot_info.filter_settings.colorize.colorize_intensity;
-                this.color_filter.colorize = this.snapshot_info.filter_settings.colorize.colorize;
+                this.manage_filter(this.colorize_filter, true);
+                this.colorize_filter.intensity = this.snapshot_info.filter_settings.colorize.intensity;
+                this.colorize_filter.color = this.snapshot_info.filter_settings.colorize.color;
             }
             if (active_filters[EngineFilters.LEVELS]) {
                 this.manage_filter(this.levels_filter, true);

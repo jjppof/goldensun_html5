@@ -172,11 +172,11 @@ export class DjinnGetEvent extends GameEvent {
         };
         this.data.particle_manager.addData("out_of_ground", data);
         const emitter = this.data.particle_manager.createEmitter(Phaser.ParticleStorm.SPRITE);
-        const color_filter = this.game.add.filter("Hue") as Phaser.Filter.Hue;
-        color_filter.angle = DjinnGetEvent.ELEMENT_HUE[this.djinn.element];
+        const hue_filter = this.game.add.filter("Hue") as Phaser.Filter.Hue;
+        hue_filter.angle = DjinnGetEvent.ELEMENT_HUE[this.djinn.element];
         emitter.onEmit = new Phaser.Signal();
         emitter.onEmit.add((emitter: Phaser.ParticleStorm.Emitter, particle: Phaser.ParticleStorm.Particle) => {
-            particle.sprite.filters = [color_filter];
+            particle.sprite.filters = [hue_filter];
         });
         emitter.addToWorld();
         emitter.emit("out_of_ground", this.data.hero.sprite.x, this.data.hero.sprite.y + 10, {
@@ -209,7 +209,7 @@ export class DjinnGetEvent extends GameEvent {
             const particle = this.game.add.sprite(0, 0, "djinn_ball");
             particle.anchor.setTo(0.5, 0.5);
             particle.alpha = 0.9;
-            particle.filters = [color_filter];
+            particle.filters = [hue_filter];
             particles_group.addChild(particle);
         }
         this.game.add.tween(rho).to(
@@ -576,16 +576,16 @@ export class DjinnGetEvent extends GameEvent {
         await this.aux_promise;
 
         //spiral init vars
-        const color_filters: Phaser.Filter.Hue[] = [
+        const hue_filters: Phaser.Filter.Hue[] = [
             this.game.add.filter("Hue") as Phaser.Filter.Hue,
             this.game.add.filter("Hue") as Phaser.Filter.Hue,
             this.game.add.filter("Hue") as Phaser.Filter.Hue,
             this.game.add.filter("Hue") as Phaser.Filter.Hue,
         ];
-        color_filters[0].angle = 0.6;
-        color_filters[1].angle = 2.6;
-        color_filters[2].angle = 4.5;
-        color_filters[3].angle = 5;
+        hue_filters[0].angle = 0.6;
+        hue_filters[1].angle = 2.6;
+        hue_filters[2].angle = 4.5;
+        hue_filters[3].angle = 5;
         const spiral_particles_number = 25;
         const spiral_particles_number_half = spiral_particles_number >> 1;
         const get_scale = i => {
@@ -600,7 +600,7 @@ export class DjinnGetEvent extends GameEvent {
             const scale = get_scale(i);
             particle.scale.setTo(scale, scale);
             particle.visible = false;
-            particle.filters = [_.sample(color_filters)];
+            particle.filters = [_.sample(hue_filters)];
             particles_group.addChild(particle);
         }
         const spiral_time = {

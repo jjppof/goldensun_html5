@@ -40,7 +40,7 @@ export class Map {
     private _bodies_positions: {[collision_index: number]: {[location_key: number]: (NPC | InteractableObjects)[]}};
     private _collision_layers_number: number;
     private _collision_sprite: Phaser.Sprite;
-    private _color_filter: Phaser.Filter.ColorFilters;
+    private _colorize_filter: Phaser.Filter.Colorize;
     private _gray_filter: Phaser.Filter.Gray;
     private _mode7_filter: any;
     private _collision_layer: number;
@@ -122,7 +122,7 @@ export class Map {
         this._collision_layers_number = this.physics_names.length;
         this._collision_sprite = this.game.add.sprite(0, 0);
         this._collision_sprite.width = this.collision_sprite.height = 0;
-        this._color_filter = this.game.add.filter("ColorFilters") as Phaser.Filter.ColorFilters;
+        this._colorize_filter = this.game.add.filter("Colorize") as Phaser.Filter.Colorize;
         this._gray_filter = this.game.add.filter("Gray") as Phaser.Filter.Gray;
         this._mode7_filter = this.game.add.filter("Mode7");
         this._collision_layer = null;
@@ -200,8 +200,8 @@ export class Map {
         return this._show_footsteps;
     }
     /** The Phaser.Filter object responsible for this map texture color control. */
-    get color_filter() {
-        return this._color_filter;
+    get colorize_filter() {
+        return this._colorize_filter;
     }
     /** The Phaser.Filter object responsible for this map saturation control. */
     get gray_filter() {

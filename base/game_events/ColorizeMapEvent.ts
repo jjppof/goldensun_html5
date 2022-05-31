@@ -25,17 +25,17 @@ export class ColorizeMapEvent extends GameEvent {
     async _fire() {
         ++this.data.game_event_manager.events_running_count;
 
-        const color_key = this.color_key ?? this.data.map.color_filter.colorize;
-        const intensity = this.intensity ?? this.data.map.color_filter.colorize_intensity;
+        const color_key = this.color_key ?? this.data.map.colorize_filter.color;
+        const intensity = this.intensity ?? this.data.map.colorize_filter.intensity;
         const gray = this.gray ?? this.data.map.gray_filter.intensity;
 
-        this.data.map.color_filter.colorize = color_key;
+        this.data.map.colorize_filter.color = color_key;
 
         if (gray) {
             this.data.map.manage_filter(this.data.map.gray_filter, true);
         }
         if (intensity) {
-            this.data.map.manage_filter(this.data.map.color_filter, true);
+            this.data.map.manage_filter(this.data.map.colorize_filter, true);
         }
 
         if (this.duration > 30) {
@@ -50,10 +50,10 @@ export class ColorizeMapEvent extends GameEvent {
                 true
             );
             this.game.add
-                .tween(this.data.map.color_filter)
+                .tween(this.data.map.colorize_filter)
                 .to(
                     {
-                        colorize_intensity: intensity,
+                        intensity: intensity,
                     },
                     this.duration,
                     Phaser.Easing.Linear.None,
@@ -63,13 +63,13 @@ export class ColorizeMapEvent extends GameEvent {
 
             await promise;
         } else {
-            this.data.map.color_filter.colorize_intensity = intensity;
+            this.data.map.colorize_filter.intensity = intensity;
             this.data.map.gray_filter.intensity = gray;
         }
 
         if (intensity === 0) {
-            this.data.map.color_filter.colorize = -1;
-            this.data.map.manage_filter(this.data.map.color_filter, false);
+            this.data.map.colorize_filter.color = -1;
+            this.data.map.manage_filter(this.data.map.colorize_filter, false);
         }
 
         if (gray === 0) {
