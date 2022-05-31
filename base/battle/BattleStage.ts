@@ -198,6 +198,7 @@ export class BattleStage {
         const hue_filter = this.game.add.filter("Hue") as Phaser.Filter.Hue;
         const tint_filter = this.game.add.filter("Tint") as Phaser.Filter.Tint;
         const gray_filter = this.game.add.filter("Gray") as Phaser.Filter.Gray;
+        const flame_filter = this.game.add.filter("Flame") as Phaser.Filter.Flame;
 
         this.battle_bg.available_filters[color_filter.key] = color_filter;
         this.battle_bg.available_filters[levels_filter.key] = levels_filter;
@@ -205,6 +206,7 @@ export class BattleStage {
         this.battle_bg.available_filters[hue_filter.key] = hue_filter;
         this.battle_bg.available_filters[tint_filter.key] = tint_filter;
         this.battle_bg.available_filters[gray_filter.key] = gray_filter;
+        this.battle_bg.available_filters[flame_filter.key] = flame_filter;
 
         this.battle_bg2.available_filters[color_filter.key] = color_filter;
         this.battle_bg2.available_filters[levels_filter.key] = levels_filter;
@@ -212,6 +214,7 @@ export class BattleStage {
         this.battle_bg2.available_filters[hue_filter.key] = hue_filter;
         this.battle_bg2.available_filters[tint_filter.key] = tint_filter;
         this.battle_bg2.available_filters[gray_filter.key] = gray_filter;
+        this.battle_bg2.available_filters[flame_filter.key] = flame_filter;
     }
 
     initialize_sprites() {

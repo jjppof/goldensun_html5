@@ -1227,6 +1227,8 @@ declare module Phaser {
             b: number;
         }
 
+        class Flame extends Phaser.Filter { }
+
         class Levels extends Phaser.Filter {
             min_input: number;
             max_input: number;
@@ -1236,7 +1238,6 @@ declare module Phaser {
         class ColorFilters extends Phaser.Filter {
             colorize_intensity: number;
             colorize: number;
-            flame: boolean;
         }
 
         class BinarySerpents extends Phaser.Filter {

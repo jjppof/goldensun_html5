@@ -33,6 +33,7 @@ export enum EngineFilters {
     HUE = "hue",
     TINT = "tint",
     GRAY = "gray",
+    FLAME = "flame",
     MODE7 = "mode7",
 }
 

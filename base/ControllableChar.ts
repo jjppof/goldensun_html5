@@ -136,6 +136,7 @@ export abstract class ControllableChar {
     private _hue_filter: Phaser.Filter.Hue;
     private _tint_filter: Phaser.Filter.Tint;
     private _gray_filter: Phaser.Filter.Gray;
+    private _flame_filter: Phaser.Filter.Flame;
     private _outline_filter: any;
     private _active_filters: {[key in EngineFilters]?: boolean};
     protected _push_timer: Phaser.Timer;
@@ -238,6 +239,7 @@ export abstract class ControllableChar {
         this._hue_filter = this.game.add.filter("Hue") as Phaser.Filter.Hue;
         this._tint_filter = this.game.add.filter("Tint") as Phaser.Filter.Tint;
         this._gray_filter = this.game.add.filter("Gray") as Phaser.Filter.Gray;
+        this._flame_filter = this.game.add.filter("Flame") as Phaser.Filter.Flame;
         this._outline_filter = this.game.add.filter("Outline");
         this._active_filters = {
             [EngineFilters.COLORIZE]: false,
@@ -247,6 +249,7 @@ export abstract class ControllableChar {
             [EngineFilters.HUE]: false,
             [EngineFilters.TINT]: false,
             [EngineFilters.GRAY]: false,
+            [EngineFilters.FLAME]: false,
         };
         this.trying_to_push = false;
         this._trying_to_push_direction = null;
@@ -357,6 +360,10 @@ export abstract class ControllableChar {
     /** The Phaser.Filter that controls the saturation of the texture of this char sprite. */
     get gray_filter() {
         return this._gray_filter;
+    }
+    /** The Phaser.Filter that sets flame colors into char sprite. */
+    get flame_filter() {
+        return this._flame_filter;
     }
     /** An object containing which filters are active in this char. */
     get active_filters() {

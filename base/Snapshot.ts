@@ -19,7 +19,6 @@ type FilterSettings = {
     [EngineFilters.COLORIZE]?: {
         colorize_intensity: Phaser.Filter.ColorFilters["colorize_intensity"];
         colorize: Phaser.Filter.ColorFilters["colorize"];
-        flame: Phaser.Filter.ColorFilters["flame"];
     };
     [EngineFilters.LEVELS]?: {
         min_input: number;
@@ -114,7 +113,7 @@ export type SnapshotData = {
             movement_type: npc_movement_types;
             body_in_map: boolean;
             shapes_collision_active: boolean;
-            active_filters: {[key: string]: boolean};
+            active_filters: {[key in EngineFilters]?: boolean};
             filter_settings?: FilterSettings;
         }[];
         interactable_objects: {
@@ -301,7 +300,6 @@ export class Snapshot {
                                 colorize: {
                                     colorize_intensity: npc.color_filter.colorize_intensity,
                                     colorize: npc.color_filter.colorize,
-                                    flame: npc.color_filter.flame,
                                 },
                             }),
                             ...(npc.active_filters.levels && {
@@ -402,7 +400,6 @@ export class Snapshot {
                                 colorize: {
                                     colorize_intensity: io.color_filter.colorize_intensity,
                                     colorize: io.color_filter.colorize,
-                                    flame: io.color_filter.flame,
                                 },
                             }),
                             ...(io.active_filters.levels && {

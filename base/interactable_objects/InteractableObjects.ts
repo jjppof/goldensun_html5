@@ -80,6 +80,7 @@ export class InteractableObjects {
     private _hue_filter: Phaser.Filter.Hue;
     private _tint_filter: Phaser.Filter.Tint;
     private _gray_filter: Phaser.Filter.Gray;
+    private _flame_filter: Phaser.Filter.Flame;
     private _enable: boolean;
     private _entangled_by_bush: boolean;
     private _sprite: Phaser.Sprite;
@@ -197,6 +198,7 @@ export class InteractableObjects {
         this._hue_filter = this.game.add.filter("Hue") as Phaser.Filter.Hue;
         this._tint_filter = this.game.add.filter("Tint") as Phaser.Filter.Tint;
         this._gray_filter = this.game.add.filter("Gray") as Phaser.Filter.Gray;
+        this._flame_filter = this.game.add.filter("Flame") as Phaser.Filter.Flame;
         this.anchor_x = anchor_x;
         this.anchor_y = anchor_y;
         this.scale_x = scale_x;
@@ -243,6 +245,7 @@ export class InteractableObjects {
             [EngineFilters.HUE]: false,
             [EngineFilters.TINT]: false,
             [EngineFilters.GRAY]: false,
+            [EngineFilters.FLAME]: false,
         };
     }
 
@@ -308,6 +311,9 @@ export class InteractableObjects {
     }
     get gray_filter() {
         return this._gray_filter;
+    }
+    get flame_filter() {
+        return this._flame_filter;
     }
     get collision_tiles_bodies() {
         return this._collision_tiles_bodies;
@@ -600,7 +606,6 @@ export class InteractableObjects {
                     this.color_filter.colorize_intensity =
                         this.snapshot_info.filter_settings.colorize.colorize_intensity;
                     this.color_filter.colorize = this.snapshot_info.filter_settings.colorize.colorize;
-                    this.color_filter.flame = this.snapshot_info.filter_settings.colorize.flame;
                 }
                 if (active_filters[EngineFilters.LEVELS]) {
                     this.manage_filter(this.levels_filter, true);
@@ -627,6 +632,9 @@ export class InteractableObjects {
                     this.tint_filter.r = this.snapshot_info.filter_settings.tint.r;
                     this.tint_filter.g = this.snapshot_info.filter_settings.tint.g;
                     this.tint_filter.b = this.snapshot_info.filter_settings.tint.b;
+                }
+                if (active_filters[EngineFilters.FLAME]) {
+                    this.manage_filter(this.flame_filter, true);
                 }
             }
         }
