@@ -137,7 +137,7 @@ export abstract class ControllableChar {
     private _tint_filter: Phaser.Filter.Tint;
     private _gray_filter: Phaser.Filter.Gray;
     private _flame_filter: Phaser.Filter.Flame;
-    private _outline_filter: any;
+    private _outline_filter: Phaser.Filter.Outline;
     private _active_filters: {[key in EngineFilters]?: boolean};
     protected _push_timer: Phaser.Timer;
     private _footsteps: Footsteps;
@@ -240,7 +240,7 @@ export abstract class ControllableChar {
         this._tint_filter = this.game.add.filter("Tint") as Phaser.Filter.Tint;
         this._gray_filter = this.game.add.filter("Gray") as Phaser.Filter.Gray;
         this._flame_filter = this.game.add.filter("Flame") as Phaser.Filter.Flame;
-        this._outline_filter = this.game.add.filter("Outline");
+        this._outline_filter = this.game.add.filter("Outline") as Phaser.Filter.Outline;
         this._active_filters = {
             [EngineFilters.COLORIZE]: false,
             [EngineFilters.OUTLINE]: false,

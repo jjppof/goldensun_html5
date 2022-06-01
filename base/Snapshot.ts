@@ -41,6 +41,14 @@ type FilterSettings = {
     [EngineFilters.GRAY]?: {
         intensity: number;
     };
+    [EngineFilters.OUTLINE]?: {
+        texture_width: number;
+        texture_height: number;
+        r: number;
+        g: number;
+        b: number;
+        keep_transparent: boolean;
+    };
 };
 
 export type SnapshotData = {
@@ -331,6 +339,16 @@ export class Snapshot {
                             ...(npc.active_filters.gray && {
                                 gray: {
                                     intensity: npc.gray_filter.intensity,
+                                },
+                            }),
+                            ...(npc.active_filters.outline && {
+                                outline: {
+                                    texture_width: npc.outline_filter.texture_width,
+                                    texture_height: npc.outline_filter.texture_height,
+                                    r: npc.outline_filter.r,
+                                    g: npc.outline_filter.g,
+                                    b: npc.outline_filter.b,
+                                    keep_transparent: npc.outline_filter.keep_transparent,
                                 },
                             }),
                         },

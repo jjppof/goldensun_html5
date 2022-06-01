@@ -1207,6 +1207,15 @@ declare module Phaser {
 
     module Filter {
 
+        class Outline extends Phaser.Filter {
+            texture_width: number;
+            texture_height: number;
+            r: number;
+            g: number;
+            b: number;
+            keep_transparent: boolean;
+        }
+
         class Gray extends Phaser.Filter {
             intensity: number;
         }

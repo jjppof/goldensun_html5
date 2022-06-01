@@ -42,6 +42,7 @@ void main(void) {
 
 Phaser.Filter.Outline.prototype = Object.create(Phaser.Filter.prototype);
 Phaser.Filter.Outline.prototype.constructor = Phaser.Filter.Outline;
+Phaser.Filter.Outline.prototype.key = "outline";
 
 Object.defineProperty(Phaser.Filter.Outline.prototype, 'texture_width', {
     get: function() {

@@ -644,6 +644,15 @@ export class NPC extends ControllableChar {
             if (active_filters[EngineFilters.FLAME]) {
                 this.manage_filter(this.flame_filter, true);
             }
+            if (active_filters[EngineFilters.OUTLINE]) {
+                this.manage_filter(this.outline_filter, true);
+                this.outline_filter.texture_width = this.snapshot_info.filter_settings.outline.texture_width;
+                this.outline_filter.texture_height = this.snapshot_info.filter_settings.outline.texture_height;
+                this.outline_filter.r = this.snapshot_info.filter_settings.outline.r;
+                this.outline_filter.g = this.snapshot_info.filter_settings.outline.g;
+                this.outline_filter.b = this.snapshot_info.filter_settings.outline.b;
+                this.outline_filter.keep_transparent = this.snapshot_info.filter_settings.outline.keep_transparent;
+            }
         }
     }
 
