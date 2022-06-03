@@ -42,7 +42,7 @@ export class Map {
     private _collision_sprite: Phaser.Sprite;
     private _colorize_filter: Phaser.Filter.Colorize;
     private _gray_filter: Phaser.Filter.Gray;
-    private _mode7_filter: any;
+    private _mode7_filter: Phaser.Filter.Mode7;
     private _collision_layer: number;
     private _show_footsteps: boolean;
     private assets_loaded: boolean;
@@ -124,7 +124,7 @@ export class Map {
         this._collision_sprite.width = this.collision_sprite.height = 0;
         this._colorize_filter = this.game.add.filter("Colorize") as Phaser.Filter.Colorize;
         this._gray_filter = this.game.add.filter("Gray") as Phaser.Filter.Gray;
-        this._mode7_filter = this.game.add.filter("Mode7");
+        this._mode7_filter = this.game.add.filter("Mode7") as Phaser.Filter.Mode7;
         this._collision_layer = null;
         this._show_footsteps = false;
         this.assets_loaded = false;

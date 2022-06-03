@@ -1249,6 +1249,15 @@ declare module Phaser {
             color: number;
         }
 
+        class Mode7 extends Phaser.Filter {
+            angle: number;
+            inclination: number;
+            lookY: number;
+            lookX: number;
+            scale: number;
+            distance: number;
+        }
+
         class BinarySerpents extends Phaser.Filter {
 
             constructor(game: Phaser.Game, width: number, height: number, march?: number, maxDistance?: number);
