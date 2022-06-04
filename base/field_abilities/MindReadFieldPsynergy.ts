@@ -1,6 +1,6 @@
 import {FieldAbilities} from "./FieldAbilities";
 import {base_actions} from "../utils";
-import {NPC} from "../NPC";
+import {NPC, npc_movement_types} from "../NPC";
 import {Button} from "../XGamepad";
 import {interaction_patterns} from "../game_events/GameEventManager";
 import {DialogManager} from "../utils/DialogManager";
@@ -65,10 +65,13 @@ export class MindReadFieldPsynergy extends FieldAbilities {
         );
     }
 
-    async finish() {
+    async finish(previous_movement_type?: npc_movement_types) {
         await Promise.all([this.cast_finish_promise, this.cast_char_anim_promise]);
         this.data.control_manager.detach_bindings(this.control_id);
-        this.target_object = null;
+        if (this.target_object) {
+            this.target_object.movement_type = previous_movement_type;
+            this.target_object = null;
+        }
         this.dialog_manager?.destroy();
         this.reset_map();
         this.arrows?.forEach(arrow => {
@@ -100,6 +103,8 @@ export class MindReadFieldPsynergy extends FieldAbilities {
         }
 
         this.target_object.stop_char();
+        const previous_movement_type = this.target_object.movement_type;
+        this.target_object.movement_type = npc_movement_types.IDLE;
 
         this.set_arrows();
 
@@ -112,7 +117,7 @@ export class MindReadFieldPsynergy extends FieldAbilities {
         this.fire_next_step = this.dialog_manager.next.bind(this.dialog_manager, async (finished: boolean) => {
             if (finished) {
                 this.fire_next_step = null;
-                this.finish();
+                this.finish(previous_movement_type);
             } else {
                 this.control_enable = true;
             }

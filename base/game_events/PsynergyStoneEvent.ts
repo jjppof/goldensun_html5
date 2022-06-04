@@ -54,7 +54,8 @@ export class PsynergyStoneEvent extends GameEvent {
         await this.set_text(INIT_TEXT(hero_name));
 
         await this.data.hero.face_direction(directions.down);
-        this.data.game_event_manager.force_idle_action = false;
+        const previous_force_idle_action_in_event = this.data.hero.force_idle_action_in_event;
+        this.data.hero.force_idle_action_in_event = false;
         this.data.hero.play(base_actions.GRANT);
         this.data.audio.pause_bgm();
         this.data.audio.play_se("misc/item_get", () => {
@@ -110,12 +111,12 @@ export class PsynergyStoneEvent extends GameEvent {
         const animation_key_shatter = this.origin_npc.sprite_info.getAnimationKey("stone", "shatter");
         const animation_shatter = this.origin_npc.sprite.animations.getAnimation(animation_key_shatter);
         animation_shatter.play().onComplete.addOnce(() => {
-            this.finish();
+            this.finish(previous_force_idle_action_in_event);
         });
     }
 
     //Hide Stone sprite and return control to character
-    async finish() {
+    async finish(previous_force_idle_action_in_event: boolean) {
         this.origin_npc.toggle_active(false);
         await this.set_text(DISAPPEAR_TEXT, false);
 
@@ -123,7 +124,7 @@ export class PsynergyStoneEvent extends GameEvent {
         this.control_enable = false;
         this.data.control_manager.detach_bindings(this.control_key);
         this.dialog_manager?.destroy();
-        this.data.game_event_manager.force_idle_action = true;
+        this.data.hero.force_idle_action_in_event = previous_force_idle_action_in_event;
         --this.data.game_event_manager.events_running_count;
         this.finish_events.forEach(event => event.fire(this.origin_npc));
     }

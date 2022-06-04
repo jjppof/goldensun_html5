@@ -139,7 +139,8 @@ export class ChestEvent extends GameEvent {
         await this.promise;
 
         await this.data.hero.face_direction(directions.down);
-        this.data.game_event_manager.force_idle_action = false;
+        const previous_force_idle_action_in_event = this.data.hero.force_idle_action_in_event;
+        this.data.hero.force_idle_action_in_event = false;
         this.data.hero.play(base_actions.GRANT);
         this.data.audio.pause_bgm();
         this.data.audio.play_se("misc/item_get", () => {
@@ -174,7 +175,7 @@ export class ChestEvent extends GameEvent {
         this.control_enable = false;
         this.data.control_manager.detach_bindings(this.control_key);
         this.control_key = null;
-        this.data.game_event_manager.force_idle_action = true;
+        this.data.hero.force_idle_action_in_event = previous_force_idle_action_in_event;
         this.dialog_manager?.destroy();
         --this.data.game_event_manager.events_running_count;
         this.finish_events.forEach(event => event.fire(this.origin_npc));

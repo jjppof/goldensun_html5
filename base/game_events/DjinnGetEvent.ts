@@ -76,11 +76,11 @@ export class DjinnGetEvent extends GameEvent {
         });
     }
 
-    next() {
+    next(previous_force_idle_action_in_event: boolean) {
         this.dialog_manager.next(finished => {
             this.control_enable = true;
             if (finished) {
-                this.finish();
+                this.finish(previous_force_idle_action_in_event);
             }
         });
     }
@@ -89,14 +89,14 @@ export class DjinnGetEvent extends GameEvent {
         this.on_event_finish = on_event_finish;
     }
 
-    finish() {
+    finish(previous_force_idle_action_in_event: boolean) {
         this.control_enable = false;
         this.running = false;
         this.data.control_manager.detach_bindings(this.control_key);
         const char = MainChar.add_djinn_to_party(this.data.info.party_data, this.djinn);
         this.djinn.set_status(djinn_status.STANDBY, char);
         this.data.hero.play(base_actions.IDLE);
-        this.data.game_event_manager.force_idle_action = true;
+        this.data.hero.force_idle_action_in_event = previous_force_idle_action_in_event;
         this.data.hero.toggle_collision(true);
         --this.data.game_event_manager.events_running_count;
         this.finish_events.forEach(event => event.fire(this.origin_npc));
@@ -105,12 +105,12 @@ export class DjinnGetEvent extends GameEvent {
         }
     }
 
-    finish_on_defeat() {
+    finish_on_defeat(previous_force_idle_action_in_event: boolean) {
         this.control_enable = false;
         this.running = false;
         this.data.control_manager.detach_bindings(this.control_key);
         this.data.hero.play(base_actions.IDLE);
-        this.data.game_event_manager.force_idle_action = true;
+        this.data.hero.force_idle_action_in_event = previous_force_idle_action_in_event;
         this.data.hero.toggle_collision(true);
         --this.data.game_event_manager.events_running_count;
         this.on_battle_defeat_events.forEach(event => event.fire(this.origin_npc));
@@ -855,7 +855,8 @@ export class DjinnGetEvent extends GameEvent {
             return;
         }
         ++this.data.game_event_manager.events_running_count;
-        this.data.game_event_manager.force_idle_action = false;
+        const previous_force_idle_action_in_event = this.data.hero.force_idle_action_in_event;
+        this.data.hero.force_idle_action_in_event = false;
         this.running = true;
 
         this.control_key = this.data.control_manager.add_controls(
@@ -864,7 +865,7 @@ export class DjinnGetEvent extends GameEvent {
                     buttons: Button.A,
                     on_down: () => {
                         if (!this.running || !this.control_enable) return;
-                        this.next();
+                        this.next(previous_force_idle_action_in_event);
                     },
                 },
             ],
@@ -881,7 +882,7 @@ export class DjinnGetEvent extends GameEvent {
         if (this.has_fight) {
             await this.start_a_fight();
             if (!this.djinn_defeated) {
-                this.finish_on_defeat();
+                this.finish_on_defeat(previous_force_idle_action_in_event);
                 return;
             }
         }
@@ -916,7 +917,7 @@ export class DjinnGetEvent extends GameEvent {
         this.data.audio.play_se("misc/party_join", () => {
             this.data.audio.resume_bgm();
         });
-        this.next();
+        this.next(previous_force_idle_action_in_event);
     }
 
     _destroy() {

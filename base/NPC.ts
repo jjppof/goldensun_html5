@@ -34,7 +34,6 @@ export class NPC extends ControllableChar {
     private static readonly MAX_DIR_GET_TRIES = 7;
     private static readonly STOP_MINIMAL_DISTANCE_SQR = 2 * 2;
 
-    private _movement_type: npc_movement_types;
     private _npc_type: npc_types;
     private _message: string;
     private _thought_message: string;
@@ -81,6 +80,11 @@ export class NPC extends ControllableChar {
     private previous_visible_state: boolean;
     private _snapshot_info: SnapshotData["map_data"]["npcs"][0];
 
+    /** If true, this NPC will move freely while a game event is happening. */
+    public move_freely_in_event: boolean;
+    /** The type of movement of this NPC. Idle or random walk. */
+    public movement_type: npc_movement_types;
+
     constructor(
         game,
         data,
@@ -123,7 +127,8 @@ export class NPC extends ControllableChar {
         step_duration,
         wait_duration,
         base_step,
-        step_max_variation
+        step_max_variation,
+        move_freely_in_event
     ) {
         super(
             game,
@@ -145,7 +150,7 @@ export class NPC extends ControllableChar {
         if (this.storage_keys.movement_type !== undefined) {
             movement_type = this.data.storage.get(this.storage_keys.movement_type);
         }
-        this._movement_type = movement_type ?? npc_movement_types.IDLE;
+        this.movement_type = movement_type ?? npc_movement_types.IDLE;
         this._message = message ?? "";
         this._thought_message = thought_message ?? "";
         this._avatar = avatar ?? null;
@@ -185,6 +190,7 @@ export class NPC extends ControllableChar {
         this._stepping = false;
         this._base_step = base_step;
         this._step_max_variation = step_max_variation;
+        this.move_freely_in_event = move_freely_in_event;
     }
 
     /** The list of GameEvents related to this NPC. */
@@ -251,10 +257,6 @@ export class NPC extends ControllableChar {
     get healer_key() {
         return this._healer_key;
     }
-    /** The type of movement of this NPC. Idle or random walk. */
-    get movement_type() {
-        return this._movement_type;
-    }
     /** Returns the snapshot info of this NPC when the game is restored. */
     get snapshot_info() {
         return this._snapshot_info;
@@ -285,7 +287,7 @@ export class NPC extends ControllableChar {
         if (this.storage_keys.movement_type !== undefined) {
             const storage_value = this.data.storage.get(this.storage_keys.movement_type);
             if (this.movement_type !== storage_value) {
-                this._movement_type = storage_value as npc_movement_types;
+                this.movement_type = storage_value as npc_movement_types;
             }
         }
     }

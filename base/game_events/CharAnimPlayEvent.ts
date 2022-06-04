@@ -56,10 +56,10 @@ export class CharAnimPlayEvent extends GameEvent {
             const animation = target_char.play(this.animation, this.action, true, this.frame_rate, this.loop);
             if (!animation.loop) {
                 ++this.data.game_event_manager.events_running_count;
+                const previous_force_idle_action_in_event = target_char.force_idle_action_in_event;
+                target_char.force_idle_action_in_event = false;
                 animation.onComplete.addOnce(() => {
-                    if (!this.is_npc) {
-                        this.data.game_event_manager.force_idle_action = true;
-                    }
+                    target_char.force_idle_action_in_event = previous_force_idle_action_in_event;
                     --this.data.game_event_manager.events_running_count;
                     this.finish_events.forEach(event => event.fire(this.origin_npc));
                 });

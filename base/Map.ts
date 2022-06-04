@@ -903,6 +903,10 @@ export class Map {
             const movement_type = snapshot_info?.movement_type ?? property_info.movement_type;
             const x = snapshot_info?.position.x ?? property_info.x;
             const y = snapshot_info?.position.y ?? property_info.y;
+            const move_freely_in_event =
+                snapshot_info?.move_freely_in_event ??
+                property_info.move_freely_in_event ??
+                npc_db.move_freely_in_event;
             const npc = new NPC(
                 this.game,
                 this.data,
@@ -945,7 +949,8 @@ export class Map {
                 step_duration,
                 wait_duration,
                 base_step,
-                step_max_variation
+                step_max_variation,
+                move_freely_in_event
             );
             this.npcs.push(npc);
             if (npc.label) {

@@ -77,10 +77,6 @@ export class GameEventManager {
 
     /** The game events counter. This variable shows how many game events are running at the moment. */
     public events_running_count: number;
-    /** If true, the hero can move while in a game event. */
-    public allow_char_to_move: boolean;
-    /** If false, the hero can assume any action like walk, dash, grant etc. */
-    public force_idle_action: boolean;
 
     constructor(game: Phaser.Game, data: GoldenSun) {
         this.game = game;
@@ -88,14 +84,12 @@ export class GameEventManager {
         this.events_running_count = 0;
         this.control_enable = true;
         this.fire_next_step = null;
-        this.allow_char_to_move = false;
-        this.force_idle_action = true;
         this.set_controls();
     }
 
     get on_event() {
-        if (this.events_running_count === 0 && !this.force_idle_action) {
-            this.force_idle_action = true;
+        if (this.events_running_count === 0 && !this.data.hero.force_idle_action_in_event) {
+            this.data.hero.force_idle_action_in_event = true;
         }
         return this.events_running_count;
     }
@@ -255,6 +249,12 @@ export class GameEventManager {
      */
     private async manage_npc_dialog(npc: NPC) {
         const previous_npc_direction = await this.handle_npc_interaction_start(npc);
+        const previous_move_freely = npc.move_freely_in_event;
+        npc.move_freely_in_event = false;
+        const previous_allow_char_to_move_in_event = npc.allow_char_to_move_in_event;
+        npc.allow_char_to_move_in_event = false;
+        const previous_force_idle_action_in_event = npc.force_idle_action_in_event;
+        npc.force_idle_action_in_event = true;
         const dialog_manager = new DialogManager(this.game, this.data);
         dialog_manager.set_dialog(npc.message, {
             avatar: npc.avatar,
@@ -265,6 +265,9 @@ export class GameEventManager {
             if (finished) {
                 this.fire_next_step = null;
                 await this.handle_npc_interaction_end(npc, previous_npc_direction);
+                npc.move_freely_in_event = previous_move_freely;
+                npc.allow_char_to_move_in_event = previous_allow_char_to_move_in_event;
+                npc.force_idle_action_in_event = previous_force_idle_action_in_event;
                 this.fire_npc_events(npc);
             } else {
                 this.control_enable = true;
@@ -914,11 +917,20 @@ export class GameEventManager {
      * every single frame.
      */
     update() {
-        if (!this.allow_char_to_move) {
-            this.data.hero.stop_char(this.force_idle_action);
+        if (!this.data.hero.allow_char_to_move_in_event) {
+            this.data.hero.stop_char(this.data.hero.force_idle_action_in_event);
         }
         this.data.hero.update_on_event();
-        this.data.map.npcs.forEach(npc => npc.update_on_event());
+        this.data.map.npcs.forEach(npc => {
+            if (npc.move_freely_in_event) {
+                npc.update();
+            } else {
+                if (!npc.allow_char_to_move_in_event) {
+                    npc.stop_char(npc.force_idle_action_in_event);
+                }
+            }
+            npc.update_on_event();
+        });
         this.update_callbacks.forEach(callback => callback());
     }
 

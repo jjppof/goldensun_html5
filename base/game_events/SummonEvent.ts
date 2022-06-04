@@ -79,12 +79,12 @@ export class SummonEvent extends GameEvent {
         }
     }
 
-    finish() {
+    finish(previous_force_idle_action_in_event: boolean) {
         this.summon.available = true;
         this.control_enable = false;
         this.data.control_manager.detach_bindings(this.control_key);
         this.control_enable = null;
-        this.data.game_event_manager.force_idle_action = true;
+        this.data.hero.force_idle_action_in_event = previous_force_idle_action_in_event;
         this.data.hero.play(base_actions.IDLE);
         this.emitter?.destroy();
         this.dialog?.destroy();
@@ -212,7 +212,8 @@ export class SummonEvent extends GameEvent {
         this.data.game_event_manager.remove_callback(letter_shine_update_callback);
 
         await this.data.hero.face_direction(directions.down);
-        this.data.game_event_manager.force_idle_action = false;
+        const previous_force_idle_action_in_event = this.data.hero.force_idle_action_in_event;
+        this.data.hero.force_idle_action_in_event = false;
         this.data.hero.play(base_actions.GRANT);
 
         const total_phi = (Math.PI * 17) / 2;
@@ -326,7 +327,7 @@ export class SummonEvent extends GameEvent {
         );
 
         await aux_promise;
-        this.finish();
+        this.finish(previous_force_idle_action_in_event);
     }
 
     _destroy() {

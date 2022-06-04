@@ -63,9 +63,8 @@ export class JumpEvent extends GameEvent {
                 npc_index: this.npc_index,
                 npc_label: this.npc_label,
             }) ?? this.origin_npc;
-        if (!char.is_npc) {
-            this.data.game_event_manager.allow_char_to_move = true;
-        }
+        const previous_allow_char_to_move_in_event = char.allow_char_to_move_in_event;
+        char.allow_char_to_move_in_event = true;
 
         await char.jump({
             jump_height: this.jump_height,
@@ -76,9 +75,7 @@ export class JumpEvent extends GameEvent {
             sfx_key: this.sfx_key,
         });
 
-        if (!this.is_npc) {
-            this.data.game_event_manager.allow_char_to_move = false;
-        }
+        char.allow_char_to_move_in_event = previous_allow_char_to_move_in_event;
 
         --this.data.game_event_manager.events_running_count;
         this.finish_events.forEach(event => event.fire(this.origin_npc));

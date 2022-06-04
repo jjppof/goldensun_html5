@@ -20,7 +20,6 @@ export class MoveEvent extends GameEvent {
     private npc_label: string;
     private finish_events: GameEvent[];
     private previous_dash_value: boolean;
-    private previous_allow_char_to_move: boolean;
     private camera_follow: boolean;
     private camera_follow_duration: number;
     private camera_unfollow_char_on_finish: boolean;
@@ -62,7 +61,6 @@ export class MoveEvent extends GameEvent {
         this.is_npc = is_npc;
         this.npc_label = npc_label;
         this.previous_dash_value = null;
-        this.previous_allow_char_to_move = null;
         this.camera_follow = camera_follow ?? false;
         this.camera_follow_duration = camera_follow_duration ?? MoveEvent.CAMERA_TRANSITION_DURATION;
         this.camera_unfollow_char_on_finish = camera_unfollow_char_on_finish ?? false;
@@ -78,7 +76,7 @@ export class MoveEvent extends GameEvent {
         }
     }
 
-    async on_position_reach(char: ControllableChar) {
+    async on_position_reach(char: ControllableChar, previous_allow_char_to_move_in_event: boolean) {
         char.stop_char();
         if (this.final_direction !== null) {
             await char.face_direction(this.final_direction);
@@ -86,11 +84,11 @@ export class MoveEvent extends GameEvent {
         if (this.wait_after) {
             this.game.time.events.add(this.wait_after, this.go_to_finish, this, char);
         } else {
-            this.go_to_finish(char);
+            this.go_to_finish(char, previous_allow_char_to_move_in_event);
         }
     }
 
-    async go_to_finish(char: ControllableChar) {
+    async go_to_finish(char: ControllableChar, previous_allow_char_to_move_in_event: boolean) {
         if (this.camera_follow) {
             if (this.reset_previous_camera_target) {
                 await this.data.camera.follow(this.previous_camera_target, this.camera_follow_duration);
@@ -101,7 +99,7 @@ export class MoveEvent extends GameEvent {
         if (this.follow_hero_on_finish) {
             await this.data.camera.follow(this.data.hero, this.camera_follow_duration);
         }
-        this.finish(char);
+        this.finish(char, previous_allow_char_to_move_in_event);
     }
 
     async _fire() {
@@ -113,10 +111,8 @@ export class MoveEvent extends GameEvent {
                 is_npc: this.is_npc,
                 npc_label: this.npc_label,
             }) ?? this.origin_npc;
-        if (!char.is_npc) {
-            this.previous_allow_char_to_move = this.data.game_event_manager.allow_char_to_move;
-            this.data.game_event_manager.allow_char_to_move = true;
-        }
+        const previous_allow_char_to_move_in_event = char.allow_char_to_move_in_event;
+        char.allow_char_to_move_in_event = true;
         this.previous_dash_value = char.dashing;
         char.dashing = this.dash;
         let dest_value: {x: number; y: number};
@@ -151,17 +147,15 @@ export class MoveEvent extends GameEvent {
             const this_sqr_dist = get_sqr_distance(char.x, dest.x, char.y, dest.y);
             if (this_sqr_dist < minimal_distance_sqr || this_sqr_dist > previous_sqr_dist) {
                 this.data.game_event_manager.remove_callback(udpate_callback);
-                await this.on_position_reach(char);
+                await this.on_position_reach(char, previous_allow_char_to_move_in_event);
             }
             previous_sqr_dist = this_sqr_dist;
         };
         this.data.game_event_manager.add_callback(udpate_callback);
     }
 
-    finish(char: ControllableChar) {
-        if (!char.is_npc) {
-            this.data.game_event_manager.allow_char_to_move = this.previous_allow_char_to_move;
-        }
+    finish(char: ControllableChar, previous_allow_char_to_move_in_event: boolean) {
+        char.allow_char_to_move_in_event = previous_allow_char_to_move_in_event;
         char.dashing = this.previous_dash_value;
         if (this.deactive_char_on_end) {
             char.toggle_active(false);

@@ -121,6 +121,7 @@ export type SnapshotData = {
             movement_type: npc_movement_types;
             body_in_map: boolean;
             shapes_collision_active: boolean;
+            move_freely_in_event: boolean;
             active_filters: {[key in EngineFilters]?: boolean};
             filter_settings?: FilterSettings;
         }[];
@@ -302,6 +303,7 @@ export class Snapshot {
                         movement_type: npc.movement_type,
                         body_in_map: this.data.map.body_in_map(npc),
                         shapes_collision_active: npc.shapes_collision_active,
+                        move_freely_in_event: npc.move_freely_in_event,
                         active_filters: npc.active_filters,
                         filter_settings: {
                             ...(npc.active_filters.colorize && {
