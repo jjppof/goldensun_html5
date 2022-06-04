@@ -1133,6 +1133,20 @@ export abstract class ControllableChar {
     }
 
     /**
+     * Sets or unsets the hue filter in this char.
+     * @param activate whether you want to activate the hue filter or not.
+     * @param angle the hue angle.
+     */
+    set_hue(activate: boolean, angle?: number) {
+        if (activate) {
+            this.manage_filter(this.hue_filter, true);
+            this.hue_filter.angle = angle;
+        } else {
+            this.manage_filter(this.hue_filter, false);
+        }
+    }
+
+    /**
      * Sets or unsets an outline in this char. You can also use this function to update options.
      * Otherwise, use ControllableChar.outline_filter directly.
      * @param activate whether you want to activate the outline or not.

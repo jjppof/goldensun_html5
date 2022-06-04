@@ -91,6 +91,9 @@ export enum event_types {
     ADD_ITEM_TO_PARTY = "add_item_to_party",
     GENERIC_SPRITE = "generic_sprite",
     PARTICLES = "particles",
+    CHAR_HUE = "char_hue",
+    FLAME_CHAR = "flame_char",
+    CHAR_BLEND_MODE = "char_blend_mode",
 }
 
 /**

@@ -1,7 +1,7 @@
 Phaser.Filter.Hue = function (game) {
     Phaser.Filter.call(this, game);
 
-    this.uniforms.angle = { type: '1f', value: 0.0 };
+    this.uniforms.angle = { type: '1f', value: -1.0 };
 
     this.fragmentSrc = [
         "precision mediump float;",
@@ -12,7 +12,7 @@ Phaser.Filter.Hue = function (game) {
 
         "void main(void) {",
             "gl_FragColor = texture2D(uSampler, vTextureCoord);",
-            "if (angle != 0.0) {",
+            "if (angle != -1.0) {",
                 "const vec3 k = vec3(0.57735, 0.57735, 0.57735);",
                 "float cosAngle = cos(angle);",
                 "gl_FragColor.rgb = vec3(gl_FragColor.rgb * cosAngle + cross(k, gl_FragColor.rgb) * sin(angle) + k * dot(k, gl_FragColor.rgb) * (1.0 - cosAngle));",
