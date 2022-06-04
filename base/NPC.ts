@@ -62,6 +62,7 @@ export class NPC extends ControllableChar {
         affected_by_reveal?: string;
         visible?: string;
         movement_type?: string;
+        move_freely_in_event?: string;
     };
     private sprite_misc_db_key: string;
     private ignore_physics: boolean;
@@ -151,6 +152,10 @@ export class NPC extends ControllableChar {
             movement_type = this.data.storage.get(this.storage_keys.movement_type);
         }
         this.movement_type = movement_type ?? npc_movement_types.IDLE;
+        if (this.storage_keys.move_freely_in_event !== undefined) {
+            move_freely_in_event = this.data.storage.get(this.storage_keys.move_freely_in_event);
+        }
+        this.move_freely_in_event = move_freely_in_event ?? false;
         this._message = message ?? "";
         this._thought_message = thought_message ?? "";
         this._avatar = avatar ?? null;
@@ -190,7 +195,6 @@ export class NPC extends ControllableChar {
         this._stepping = false;
         this._base_step = base_step;
         this._step_max_variation = step_max_variation;
-        this.move_freely_in_event = move_freely_in_event;
     }
 
     /** The list of GameEvents related to this NPC. */
