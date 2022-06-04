@@ -68,7 +68,7 @@ export class PoundFieldPsynergy extends FieldAbilities {
         this.hand_translate_y = this.hand_sprite.centerY;
         let initial_x_pos = 16;
         let initial_y_pos = -24;
-        if (this.target_found) {
+        if (this.target_object) {
             if (this.cast_direction === directions.down) {
                 initial_y_pos = -(this.target_object.sprite.y - this.data.hero.sprite.y + 5);
             } else if (this.cast_direction === directions.up) {
@@ -128,14 +128,14 @@ export class PoundFieldPsynergy extends FieldAbilities {
                     } else {
                         this.move_hand_by_dir(0, this.controllable_char.sprite.height + 7);
                     }
-                    if (this.target_found) {
+                    if (this.target_object) {
                         this.game.add
                             .tween(this.target_object.sprite.scale)
                             .to({y: 0.1}, 150, Phaser.Easing.Linear.None, true);
                     }
                     this.hand_tween(
                         this.hand_translate_x,
-                        this.target_found ? this.target_object.sprite.y - 4 : this.hand_translate_y,
+                        this.target_object ? this.target_object.sprite.y - 4 : this.hand_translate_y,
                         150,
                         this.finish_hand_movement.bind(this)
                     );
@@ -148,7 +148,7 @@ export class PoundFieldPsynergy extends FieldAbilities {
 
     finish_hand_movement() {
         this.data.audio.play_se("psynergy/8");
-        if (this.target_found) {
+        if (this.target_object) {
             this.target_object.sprite.scale.y = 1;
             this.target_object.play("down");
             this.target_object.get_events().forEach((event: JumpEvent) => {

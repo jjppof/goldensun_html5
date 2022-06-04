@@ -114,7 +114,7 @@ export class GrowthFieldPsynergy extends FieldAbilities {
             particle.animations.play("shine");
         });
         this.game.time.events.add(Phaser.Timer.SECOND, () => {
-            if (this.target_found) {
+            if (this.target_object) {
                 this.grow_sprout();
             } else {
                 this.miss_target();

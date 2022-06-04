@@ -78,7 +78,7 @@ export class WhirlwindFieldPsynergy extends FieldAbilities {
         this._whirlwind_sprite.centerX = this.controllable_char.sprite.centerX;
         this._whirlwind_sprite.centerY = this.controllable_char.sprite.centerY;
         let target_x, target_y;
-        if (this.target_found) {
+        if (this.target_object) {
             target_x = this.target_object.bush_sprite.centerX;
             target_y = this.target_object.bush_sprite.centerY;
         } else {
@@ -100,7 +100,7 @@ export class WhirlwindFieldPsynergy extends FieldAbilities {
                 true
             )
             .onComplete.addOnce(() => {
-                if (this.target_found) {
+                if (this.target_object) {
                     this.blow_leaves();
                 } else {
                     this.miss_target();

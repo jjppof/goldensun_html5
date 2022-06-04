@@ -58,7 +58,7 @@ export class DouseFieldPsynergy extends FieldAbilities {
 
     async move_cloud_out() {
         let dest_x: number, dest_y: number;
-        if (this.target_found) {
+        if (this.target_object) {
             dest_x = this.target_object.x;
             dest_y = this.target_object.y - DouseFieldPsynergy.DOUSE_HEIGHT;
         } else {
@@ -125,7 +125,7 @@ export class DouseFieldPsynergy extends FieldAbilities {
         const into_emitter = this.data.particle_manager.createEmitter(Phaser.ParticleStorm.SPRITE);
         into_emitter.addToWorld(this.data.overlayer_group);
         this.cloud_sprite.bringToTop();
-        const repeat = this.target_found ? 30 : 10;
+        const repeat = this.target_object ? 30 : 10;
         const ellapse_between_repeats = 120;
         into_emitter.emit("drops", undefined, undefined, {
             total: 1,
@@ -139,7 +139,7 @@ export class DouseFieldPsynergy extends FieldAbilities {
         await promised_wait(this.game, duration);
 
         this.return_to_idle_anim();
-        if (this.target_found) {
+        if (this.target_object) {
             await this.stop_casting(false);
         } else {
             this.stop_casting(false);

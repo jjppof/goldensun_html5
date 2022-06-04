@@ -277,7 +277,9 @@ export class GoldenSun {
     private async initialize_game() {
         this.game.camera.fade(0x0, 1);
 
-        this.game.sound.mute = this.snapshot_manager.snapshot?.mute ?? this.game.sound.mute;
+        const snapshot = this.snapshot_manager.snapshot;
+
+        this.game.sound.mute = snapshot?.mute ?? this.game.sound.mute;
 
         //init storage
         this.storage = new Storage(this);
@@ -300,18 +302,13 @@ export class GoldenSun {
         this.game_event_manager = new GameEventManager(this.game, this);
 
         //configs map layers: creates sprites, interactable objects and npcs, lists events and sets the map layers
-        const map =
-            this.info.maps_list[this.snapshot_manager.snapshot?.map_data.key_name ?? this.dbs.init_db.map_key_name];
-        const initial_collision_layer =
-            this.snapshot_manager.snapshot?.map_data.collision_layer ?? this.dbs.init_db.collision_layer;
-        this.map = await map.mount_map(
-            initial_collision_layer,
-            this.snapshot_manager.snapshot?.map_data.encounter_cumulator
-        );
-        const hero_initial_x =
-            this.snapshot_manager.snapshot?.map_data.pc.position.x ?? this.dbs.init_db.x_tile_position;
-        const hero_initial_y =
-            this.snapshot_manager.snapshot?.map_data.pc.position.y ?? this.dbs.init_db.y_tile_position;
+
+        const map_key_name = snapshot?.map_data.key_name ?? this.dbs.init_db.map_key_name;
+        const map = this.info.maps_list[map_key_name];
+        const initial_collision_layer = snapshot?.map_data.collision_layer ?? this.dbs.init_db.collision_layer;
+        this.map = await map.mount_map(initial_collision_layer, snapshot?.map_data.encounter_cumulator);
+        const hero_initial_x = snapshot?.map_data.pc.position.x ?? this.dbs.init_db.x_tile_position;
+        const hero_initial_y = snapshot?.map_data.pc.position.y ?? this.dbs.init_db.y_tile_position;
         this.map.set_map_bounds(hero_initial_x, hero_initial_y);
 
         //initializes the controllable hero
@@ -322,8 +319,8 @@ export class GoldenSun {
             hero_key_name,
             hero_initial_x,
             hero_initial_y,
-            this.snapshot_manager.snapshot ? base_actions.IDLE : this.dbs.init_db.initial_action,
-            this.snapshot_manager.snapshot?.map_data.pc.direction ?? this.dbs.init_db.initial_direction,
+            snapshot ? base_actions.IDLE : this.dbs.init_db.initial_action,
+            snapshot?.map_data.pc.direction ?? this.dbs.init_db.initial_direction,
             this.dbs.npc_db[hero_key_name].walk_speed,
             this.dbs.npc_db[hero_key_name].dash_speed,
             this.dbs.npc_db[hero_key_name].climb_speed
@@ -346,11 +343,11 @@ export class GoldenSun {
         this.main_menu = initialize_menu(this.game, this);
 
         //set initial zoom
-        this.scale_factor = this.snapshot_manager.snapshot?.scale_factor ?? this.scale_factor;
+        this.scale_factor = snapshot?.scale_factor ?? this.scale_factor;
         this.game.scale.setupScale(this.scale_factor * numbers.GAME_WIDTH, this.scale_factor * numbers.GAME_HEIGHT);
         window.dispatchEvent(new Event("resize"));
 
-        this.fullscreen = this.snapshot_manager.snapshot?.full_screen ?? false;
+        this.fullscreen = snapshot?.full_screen ?? false;
         if (this.fullscreen) {
             this.set_fullscreen_mode(false);
         }

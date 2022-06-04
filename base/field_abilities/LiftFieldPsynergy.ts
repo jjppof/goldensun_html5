@@ -46,7 +46,7 @@ export class LiftFieldPsynergy extends FieldAbilities {
     async init() {
         this.field_psynergy_window.close();
 
-        if (this.target_found) {
+        if (this.target_object) {
             if (this.target_object.psynergies_info?.lift?.destination_y_pos) {
                 this.destination_y_pos = this.target_object.psynergies_info.lift.destination_y_pos;
             } else {
@@ -106,7 +106,7 @@ export class LiftFieldPsynergy extends FieldAbilities {
         this.right_hand_sprite.scale.setTo(0, 0);
 
         let left_x, right_x, y_pos;
-        if (this.target_found) {
+        if (this.target_object) {
             left_x = this.target_object.x - this.target_object.width;
             right_x = this.target_object.x + this.target_object.width;
             y_pos = this.target_object.sprite.centerY;
@@ -173,7 +173,7 @@ export class LiftFieldPsynergy extends FieldAbilities {
 
     async hold_target_obj() {
         let left_x, right_x;
-        if (this.target_found) {
+        if (this.target_object) {
             left_x = this.target_object.x - (this.target_object.width >> 1);
             right_x = this.target_object.x + (this.target_object.width >> 1);
         } else {
@@ -215,7 +215,7 @@ export class LiftFieldPsynergy extends FieldAbilities {
 
         await Promise.all([left_promise, right_promise]);
 
-        if (this.target_found) {
+        if (this.target_object) {
             LiftFieldPsynergy.set_permanent_hue_effect(this.game, this.target_object);
         } else {
             this.left_hand_sprite.destroy();
@@ -340,7 +340,7 @@ export class LiftFieldPsynergy extends FieldAbilities {
     finish() {
         this.left_hand_sprite?.destroy();
         this.right_hand_sprite?.destroy();
-        if (this.target_found) {
+        if (this.target_object) {
             this.target_object.set_tile_position(
                 {
                     y: this.destination_y_pos,

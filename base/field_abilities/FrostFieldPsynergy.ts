@@ -96,7 +96,7 @@ export class FrostFieldPsynergy extends FieldAbilities {
             tween.onComplete.addOnce(() => {
                 snowflake_sprite.destroy();
                 if (i === FrostFieldPsynergy.SNOWFLAKES_COUNT - 1) {
-                    if (this.target_found) {
+                    if (this.target_object) {
                         this.init_pillar();
                     } else {
                         this.return_to_idle_anim();

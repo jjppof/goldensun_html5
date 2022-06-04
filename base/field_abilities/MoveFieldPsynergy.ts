@@ -210,7 +210,7 @@ export class MoveFieldPsynergy extends FieldAbilities {
         let translate_y = this.hand_sprite.centerY;
         switch (this.cast_direction) {
             case directions.up:
-                if (this.target_found) {
+                if (this.target_object) {
                     translate_x = this.target_object.sprite.centerX;
                     translate_y = this.target_object.sprite.y;
                 } else {
@@ -218,7 +218,7 @@ export class MoveFieldPsynergy extends FieldAbilities {
                 }
                 break;
             case directions.down:
-                if (this.target_found) {
+                if (this.target_object) {
                     translate_x = this.target_object.sprite.centerX;
                     translate_y =
                         this.target_object.sprite.y -
@@ -229,7 +229,7 @@ export class MoveFieldPsynergy extends FieldAbilities {
                 }
                 break;
             case directions.right:
-                if (this.target_found) {
+                if (this.target_object) {
                     translate_x =
                         this.target_object.sprite.x -
                         2 * this.data.dbs.interactable_objects_db[this.target_object.key_name].body_radius;
@@ -239,7 +239,7 @@ export class MoveFieldPsynergy extends FieldAbilities {
                 }
                 break;
             case directions.left:
-                if (this.target_found) {
+                if (this.target_object) {
                     translate_x =
                         this.target_object.sprite.x +
                         2 * this.data.dbs.interactable_objects_db[this.target_object.key_name].body_radius;
@@ -259,7 +259,7 @@ export class MoveFieldPsynergy extends FieldAbilities {
                     reverse_directions[this.cast_direction]
                 );
                 this.hand_sprite.animations.play(anim_key);
-                if (this.target_found) {
+                if (this.target_object) {
                     this.target_object.manage_filter(this.target_object.hue_filter, true);
                     this.target_hueshift_timer = this.game.time.create(false);
                     this.target_hueshift_timer.loop(5, () => {
@@ -374,7 +374,7 @@ export class MoveFieldPsynergy extends FieldAbilities {
     }
 
     unset_hue_shifter() {
-        if (this.target_found) {
+        if (this.target_object) {
             this.target_object.manage_filter(this.target_object.hue_filter, false);
             this.target_hueshift_timer.stop();
         }

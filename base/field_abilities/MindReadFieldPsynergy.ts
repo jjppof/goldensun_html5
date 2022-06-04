@@ -15,6 +15,7 @@ export class MindReadFieldPsynergy extends FieldAbilities {
     private control_id: number;
     private fire_next_step: () => void;
     private dialog_manager: DialogManager;
+    private cast_char_anim_promise: Promise<void>;
     private cast_finish_promise: Promise<void>;
     private arrows: Phaser.Sprite[];
 
@@ -42,6 +43,8 @@ export class MindReadFieldPsynergy extends FieldAbilities {
         );
         this.set_bootstrap_method(this.init.bind(this));
         this.control_enable = false;
+        this.cast_char_anim_promise = null;
+        this.cast_finish_promise = null;
     }
 
     set_controls() {
@@ -63,7 +66,7 @@ export class MindReadFieldPsynergy extends FieldAbilities {
     }
 
     async finish() {
-        await this.cast_finish_promise;
+        await Promise.all([this.cast_finish_promise, this.cast_char_anim_promise]);
         this.data.control_manager.detach_bindings(this.control_id);
         this.target_object = null;
         this.dialog_manager?.destroy();
@@ -82,8 +85,8 @@ export class MindReadFieldPsynergy extends FieldAbilities {
         this.field_psynergy_window.close();
         this.set_controls();
 
-        this.cast_finish_promise = this.return_to_idle_anim();
-        this.stop_casting(false, false);
+        this.cast_char_anim_promise = this.return_to_idle_anim();
+        this.cast_finish_promise = this.stop_casting(false, false);
 
         if (
             !this.target_object ||

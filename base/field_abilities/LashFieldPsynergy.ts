@@ -58,7 +58,7 @@ export class LashFieldPsynergy extends FieldAbilities {
     goto_dock() {
         let target_x: number, target_y: number;
         const front_pos = get_front_position(0, 0, this.cast_direction);
-        if (this.target_found) {
+        if (this.target_object) {
             target_x = this.target_object.sprite.centerX;
             target_y = this.target_object.sprite.centerY - this.controllable_char.height;
         } else {
@@ -100,7 +100,7 @@ export class LashFieldPsynergy extends FieldAbilities {
                 );
                 this._hand_sprite.play(down_hand_key);
 
-                target_y = this.target_found
+                target_y = this.target_object
                     ? this.target_object.sprite.centerY
                     : target_y + this.controllable_char.height;
                 const to_down_duration = 350;
@@ -122,7 +122,7 @@ export class LashFieldPsynergy extends FieldAbilities {
                 );
 
                 to_down_tween.onComplete.addOnce(() => {
-                    if (this.target_found && this._rope_dock.is_starting_dock && !this._rope_dock.tied) {
+                    if (this.target_object && this._rope_dock.is_starting_dock && !this._rope_dock.tied) {
                         this.tie();
                     } else {
                         this._hand_sprite.destroy();

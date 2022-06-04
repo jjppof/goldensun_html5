@@ -27,7 +27,6 @@ export abstract class FieldAbilities {
     private bootstrap_method: Function;
     private cast_finisher: Function;
     protected controllable_char: ControllableChar;
-    protected target_found: boolean;
     protected target_object: InteractableObjects | NPC;
     protected stop_casting: (reset_casting_psy_flag?: boolean, reset_map_tint?: boolean) => Promise<void>;
     protected field_psynergy_window: FieldPsynergyWindow;
@@ -92,7 +91,6 @@ export abstract class FieldAbilities {
         this.bootstrap_method = () => {};
         this.cast_finisher = () => {};
         this.controllable_char = null;
-        this.target_found = false;
         this.target_object = null;
         this.stop_casting = null;
         this.field_psynergy_window = new FieldPsynergyWindow(this.game, this.data);
@@ -147,7 +145,7 @@ export abstract class FieldAbilities {
     }
 
     search_for_target() {
-        this.target_found = false;
+        this.target_object = null;
         let min_x, max_x, min_y, max_y;
         if (this.cast_direction === directions.up || this.cast_direction === directions.down) {
             min_x = this.controllable_char.sprite.x - this.controllable_char.body_radius;
@@ -219,7 +217,6 @@ export abstract class FieldAbilities {
                     Math.pow(item_y_px - this.controllable_char.sprite.y, 2);
                 if (this_sqr_distance < sqr_distance) {
                     sqr_distance = this_sqr_distance;
-                    this.target_found = true;
                     this.target_object = target_object;
                 }
             }
@@ -233,9 +230,8 @@ export abstract class FieldAbilities {
                 const psynergy_properties = target_object.psynergies_info[this.ability_key_name];
                 if (psynergy_properties.interaction_type === interactable_object_interaction_types.ONCE) {
                     if (target_object.psynergy_casted[this.ability_key_name]) {
-                        this.target_found = false;
                         this.target_object = null;
-                    } else if (this.target_found) {
+                    } else if (this.target_object) {
                         target_object.psynergy_casted[this.ability_key_name] = true;
                     }
                 }
@@ -244,6 +240,10 @@ export abstract class FieldAbilities {
     }
 
     init_cast(caster_key_name: string) {
+        if (this.controllable_char.casting_psynergy) {
+            return;
+        }
+
         this.field_psynergy_window.close();
         const caster = this.data.info.main_char_list[caster_key_name];
         const ability = this.data.info.abilities_list[this.ability_key_name];
@@ -263,7 +263,7 @@ export abstract class FieldAbilities {
         if (this.need_target) {
             this.search_for_target();
             this.set_target_casted();
-            if (this.target_found) {
+            if (this.target_object) {
                 this.previous_collision_status.target = this.target_object.shapes_collision_active;
                 this.target_object.toggle_collision(false);
             }
@@ -286,7 +286,7 @@ export abstract class FieldAbilities {
                 } else {
                     this.reset_map = null;
                 }
-                if (this.target_found && this.target_object.is_interactable_object) {
+                if (this.target_object?.is_interactable_object) {
                     const events = (this.target_object as InteractableObjects).before_psynergy_cast_events[
                         this.ability_key_name
                     ];
@@ -300,7 +300,7 @@ export abstract class FieldAbilities {
                 if (reset_casting_psy_flag) {
                     this.controllable_char.casting_psynergy = false;
                 }
-                if (this.target_found) {
+                if (this.target_object) {
                     this.target_object.toggle_collision(this.previous_collision_status.target);
                     if (this.target_object.is_interactable_object) {
                         const events = (this.target_object as InteractableObjects).after_psynergy_cast_events[
@@ -563,7 +563,6 @@ export abstract class FieldAbilities {
             map_colors_sequence?: boolean;
         }
     ) {
-        const gray_was_active = map.active_filters.gray;
         map.manage_filter(map.gray_filter, true);
         map.manage_filter(map.colorize_filter, true);
         const target_intensity = options?.intensity ?? 0.4;
