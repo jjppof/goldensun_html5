@@ -76,7 +76,11 @@ export class MoveEvent extends GameEvent {
         }
     }
 
-    async on_position_reach(char: ControllableChar, previous_allow_char_to_move_in_event: boolean) {
+    async on_position_reach(
+        char: ControllableChar,
+        previous_force_char_stop_in_event: boolean,
+        previous_move_freely_in_event: boolean
+    ) {
         char.stop_char();
         if (this.final_direction !== null) {
             await char.face_direction(this.final_direction);
@@ -84,11 +88,15 @@ export class MoveEvent extends GameEvent {
         if (this.wait_after) {
             this.game.time.events.add(this.wait_after, this.go_to_finish, this, char);
         } else {
-            this.go_to_finish(char, previous_allow_char_to_move_in_event);
+            this.go_to_finish(char, previous_force_char_stop_in_event, previous_move_freely_in_event);
         }
     }
 
-    async go_to_finish(char: ControllableChar, previous_allow_char_to_move_in_event: boolean) {
+    async go_to_finish(
+        char: ControllableChar,
+        previous_force_char_stop_in_event: boolean,
+        previous_move_freely_in_event: boolean
+    ) {
         if (this.camera_follow) {
             if (this.reset_previous_camera_target) {
                 await this.data.camera.follow(this.previous_camera_target, this.camera_follow_duration);
@@ -99,7 +107,7 @@ export class MoveEvent extends GameEvent {
         if (this.follow_hero_on_finish) {
             await this.data.camera.follow(this.data.hero, this.camera_follow_duration);
         }
-        this.finish(char, previous_allow_char_to_move_in_event);
+        this.finish(char, previous_force_char_stop_in_event, previous_move_freely_in_event);
     }
 
     async _fire() {
@@ -111,8 +119,13 @@ export class MoveEvent extends GameEvent {
                 is_npc: this.is_npc,
                 npc_label: this.npc_label,
             }) ?? this.origin_npc;
-        const previous_allow_char_to_move_in_event = char.allow_char_to_move_in_event;
-        char.allow_char_to_move_in_event = true;
+        const previous_force_char_stop_in_event = char.force_char_stop_in_event;
+        char.force_char_stop_in_event = false;
+        let previous_move_freely_in_event: boolean;
+        if (char.is_npc) {
+            previous_move_freely_in_event = (char as NPC).move_freely_in_event;
+            (char as NPC).move_freely_in_event = false;
+        }
         this.previous_dash_value = char.dashing;
         char.dashing = this.dash;
         let dest_value: {x: number; y: number};
@@ -147,15 +160,18 @@ export class MoveEvent extends GameEvent {
             const this_sqr_dist = get_sqr_distance(char.x, dest.x, char.y, dest.y);
             if (this_sqr_dist < minimal_distance_sqr || this_sqr_dist > previous_sqr_dist) {
                 this.data.game_event_manager.remove_callback(udpate_callback);
-                await this.on_position_reach(char, previous_allow_char_to_move_in_event);
+                await this.on_position_reach(char, previous_force_char_stop_in_event, previous_move_freely_in_event);
             }
             previous_sqr_dist = this_sqr_dist;
         };
         this.data.game_event_manager.add_callback(udpate_callback);
     }
 
-    finish(char: ControllableChar, previous_allow_char_to_move_in_event: boolean) {
-        char.allow_char_to_move_in_event = previous_allow_char_to_move_in_event;
+    finish(char: ControllableChar, previous_force_char_stop_in_event: boolean, previous_move_freely_in_event: boolean) {
+        char.force_char_stop_in_event = previous_force_char_stop_in_event;
+        if (char.is_npc) {
+            (char as NPC).move_freely_in_event = previous_move_freely_in_event;
+        }
         char.dashing = this.previous_dash_value;
         if (this.deactive_char_on_end) {
             char.toggle_active(false);

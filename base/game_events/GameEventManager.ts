@@ -251,8 +251,8 @@ export class GameEventManager {
         const previous_npc_direction = await this.handle_npc_interaction_start(npc);
         const previous_move_freely = npc.move_freely_in_event;
         npc.move_freely_in_event = false;
-        const previous_allow_char_to_move_in_event = npc.allow_char_to_move_in_event;
-        npc.allow_char_to_move_in_event = false;
+        const previous_force_char_stop_in_event = npc.force_char_stop_in_event;
+        npc.force_char_stop_in_event = true;
         const previous_force_idle_action_in_event = npc.force_idle_action_in_event;
         npc.force_idle_action_in_event = true;
         const dialog_manager = new DialogManager(this.game, this.data);
@@ -266,7 +266,7 @@ export class GameEventManager {
                 this.fire_next_step = null;
                 await this.handle_npc_interaction_end(npc, previous_npc_direction);
                 npc.move_freely_in_event = previous_move_freely;
-                npc.allow_char_to_move_in_event = previous_allow_char_to_move_in_event;
+                npc.force_char_stop_in_event = previous_force_char_stop_in_event;
                 npc.force_idle_action_in_event = previous_force_idle_action_in_event;
                 this.fire_npc_events(npc);
             } else {
@@ -917,7 +917,7 @@ export class GameEventManager {
      * every single frame.
      */
     update() {
-        if (!this.data.hero.allow_char_to_move_in_event) {
+        if (this.data.hero.force_char_stop_in_event) {
             this.data.hero.stop_char(this.data.hero.force_idle_action_in_event);
         }
         this.data.hero.update_on_event();
@@ -925,7 +925,7 @@ export class GameEventManager {
             if (npc.move_freely_in_event) {
                 npc.update();
             } else {
-                if (!npc.allow_char_to_move_in_event) {
+                if (npc.force_char_stop_in_event) {
                     npc.stop_char(npc.force_idle_action_in_event);
                 }
             }

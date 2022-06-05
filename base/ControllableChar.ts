@@ -130,9 +130,9 @@ export abstract class ControllableChar {
     /** Whether the shadow is following or not this char. */
     public shadow_following: boolean;
 
-    /** Allows this char to move in game event. Otherwise it will be forced to stay idle. */
-    public allow_char_to_move_in_event: boolean;
-    /** Forces char to assume idle action if it's not allowed to move while in a event. */
+    /** Forces this char to stop while in game event. */
+    public force_char_stop_in_event: boolean;
+    /** Forces char to assume idle action if it's forced to stop while in a game event. */
     public force_idle_action_in_event: boolean;
 
     private _colorize_filter: Phaser.Filter.Colorize;
@@ -264,7 +264,7 @@ export abstract class ControllableChar {
         this.crop_texture = false;
         this.shadow_following = true;
         this._shapes_collision_active = false;
-        this.allow_char_to_move_in_event = false;
+        this.force_char_stop_in_event = true;
         this.force_idle_action_in_event = true;
     }
 

@@ -1,5 +1,6 @@
 import {event_types, GameEvent} from "./GameEvent";
 import {directions} from "../utils";
+import {NPC} from "NPC";
 
 export class JumpEvent extends GameEvent {
     private npc_index: number;
@@ -63,8 +64,13 @@ export class JumpEvent extends GameEvent {
                 npc_index: this.npc_index,
                 npc_label: this.npc_label,
             }) ?? this.origin_npc;
-        const previous_allow_char_to_move_in_event = char.allow_char_to_move_in_event;
-        char.allow_char_to_move_in_event = true;
+        const previous_force_char_stop_in_event = char.force_char_stop_in_event;
+        char.force_char_stop_in_event = false;
+        let previous_move_freely_in_event: boolean;
+        if (char.is_npc) {
+            previous_move_freely_in_event = (char as NPC).move_freely_in_event;
+            (char as NPC).move_freely_in_event = false;
+        }
 
         await char.jump({
             jump_height: this.jump_height,
@@ -75,7 +81,10 @@ export class JumpEvent extends GameEvent {
             sfx_key: this.sfx_key,
         });
 
-        char.allow_char_to_move_in_event = previous_allow_char_to_move_in_event;
+        char.force_char_stop_in_event = previous_force_char_stop_in_event;
+        if (char.is_npc) {
+            (char as NPC).move_freely_in_event = previous_move_freely_in_event;
+        }
 
         --this.data.game_event_manager.events_running_count;
         this.finish_events.forEach(event => event.fire(this.origin_npc));
