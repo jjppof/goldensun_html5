@@ -2,11 +2,12 @@ import {GameEvent, event_types} from "./GameEvent";
 
 export class TimerEvent extends GameEvent {
     private duration: number;
-    private finish_events: GameEvent[] = [];
+    private finish_events: GameEvent[];
 
     constructor(game, data, active, key_name, duration, finish_events) {
         super(game, data, event_types.TIMER, active, key_name);
         this.duration = duration;
+        this.finish_events = [];
         if (finish_events !== undefined) {
             finish_events.forEach(event_info => {
                 const event = this.data.game_event_manager.get_event_instance(event_info);

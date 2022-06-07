@@ -323,7 +323,9 @@ export class TileEventManager {
                 info.open_door,
                 info.dest_collision_layer,
                 info.destination_direction,
-                info.keep_encounter_cumulator
+                info.keep_encounter_cumulator,
+                info.fade_camera,
+                info.skip_checks
             );
         } else if (info.type === event_types.SLIDER) {
             return new SliderEvent(

@@ -301,8 +301,21 @@ export class GoldenSun {
         this.tile_event_manager = new TileEventManager(this.game, this);
         this.game_event_manager = new GameEventManager(this.game, this);
 
-        //configs map layers: creates sprites, interactable objects and npcs, lists events and sets the map layers
+        //sets last visited sanctum info
+        const sanctum_data =
+            snapshot?.last_visited_town_with_sanctum ?? this.dbs.init_db.last_visited_town_with_sanctum;
+        if (sanctum_data) {
+            this.info.last_visited_town_with_sanctum = {
+                map_key: sanctum_data.map_key,
+                collision_layer: sanctum_data.collision_layer,
+                tile_position: {
+                    x: sanctum_data.tile_position.x,
+                    y: sanctum_data.tile_position.y,
+                },
+            };
+        }
 
+        //configs map layers: creates sprites, interactable objects and npcs, lists events and sets the map layers
         const map_key_name = snapshot?.map_data.key_name ?? this.dbs.init_db.map_key_name;
         const map = this.info.maps_list[map_key_name];
         const initial_collision_layer = snapshot?.map_data.collision_layer ?? this.dbs.init_db.collision_layer;

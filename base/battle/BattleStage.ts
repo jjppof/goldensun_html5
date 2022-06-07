@@ -591,11 +591,11 @@ export class BattleStage {
         }
     }
 
-    unset_stage(on_fade_complete: Function, on_flash_complete: Function) {
+    unset_stage(on_fade_complete: () => Promise<void>, on_flash_complete: () => void) {
         this.game.camera.fade();
-        this.game.camera.onFadeComplete.addOnce(() => {
+        this.game.camera.onFadeComplete.addOnce(async () => {
             if (on_fade_complete) {
-                on_fade_complete();
+                await on_fade_complete();
             }
             this.sprites.forEach(sprite => {
                 sprite.destroy();

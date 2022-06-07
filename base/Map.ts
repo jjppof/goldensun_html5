@@ -1602,6 +1602,22 @@ export class Map {
             this._is_world_map = true;
         }
 
+        if (this.sprite.properties?.sanctum) {
+            try {
+                const parsed_data = JSON.parse(this.sprite.properties.sanctum);
+                this.data.info.last_visited_town_with_sanctum = {
+                    map_key: parsed_data.map_key,
+                    collision_layer: parsed_data.collision_layer,
+                    tile_position: {
+                        x: parsed_data.tile_position.x,
+                        y: parsed_data.tile_position.y,
+                    },
+                };
+            } catch {
+                console.warn("The sanctum data is not a valid JSON.");
+            }
+        }
+
         const tileset_name = this.sprite.tilesets[0].name;
         this.sprite.addTilesetImage(tileset_name, this.key_name);
 

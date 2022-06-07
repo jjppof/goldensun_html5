@@ -301,7 +301,9 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.background_key,
-                    info.enemy_party_key
+                    info.enemy_party_key,
+                    info.return_to_sanctum,
+                    info.finish_events
                 );
             case event_types.BRANCH:
                 return new BranchEvent(

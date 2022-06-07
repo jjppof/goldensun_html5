@@ -45,6 +45,7 @@ export type GameInfo = {
     artifacts_global_list: ShopItem[];
     last_visited_town_with_sanctum: {
         map_key: string;
+        collision_layer: number;
         tile_position: {
             x: number;
             y: number;

@@ -11,6 +11,9 @@ export class TeleportEvent extends TileEvent {
     private dest_collision_layer: number;
     private destination_direction: string;
     private keep_encounter_cumulator: boolean;
+    private fade_camera: boolean;
+    private skip_checks: boolean;
+    private finish_callback: () => void;
 
     constructor(
         game,
@@ -29,7 +32,9 @@ export class TeleportEvent extends TileEvent {
         open_door,
         dest_collision_layer,
         destination_direction,
-        keep_encounter_cumulator
+        keep_encounter_cumulator,
+        fade_camera,
+        skip_checks
     ) {
         super(
             game,
@@ -52,6 +57,9 @@ export class TeleportEvent extends TileEvent {
         this.dest_collision_layer = dest_collision_layer ?? 0;
         this.destination_direction = destination_direction;
         this.keep_encounter_cumulator = keep_encounter_cumulator;
+        this.fade_camera = fade_camera ?? true;
+        this.skip_checks = skip_checks ?? false;
+        this.finish_callback = null;
     }
 
     get open_door() {
@@ -59,7 +67,7 @@ export class TeleportEvent extends TileEvent {
     }
 
     fire() {
-        if (!this.check_position() || !this.data.hero_movement_allowed()) {
+        if (!this.skip_checks && (!this.check_position() || !this.data.hero_movement_allowed())) {
             return;
         }
         this.data.tile_event_manager.on_event = true;
@@ -108,8 +116,8 @@ export class TeleportEvent extends TileEvent {
 
     private camera_fade_in() {
         this.data.hero.stop_char(true);
-        this.game.camera.fade(undefined, undefined, true);
-        this.game.camera.onFadeComplete.addOnce(() => {
+
+        const on_camera_fade_in = () => {
             if (this.data.hero.on_reveal) {
                 (this.data.info.field_abilities_list.reveal as RevealFieldPsynergy).finish(true);
             }
@@ -121,7 +129,14 @@ export class TeleportEvent extends TileEvent {
             this.data.hero.play(base_actions.IDLE, reverse_directions[this.data.hero.current_direction]);
             this.game.camera.lerp.setTo(1, 1);
             this.change_map();
-        });
+        };
+
+        if (this.fade_camera) {
+            this.game.camera.fade(undefined, undefined, true);
+            this.game.camera.onFadeComplete.addOnce(on_camera_fade_in);
+        } else {
+            on_camera_fade_in();
+        }
     }
 
     private async change_map() {
@@ -154,13 +169,27 @@ export class TeleportEvent extends TileEvent {
         this.data.hero.update_half_crop(true);
         this.data.map.sort_sprites();
         this.data.map.npcs.forEach(npc => npc.update());
-        this.game.camera.flash(0x0, undefined, true);
-        this.game.camera.onFlashComplete.addOnce(() => {
+
+        const on_camera_fade_out = () => {
             this.data.camera.reset_lerp();
             this.data.tile_event_manager.on_event = false;
             this.data.hero.teleporting = false;
+            if (this.finish_callback) {
+                this.finish_callback();
+            }
             this.data.map.fire_game_events();
-        });
+        };
+
+        if (this.fade_camera) {
+            this.game.camera.flash(0x0, undefined, true);
+            this.game.camera.onFlashComplete.addOnce(on_camera_fade_out);
+        } else {
+            on_camera_fade_out();
+        }
+    }
+
+    set_finish_callback(callback: () => void) {
+        this.finish_callback = callback;
     }
 
     private set_open_door_tile() {

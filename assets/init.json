@@ -14,6 +14,13 @@
             "quantity": 1
         }
     ],
+    "last_visited_town_with_sanctum": {
+        "map_key": "madra_church",
+        "tile_position": {
+            "x": 15.5,
+            "y": 24
+        }
+    },
     "initial_shortcuts": [
         { "ability": "move", "adept": "isaac" },
         { "ability": "frost", "adept": "sheba" },
