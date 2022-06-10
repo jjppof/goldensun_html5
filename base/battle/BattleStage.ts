@@ -607,7 +607,6 @@ export class BattleStage {
             this.upper_rect.y = 0;
             this.lower_rect.y = numbers.GAME_HEIGHT >> 1;
             const fade_time = 300;
-            this.game.camera.resetFX();
             this.game.add
                 .tween(this.upper_rect)
                 .to(
@@ -619,10 +618,14 @@ export class BattleStage {
                     true
                 )
                 .onComplete.addOnce(() => {
-                    if (on_flash_complete) {
-                        on_flash_complete();
-                    }
                     this.crop_group.destroy();
+                    this.game.camera.flash(0x0, fade_time, true);
+                    this.game.camera.onFlashComplete.addOnce(() => {
+                        this.game.camera.resetFX();
+                        if (on_flash_complete) {
+                            on_flash_complete();
+                        }
+                    });
                 });
             this.game.add.tween(this.lower_rect).to(
                 {
