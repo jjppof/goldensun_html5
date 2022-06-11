@@ -1426,6 +1426,13 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                 this.battle_menu.destroy_menu();
                 this.target_window.destroy();
                 this.animation_manager.destroy();
+
+                if (this.allies_defeated) {
+                    const hero = this.data.info.main_char_list[this.data.hero.key_name];
+                    hero.current_hp = 1;
+                    hero.remove_permanent_status(permanent_status.DOWNED);
+                }
+
                 if (this.before_fade_finish_callback) {
                     return this.before_fade_finish_callback(!this.allies_defeated);
                 }
