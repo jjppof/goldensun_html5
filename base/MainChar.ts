@@ -10,6 +10,7 @@ import * as _ from "lodash";
 import {GameInfo, PartyData} from "./initializers/initialize_info";
 import {Ability} from "./Ability";
 import {djinn_actions} from "./main_menus/MainDjinnMenu";
+import {Button} from "./XGamepad";
 
 export type ItemSlot = {
     key_name: string;
@@ -833,6 +834,17 @@ export class MainChar extends Player {
             this.equipped_abilities,
             this.learnt_abilities
         );
+
+        if (this.info.party_data.psynergies_shortcuts[Button.L]?.main_char === this.key_name) {
+            if (!this.abilities.includes(this.info.party_data.psynergies_shortcuts[Button.L].ability)) {
+                this.info.party_data.psynergies_shortcuts[Button.L] = null;
+            }
+        }
+        if (this.info.party_data.psynergies_shortcuts[Button.R]?.main_char === this.key_name) {
+            if (!this.abilities.includes(this.info.party_data.psynergies_shortcuts[Button.R].ability)) {
+                this.info.party_data.psynergies_shortcuts[Button.R] = null;
+            }
+        }
     }
 
     /**
@@ -956,7 +968,15 @@ export class MainChar extends Player {
         party_data.members = party_data.members.filter(member => {
             return member.key_name !== char.key_name;
         });
+
         party_data.avg_level = _.mean(party_data.members.map(char => char.level)) | 0;
+
+        if (party_data.psynergies_shortcuts[Button.L]?.main_char === char.key_name) {
+            party_data.psynergies_shortcuts[Button.L] = null;
+        }
+        if (party_data.psynergies_shortcuts[Button.R]?.main_char === char.key_name) {
+            party_data.psynergies_shortcuts[Button.R] = null;
+        }
     }
 
     /**

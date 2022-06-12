@@ -159,6 +159,9 @@ export class MainPsynergyMenu {
             const ability_name = this.data.info.abilities_list[l_shortcut_info.ability].name;
             this.shortcuts_window.update_text(char_name, this.shortcuts_info.l_char);
             this.shortcuts_window.update_text(ability_name, this.shortcuts_info.l_ability);
+        } else {
+            this.shortcuts_window.update_text("", this.shortcuts_info.l_char);
+            this.shortcuts_window.update_text("", this.shortcuts_info.l_ability);
         }
 
         const r_shortcut_info = this.data.info.party_data.psynergies_shortcuts[Button.R];
@@ -167,6 +170,9 @@ export class MainPsynergyMenu {
             const ability_name = this.data.info.abilities_list[r_shortcut_info.ability].name;
             this.shortcuts_window.update_text(char_name, this.shortcuts_info.r_char);
             this.shortcuts_window.update_text(ability_name, this.shortcuts_info.r_ability);
+        } else {
+            this.shortcuts_window.update_text("", this.shortcuts_info.r_char);
+            this.shortcuts_window.update_text("", this.shortcuts_info.r_ability);
         }
     }
 
