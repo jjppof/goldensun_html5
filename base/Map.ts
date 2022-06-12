@@ -58,6 +58,7 @@ export class Map {
         base_rate: number;
         parties: string[];
         rectangle: Phaser.Rectangle;
+        background_key: string;
     }[];
     private processed_polygons: {
         [collision_layer: number]: Array<{
@@ -1193,6 +1194,7 @@ export class Map {
                             rectangle: zone,
                             base_rate: this_obj.properties?.base_rate ?? objs.properties?.base_rate ?? 0,
                             parties: this_obj.properties?.parties ? JSON.parse(this_obj.properties.parties) : [],
+                            background_key: this_obj.properties?.background_key ?? null,
                         });
                     } catch {
                         console.warn(`Parties data is not a valid JSON in ${layer_name} layer.`);
@@ -1335,11 +1337,24 @@ export class Map {
                             return true;
                         }
                     });
+
+                let tile_bg_key = null;
+                const current_tiles = this.get_current_tile(this.data.hero) as Phaser.Tile[];
+                for (let i = 0; i < current_tiles.length; ++i) {
+                    const tile = current_tiles[i];
+                    if (tile.properties.background_key) {
+                        tile_bg_key = tile.properties.background_key;
+                        break;
+                    }
+                }
+                const zone_bg_key = zones_list[zones_list.length - 1].background_key;
+                const background_key = zone_bg_key ?? tile_bg_key ?? this.background_key;
+
                 if (parties.length) {
                     const party = _.sample(parties);
                     const event = this.data.game_event_manager.get_event_instance({
                         type: event_types.BATTLE,
-                        background_key: this.background_key,
+                        background_key: background_key,
                         enemy_party_key: party,
                     }) as BattleEvent;
                     let get_djinn_fire_event;

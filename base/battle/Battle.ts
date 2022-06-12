@@ -84,6 +84,7 @@ export class Battle {
     public enemies_defeated: boolean;
     public battle_finishing: boolean;
     public can_escape: boolean;
+    public party_fled: boolean;
 
     public advance_log_resolve: Function;
     public advance_log_control_key: number;
@@ -95,8 +96,8 @@ export class Battle {
     public enemies_map_sprite: {[player_key: string]: PlayerSprite};
 
     public previous_map_state: ReturnType<Map["pause"]>;
-    public before_fade_finish_callback: (victory: boolean) => Promise<void>;
-    public finish_callback: (victory: boolean) => void;
+    public before_fade_finish_callback: (victory: boolean, party_fled: boolean) => Promise<void>;
+    public finish_callback: (victory: boolean, party_fled?: boolean) => void;
     public background_key: string;
 
     constructor(
@@ -104,8 +105,8 @@ export class Battle {
         data: GoldenSun,
         background_key: string,
         enemy_party_key: string,
-        before_fade_finish_callback?: (victory: boolean) => Promise<void>,
-        finish_callback?: (victory: boolean) => void
+        before_fade_finish_callback?: Battle["before_fade_finish_callback"],
+        finish_callback?: Battle["finish_callback"]
     ) {
         this.game = game;
         this.data = data;
@@ -170,6 +171,7 @@ export class Battle {
         this.allies_defeated = false;
         this.enemies_defeated = false;
         this.battle_finishing = false;
+        this.party_fled = false;
     }
 
     start_battle() {
@@ -1299,6 +1301,7 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                 effect.char.update_all();
             }
         }
+        this.party_fled = true;
         this.unset_battle();
     }
 
@@ -1434,7 +1437,7 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                 }
 
                 if (this.before_fade_finish_callback) {
-                    return this.before_fade_finish_callback(!this.allies_defeated);
+                    return this.before_fade_finish_callback(!this.allies_defeated, this.party_fled);
                 }
                 return null;
             },
@@ -1444,7 +1447,7 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                 this.game.physics.p2.resume();
                 this.data.audio.play_bgm();
                 if (this.finish_callback) {
-                    this.finish_callback(!this.allies_defeated);
+                    this.finish_callback(!this.allies_defeated, this.party_fled);
                 }
             }
         );

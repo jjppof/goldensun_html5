@@ -33,11 +33,11 @@ export class BattleEvent extends GameEvent {
             this.data,
             this.background_key,
             this.enemy_party_key,
-            victory => {
+            (victory, party_fled) => {
                 if (this.before_fade_finish_callback) {
                     this.before_fade_finish_callback(victory);
                 }
-                if (this.return_to_sanctum) {
+                if (this.return_to_sanctum && !victory && !party_fled) {
                     const sanctum_data = this.data.info.last_visited_town_with_sanctum;
                     const event = new TeleportEvent(
                         this.game,
