@@ -11,6 +11,7 @@ import {DjinnActionWindow} from "./DjinnActionWindow";
 import {CharsQuickInfoDjinnWindow} from "./CharsQuickInfoDjinnWindow";
 import {djinn_actions} from "../../main_menus/MainDjinnMenu";
 import * as _ from "lodash";
+import {Control} from "utils/ControlManager";
 
 const WIN_WIDTH = 236;
 const WIN_HEIGHT = 116;
@@ -501,16 +502,23 @@ export class DjinnListWindow {
         on_cancel: Function,
         on_select: Function,
         on_change_djinn_status?: Function,
-        view_char_status?: Function
+        view_char_status?: Function,
+        on_change_all_djinn_status?: Function
     ) {
         //Missing check for different states on R Button. Using "Set" sound for all
-        const controls = [
+        const controls: Control[] = [
             {buttons: Button.LEFT, on_down: this.previous_character.bind(this), sfx: {down: "menu/move"}},
             {buttons: Button.RIGHT, on_down: this.next_character.bind(this), sfx: {down: "menu/move"}},
             {buttons: Button.UP, on_down: this.previous_djinni.bind(this), sfx: {down: "menu/move"}},
             {buttons: Button.DOWN, on_down: this.next_djinni.bind(this), sfx: {down: "menu/move"}},
             {buttons: Button.A, on_down: on_select, sfx: {down: "menu/positive"}},
             {buttons: Button.B, on_down: on_cancel, sfx: {down: "menu/negative"}},
+            {
+                buttons: [Button.R, Button.SELECT],
+                halt: true,
+                on_down: on_change_all_djinn_status,
+                sfx: {down: "menu/positive"},
+            },
             {buttons: Button.R, on_down: on_change_djinn_status, sfx: {down: "menu/positive_3"}},
             {buttons: Button.L, on_down: view_char_status, sfx: {down: "menu/positive"}},
         ];
@@ -678,27 +686,57 @@ export class DjinnListWindow {
         }
     }
 
+    change_all_djinn_status() {
+        const djinn_index = this.setting_djinn_status
+            ? this.setting_djinn_status_djinn_index
+            : this.selected_djinn_index;
+        const this_char = this.data.info.party_data.members[this.selected_char_index];
+        const this_djinn = this.data.info.djinni_list[this_char.djinni[djinn_index]];
+
+        let status: djinn_status = null;
+        if (this_djinn.status === djinn_status.SET) {
+            status = djinn_status.STANDBY;
+        } else if (this_djinn.status === djinn_status.STANDBY) {
+            status = djinn_status.SET;
+        }
+
+        if (status !== null) {
+            for (let i = 0; i < this.data.info.party_data.members.length; ++i) {
+                const member = this.data.info.party_data.members[i];
+                const djinn = member.djinni;
+                for (let j = 0; j < djinn.length; ++j) {
+                    const djinni = this.data.info.djinni_list[djinn[j]];
+                    djinni.set_status(status, member);
+                    this.base_window.update_text_color(djinn_font_colors[status], this.djinn_names[i][j]);
+                }
+            }
+            this.chars_quick_info_window.update_text();
+            this.set_action_text();
+            this.set_djinn_sprite(false);
+        }
+    }
+
     /**
      * Toggles the current djinn status (Set <> Standby).
      */
     change_djinn_status() {
-        let djinn_index = this.setting_djinn_status ? this.setting_djinn_status_djinn_index : this.selected_djinn_index;
+        const djinn_index = this.setting_djinn_status
+            ? this.setting_djinn_status_djinn_index
+            : this.selected_djinn_index;
         const this_char = this.data.info.party_data.members[this.selected_char_index];
         const this_djinn = this.data.info.djinni_list[this_char.djinni[djinn_index]];
 
+        let status: djinn_status = null;
         if (this_djinn.status === djinn_status.SET) {
-            this_djinn.set_status(djinn_status.STANDBY, this_char);
-            this.base_window.update_text_color(
-                djinn_font_colors[djinn_status.STANDBY],
-                this.djinn_names[this.selected_char_index][this.selected_djinn_index]
-            );
-            this.chars_quick_info_window.update_text();
-            this.set_action_text();
-            this.set_djinn_sprite(false);
+            status = djinn_status.STANDBY;
         } else if (this_djinn.status === djinn_status.STANDBY) {
-            this_djinn.set_status(djinn_status.SET, this_char);
+            status = djinn_status.SET;
+        }
+
+        if (status !== null) {
+            this_djinn.set_status(status, this_char);
             this.base_window.update_text_color(
-                djinn_font_colors[djinn_status.SET],
+                djinn_font_colors[status],
                 this.djinn_names[this.selected_char_index][this.selected_djinn_index]
             );
             this.chars_quick_info_window.update_text();
@@ -748,7 +786,8 @@ export class DjinnListWindow {
             this.close.bind(this),
             this.on_choose.bind(this),
             this.change_djinn_status.bind(this),
-            this.view_char_status.bind(this)
+            this.view_char_status.bind(this),
+            this.change_all_djinn_status.bind(this)
         );
     }
 
@@ -777,7 +816,8 @@ export class DjinnListWindow {
                         this.close.bind(this),
                         this.on_choose.bind(this),
                         this.change_djinn_status.bind(this),
-                        this.view_char_status.bind(this)
+                        this.view_char_status.bind(this),
+                        this.change_all_djinn_status.bind(this)
                     );
                 });
             },
@@ -877,7 +917,8 @@ export class DjinnListWindow {
             this.close.bind(this),
             this.on_choose.bind(this),
             this.change_djinn_status.bind(this),
-            this.view_char_status.bind(this)
+            this.view_char_status.bind(this),
+            this.change_all_djinn_status.bind(this)
         );
 
         this.base_window.show(undefined, false);
