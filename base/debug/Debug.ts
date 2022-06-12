@@ -66,6 +66,9 @@ export class Debug {
 
     //activate debug mode
     toggle_debug_physics() {
+        if (!this.data.assets_loaded) {
+            return;
+        }
         this.data.hero.sprite.body.debug = !this.data.hero.sprite.body.debug;
         this.update_debug_physics(this.data.hero.sprite.body.debug);
         for (let i = 0; i < this.data.map.interactable_objects.length; ++i) {
