@@ -54,7 +54,7 @@ export class InteractableObjects {
     private anchor_y: number;
     private scale_x: number;
     private scale_y: number;
-    private storage_keys: {
+    protected storage_keys: {
         position?: string;
         base_collision_layer?: string;
         enable?: string;

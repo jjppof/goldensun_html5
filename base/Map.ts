@@ -1055,7 +1055,9 @@ export class Map {
                 action,
                 snapshot_info
             );
-            if (interactable_object.is_rope_dock) {
+            if (interactable_object.pushable) {
+                (interactable_object as Pushable).initialize_pushable(property_info.dock_tile_position);
+            } else if (interactable_object.is_rope_dock) {
                 (interactable_object as RopeDock).intialize_dock_info(
                     property_info.dest_x,
                     property_info.dest_y,

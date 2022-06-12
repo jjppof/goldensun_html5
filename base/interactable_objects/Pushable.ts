@@ -14,6 +14,11 @@ export class Pushable extends InteractableObjects {
     private static readonly DUST_KEY = "dust";
     private static readonly DUST_ANIM_KEY = "spread";
 
+    private dock_tile_position: {
+        x: number;
+        y: number;
+    };
+
     constructor(
         game,
         data,
@@ -73,6 +78,11 @@ export class Pushable extends InteractableObjects {
             snapshot_info
         );
         this._pushable = true;
+        this.dock_tile_position = null;
+    }
+
+    initialize_pushable(dock_tile_position: Pushable["dock_tile_position"]) {
+        this.dock_tile_position = dock_tile_position ?? null;
     }
 
     /**
@@ -327,6 +337,19 @@ export class Pushable extends InteractableObjects {
             }
             Promise.all(promises).then(() => {
                 char.pushing = false;
+
+                if (this.dock_tile_position && this.storage_keys.position) {
+                    if (
+                        this.tile_x_pos === this.dock_tile_position.x &&
+                        this.tile_y_pos === this.dock_tile_position.y
+                    ) {
+                        this.data.storage.set(this.storage_keys.position, {
+                            x: this.tile_x_pos,
+                            y: this.tile_y_pos,
+                        });
+                    }
+                }
+
                 if (enable_physics_at_end) {
                     char.toggle_collision(true);
                     this.toggle_collision(true);
