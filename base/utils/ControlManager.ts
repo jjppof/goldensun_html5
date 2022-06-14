@@ -217,7 +217,7 @@ export class ControlManager {
                 ? gamepad_button[gamepad_button.length - 1]
                 : gamepad_button;
 
-            const binding_callback = (callback: Function, sfx: string) => {
+            const binding_callback = (control: Control, is_down: boolean, sfx: string) => {
                 if (this.disabled) return;
                 if (Array.isArray(control.buttons)) {
                     if (!this.check_bt_sequence_is_down(control.buttons as Button[])) return;
@@ -231,23 +231,27 @@ export class ControlManager {
                 if (sfx) this.audio.play_se(sfx);
                 if (control.halt) {
                     if (Array.isArray(gamepad_button)) {
-                        gamepad_button.forEach(bt => bt.on_up.halt());
+                        gamepad_button.forEach(bt => (is_down ? bt.on_down : bt.on_up).halt());
                     } else {
-                        last_gamepad_bt.on_up.halt();
+                        (is_down ? last_gamepad_bt.on_down : last_gamepad_bt.on_up).halt();
                     }
                 }
-                callback();
+                if (is_down) {
+                    control.on_down();
+                } else {
+                    control.on_up();
+                }
             };
 
             if (control.on_up) {
                 let signal_binding: Phaser.SignalBinding;
                 if (call_once) {
                     signal_binding = last_gamepad_bt.on_up.addOnce(
-                        binding_callback.bind(this, control.on_up, control.sfx?.up)
+                        binding_callback.bind(this, control, false, control.sfx?.up)
                     );
                 } else {
                     signal_binding = last_gamepad_bt.on_up.add(
-                        binding_callback.bind(this, control.on_up, control.sfx?.up)
+                        binding_callback.bind(this, control, false, control.sfx?.up)
                     );
                 }
                 register(signal_binding);
@@ -292,11 +296,11 @@ export class ControlManager {
                     let signal_binding: Phaser.SignalBinding;
                     if (call_once) {
                         signal_binding = last_gamepad_bt.on_down.addOnce(
-                            binding_callback.bind(this, control.on_down, control.sfx?.down)
+                            binding_callback.bind(this, control, true, control.sfx?.down)
                         );
                     } else {
                         signal_binding = last_gamepad_bt.on_down.add(
-                            binding_callback.bind(this, control.on_down, control.sfx?.down)
+                            binding_callback.bind(this, control, true, control.sfx?.down)
                         );
                     }
                     register(signal_binding);
