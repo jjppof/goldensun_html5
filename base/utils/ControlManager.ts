@@ -217,7 +217,7 @@ export class ControlManager {
                 ? gamepad_button[gamepad_button.length - 1]
                 : gamepad_button;
 
-            const binding_callback = (control: Control, is_down: boolean, sfx: string) => {
+            const binding_callback = (is_down: boolean, sfx: string) => {
                 if (this.disabled) return;
                 if (Array.isArray(control.buttons)) {
                     if (!this.check_bt_sequence_is_down(control.buttons as Button[])) return;
@@ -246,13 +246,9 @@ export class ControlManager {
             if (control.on_up) {
                 let signal_binding: Phaser.SignalBinding;
                 if (call_once) {
-                    signal_binding = last_gamepad_bt.on_up.addOnce(
-                        binding_callback.bind(this, control, false, control.sfx?.up)
-                    );
+                    signal_binding = last_gamepad_bt.on_up.addOnce(binding_callback.bind(this, false, control.sfx?.up));
                 } else {
-                    signal_binding = last_gamepad_bt.on_up.add(
-                        binding_callback.bind(this, control, false, control.sfx?.up)
-                    );
+                    signal_binding = last_gamepad_bt.on_up.add(binding_callback.bind(this, false, control.sfx?.up));
                 }
                 register(signal_binding);
             }
@@ -296,11 +292,11 @@ export class ControlManager {
                     let signal_binding: Phaser.SignalBinding;
                     if (call_once) {
                         signal_binding = last_gamepad_bt.on_down.addOnce(
-                            binding_callback.bind(this, control, true, control.sfx?.down)
+                            binding_callback.bind(this, true, control.sfx?.down)
                         );
                     } else {
                         signal_binding = last_gamepad_bt.on_down.add(
-                            binding_callback.bind(this, control, true, control.sfx?.down)
+                            binding_callback.bind(this, true, control.sfx?.down)
                         );
                     }
                     register(signal_binding);
