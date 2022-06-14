@@ -102,7 +102,7 @@ export function initialize_main_chars(
         if (char_snapshot_data?.djinn) {
             char_snapshot_data.djinn.forEach(djinni_info => {
                 const djinn = data.info.djinni_list[djinni_info.key_name];
-                djinn.set_status(djinni_info.status, main_char);
+                djinn.set_status(djinni_info.status);
                 djinn.recovery_turn = djinni_info.recovery_turn;
             });
         }

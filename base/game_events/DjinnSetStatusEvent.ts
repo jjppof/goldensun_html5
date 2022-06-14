@@ -24,8 +24,7 @@ export class DjinnSetStatusEvent extends GameEvent {
 
     protected _fire(): void {
         if (this.status !== undefined && this.djinn !== undefined) {
-            const owner = this.djinn.owner;
-            this.djinn.set_status(this.status, owner);
+            this.djinn.set_status(this.status);
         }
     }
 

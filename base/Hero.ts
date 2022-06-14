@@ -3,6 +3,9 @@ import * as numbers from "./magic_numbers";
 import {get_transition_directions, directions, base_actions, get_direction_mask, range_360} from "./utils";
 import {Button} from "./XGamepad";
 import {GoldenSun} from "./GoldenSun";
+import {Djinn, djinn_status} from "./Djinn";
+import {permanent_status} from "./Player";
+import * as _ from "lodash";
 
 /**
  * This class is responsible to control the hero that is controlled by the game player in the maps.
@@ -40,6 +43,17 @@ export class Hero extends ControllableChar {
         [directions.down_left]: {x: -numbers.INV_SQRT2, y: numbers.INV_SQRT2},
     };
 
+    /** The increment value for hero general counter when walking. Used in recover PP, djinn recover and poison damage. */
+    private static readonly GENERAL_COUNTER_INCR_WALK = 0x66;
+    /** The increment value for hero general counter when dashing. Used in recover PP, djinn recover and poison damage. */
+    private static readonly GENERAL_COUNTER_INCR_DASH = 0xcc;
+    /** The counter limit value. Used in recover PP, djinn recover and poison damage. */
+    private static readonly GENERAL_COUNTER_LIMIT = 0xffff;
+
+    /** This hero general counter. Used in recover PP, djinn recover and poison damage. */
+    private general_counter: number;
+
+    /** If true, the next battle encounter will be avoided, then this var is reset to false. */
     public avoid_encounter: boolean;
 
     constructor(
@@ -69,6 +83,7 @@ export class Hero extends ControllableChar {
             initial_direction
         );
         this.avoid_encounter = false;
+        this.general_counter = 0;
     }
 
     /** Gets the collision layer that the hero is. */
@@ -284,6 +299,42 @@ export class Hero extends ControllableChar {
         this.play_current_action(true); //sets the hero sprite
         this.update_shadow(); //updates the hero's shadow position
         this.update_half_crop(); //halves the hero texture if needed
+        this.update_general_counter(); //updates general counter
+    }
+
+    /**
+     * Updates the general counter value. General counter is used in recover PP,
+     * djinn recover and poison damage.
+     */
+    update_general_counter() {
+        if (this.data.map.get_current_zones()) {
+            const incr = this.dashing ? Hero.GENERAL_COUNTER_INCR_DASH : Hero.GENERAL_COUNTER_INCR_WALK;
+            this.general_counter += incr;
+            if (this.general_counter >= Hero.GENERAL_COUNTER_LIMIT) {
+                this.general_counter %= Hero.GENERAL_COUNTER_LIMIT;
+
+                const djinni_to_recover = Djinn.djinn_in_recover.length ? Djinn.djinn_in_recover[0] : null;
+                if (djinni_to_recover) {
+                    this.data.info.djinni_list[djinni_to_recover].set_status(djinn_status.SET);
+                }
+
+                this.data.info.party_data.members.forEach(char => {
+                    if (char.current_pp < char.max_pp) {
+                        ++char.current_pp;
+                    }
+                    let damage = 0;
+                    if (char.has_permanent_status(permanent_status.POISON)) {
+                        damage = ((char.max_hp + 10) / 20) | 0;
+                    } else if (char.has_permanent_status(permanent_status.VENOM)) {
+                        damage = ((char.max_hp + 5) / 10) | 0;
+                    }
+                    char.current_hp = _.clamp(char.current_hp - damage, 0, char.max_hp);
+                    if (char.current_hp === 0) {
+                        char.add_permanent_status(permanent_status.DOWNED);
+                    }
+                });
+            }
+        }
     }
 
     /**

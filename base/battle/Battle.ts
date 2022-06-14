@@ -654,12 +654,9 @@ export class Battle {
         //change djinn status
         if (ability.ability_category === ability_categories.DJINN) {
             if (ability.effects.some(effect => effect.type === effect_types.SET_DJINN)) {
-                this.data.info.djinni_list[action.djinn_key_name].set_status(
-                    djinn_status.SET,
-                    action.caster as MainChar
-                );
+                this.data.info.djinni_list[action.djinn_key_name].set_status(djinn_status.SET);
             } else {
-                this.data.info.djinni_list[action.key_name].set_status(djinn_status.STANDBY, action.caster as MainChar);
+                this.data.info.djinni_list[action.key_name].set_status(djinn_status.STANDBY);
             }
         } else if (ability.ability_category === ability_categories.SUMMON) {
             //deal with summon ability type
@@ -1249,7 +1246,7 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                 const djinn = this.data.info.djinni_list[djinn_key];
                 if (djinn.status === djinn_status.RECOVERY) {
                     if (djinn.recovery_turn === 0) {
-                        djinn.set_status(djinn_status.SET, player);
+                        djinn.set_status(djinn_status.SET);
                         await this.battle_log.add(`${djinn.name} is set to ${player.name}!`);
                         await this.wait_for_key();
                     } else {

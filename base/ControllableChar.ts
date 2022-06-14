@@ -452,14 +452,16 @@ export abstract class ControllableChar {
 
     /**
      * Checks whether this char is in movement.
+     * @param walk_dash_only if true, will check only dash and walk.
      * @returns returns true if in movement.
      */
-    in_movement() {
+    in_movement(walk_dash_only: boolean = false) {
         if (
             this._current_action === base_actions.WALK ||
             this._current_action === base_actions.DASH ||
-            (this._current_action === base_actions.CLIMB && !this.idle_climbing) ||
-            (this._current_action === base_actions.ROPE && this.current_animation !== base_actions.IDLE)
+            (!walk_dash_only &&
+                ((this._current_action === base_actions.CLIMB && !this.idle_climbing) ||
+                    (this._current_action === base_actions.ROPE && this.current_animation !== base_actions.IDLE)))
         ) {
             return true;
         }

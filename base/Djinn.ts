@@ -4,6 +4,7 @@ import * as _ from "lodash";
 import {MainChar} from "./MainChar";
 import {Summon} from "./Summon";
 import {main_stats} from "./Player";
+import {GameInfo} from "./initializers/initialize_info";
 
 export enum djinn_status {
     SET = "set",
@@ -27,8 +28,10 @@ export class Djinn {
     public boost_stats: {[main_stat in main_stats]?: number};
     public status: djinn_status;
     public index: number;
-    public recovery_turn: number;
     public owner: MainChar;
+    public recovery_turn: number;
+
+    public static djinn_in_recover: string[] = [];
 
     constructor(
         key_name,
@@ -62,13 +65,23 @@ export class Djinn {
         this.owner = null;
     }
 
-    set_status(status: djinn_status, char?: MainChar) {
+    set_status(status: djinn_status) {
+        if (status === djinn_status.RECOVERY) {
+            if (!Djinn.djinn_in_recover.includes(this.key_name)) {
+                Djinn.djinn_in_recover.push(this.key_name);
+            }
+        } else if (this.status === djinn_status.RECOVERY) {
+            Djinn.djinn_in_recover = Djinn.djinn_in_recover.filter(key_name => key_name !== this.key_name);
+            this.recovery_turn = 0;
+        }
+
         this.status = status;
-        if (char) {
-            char.update_elemental_attributes();
-            char.update_class();
-            char.update_attributes();
-            char.update_abilities();
+
+        if (this.owner) {
+            this.owner.update_elemental_attributes();
+            this.owner.update_class();
+            this.owner.update_attributes();
+            this.owner.update_abilities();
         }
     }
 
@@ -103,7 +116,7 @@ export class Djinn {
     }
 
     static set_to_recovery(
-        djinni_list: {[key: string]: Djinn},
+        djinni_list: GameInfo["djinni_list"],
         members: MainChar[],
         requirements: Summon["requirements"]
     ) {
@@ -119,7 +132,7 @@ export class Djinn {
                 if (req_counter[djinn.element] > 0) {
                     djinn.recovery_turn = recovery_counter;
                     ++recovery_counter;
-                    djinn.set_status(djinn_status.RECOVERY, player);
+                    djinn.set_status(djinn_status.RECOVERY);
                     --req_counter[djinn.element];
                     if (!_.some(req_counter, Boolean)) {
                         done = true;

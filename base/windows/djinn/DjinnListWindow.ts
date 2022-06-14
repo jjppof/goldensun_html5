@@ -706,7 +706,7 @@ export class DjinnListWindow {
                 const djinn = member.djinni;
                 for (let j = 0; j < djinn.length; ++j) {
                     const djinni = this.data.info.djinni_list[djinn[j]];
-                    djinni.set_status(status, member);
+                    djinni.set_status(status);
                     this.base_window.update_text_color(djinn_font_colors[status], this.djinn_names[i][j]);
                 }
             }
@@ -734,7 +734,7 @@ export class DjinnListWindow {
         }
 
         if (status !== null) {
-            this_djinn.set_status(status, this_char);
+            this_djinn.set_status(status);
             this.base_window.update_text_color(
                 djinn_font_colors[status],
                 this.djinn_names[this.selected_char_index][this.selected_djinn_index]

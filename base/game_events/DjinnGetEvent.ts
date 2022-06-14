@@ -93,8 +93,8 @@ export class DjinnGetEvent extends GameEvent {
         this.control_enable = false;
         this.running = false;
         this.data.control_manager.detach_bindings(this.control_key);
-        const char = MainChar.add_djinn_to_party(this.data.info.party_data, this.djinn);
-        this.djinn.set_status(djinn_status.STANDBY, char);
+        MainChar.add_djinn_to_party(this.data.info.party_data, this.djinn);
+        this.djinn.set_status(djinn_status.STANDBY);
         this.data.hero.play(base_actions.IDLE);
         this.data.hero.force_idle_action_in_event = previous_force_idle_action_in_event;
         this.data.hero.toggle_collision(true);
@@ -843,8 +843,8 @@ export class DjinnGetEvent extends GameEvent {
     async _fire() {
         if (this.no_animation) {
             if (this.add_djinn) {
-                const char = MainChar.add_djinn_to_party(this.data.info.party_data, this.djinn);
-                this.djinn.set_status(djinn_status.STANDBY, char);
+                MainChar.add_djinn_to_party(this.data.info.party_data, this.djinn);
+                this.djinn.set_status(djinn_status.STANDBY);
             } else {
                 const char = this.djinn.owner;
                 if (char) {

@@ -1306,82 +1306,86 @@ export class Map {
     }
 
     /**
+     * Gets the zones that the hero is in. Zones are only available if hero is moving.
+     * @returns a Set of zones.
+     */
+    public get_current_zones() {
+        if (this.data.hero.in_movement(true) && this.encounter_zones.length) {
+            const zones = new Set<Map["encounter_zones"][0]>();
+            for (let i = 0; i < this.encounter_zones.length; ++i) {
+                const zone = this.encounter_zones[i];
+                if (zone.rectangle.contains(this.data.hero.x, this.data.hero.y)) {
+                    zones.add(zone);
+                }
+            }
+            return zones.size ? zones : null;
+        } else {
+            return null;
+        }
+    }
+
+    /**
      * Checks whether it's time to start a random battle.
      */
     private zone_check() {
-        if (
-            !this.encounter_zones.length ||
-            ((this.data.hero.current_action as base_actions) !== base_actions.WALK &&
-                (this.data.hero.current_action as base_actions) !== base_actions.DASH)
-        ) {
+        const zones = this.get_current_zones();
+        if (!zones) {
             return;
         }
-        const zones = new Set<Map["encounter_zones"][0]>();
-        for (let i = 0; i < this.encounter_zones.length; ++i) {
-            const zone = this.encounter_zones[i];
-            if (zone.rectangle.contains(this.data.hero.sprite.x, this.data.hero.sprite.y)) {
-                zones.add(zone);
-            }
-        }
-        if (zones.size) {
-            const zones_list = [...zones];
-            const base_rate = _.mean(zones_list.map(zone => zone.base_rate)) | 0;
-            if (this.start_battle_encounter(base_rate)) {
-                const parties = zones_list
-                    .map(zone => zone.parties)
-                    .flat()
-                    .filter(party => {
-                        if (this.data.dbs.enemies_parties_db[party].active_storage_key) {
-                            return this.data.storage.get(this.data.dbs.enemies_parties_db[party].active_storage_key);
-                        } else {
-                            return true;
-                        }
-                    });
-
-                let tile_bg_key = null;
-                const current_tiles = this.get_current_tile(this.data.hero) as Phaser.Tile[];
-                for (let i = 0; i < current_tiles.length; ++i) {
-                    const tile = current_tiles[i];
-                    if (tile.properties.background_key) {
-                        tile_bg_key = tile.properties.background_key;
-                        break;
+        const zones_list = [...zones];
+        const base_rate = _.mean(zones_list.map(zone => zone.base_rate)) | 0;
+        if (this.start_battle_encounter(base_rate)) {
+            const parties = zones_list
+                .map(zone => zone.parties)
+                .flat()
+                .filter(party => {
+                    if (this.data.dbs.enemies_parties_db[party].active_storage_key) {
+                        return this.data.storage.get(this.data.dbs.enemies_parties_db[party].active_storage_key);
+                    } else {
+                        return true;
                     }
-                }
-                const zone_bg_key = zones_list[zones_list.length - 1].background_key;
-                const background_key = zone_bg_key ?? tile_bg_key ?? this.background_key;
+                });
 
-                if (parties.length) {
-                    const party = _.sample(parties);
-                    const event = this.data.game_event_manager.get_event_instance({
-                        type: event_types.BATTLE,
-                        background_key: background_key,
-                        enemy_party_key: party,
-                    }) as BattleEvent;
-                    let get_djinn_fire_event;
-                    event.assign_before_fade_finish_callback(victory => {
-                        if (victory) {
-                            if (this.data.dbs.enemies_parties_db[party].djinn) {
-                                get_djinn_fire_event = this.get_djinn_on_world_map(
-                                    this.data.dbs.enemies_parties_db[party].djinn
-                                );
-                            }
-                        }
-                    });
-                    event.assign_finish_callback(victory => {
-                        if (victory) {
-                            if (this.data.dbs.enemies_parties_db[party].active_storage_key) {
-                                this.data.storage.set(
-                                    this.data.dbs.enemies_parties_db[party].active_storage_key,
-                                    false
-                                );
-                            }
-                            if (get_djinn_fire_event !== undefined) {
-                                get_djinn_fire_event();
-                            }
-                        }
-                    });
-                    event.fire();
+            let tile_bg_key = null;
+            const current_tiles = this.get_current_tile(this.data.hero) as Phaser.Tile[];
+            for (let i = 0; i < current_tiles.length; ++i) {
+                const tile = current_tiles[i];
+                if (tile.properties.background_key) {
+                    tile_bg_key = tile.properties.background_key;
+                    break;
                 }
+            }
+            const zone_bg_key = zones_list[zones_list.length - 1].background_key;
+            const background_key = zone_bg_key ?? tile_bg_key ?? this.background_key;
+
+            if (parties.length) {
+                const party = _.sample(parties);
+                const event = this.data.game_event_manager.get_event_instance({
+                    type: event_types.BATTLE,
+                    background_key: background_key,
+                    enemy_party_key: party,
+                }) as BattleEvent;
+                let get_djinn_fire_event;
+                event.assign_before_fade_finish_callback(victory => {
+                    if (victory) {
+                        if (this.data.dbs.enemies_parties_db[party].djinn) {
+                            get_djinn_fire_event = this.get_djinn_on_world_map(
+                                this.data.dbs.enemies_parties_db[party].djinn
+                            );
+                        }
+                    }
+                });
+                event.assign_finish_callback(victory => {
+                    if (victory) {
+                        if (this.data.dbs.enemies_parties_db[party].active_storage_key) {
+                            this.data.storage.set(this.data.dbs.enemies_parties_db[party].active_storage_key, false);
+                        }
+                        if (get_djinn_fire_event !== undefined) {
+                            get_djinn_fire_event();
+                        }
+                    }
+                });
+                event.fire();
             }
         }
     }
