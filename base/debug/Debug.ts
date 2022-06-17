@@ -327,7 +327,7 @@ export class Debug {
                                 x: event.x,
                                 y: event.y,
                                 activation_directions: event.activation_directions.map(dir => reverse_directions[dir]),
-                                activation_collision_layers: event.activation_collision_layers,
+                                activation_collision_layers: Array.from(event.activation_collision_layers),
                                 active: event.active.flatMap((active, i) =>
                                     active ? [reverse_directions[event.activation_directions[i]]] : []
                                 ),

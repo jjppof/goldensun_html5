@@ -124,7 +124,7 @@ export class JumpEvent extends TileEvent {
                 if (
                     event.type === event_types.JUMP &&
                     event.is_active(get_opposite_direction(jump_direction)) >= 0 &&
-                    event.activation_collision_layers.includes(this.data.map.collision_layer)
+                    event.activation_collision_layers.has(this.data.map.collision_layer)
                 ) {
                     active_jump_event_found = true;
                     if (event.origin_interactable_object?.breakable) {

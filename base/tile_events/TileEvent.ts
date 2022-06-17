@@ -47,7 +47,7 @@ export abstract class TileEvent {
     protected _location_key: number;
     protected _id: number;
     protected _key_name: string;
-    protected _activation_collision_layers: number[];
+    protected _activation_collision_layers: Set<number>;
     protected _activation_directions: number[];
     protected _active: boolean[];
     protected _affected_by_reveal: boolean[];
@@ -92,9 +92,10 @@ export abstract class TileEvent {
         this.in_map = snapshot_info?.in_map ?? true;
 
         activation_collision_layers = snapshot_info?.activation_collision_layers ?? activation_collision_layers;
-        this._activation_collision_layers = Array.isArray(activation_collision_layers)
+        activation_collision_layers = Array.isArray(activation_collision_layers)
             ? activation_collision_layers
             : [activation_collision_layers ?? 0];
+        this._activation_collision_layers = new Set(activation_collision_layers);
 
         activation_directions = snapshot_info?.activation_directions ?? activation_directions;
         this._activation_directions = TileEvent.format_activation_directions(activation_directions);
@@ -286,7 +287,7 @@ export abstract class TileEvent {
      * @param collision_layers_indexes the collision layers index.
      */
     set_activation_collision_layers(...collision_layers_indexes: number[]) {
-        this._activation_collision_layers = [...collision_layers_indexes];
+        collision_layers_indexes.forEach(this.activation_collision_layers.add, this.activation_collision_layers);
     }
 
     private static format_activation_directions(input) {

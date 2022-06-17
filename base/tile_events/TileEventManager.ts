@@ -161,7 +161,7 @@ export class TileEventManager {
             const this_event = this.data.map.events[location_key][i];
 
             //ignore events on different collision layers than the one that the hero is.
-            if (!this_event.activation_collision_layers.includes(this.data.map.collision_layer)) {
+            if (!this_event.activation_collision_layers.has(this.data.map.collision_layer)) {
                 continue;
             }
 
@@ -243,7 +243,7 @@ export class TileEventManager {
                                         this.event_timers[timer_key].activation_direction ===
                                             this.data.hero.current_direction &&
                                         this_event.is_active(this.data.hero.current_direction) >= 0 &&
-                                        this_event.activation_collision_layers.includes(this.data.hero.collision_layer)
+                                        this_event.activation_collision_layers.has(this.data.hero.collision_layer)
                                     ) {
                                         this.fire_event(this_event, this.data.hero.current_direction);
                                     }
