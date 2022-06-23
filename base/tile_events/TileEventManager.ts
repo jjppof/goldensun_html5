@@ -30,10 +30,7 @@ class EventQueue {
     add(event: TileEvent, this_activation_direction: directions, fire_function: Function, fire = false) {
         switch (event.type) {
             case event_types.CLIMB:
-                if (
-                    event.is_active(this_activation_direction) > -1 &&
-                    event.activation_directions.includes(this_activation_direction)
-                ) {
+                if (event.is_active_at_direction(this_activation_direction)) {
                     this.climb_event = true;
                 }
                 break;
@@ -166,7 +163,7 @@ export class TileEventManager {
             }
 
             //ignore events that are not active in the direction that the hero is going.
-            if (this_event.is_active(this.data.hero.current_direction) === -1) {
+            if (!this_event.is_active_at_direction(this.data.hero.current_direction)) {
                 continue;
             }
 
@@ -212,9 +209,7 @@ export class TileEventManager {
                             this.fire_event.bind(this, this_event, this.data.hero.current_direction)
                         );
                     } else {
-                        const right_direction = this_event.activation_directions.includes(
-                            this.data.hero.current_direction
-                        );
+                        const right_direction = this_event.is_active_at_direction(this.data.hero.current_direction);
                         //the hero must be trying to walk/dash/climb towards the event activation direction.
                         if (
                             right_direction &&
@@ -242,7 +237,7 @@ export class TileEventManager {
                                     if (
                                         this.event_timers[timer_key].activation_direction ===
                                             this.data.hero.current_direction &&
-                                        this_event.is_active(this.data.hero.current_direction) >= 0 &&
+                                        this_event.is_active_at_direction(this.data.hero.current_direction) &&
                                         this_event.activation_collision_layers.has(this.data.hero.collision_layer)
                                     ) {
                                         this.fire_event(this_event, this.data.hero.current_direction);
@@ -283,8 +278,8 @@ export class TileEventManager {
                 info.x,
                 info.y,
                 info.activation_directions,
+                info.initial_disabled_directions,
                 info.activation_collision_layers,
-                info.active,
                 info.active_storage_key,
                 info.affected_by_reveal,
                 info.key_name,
@@ -297,8 +292,8 @@ export class TileEventManager {
                 info.x,
                 info.y,
                 info.activation_directions,
+                info.initial_disabled_directions,
                 info.activation_collision_layers,
-                info.active,
                 info.active_storage_key,
                 info.affected_by_reveal,
                 info.key_name,
@@ -312,8 +307,8 @@ export class TileEventManager {
                 info.x,
                 info.y,
                 info.activation_directions,
+                info.initial_disabled_directions,
                 info.activation_collision_layers,
-                info.active,
                 info.active_storage_key,
                 info.affected_by_reveal,
                 info.key_name,
@@ -334,8 +329,8 @@ export class TileEventManager {
                 info.x,
                 info.y,
                 info.activation_directions,
+                info.initial_disabled_directions,
                 info.activation_collision_layers,
-                info.active,
                 info.active_storage_key,
                 info.affected_by_reveal,
                 info.key_name,
@@ -351,8 +346,8 @@ export class TileEventManager {
                 info.x,
                 info.y,
                 info.activation_directions,
+                info.initial_disabled_directions,
                 info.activation_collision_layers,
-                info.active,
                 info.active_storage_key,
                 null,
                 info.affected_by_reveal,
@@ -365,8 +360,8 @@ export class TileEventManager {
                 info.x,
                 info.y,
                 info.activation_directions,
+                info.initial_disabled_directions,
                 info.activation_collision_layers,
-                info.active,
                 info.active_storage_key,
                 info.affected_by_reveal,
                 info.key_name,
@@ -379,8 +374,8 @@ export class TileEventManager {
                 info.x,
                 info.y,
                 info.activation_directions,
+                info.initial_disabled_directions,
                 info.activation_collision_layers,
-                info.active,
                 info.active_storage_key,
                 info.affected_by_reveal,
                 info.key_name,
@@ -393,8 +388,8 @@ export class TileEventManager {
                 info.x,
                 info.y,
                 info.activation_directions,
+                info.initial_disabled_directions,
                 info.activation_collision_layers,
-                info.active,
                 info.active_storage_key,
                 info.affected_by_reveal,
                 info.key_name,
@@ -408,8 +403,8 @@ export class TileEventManager {
                 info.x,
                 info.y,
                 info.activation_directions,
+                info.initial_disabled_directions,
                 info.activation_collision_layers,
-                info.active,
                 info.active_storage_key,
                 info.affected_by_reveal,
                 info.key_name,
@@ -422,8 +417,8 @@ export class TileEventManager {
                 info.x,
                 info.y,
                 info.activation_directions,
+                info.initial_disabled_directions,
                 info.activation_collision_layers,
-                info.active,
                 info.active_storage_key,
                 info.affected_by_reveal,
                 info.key_name,

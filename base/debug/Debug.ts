@@ -326,11 +326,10 @@ export class Debug {
                                 type: event.type,
                                 x: event.x,
                                 y: event.y,
-                                activation_directions: event.activation_directions.map(dir => reverse_directions[dir]),
-                                activation_collision_layers: Array.from(event.activation_collision_layers),
-                                active: event.active.flatMap((active, i) =>
-                                    active ? [reverse_directions[event.activation_directions[i]]] : []
+                                activation_directions: Array.from(event.activation_directions).map(
+                                    dir => reverse_directions[dir]
                                 ),
+                                activation_collision_layers: Array.from(event.activation_collision_layers),
                                 ...(event.origin_interactable_object && {
                                     origin_interactable_object: `[${event.origin_interactable_object.key_name}${
                                         event.origin_interactable_object.label

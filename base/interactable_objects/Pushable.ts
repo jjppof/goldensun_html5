@@ -139,9 +139,8 @@ export class Pushable extends InteractableObjects {
             const event = events[i];
             if (
                 event.type === event_types.CLIMB &&
-                event.activation_directions.includes(char.current_direction) &&
-                event.activation_collision_layers.has(this.data.map.collision_layer) &&
-                event.is_active(char.current_direction) > -1
+                event.is_active_at_direction(char.current_direction) &&
+                event.activation_collision_layers.has(this.data.map.collision_layer)
             ) {
                 return true;
             }

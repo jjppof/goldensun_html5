@@ -1,6 +1,6 @@
 import {FieldAbilities} from "./FieldAbilities";
 import * as numbers from "../magic_numbers";
-import {base_actions} from "../utils";
+import {base_actions, directions} from "../utils";
 
 export class RevealFieldPsynergy extends FieldAbilities {
     private static readonly ABILITY_KEY_NAME = "reveal";
@@ -60,9 +60,11 @@ export class RevealFieldPsynergy extends FieldAbilities {
         for (let key in this.data.map.events) {
             const events = this.data.map.events[key];
             events.forEach(event => {
-                event.affected_by_reveal.forEach((affect, i) => {
-                    if (affect) {
-                        event.active[i] = !event.active[i];
+                event.affected_by_reveal.forEach(direction => {
+                    if (event.is_active_at_direction(direction)) {
+                        event.deactivate_at(direction);
+                    } else {
+                        event.activate_at(direction);
                     }
                 });
             });

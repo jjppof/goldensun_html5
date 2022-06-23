@@ -46,7 +46,7 @@ export class BattleEvent extends GameEvent {
                         undefined,
                         undefined,
                         undefined,
-                        true,
+                        undefined,
                         undefined,
                         false,
                         undefined,

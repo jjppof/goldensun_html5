@@ -15,8 +15,8 @@ export class StepEvent extends TileEvent {
         x,
         y,
         activation_directions,
+        initial_disabled_directions,
         activation_collision_layers,
-        active,
         active_storage_key,
         affected_by_reveal,
         key_name: string,
@@ -29,8 +29,8 @@ export class StepEvent extends TileEvent {
             x,
             y,
             activation_directions,
+            initial_disabled_directions,
             activation_collision_layers,
-            active,
             active_storage_key,
             null,
             affected_by_reveal,
@@ -51,13 +51,13 @@ export class StepEvent extends TileEvent {
         } else if (this.step_direction === directions.down) {
             shift_y = (this.data.map.tile_height / StepEvent.STEP_SHIFT_FACTOR) | 0;
         }
-        if (this.activation_directions[0] === directions.left) {
+        if (this.get_activation_direction() === directions.left) {
             next_x = this.x - 1;
-        } else if (this.activation_directions[0] === directions.right) {
+        } else if (this.get_activation_direction() === directions.right) {
             next_x = this.x + 1;
-        } else if (this.activation_directions[0] === directions.up) {
+        } else if (this.get_activation_direction() === directions.up) {
             next_y = this.y - 1;
-        } else if (this.activation_directions[0] === directions.down) {
+        } else if (this.get_activation_direction() === directions.down) {
             next_y = this.y + 1;
         }
         this.next_x = next_x;

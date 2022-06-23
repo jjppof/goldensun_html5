@@ -111,7 +111,7 @@ export class FrostFieldPsynergy extends FieldAbilities {
     Will change its properties and animation*/
     init_pillar() {
         this.target_object.get_events().forEach((event: JumpEvent) => {
-            if (event.is_active() >= 0) {
+            if (event.is_active_at_direction()) {
                 event.deactivate();
             } else {
                 event.activate();

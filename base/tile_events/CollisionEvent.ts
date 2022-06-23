@@ -12,8 +12,8 @@ export class CollisionEvent extends TileEvent {
         x,
         y,
         activation_directions,
+        initial_disabled_directions,
         activation_collision_layers,
-        active,
         active_storage_key,
         affected_by_reveal,
         key_name: string,
@@ -26,8 +26,8 @@ export class CollisionEvent extends TileEvent {
             x,
             y,
             activation_directions,
+            initial_disabled_directions,
             activation_collision_layers,
-            active,
             active_storage_key,
             null,
             affected_by_reveal,
@@ -41,13 +41,13 @@ export class CollisionEvent extends TileEvent {
     set() {
         let next_x = this.x,
             next_y = this.y;
-        if (this.activation_directions[0] === directions.left) {
+        if (this.get_activation_direction() === directions.left) {
             next_x = this.x - 1;
-        } else if (this.activation_directions[0] === directions.right) {
+        } else if (this.get_activation_direction() === directions.right) {
             next_x = this.x + 1;
-        } else if (this.activation_directions[0] === directions.up) {
+        } else if (this.get_activation_direction() === directions.up) {
             next_y = this.y - 1;
-        } else if (this.activation_directions[0] === directions.down) {
+        } else if (this.get_activation_direction() === directions.down) {
             next_y = this.y + 1;
         }
         this.next_x = next_x;

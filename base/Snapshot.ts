@@ -185,8 +185,7 @@ export type SnapshotData = {
                     x: number;
                     y: number;
                 };
-                active: TileEvent["active"];
-                activation_directions: string[];
+                activation_directions: number[];
                 activation_collision_layers: number[];
                 in_map: boolean;
             };
@@ -462,8 +461,7 @@ export class Snapshot {
                             x: event.x,
                             y: event.y,
                         },
-                        active: event.active,
-                        activation_directions: event.activation_directions.map(dir => reverse_directions[dir]),
+                        activation_directions: Array.from(event.activation_directions),
                         activation_collision_layers: Array.from(event.activation_collision_layers),
                         in_map: event.in_map,
                     };

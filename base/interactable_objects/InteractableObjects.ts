@@ -853,19 +853,20 @@ export class InteractableObjects {
         if (!(this_event_location_key in map.events)) {
             map.events[this_event_location_key] = [];
         }
+        const activation_directions = [
+            reverse_directions[directions.right],
+            reverse_directions[directions.left],
+            reverse_directions[directions.down],
+            reverse_directions[directions.up],
+        ];
         const new_event = new JumpEvent(
             this.game,
             this.data,
             x_pos,
             y_pos,
-            [
-                reverse_directions[directions.right],
-                reverse_directions[directions.left],
-                reverse_directions[directions.down],
-                reverse_directions[directions.up],
-            ],
+            activation_directions,
+            active_event ? undefined : activation_directions,
             [target_layer],
-            active_event,
             undefined,
             this,
             false,
@@ -879,7 +880,7 @@ export class InteractableObjects {
             new_event.set_activation_collision_layers(this.base_collision_layer + collision_layer_shift);
         });
 
-        if (new_event.is_active() >= 0) {
+        if (new_event.is_active_at_direction()) {
             new_event.activation_collision_layers.forEach(collision_layer => {
                 if (collision_layer !== this.base_collision_layer) {
                     map.set_collision_in_tile(new_event.x, new_event.y, false, collision_layer);
@@ -937,8 +938,8 @@ export class InteractableObjects {
                 x,
                 y,
                 activation_direction,
+                active_event ? undefined : activation_direction,
                 activation_collision_layer,
-                active_event,
                 undefined,
                 false,
                 event_info.key_name,
@@ -959,19 +960,20 @@ export class InteractableObjects {
             if (!(this_event_location_key in map.events)) {
                 map.events[this_event_location_key] = [];
             }
+            const activation_direction = [
+                reverse_directions[directions.right],
+                reverse_directions[directions.left],
+                reverse_directions[directions.down],
+                reverse_directions[directions.up],
+            ][index];
             const new_event = new JumpEvent(
                 this.game,
                 this.data,
                 pos.x,
                 pos.y,
-                [
-                    reverse_directions[directions.right],
-                    reverse_directions[directions.left],
-                    reverse_directions[directions.down],
-                    reverse_directions[directions.up],
-                ][index],
+                activation_direction,
+                active_event ? undefined : activation_direction,
                 [target_layer],
-                active_event,
                 undefined,
                 this,
                 false,
@@ -1070,8 +1072,8 @@ export class InteractableObjects {
                 event_data.x,
                 event_data.y,
                 event_data.activation_directions,
+                active_event ? undefined : event_data.activation_directions,
                 event_data.activation_collision_layers,
-                active_event,
                 undefined,
                 false,
                 undefined,

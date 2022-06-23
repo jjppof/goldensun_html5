@@ -170,7 +170,7 @@ export class Breakable extends InteractableObjects {
 
         this.data.collision.change_map_body(this.base_collision_layer);
         this.get_events().forEach(event => {
-            if (event.is_active() >= 0) {
+            if (event.is_active_at_direction()) {
                 event.deactivate();
                 event.activation_collision_layers.forEach(collision_layer => {
                     this.data.map.set_collision_in_tile(event.x, event.y, true, collision_layer);

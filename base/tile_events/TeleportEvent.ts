@@ -21,8 +21,8 @@ export class TeleportEvent extends TileEvent {
         x,
         y,
         activation_directions,
+        initial_disabled_directions,
         activation_collision_layers,
-        active,
         active_storage_key,
         affected_by_reveal,
         key_name: string,
@@ -43,8 +43,8 @@ export class TeleportEvent extends TileEvent {
             x,
             y,
             activation_directions,
+            initial_disabled_directions,
             activation_collision_layers,
-            active,
             active_storage_key,
             null,
             affected_by_reveal,
@@ -124,7 +124,7 @@ export class TeleportEvent extends TileEvent {
             const destination_direction =
                 directions[this.destination_direction] !== undefined
                     ? directions[this.destination_direction]
-                    : this.activation_directions[0];
+                    : this.get_activation_direction();
             this.data.hero.set_direction(destination_direction);
             this.data.hero.play(base_actions.IDLE, reverse_directions[this.data.hero.current_direction]);
             this.game.camera.lerp.setTo(1, 1);

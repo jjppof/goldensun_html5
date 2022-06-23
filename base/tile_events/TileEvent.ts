@@ -48,9 +48,10 @@ export abstract class TileEvent {
     protected _id: number;
     protected _key_name: string;
     protected _activation_collision_layers: Set<number>;
-    protected _activation_directions: number[];
-    protected _active: boolean[];
-    protected _affected_by_reveal: boolean[];
+    protected _initial_activation_directions: Set<directions>;
+    protected _activation_directions: Set<directions>;
+    protected _initial_disabled_directions: Set<directions>;
+    protected _affected_by_reveal: Set<directions>;
     protected _origin_interactable_object: InteractableObjects;
     protected _allow_active_in_diagonal: boolean;
 
@@ -60,11 +61,11 @@ export abstract class TileEvent {
     /** Whether this event is in the map. */
     public in_map: boolean;
 
-    private active_storage_key: string;
-
     protected static id_incrementer: number;
     protected static _events: {[id: number]: TileEvent};
     protected static labeled_events: {[key_name: number]: TileEvent};
+
+    private active_storage_key: string;
 
     constructor(
         game,
@@ -73,8 +74,8 @@ export abstract class TileEvent {
         x,
         y,
         activation_directions,
+        initial_disabled_directions,
         activation_collision_layers,
-        active,
         active_storage_key,
         origin_interactable_object,
         affected_by_reveal,
@@ -97,22 +98,29 @@ export abstract class TileEvent {
             : [activation_collision_layers ?? 0];
         this._activation_collision_layers = new Set(activation_collision_layers);
 
-        activation_directions = snapshot_info?.activation_directions ?? activation_directions;
-        this._activation_directions = TileEvent.format_activation_directions(activation_directions);
-
-        active = snapshot_info?.active ?? active;
-        this._active = Array.isArray(active)
-            ? active
-            : new Array(this._activation_directions.length).fill(active ?? true);
-
         this.active_storage_key = active_storage_key;
-        if (this.active_storage_key !== undefined && !this.data.storage.get(this.active_storage_key)) {
-            this._active = new Array(this._activation_directions.length).fill(active ?? false);
-        }
 
-        this._affected_by_reveal = Array.isArray(affected_by_reveal)
+        this._initial_disabled_directions = new Set(
+            TileEvent.format_activation_directions(initial_disabled_directions, false)
+        );
+        this._initial_activation_directions = new Set(TileEvent.format_activation_directions(activation_directions));
+        if (snapshot_info?.activation_directions) {
+            activation_directions = new Set(snapshot_info?.activation_directions);
+        } else if (this.active_storage_key && !this.data.storage.get(this.active_storage_key)) {
+            activation_directions = new Set();
+        } else {
+            activation_directions = new Set(
+                [...this._initial_activation_directions].filter(x => !this._initial_disabled_directions.has(x))
+            );
+        }
+        this._activation_directions = activation_directions;
+
+        affected_by_reveal = Array.isArray(affected_by_reveal)
             ? affected_by_reveal
-            : new Array(this._activation_directions.length).fill(affected_by_reveal ?? false);
+            : affected_by_reveal
+            ? Array.from(this.activation_collision_layers)
+            : [];
+        this._affected_by_reveal = new Set(affected_by_reveal);
 
         this._origin_interactable_object = origin_interactable_object ?? null;
         this.collision_layer_shift_from_source = 0;
@@ -143,29 +151,19 @@ export abstract class TileEvent {
     get id() {
         return this._id;
     }
-    /** The list of directions that this event can be fire. */
+    /** The set of directions that this event can be fired. */
     get activation_directions() {
         return this._activation_directions;
     }
-    /** The list of collision layers that this event can be fired. */
+    /** The set of collision layers that this event can be fired. */
     get activation_collision_layers() {
         return this._activation_collision_layers;
-    }
-    /**
-     * This array has the same size of activation directions.
-     * The indexes of this array matches activation_directions in the
-     * way that it tells whether a given activation_direction is active
-     * by checking this var in the same corresponding index. Example:
-     * if active[2] is false, it means that this event is not active in
-     * the direction holded in activation_directions[2].
-     */
-    get active() {
-        return this._active;
     }
     /** The interactable object that created this event (in the case of it has been created from it). */
     get origin_interactable_object() {
         return this._origin_interactable_object;
     }
+    /** The set of directions that are causes this event to have its activation toggled when reveal is casted. */
     get affected_by_reveal() {
         return this._affected_by_reveal;
     }
@@ -195,72 +193,83 @@ export abstract class TileEvent {
      * Tests whether a given direction is available to active this event. If no directions given,
      * tests if at least one direction is active.
      * @param direction the direction to test if it's active.
-     * @returns The resulting direction that actives this event. Returns -1 if there's no active direction.
+     * @returns Returns whether it's active or not.
      */
-    is_active(direction?: directions): directions | -1 {
+    is_active_at_direction(direction?: directions) {
         if (direction === undefined) {
-            return _.findIndex(this.active, v => v) ?? -1;
+            return Boolean(this.activation_directions.size);
         } else {
             const possible_directions = this.allow_active_in_diagonal ? split_direction(direction) : [direction];
             for (let i = 0; i < possible_directions.length; ++i) {
-                if (this.active[this.activation_directions.indexOf(possible_directions[i])]) {
-                    return possible_directions[i];
+                const dir = possible_directions[i];
+                if (this.activation_directions.has(dir)) {
+                    return true;
                 }
             }
         }
-        return -1;
+        return false;
+    }
+
+    /**
+     * Checks whether this event is active in any direction.
+     * @returns returns true if active.
+     */
+    is_active() {
+        return this.is_active_at_direction();
     }
 
     /**
      * Activates this event in a given direction.
-     * @param direction the direction to activate this event.
+     * @param direction the direction to activate this event. If "all" is passed, all directions will be activated.
      */
     activate_at(direction: directions | "all") {
         if (direction === "all") {
             this.activate();
         } else {
-            const index = this.activation_directions.indexOf(direction as directions);
-            if (index >= 0) {
-                this.active[index] = true;
-            }
+            this.activation_directions.add(direction);
         }
     }
 
     /**
      * Deactivates this event in a given direction.
-     * @param direction the direction to deactivate this event.
+     * @param direction the direction to deactivate this event.  If "all" is passed, all directions will be deactivated.
      */
     deactivate_at(direction: directions | "all") {
         if (direction === "all") {
             this.deactivate();
         } else {
-            const index = this.activation_directions.indexOf(direction as directions);
-            if (index >= 0) {
-                this.active[index] = false;
-            }
+            this.activation_directions.delete(direction);
         }
     }
 
     /**
-     * Activates this event in all directions.
+     * Activates this event in all initial directions.
      */
     activate() {
-        this._active = this.active.fill(true);
+        this._activation_directions = new Set(this._initial_activation_directions);
     }
 
     /**
      * Deactivates this event in all directions.
      */
     deactivate() {
-        this._active = this.active.fill(false);
+        this.activation_directions.clear();
     }
 
     /**
-     * Checks whether the hero is iver this tile event.
+     * Checks whether the hero is over this tile event.
      * @returns whether the hero position is correct or not.
      */
     check_position() {
         return this.data.hero.tile_x_pos === this.x && this.data.hero.tile_y_pos === this.y;
+    }
+
+    /**
+     * Gets an activation direction of this event.
+     * @returns returns an direction.
+     */
+    get_activation_direction(): directions {
+        return this.activation_directions.values().next().value;
     }
 
     /**
@@ -284,13 +293,19 @@ export abstract class TileEvent {
 
     /**
      * Adds new collision layers that this event can active.
-     * @param collision_layers_indexes the collision layers index.
+     * @param collision_layers_indexes the collision layers indexes.
      */
     set_activation_collision_layers(...collision_layers_indexes: number[]) {
         collision_layers_indexes.forEach(this.activation_collision_layers.add, this.activation_collision_layers);
     }
 
-    private static format_activation_directions(input) {
+    private static format_activation_directions(
+        input: string | string[],
+        undefined_is_all: boolean = true
+    ): directions[] {
+        if (input === undefined && !undefined_is_all) {
+            return [];
+        }
         if (input === undefined || input === "all") {
             return get_directions(true);
         }

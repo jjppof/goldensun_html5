@@ -27,8 +27,8 @@ export class RopeEvent extends TileEvent {
         x: number,
         y: number,
         activation_directions,
+        initial_disabled_directions,
         activation_collision_layers,
-        active,
         active_storage_key,
         affected_by_reveal,
         key_name: string,
@@ -44,8 +44,8 @@ export class RopeEvent extends TileEvent {
             x,
             y,
             activation_directions,
+            initial_disabled_directions,
             activation_collision_layers,
-            active,
             active_storage_key,
             origin_interactable_object,
             affected_by_reveal,
@@ -97,7 +97,7 @@ export class RopeEvent extends TileEvent {
         this.data.collision.change_map_body(this._rope_collision_layer);
         this._starting_rope_dock.set_sprites_z_sorting(true);
         this.data.map.sort_sprites();
-        const jump_direction = this.is_active(this.data.hero.current_direction);
+        const jump_direction = this.activation_directions.values().next().value;
         await this.data.hero.jump({
             dest: {
                 x: this.origin_interactable_object.sprite.centerX,

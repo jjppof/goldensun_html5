@@ -14,8 +14,8 @@ export class JumpEvent extends TileEvent {
         x,
         y,
         activation_directions,
+        initial_disabled_directions,
         activation_collision_layers,
-        active,
         active_storage_key,
         origin_interactable_object,
         affected_by_reveal,
@@ -28,8 +28,8 @@ export class JumpEvent extends TileEvent {
             x,
             y,
             activation_directions,
+            initial_disabled_directions,
             activation_collision_layers,
-            active,
             active_storage_key,
             origin_interactable_object,
             affected_by_reveal,
@@ -123,7 +123,7 @@ export class JumpEvent extends TileEvent {
                 const event = this.data.map.events[next_pos_key][i];
                 if (
                     event.type === event_types.JUMP &&
-                    event.is_active(get_opposite_direction(jump_direction)) >= 0 &&
+                    event.is_active_at_direction(get_opposite_direction(jump_direction)) &&
                     event.activation_collision_layers.has(this.data.map.collision_layer)
                 ) {
                     active_jump_event_found = true;
