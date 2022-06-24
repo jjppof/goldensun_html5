@@ -6,7 +6,7 @@ import {event_types, GameEvent} from "./game_events/GameEvent";
 import {EngineFilters, GoldenSun} from "./GoldenSun";
 import * as _ from "lodash";
 import {ControllableChar} from "./ControllableChar";
-import {base_actions, directions, get_px_position, parse_blend_mode} from "./utils";
+import {base_actions, directions, get_px_position, get_text_width, parse_blend_mode} from "./utils";
 import {BattleEvent} from "./game_events/BattleEvent";
 import {Djinn} from "./Djinn";
 import {Pushable} from "./interactable_objects/Pushable";
@@ -15,6 +15,8 @@ import {RollablePillar} from "./interactable_objects/RollingPillar";
 import {Collision} from "./Collision";
 import {DjinnGetEvent} from "./game_events/DjinnGetEvent";
 import {Breakable} from "./interactable_objects/Breakable";
+import {Window} from "./Window";
+import {GAME_HEIGHT, GAME_WIDTH} from "./magic_numbers";
 
 /** The class reponsible for the maps of the engine. */
 export class Map {
@@ -85,6 +87,8 @@ export class Map {
 
     /** If true, sprites in middlelayer_group won't be sorted. */
     public sprites_sort_paused: boolean;
+    map_name_window: Window;
+    show_map_name: boolean;
 
     constructor(
         game,
@@ -100,7 +104,8 @@ export class Map {
         bgm_key,
         bgm_url,
         expected_party_level,
-        background_key
+        background_key,
+        show_map_name
     ) {
         this.game = game;
         this.data = data;
@@ -150,6 +155,8 @@ export class Map {
             [EngineFilters.GRAY]: false,
             [EngineFilters.MODE7]: false,
         };
+        this.map_name_window = null;
+        this.show_map_name = show_map_name ?? true;
     }
 
     /** The list of TileEvents of this map. */
@@ -345,6 +352,9 @@ export class Map {
         this.npcs.forEach(npc => npc.update());
         for (let key in this.events) {
             this.events[key].forEach(event => event.update());
+        }
+        if (this.map_name_window?.open) {
+            this.map_name_window.update();
         }
         this.sort_sprites();
         this.update_map_rotation();
@@ -1617,6 +1627,13 @@ export class Map {
         TileEvent.reset();
         GameEvent.reset();
 
+        const window_width = get_text_width(this.game, this.name, true) + 14;
+        const window_height = 20;
+        const window_x = (GAME_WIDTH >> 1) - (window_width >> 1);
+        const window_y = GAME_HEIGHT >> 2;
+        this.map_name_window = new Window(this.game, window_x, window_y, window_width, window_height);
+        this.map_name_window.set_lines_of_text([this.name], {italic: true});
+
         this._encounter_cumulator = encounter_cumulator ?? 0;
 
         this._collision_layer = collision_layer;
@@ -1830,5 +1847,7 @@ export class Map {
         this.game_events = [];
         this.data.middlelayer_group.add(this.data.hero.shadow);
         this.data.middlelayer_group.add(this.data.hero.sprite);
+
+        if (this.map_name_window) this.map_name_window.destroy(false);
     }
 }

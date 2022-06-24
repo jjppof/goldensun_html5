@@ -140,6 +140,7 @@ export class TeleportEvent extends TileEvent {
     }
 
     private async change_map() {
+        const curr_map_name = this.data.map.name;
         const next_map_key_name = this.target;
         const target_collision_layer = this.dest_collision_layer;
         this.data.hero.set_collision_layer(target_collision_layer);
@@ -160,10 +161,10 @@ export class TeleportEvent extends TileEvent {
         this.data.hero.sprite.body.x = get_centered_pos_in_px(this.x_target, this.data.map.tile_width);
         this.data.hero.sprite.body.y = get_centered_pos_in_px(this.y_target, this.data.map.tile_height);
         this.game.physics.p2.resume();
-        this.camera_fade_out();
+        this.camera_fade_out(curr_map_name);
     }
 
-    private camera_fade_out() {
+    private camera_fade_out(previous_map_name?: string) {
         this.data.hero.update_shadow();
         this.data.hero.update_tile_position();
         this.data.hero.update_half_crop(true);
@@ -171,6 +172,13 @@ export class TeleportEvent extends TileEvent {
         this.data.map.npcs.forEach(npc => npc.update());
 
         const on_camera_fade_out = () => {
+            if (this.data.map.show_map_name && this.data.map.name !== previous_map_name) {
+                this.data.map.map_name_window.show();
+                this.game.time.events.add(2000, () => {
+                    this.data.map.map_name_window.close();
+                });
+            }
+
             this.data.camera.reset_lerp();
             this.data.tile_event_manager.on_event = false;
             this.data.hero.teleporting = false;

@@ -20,7 +20,8 @@ export function initialize_maps(game: Phaser.Game, data: GoldenSun, maps_db: any
             map_data.bgm?.key,
             map_data.bgm?.path,
             map_data.expected_party_level,
-            map_data.background_key
+            map_data.background_key,
+            map_data.show_map_name
         );
     }
     let at_least_one_map_loaded = false;
