@@ -343,6 +343,9 @@ export class Map {
         }
         this.collision_sprite.body.velocity.y = this.collision_sprite.body.velocity.x = 0;
         this.npcs.forEach(npc => npc.update());
+        for (let key in this.events) {
+            this.events[key].forEach(event => event.update());
+        }
         this.sort_sprites();
         this.update_map_rotation();
         this.zone_check();

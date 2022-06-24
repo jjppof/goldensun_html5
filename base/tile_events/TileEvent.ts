@@ -299,6 +299,11 @@ export abstract class TileEvent {
         collision_layers_indexes.forEach(this.activation_collision_layers.add, this.activation_collision_layers);
     }
 
+    /**
+     * This method will be called on map update. If necessary, overrides it.
+     */
+    update() {}
+
     private static format_activation_directions(
         input: string | string[],
         undefined_is_all: boolean = true
