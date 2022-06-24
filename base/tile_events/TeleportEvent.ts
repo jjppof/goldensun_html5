@@ -1,4 +1,4 @@
-import {base_actions, directions, get_centered_pos_in_px, get_text_width, reverse_directions} from "../utils";
+import {base_actions, directions, get_centered_pos_in_px, reverse_directions} from "../utils";
 import {event_types, TileEvent} from "./TileEvent";
 import * as _ from "lodash";
 import {RevealFieldPsynergy} from "../field_abilities/RevealFieldPsynergy";
