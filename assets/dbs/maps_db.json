@@ -136,7 +136,8 @@
         "lazy_load": true,
         "collision_embedded": true,
         "expected_party_level": 18,
-        "background_key": "bg_world_map"
+        "background_key": "bg_world_map",
+        "show_map_name": false
     },{
         "name":"Cave",
         "key_name":"cave",
