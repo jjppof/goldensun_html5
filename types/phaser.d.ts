@@ -1983,6 +1983,7 @@ declare module Phaser {
         scale: Phaser.Point;
         top: number;
         total: number;
+        transformCallback: (transformCallbackContext?, wt?, pt?) => void;
         type: number;
         updateOnlyExistingChildren: boolean;
         visible: boolean;

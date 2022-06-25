@@ -89,10 +89,10 @@ export class Window {
         this.game = game;
         this._group = game.add.group();
 
-        this._x = x;
-        this._y = y;
-        this._width = width;
-        this._height = height;
+        this._x = x | 0;
+        this._y = y | 0;
+        this._width = width | 0;
+        this._height = height | 0;
 
         this._mind_read_window = mind_read_window;
 
@@ -529,15 +529,14 @@ export class Window {
      */
     update_size(new_size: {width?: number; height?: number}) {
         if (new_size.width !== undefined) {
-            this._width = new_size.width;
+            this._width = new_size.width | 0;
         }
         if (new_size.height !== undefined) {
-            this._height = new_size.height;
+            this._height = new_size.height | 0;
         }
         this.bg_graphics.clear();
         this.draw_background();
-        if (this._mind_read_window) {
-        } else {
+        if (!this._mind_read_window) {
             this.border_graphics.clear();
             this.draw_borders();
         }
@@ -550,13 +549,13 @@ export class Window {
      */
     update_position(new_position: {x?: number; y?: number}, relative_to_camera_pos = true) {
         if (new_position.x !== undefined) {
-            this._x = new_position.x;
+            this._x = new_position.x | 0;
         }
         if (new_position.y !== undefined) {
-            this._y = new_position.y;
+            this._y = new_position.y | 0;
         }
-        this.group.x = (relative_to_camera_pos ? this.game.camera.x : 0) + this.x;
-        this.group.y = (relative_to_camera_pos ? this.game.camera.y : 0) + this.y;
+        this.group.x = (relative_to_camera_pos ? this.game.camera.x | 0 : 0) + this.x;
+        this.group.y = (relative_to_camera_pos ? this.game.camera.y | 0 : 0) + this.y;
     }
 
     /**
@@ -633,8 +632,8 @@ export class Window {
      */
     show(show_callback?: () => void, animate = true, close_callback?: () => void) {
         this.group.visible = true;
-        this.group.x = this.game.camera.x + this.x;
-        this.group.y = this.game.camera.y + this.y;
+        this.group.x = (this.game.camera.x | 0) + this.x;
+        this.group.y = (this.game.camera.y | 0) + this.y;
 
         this.close_callback = close_callback;
 
@@ -655,11 +654,10 @@ export class Window {
 
     /**
      * Updates the window position if necessary.
-     * @param force If true, forces an update.
      */
     update() {
-        this.group.x = this.game.camera.x + this.x;
-        this.group.y = this.game.camera.y + this.y;
+        this.group.x = (this.game.camera.x | 0) + this.x;
+        this.group.y = (this.game.camera.y | 0) + this.y;
     }
 
     /**

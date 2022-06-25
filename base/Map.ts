@@ -353,9 +353,6 @@ export class Map {
         for (let key in this.events) {
             this.events[key].forEach(event => event.update());
         }
-        if (this.map_name_window?.open) {
-            this.map_name_window.update();
-        }
         this.sort_sprites();
         this.update_map_rotation();
         this.zone_check();
@@ -1608,6 +1605,24 @@ export class Map {
     }
 
     /**
+     * Initializes the window that shows the map name when entering on it.
+     */
+    initialize_map_name_window() {
+        const window_width = get_text_width(this.game, this.name, true) + 14;
+        const window_height = 20;
+        const window_x = (GAME_WIDTH >> 1) - (window_width >> 1);
+        const window_y = GAME_HEIGHT >> 2;
+        this.map_name_window = new Window(this.game, window_x, window_y, window_width, window_height);
+        this.map_name_window.set_lines_of_text([this.name], {italic: true});
+        this.map_name_window.group.transformCallback = () => {
+            if (this.map_name_window.open) {
+                this.map_name_window.group.x += this.map_name_window.x - this.map_name_window.group.worldPosition.x;
+                this.map_name_window.group.y += this.map_name_window.y - this.map_name_window.group.worldPosition.y;
+            }
+        };
+    }
+
+    /**
      * This is the main function of this class. It mounts the map.
      * @param collision_layer the initial collision layer.
      * @param encounter_cumulator the initial encounter cumulator. If not passed, it's reset.
@@ -1627,12 +1642,7 @@ export class Map {
         TileEvent.reset();
         GameEvent.reset();
 
-        const window_width = get_text_width(this.game, this.name, true) + 14;
-        const window_height = 20;
-        const window_x = (GAME_WIDTH >> 1) - (window_width >> 1);
-        const window_y = GAME_HEIGHT >> 2;
-        this.map_name_window = new Window(this.game, window_x, window_y, window_width, window_height);
-        this.map_name_window.set_lines_of_text([this.name], {italic: true});
+        this.initialize_map_name_window();
 
         this._encounter_cumulator = encounter_cumulator ?? 0;
 
