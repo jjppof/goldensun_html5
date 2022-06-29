@@ -90,6 +90,9 @@ export class MainMenu {
     }
 
     public open_menu() {
+        if (this.data.map.map_name_window.open) {
+            this.data.map.map_name_window.close();
+        }
         this.chars_status_window.update_chars_info();
         this.chars_status_window.update_position();
         this.chars_status_window.show();

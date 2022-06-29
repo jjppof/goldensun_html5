@@ -1,0 +1,52 @@
+{"frames": {
+
+"sweat_drops/splash/00":
+{
+	"frame": {"x":6,"y":1,"w":20,"h":7},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":6,"y":10,"w":20,"h":7},
+	"sourceSize": {"w":32,"h":32}
+},
+"sweat_drops/splash/01":
+{
+	"frame": {"x":1,"y":10,"w":24,"h":9},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":4,"y":8,"w":24,"h":9},
+	"sourceSize": {"w":32,"h":32}
+},
+"sweat_drops/splash/02":
+{
+	"frame": {"x":27,"y":11,"w":28,"h":10},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":2,"y":6,"w":28,"h":10},
+	"sourceSize": {"w":32,"h":32}
+},
+"sweat_drops/splash/03":
+{
+	"frame": {"x":28,"y":1,"w":28,"h":8},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":2,"y":6,"w":28,"h":8},
+	"sourceSize": {"w":32,"h":32}
+},
+"sweat_drops/splash/04":
+{
+	"frame": {"x":1,"y":1,"w":3,"h":3},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":0,"w":3,"h":3},
+	"sourceSize": {"w":32,"h":32}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "sweat_drops.png",
+	"format": "RGBA8888",
+	"size": {"w":57,"h":22},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:e7d185f9d0581a1a3f31c044584ab2de:f6dfa3bc2dde30f19428dc6e84bd56dd:9cf5e4f22c158450a1fb3e761516d4eb$"
+}
+}

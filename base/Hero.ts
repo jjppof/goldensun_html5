@@ -300,6 +300,7 @@ export class Hero extends ControllableChar {
         this.update_shadow(); //updates the hero's shadow position
         this.update_half_crop(); //halves the hero texture if needed
         this.update_general_counter(); //updates general counter
+        this.update_sweat_drops_position(); //udpates sweat drops position if available
     }
 
     /**
@@ -318,6 +319,7 @@ export class Hero extends ControllableChar {
                     this.data.info.djinni_list[djinni_to_recover].set_status(djinn_status.SET);
                 }
 
+                let flash_shown = false;
                 this.data.info.party_data.members.forEach(char => {
                     if (char.current_pp < char.max_pp) {
                         ++char.current_pp;
@@ -328,9 +330,16 @@ export class Hero extends ControllableChar {
                     } else if (char.has_permanent_status(permanent_status.VENOM)) {
                         damage = ((char.max_hp + 5) / 10) | 0;
                     }
-                    char.current_hp = _.clamp(char.current_hp - damage, 0, char.max_hp);
-                    if (char.current_hp === 0) {
-                        char.add_permanent_status(permanent_status.DOWNED);
+                    if (damage !== 0) {
+                        if (!flash_shown) {
+                            this.data.game.camera.flash(0xfca103, 150, true);
+                            this.splash_sweat_drops();
+                            flash_shown = true;
+                        }
+                        char.current_hp = _.clamp(char.current_hp - damage, 0, char.max_hp);
+                        if (char.current_hp === 0) {
+                            char.add_permanent_status(permanent_status.DOWNED);
+                        }
                     }
                 });
             }

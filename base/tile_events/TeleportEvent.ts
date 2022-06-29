@@ -175,7 +175,9 @@ export class TeleportEvent extends TileEvent {
             if (this.data.map.show_map_name && this.data.map.name !== previous_map_name) {
                 this.data.map.map_name_window.show();
                 this.game.time.events.add(2000, () => {
-                    this.data.map.map_name_window.close();
+                    if (this.data.map.map_name_window.open) {
+                        this.data.map.map_name_window.close();
+                    }
                 });
             }
 

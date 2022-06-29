@@ -406,6 +406,7 @@ export class NPC extends ControllableChar {
         }
         this.update_shadow();
         this.update_tile_position();
+        this.update_sweat_drops_position();
     }
 
     /**

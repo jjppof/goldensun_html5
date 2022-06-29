@@ -146,6 +146,7 @@ export abstract class ControllableChar {
     private _active_filters: {[key in EngineFilters]?: boolean};
     protected _push_timer: Phaser.Timer;
     private _footsteps: Footsteps;
+    private _sweat_drops: Phaser.Sprite;
     protected look_target: ControllableChar = null;
     protected _active: boolean;
     /**
@@ -266,6 +267,7 @@ export abstract class ControllableChar {
         this._shapes_collision_active = false;
         this.force_char_stop_in_event = true;
         this.force_idle_action_in_event = true;
+        this._sweat_drops = null;
     }
 
     /** The char key. */
@@ -1011,6 +1013,7 @@ export abstract class ControllableChar {
         if (!this.active) return;
         this.look_to_target();
         this.rotate();
+        this.update_sweat_drops_position();
     }
 
     /**
@@ -1030,6 +1033,7 @@ export abstract class ControllableChar {
         this.play_current_action();
         this.apply_speed();
         this.update_shadow();
+        this.update_sweat_drops_position();
     }
 
     /**
@@ -1457,6 +1461,53 @@ export abstract class ControllableChar {
             this.tile_able_to_show_footprint();
         if (this.footsteps?.can_make_footprint && footsteps) {
             this.footsteps.create_step(this.current_direction, this.current_action);
+        }
+    }
+
+    /**
+     * Updates sweat drops position.
+     */
+    protected update_sweat_drops_position() {
+        if (this._sweat_drops) {
+            this._sweat_drops.x = this.x;
+            this._sweat_drops.y = this.y - 5;
+        }
+    }
+
+    /**
+     * Splashes sweat drops from this char. The drops will follow this char pos.
+     * @param times how many times the sweat drops will splash.
+     */
+    async splash_sweat_drops(times: number = 2) {
+        if (times < 1) {
+            return;
+        }
+        const action = "sweat_drops";
+        const sprite_base = this.data.info.misc_sprite_base_list["sweat_drops"];
+        const sprite_key = sprite_base.getSpriteKey(action);
+        this._sweat_drops = this.data.middlelayer_group.create(0, 0, sprite_key);
+        this._sweat_drops.sort_function = () => {
+            this.data.middlelayer_group.setChildIndex(
+                this._sweat_drops,
+                this.data.middlelayer_group.getChildIndex(this.sprite)
+            );
+        };
+        this._sweat_drops.anchor.setTo(0.5, 1.0);
+        this.update_sweat_drops_position();
+        const animation = "splash";
+        sprite_base.setAnimation(this._sweat_drops, action);
+        const animation_key = sprite_base.getAnimationKey(action, animation);
+        const anim = this._sweat_drops.animations.getAnimation(animation_key);
+        for (let i = 0; i < times; ++i) {
+            let promise_resolve;
+            const promise = new Promise(resolve => (promise_resolve = resolve));
+            anim.play();
+            anim.onComplete.addOnce(promise_resolve);
+            await promise;
+        }
+        if (this._sweat_drops) {
+            this._sweat_drops.destroy();
+            this._sweat_drops = null;
         }
     }
 

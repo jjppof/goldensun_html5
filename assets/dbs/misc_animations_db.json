@@ -191,5 +191,21 @@
                 }
             }
         }
+    },
+    {
+        "key_name": "sweat_drops",
+        "initial_animation": "splash",
+        "actions": {
+            "sweat_drops": {
+                "frame_rate": 17,
+                "animations": ["splash"],
+                "frames_count": 5,
+                "loop": false,
+                "spritesheet": {
+                    "image": "assets/images/misc/sweat_drops.png",
+                    "json": "assets/images/misc/sweat_drops.json"
+                }
+            }
+        }
     }
 ]
