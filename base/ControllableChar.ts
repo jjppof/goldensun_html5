@@ -1373,7 +1373,7 @@ export abstract class ControllableChar {
      * Plays the current action of this char.
      * @param check_on_event if true, will check whether the game has any event running.
      */
-    play_current_action(check_on_event: boolean = false) {
+    play_current_action(check_on_event: boolean = false, force_squat: boolean = false) {
         if (check_on_event && this.data.tile_event_manager.on_event) {
             return;
         }
@@ -1401,6 +1401,9 @@ export abstract class ControllableChar {
             } else {
                 frame_rate = this.sprite_info.getFrameRate(base_actions.WALK, animation);
             }
+        }
+        if (force_squat && action === base_actions.IDLE) {
+            action = base_actions.SQUAT;
         }
         this.play(action, animation, true, frame_rate);
     }

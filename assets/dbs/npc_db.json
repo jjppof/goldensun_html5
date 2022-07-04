@@ -458,6 +458,25 @@
                 "frames_count": 1,
                 "frame_rate": 1
             },
+            "squat": {
+                "spritesheet": {
+                    "json": "assets/images/spritesheets/main_chars/isaac_squat.json",
+                    "image": "assets/images/spritesheets/main_chars/isaac_squat.png"
+                },
+                "animations": [
+                    "down",
+                    "up",
+                    "left",
+                    "right",
+                    "down_left",
+                    "down_right",
+                    "up_left",
+                    "up_right"
+                ],
+                "frames_count": 1,
+                "frame_rate": 1,
+                "loop": false
+            },
             "battle": {
                 "spritesheet": {
                     "json": "assets/images/spritesheets/battle/isaac_battle.json",

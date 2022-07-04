@@ -296,7 +296,8 @@ export class Hero extends ControllableChar {
         this.data.collision.check_char_collision(this); //checks if the hero is colliding and its consequences
         this.check_custom_directions_change();
         this.apply_speed(); //applies the final speed
-        this.play_current_action(true); //sets the hero sprite
+        const force_squat = this.data.info.main_char_list[this.key_name].has_permanent_status(permanent_status.DOWNED);
+        this.play_current_action(true, force_squat); //sets the hero sprite
         this.update_shadow(); //updates the hero's shadow position
         this.update_half_crop(); //halves the hero texture if needed
         this.update_general_counter(); //updates general counter

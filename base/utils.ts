@@ -93,6 +93,7 @@ export enum base_actions {
     BATTLE = "battle",
     GRANT = "grant",
     ROPE = "rope",
+    SQUAT = "squat",
 }
 
 /**
