@@ -124,6 +124,20 @@ export function split_direction(direction: directions) {
 }
 
 /**
+ * Splits an diagonal direction into component cardinal directions.
+ * @param direction the input diag direction.
+ * @returns The x and y component cardinal directions.
+ */
+export function split_diag_direction(direction: directions) {
+    if ((direction & 1) !== 1) return null;
+    const shift = (direction & 2) - 1;
+    return {
+        x: (direction + shift) % 8,
+        y: (direction - shift) % 8,
+    };
+}
+
+/**
  * Returns the diagonal value for its component directions
  * Example: Input: 6, 0 (up, right) / Output: 7 (up_right)
  *

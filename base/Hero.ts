@@ -1,6 +1,13 @@
 import {ControllableChar} from "./ControllableChar";
 import * as numbers from "./magic_numbers";
-import {get_transition_directions, directions, base_actions, get_direction_mask, range_360} from "./utils";
+import {
+    get_transition_directions,
+    directions,
+    base_actions,
+    get_direction_mask,
+    range_360,
+    split_diag_direction,
+} from "./utils";
 import {Button} from "./XGamepad";
 import {GoldenSun} from "./GoldenSun";
 import {Djinn, djinn_status} from "./Djinn";
@@ -127,14 +134,16 @@ export class Hero extends ControllableChar {
                 this.current_speed.x = this.current_speed.y = 0;
                 this.idle_climbing = true;
             } else {
-                if ((desired_direction & 1) === 1) {
-                    //transforms diagonal movements in non-diagonal
-                    --desired_direction;
-                }
-                this.set_direction(desired_direction);
                 this.idle_climbing = false;
                 this.current_speed.x = Hero.SPEEDS[desired_direction].x;
                 this.current_speed.y = Hero.SPEEDS[desired_direction].y;
+                if (
+                    Math.abs(this.body.velocity.x) - Math.abs(this.body.velocity.y) > 1e-3 &&
+                    (desired_direction & 1) === 1
+                ) {
+                    desired_direction = split_diag_direction(desired_direction).x;
+                }
+                this.set_direction(desired_direction);
             }
         } else if (!this.ice_sliding_active) {
             //Deals with walking/dashing movement.
