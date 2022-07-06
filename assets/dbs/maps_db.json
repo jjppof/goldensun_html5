@@ -108,6 +108,20 @@
         "lazy_load": true,
         "collision_embedded": true
     },{
+        "name":"Madra",
+        "key_name":"madra_cave",
+        "bgm": {
+            "key": "cave_bgm",
+            "path": "assets/sounds/bgm/cave.ogg"
+        },
+        "tileset_files": {
+            "image":"assets/images/maps/cave/cave.png",
+            "json":"assets/images/maps/madra/madra_cave.json"
+        },
+        "lazy_load": true,
+        "collision_embedded": true,
+        "background_key": "bg_cave"
+    },{
         "name":"Snowland",
         "key_name":"snowland",
         "collision_key_names":["snowland_col"],
