@@ -9,7 +9,7 @@ window.addEventListener("keydown", function(e) {
 const dom_ready = () => {
     const is_firefox = navigator.userAgent.toLowerCase().indexOf("firefox") > -1;
     if (is_firefox) {
-        document.querySelector(".firefox-banner").style.display = "block";
+        document.querySelector("#firefox-warning").style.display = "block";
     }
 };
 document.addEventListener('DOMContentLoaded', dom_ready, false);

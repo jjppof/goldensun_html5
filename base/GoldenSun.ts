@@ -54,6 +54,7 @@ export class GoldenSun {
     public loading_progress: string = "";
     public loading_what: string = "";
     public fps_reduction_active: boolean = false;
+    public showing_fps_banner: boolean = false;
 
     public electron_app: boolean;
     private ipcRenderer: any;
@@ -557,6 +558,21 @@ export class GoldenSun {
         //checks whether it's necessary to keep fps at 60
         if (!this.fps_reduction_active && this.game.time.suggestedFps > numbers.TARGET_FPS_DOUBLE) {
             this.force_target_fps();
+        }
+
+        this.check_fps();
+    }
+
+    private check_fps() {
+        if (this.electron_app) {
+            return;
+        }
+        if (!this.showing_fps_banner && this.game.time.fps < numbers.MIN_FPS) {
+            (document.querySelector("#fps-warning") as HTMLElement).style.display = "block";
+            this.showing_fps_banner = true;
+        } else if (this.showing_fps_banner && this.game.time.fps >= numbers.MIN_FPS) {
+            (document.querySelector("#fps-warning") as HTMLElement).style.display = "none";
+            this.showing_fps_banner = false;
         }
     }
 

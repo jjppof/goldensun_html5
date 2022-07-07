@@ -6,7 +6,7 @@ body {
 body.electron {
     overflow: hidden;
 }
-.firefox-banner {
+.warning-banner {
     background-color: #ec0040;
     text-align: center;
     margin: 0;
@@ -17,6 +17,12 @@ body.electron {
     font-size: larger;
     text-shadow: 2px 2px 0px #920000;
     display: none;
+}
+.bottom-warning {
+    position: absolute;
+    bottom: 0px;
+    width: 100%;
+    padding: 1rem 0 !important;
 }
 .intro {
     padding: 1rem 20% 0rem 20%;
