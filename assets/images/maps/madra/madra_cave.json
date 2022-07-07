@@ -482,12 +482,18 @@
  "properties":
     {
      "real_tile_height":16,
-     "real_tile_width":16
+     "real_tile_width":16,
+     "tile_event\/01":"{\n\"type\": \"teleport\",\n\"x_target\": 33,\n\"y_target\": 11,\n\"target\": \"madra\",\n\"activation_directions\": \"up\",\n\"x\": 9,\n\"y\": 0,\n\"stop_climbing\": true,\n\"dest_collision_layer\": 0,\n\"activation_collision_layers\": 1\n}",
+     "tile_event\/02":"{\n\"type\": \"climb\",\n\"x\": 9,\n\"y\": 6,\n\"activation_directions\": \"down\",\n\"activation_collision_layers\": 1,\n\"change_to_collision_layer\": 0\n}",
+     "tile_event\/03":"{\n\"type\": \"climb\",\n\"x\": 9,\n\"y\": 7,\n\"activation_directions\": \"up\",\n\"activation_collision_layers\": 0,\n\"change_to_collision_layer\": 1\n}"
     },
  "propertytypes":
     {
      "real_tile_height":"int",
-     "real_tile_width":"int"
+     "real_tile_width":"int",
+     "tile_event\/01":"string",
+     "tile_event\/02":"string",
+     "tile_event\/03":"string"
     },
  "renderorder":"right-down",
  "tiledversion":"1.8.4",

@@ -17,6 +17,7 @@ import {Pushable} from "./interactable_objects/Pushable";
 import {RollablePillar} from "./interactable_objects/RollingPillar";
 import {StoragePosition} from "./Storage";
 import {FieldAbilities} from "field_abilities/FieldAbilities";
+import {climb_actions} from "./tile_events/ClimbEvent";
 
 /**
  * All chars that can be controlled by human (Hero) or code/event procedures (NPC)
@@ -1286,7 +1287,10 @@ export abstract class ControllableChar {
             this.sprite.body.velocity.y = this.sprite.body.velocity.x = 0;
         }
         if (change_sprite) {
-            if (this.sprite_info.hasAction(base_actions.IDLE)) {
+            if (this.climbing) {
+                this.data.hero.idle_climbing = true;
+                this.data.hero.play(base_actions.CLIMB, climb_actions.IDLE);
+            } else if (this.sprite_info.hasAction(base_actions.IDLE)) {
                 this._current_action = base_actions.IDLE;
                 this.play_current_action();
             }

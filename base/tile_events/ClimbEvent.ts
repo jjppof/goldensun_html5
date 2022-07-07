@@ -5,7 +5,7 @@ import {InteractableObjects, interactable_object_event_types} from "../interacta
 import {RevealFieldPsynergy} from "../field_abilities/RevealFieldPsynergy";
 import {GoldenSun} from "../GoldenSun";
 
-enum climb_actions {
+export enum climb_actions {
     IDLE = "idle",
     TURN = "turn",
     START = "start",

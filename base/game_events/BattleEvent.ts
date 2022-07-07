@@ -54,6 +54,8 @@ export class BattleEvent extends GameEvent {
                         sanctum_data.tile_position.x,
                         sanctum_data.tile_position.y,
                         false,
+                        false,
+                        false,
                         sanctum_data.collision_layer,
                         reverse_directions[directions.up],
                         false,

@@ -2,12 +2,15 @@ import {base_actions, directions, get_centered_pos_in_px, reverse_directions} fr
 import {event_types, TileEvent} from "./TileEvent";
 import * as _ from "lodash";
 import {RevealFieldPsynergy} from "../field_abilities/RevealFieldPsynergy";
+import {climb_actions} from "./ClimbEvent";
 
 export class TeleportEvent extends TileEvent {
     private target: string;
     private x_target: number;
     private y_target: number;
     private _open_door: boolean;
+    private _start_climbing: boolean;
+    private _stop_climbing: boolean;
     private dest_collision_layer: number;
     private destination_direction: string;
     private keep_encounter_cumulator: boolean;
@@ -30,6 +33,8 @@ export class TeleportEvent extends TileEvent {
         x_target,
         y_target,
         open_door,
+        start_climbing,
+        stop_climbing,
         dest_collision_layer,
         destination_direction,
         keep_encounter_cumulator,
@@ -54,6 +59,8 @@ export class TeleportEvent extends TileEvent {
         this.x_target = x_target;
         this.y_target = y_target;
         this._open_door = open_door ?? false;
+        this._start_climbing = start_climbing ?? false;
+        this._stop_climbing = stop_climbing ?? false;
         this.dest_collision_layer = dest_collision_layer ?? 0;
         this.destination_direction = destination_direction;
         this.keep_encounter_cumulator = keep_encounter_cumulator;
@@ -65,6 +72,12 @@ export class TeleportEvent extends TileEvent {
     get open_door() {
         return this._open_door;
     }
+    get start_climbing() {
+        return this._start_climbing;
+    }
+    get stop_climbing() {
+        return this._stop_climbing;
+    }
 
     fire() {
         if (!this.skip_checks && (!this.check_position() || !this.data.hero_movement_allowed())) {
@@ -73,12 +86,12 @@ export class TeleportEvent extends TileEvent {
         this.data.tile_event_manager.on_event = true;
         this.data.hero.teleporting = true;
         if (this.open_door) {
-            this.data.audio.play_se("door/open_door");
             if (!this.data.hero.stop_by_colliding) {
                 this.data.tile_event_manager.on_event = false;
                 this.data.hero.teleporting = false;
                 return;
             }
+            this.data.audio.play_se("door/open_door");
             this.data.hero.play(base_actions.WALK, reverse_directions[directions.up]);
             this.set_open_door_tile();
             this.game.physics.p2.pause();
@@ -108,6 +121,34 @@ export class TeleportEvent extends TileEvent {
                 .onComplete.addOnce(() => {
                     this.camera_fade_in();
                 });
+        } else if (this.start_climbing) {
+            if (!this.data.hero.stop_by_colliding) {
+                this.data.tile_event_manager.on_event = false;
+                this.data.hero.teleporting = false;
+                return;
+            }
+            this.data.map.sprites_sort_paused = true;
+            const turn_animation = this.data.hero.play(base_actions.CLIMB, climb_actions.TURN);
+            turn_animation.onComplete.addOnce(() => {
+                this.data.hero.shadow.visible = false;
+                const x_tween = this.data.map.tile_width * (this.x + 0.5);
+                const y_tween = this.data.hero.sprite.y + 25;
+                this.game.physics.p2.pause();
+                this.game.add
+                    .tween(this.data.hero.sprite.body)
+                    .to({x: x_tween, y: y_tween}, 300, Phaser.Easing.Linear.None, true);
+                const start_animation = this.data.hero.play(base_actions.CLIMB, climb_actions.START);
+                start_animation.onComplete.addOnce(() => {
+                    this.data.hero.sprite.anchor.y -= 0.1;
+                    this.data.hero.play(base_actions.CLIMB, climb_actions.IDLE);
+                    this.data.map.sprites_sort_paused = false;
+                    this.data.hero.climbing = true;
+                    this.data.hero.change_action(base_actions.CLIMB);
+                    this.data.hero.idle_climbing = true;
+                    this.data.audio.play_se("door/default");
+                    this.camera_fade_in();
+                });
+            });
         } else {
             this.data.audio.play_se("door/default");
             this.camera_fade_in();
@@ -125,8 +166,18 @@ export class TeleportEvent extends TileEvent {
                 directions[this.destination_direction] !== undefined
                     ? directions[this.destination_direction]
                     : this.get_activation_direction();
-            this.data.hero.set_direction(destination_direction);
-            this.data.hero.play(base_actions.IDLE, reverse_directions[this.data.hero.current_direction]);
+            if (this.stop_climbing) {
+                this.data.hero.climbing = false;
+                this.data.hero.change_action(base_actions.IDLE);
+                this.data.hero.idle_climbing = false;
+                this.data.hero.set_direction(directions.up);
+                this.data.hero.shadow.visible = true;
+                this.data.hero.sprite.anchor.y += 0.1;
+            }
+            if (!this.data.hero.climbing) {
+                this.data.hero.set_direction(destination_direction);
+                this.data.hero.play(base_actions.IDLE, reverse_directions[this.data.hero.current_direction]);
+            }
             this.game.camera.lerp.setTo(1, 1);
             this.change_map();
         };
