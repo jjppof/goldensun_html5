@@ -1846,6 +1846,10 @@ export class Map {
         TileEvent.reset();
         GameEvent.reset();
 
+        for (let collision_layer in this._bodies_positions) {
+            this._bodies_positions[collision_layer] = {};
+        }
+
         this._npcs = [];
         this._npcs_label_map = {};
         this._interactable_objects = [];
