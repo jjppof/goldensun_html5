@@ -218,7 +218,7 @@ export class ClimbEvent extends TileEvent {
                 .onComplete.addOnce(() => {
                     this.data.hero.toggle_collision(true);
                     const timer_event = this.game.time.events.add(
-                        80,
+                        100,
                         () => {
                             this.data.tile_event_manager.on_event = false;
                             this.data.map.sprites_sort_paused = false;
