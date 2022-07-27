@@ -773,7 +773,7 @@ export class Map {
         instance: NPC | InteractableObjects
     ) {
         this.remove_body_tile(instance, old_x, old_y, old_col_index);
-        if (new_col_index in this._bodies_positions) {
+        if (new_col_index >= 0 && new_col_index in this._bodies_positions) {
             const new_location_key = IntegerPairKey.get_key(new_x, new_y);
             if (new_location_key in this._bodies_positions[new_col_index]) {
                 this._bodies_positions[new_col_index][new_location_key].push(instance);

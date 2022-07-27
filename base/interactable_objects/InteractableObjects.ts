@@ -96,6 +96,7 @@ export class InteractableObjects {
         destination_collision_layer: number;
         animation_duration: number;
         dust_animation: boolean;
+        water_animation: boolean;
     }[];
     private _bush_sprite: Phaser.Sprite;
     protected _pushable: boolean;
@@ -466,9 +467,11 @@ export class InteractableObjects {
         this.sprite.body.removeCollisionGroup(
             this.data.collision.interactable_objs_collision_groups[this.base_collision_layer]
         );
-        this.sprite.body.setCollisionGroup(
-            this.data.collision.interactable_objs_collision_groups[destination_collision_layer]
-        );
+        if (destination_collision_layer >= 0) {
+            this.sprite.body.setCollisionGroup(
+                this.data.collision.interactable_objs_collision_groups[destination_collision_layer]
+            );
+        }
         if (update_on_map) {
             this.data.map.update_body_tile(
                 this.tile_x_pos,

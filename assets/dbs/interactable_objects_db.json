@@ -31,9 +31,10 @@
         "initial_action": "push_pillar",
         "actions": {
             "push_pillar": {
-                "frame_rate": 1,
-                "animations": ["column", "pillar", "wooden_box"],
-                "frames_count": 1,
+                "frame_rate": [1, 1, 1, 5, 5],
+                "animations": ["column", "pillar", "wooden_box", "pillar_fall_into_water", "pillar_in_the_water"],
+                "frames_count": [1, 1, 1, 4, 4],
+                "loop": [false, false, false, false, true],
                 "initial_animation": "pillar",
                 "spritesheet": {
                     "image": "assets/images/interactable_objects/push_pillars.png",

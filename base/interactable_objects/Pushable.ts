@@ -317,10 +317,14 @@ export class Pushable extends InteractableObjects {
                                         this.shift_events_and_check_collision(0, drop_tile.dest_y - this.tile_y_pos);
                                         this.set_tile_position({y: drop_tile.dest_y});
                                         this.data.audio.play_se("misc/rock_drop");
-                                        if (drop_tile.dust_animation) {
+                                        if (drop_tile.dust_animation || drop_tile.water_animation) {
                                             char.change_action(base_actions.IDLE);
                                             char.play(char.current_action, reverse_directions[char.current_direction]);
-                                            this.dust_animation(promise_resolve);
+                                            if (drop_tile.dust_animation) {
+                                                this.dust_animation(promise_resolve);
+                                            } else {
+                                                this.water_animation(promise_resolve);
+                                            }
                                         } else {
                                             promise_resolve();
                                         }
@@ -436,5 +440,13 @@ export class Pushable extends InteractableObjects {
             });
             on_animation_end();
         });
+    }
+
+    /**
+     * Starts the water animation when this interactable object fall in the water.
+     * @param on_animation_end the animation end callback.
+     */
+    private water_animation(on_animation_end: () => void) {
+
     }
 }

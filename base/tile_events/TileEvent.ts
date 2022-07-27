@@ -292,10 +292,11 @@ export abstract class TileEvent {
     }
 
     /**
-     * Adds new collision layers that this event can active.
+     * Sets new collision layers that this event can active.
      * @param collision_layers_indexes the collision layers indexes.
      */
     set_activation_collision_layers(...collision_layers_indexes: number[]) {
+        this.activation_collision_layers.clear();
         collision_layers_indexes.forEach(this.activation_collision_layers.add, this.activation_collision_layers);
     }
 
