@@ -31,7 +31,7 @@
         "initial_action": "push_pillar",
         "actions": {
             "push_pillar": {
-                "frame_rate": [1, 1, 1, 5, 5],
+                "frame_rate": [1, 1, 1, 12, 10],
                 "animations": ["column", "pillar", "wooden_box", "pillar_fall_into_water", "pillar_in_the_water"],
                 "frames_count": [1, 1, 1, 4, 4],
                 "loop": [false, false, false, false, true],

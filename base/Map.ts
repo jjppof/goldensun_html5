@@ -749,8 +749,11 @@ export class Map {
             return false;
         }
         const location_key = IntegerPairKey.get_key(instance.tile_x_pos, instance.tile_y_pos);
-        const instances = this._bodies_positions[instance.base_collision_layer][location_key];
-        return instances.includes(instance);
+        if (instance.base_collision_layer >= 0) {
+            const instances = this._bodies_positions[instance.base_collision_layer][location_key];
+            return instances.includes(instance);
+        }
+        return false;
     }
 
     /**

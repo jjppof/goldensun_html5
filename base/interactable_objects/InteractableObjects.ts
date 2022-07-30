@@ -50,10 +50,10 @@ export class InteractableObjects {
     private collision_change_functions: Function[];
     private _shadow: Phaser.Sprite;
     private _has_shadow: boolean;
-    private anchor_x: number;
-    private anchor_y: number;
-    private scale_x: number;
-    private scale_y: number;
+    protected anchor_x: number;
+    protected anchor_y: number;
+    protected scale_x: number;
+    protected scale_y: number;
     protected storage_keys: {
         position?: string;
         base_collision_layer?: string;

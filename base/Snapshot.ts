@@ -376,6 +376,7 @@ export class Snapshot {
                             y: io.shadow?.y ?? null,
                         },
                         type: {
+                            pushable: io.pushable,
                             is_rope_dock: io.is_rope_dock,
                             rollable: io.rollable,
                             breakable: io.breakable,

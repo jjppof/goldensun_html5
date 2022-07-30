@@ -13,6 +13,7 @@ export class Pushable extends InteractableObjects {
     private static readonly PUSH_SHIFT = 16;
     private static readonly DUST_KEY = "dust";
     private static readonly DUST_ANIM_KEY = "spread";
+    private static readonly PILLAR_IN_THE_WATER_ANCHOR_Y = 1.1;
 
     private dock_tile_position: {
         x: number;
@@ -300,8 +301,11 @@ export class Pushable extends InteractableObjects {
                         this.object_drop_tiles.forEach(drop_tile => {
                             if (drop_tile.x === this.tile_x_pos && drop_tile.y === this.tile_y_pos) {
                                 drop_found = true;
-                                const dest_y_shift_px =
+                                let dest_y_shift_px =
                                     (drop_tile.dest_y - this.tile_y_pos) * this.data.map.tile_height;
+                                if (drop_tile.water_animation) {
+                                    dest_y_shift_px -= this.data.map.tile_height;
+                                }
                                 this.game.add
                                     .tween(this.sprite.body)
                                     .to(
@@ -323,12 +327,30 @@ export class Pushable extends InteractableObjects {
                                             if (drop_tile.dust_animation) {
                                                 this.dust_animation(promise_resolve);
                                             } else {
-                                                this.water_animation(promise_resolve);
+                                                const anim = this.play("pillar_fall_into_water");
+                                                anim.onComplete.addOnce(() => {
+                                                    this.play("pillar_in_the_water");
+                                                    promise_resolve();
+                                                })
                                             }
                                         } else {
                                             promise_resolve();
                                         }
                                     });
+                                if (drop_tile.water_animation) {
+                                    this.game.add
+                                        .tween(this.sprite.anchor)
+                                        .to(
+                                            {
+                                                y: Pushable.PILLAR_IN_THE_WATER_ANCHOR_Y,
+                                            },
+                                            drop_tile.animation_duration,
+                                            Phaser.Easing.Quadratic.In,
+                                            true
+                                        ).onComplete.addOnce(() => {
+                                            this.anchor_y = Pushable.PILLAR_IN_THE_WATER_ANCHOR_Y;
+                                        });
+                                }
                                 return;
                             }
                         });
@@ -440,13 +462,5 @@ export class Pushable extends InteractableObjects {
             });
             on_animation_end();
         });
-    }
-
-    /**
-     * Starts the water animation when this interactable object fall in the water.
-     * @param on_animation_end the animation end callback.
-     */
-    private water_animation(on_animation_end: () => void) {
-
     }
 }
