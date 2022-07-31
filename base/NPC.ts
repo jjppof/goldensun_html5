@@ -80,6 +80,7 @@ export class NPC extends ControllableChar {
     private initially_visible: boolean;
     private previous_visible_state: boolean;
     private _snapshot_info: SnapshotData["map_data"]["npcs"][0];
+    private _map_index: number;
 
     /** If true, this NPC will move freely while a game event is happening. */
     public move_freely_in_event: boolean;
@@ -91,6 +92,7 @@ export class NPC extends ControllableChar {
         data,
         key_name,
         label,
+        map_index,
         active,
         initial_x,
         initial_y,
@@ -195,6 +197,7 @@ export class NPC extends ControllableChar {
         this._stepping = false;
         this._base_step = base_step;
         this._step_max_variation = step_max_variation;
+        this._map_index = map_index;
     }
 
     /** The list of GameEvents related to this NPC. */
@@ -264,6 +267,10 @@ export class NPC extends ControllableChar {
     /** Returns the snapshot info of this NPC when the game is restored. */
     get snapshot_info() {
         return this._snapshot_info;
+    }
+    /** The map unique index of this NPC. */
+    get map_index() {
+        return this._map_index;
     }
 
     /**
@@ -560,8 +567,9 @@ export class NPC extends ControllableChar {
     /**
      * Initializes this NPC.
      * @param map the map that's being mounted.
+     * @param snapshot_info the snapshot data of this npc.
      */
-    init_npc(map: Map) {
+    init_npc(map: Map, snapshot_info?: SnapshotData["map_data"]["npcs"][0]) {
         const npc_db = this.data.dbs.npc_db[this.key_name];
         const npc_sprite_info =
             this.sprite_misc_db_key !== undefined
@@ -587,7 +595,9 @@ export class NPC extends ControllableChar {
             this.anchor_x ?? npc_db.anchor_x,
             this.anchor_y ?? npc_db.anchor_y,
             this.scale_x ?? npc_db.scale_x,
-            this.scale_y ?? npc_db.scale_y
+            this.scale_y ?? npc_db.scale_y,
+            snapshot_info?.position.x_px,
+            snapshot_info?.position.y_px,
         );
         this._initial_x = this.sprite.x;
         this._initial_y = this.sprite.y;
@@ -713,6 +723,15 @@ export class NPC extends ControllableChar {
         if (!this.shapes_collision_active) {
             this.toggle_collision(false);
         }
+    }
+
+    /**
+     * Creates an unique engine storage key name for a given property.
+     * @param property_name the name of the property that this storage value relates with.
+     * @returns return the engine storage key name.
+     */
+    create_engine_storage_key(property_name: string) {
+        return `__engine__npc__${this.map_index}__${property_name}`;
     }
 
     /**

@@ -56,9 +56,13 @@ export class InteractableObjects {
     protected scale_y: number;
     protected storage_keys: {
         position?: string;
+        position_px?: string;
+        anchor?: string;
+        scale?: string;
         base_collision_layer?: string;
         enable?: string;
         entangled_by_bush?: string;
+        animation?: string;
     };
     private tile_events_info: {
         [event_id: number]: {
@@ -106,6 +110,7 @@ export class InteractableObjects {
     protected _extra_sprites: (Phaser.Sprite | Phaser.Graphics | Phaser.Group)[];
     public allow_jumping_over_it: boolean;
     public allow_jumping_through_it: boolean;
+    private _map_index: number;
     private toggle_enable_events: {
         event: GameEvent;
         on_enable: boolean;
@@ -137,6 +142,7 @@ export class InteractableObjects {
         game,
         data,
         key_name,
+        map_index,
         x,
         y,
         storage_keys,
@@ -200,8 +206,18 @@ export class InteractableObjects {
         this._tint_filter = this.game.add.filter("Tint") as Phaser.Filter.Tint;
         this._gray_filter = this.game.add.filter("Gray") as Phaser.Filter.Gray;
         this._flame_filter = this.game.add.filter("Flame") as Phaser.Filter.Flame;
+        if (this.storage_keys.anchor !== undefined) {
+            const anchor = this.data.storage.get(this.storage_keys.anchor) as StoragePosition;
+            anchor_x = anchor.x;
+            anchor_y = anchor.y;
+        }
         this.anchor_x = anchor_x;
         this.anchor_y = anchor_y;
+        if (this.storage_keys.scale !== undefined) {
+            const scale = this.data.storage.get(this.storage_keys.scale) as StoragePosition;
+            scale_x = scale.x;
+            scale_y = scale.y;
+        }
         this.scale_x = scale_x;
         this.scale_y = scale_y;
         this._psynergy_casted = {};
@@ -235,6 +251,9 @@ export class InteractableObjects {
         this._has_shadow = has_shadow ?? false;
         this._before_psynergy_cast_events = {};
         this._after_psynergy_cast_events = {};
+        if (this.storage_keys.animation !== undefined) {
+            animation = this.data.storage.get(this.storage_keys.animation);
+        }
         this._current_animation = animation;
         this._current_action = action;
         this._shapes_collision_active = false;
@@ -248,6 +267,7 @@ export class InteractableObjects {
             [EngineFilters.GRAY]: false,
             [EngineFilters.FLAME]: false,
         };
+        this._map_index = map_index;
     }
 
     get key_name() {
@@ -385,6 +405,9 @@ export class InteractableObjects {
     /** An object containing which filters are active in this IO. */
     get active_filters() {
         return this._active_filters;
+    }
+    get map_index() {
+        return this._map_index;
     }
 
     position_allowed(x: number, y: number) {
@@ -535,10 +558,9 @@ export class InteractableObjects {
         this._blocking_stair_block = body;
     }
 
-    initial_config(map: Map, index_in_map: number) {
+    initial_config(map: Map, snapshot_info: SnapshotData["map_data"]["interactable_objects"][0]) {
         this._sprite_info = this.data.info.iter_objs_sprite_base_list[this.key_name];
         if (this.psynergies_info) {
-            const snapshot_info = this.data.snapshot_manager.snapshot?.map_data.interactable_objects[index_in_map];
             for (let psynergy_key in this.psynergies_info) {
                 const psynergy_properties = this.psynergies_info[psynergy_key];
                 if (psynergy_properties.interaction_type === interactable_object_interaction_types.ONCE) {
@@ -584,8 +606,14 @@ export class InteractableObjects {
             }
             this.sprite.anchor.setTo(this.anchor_x ?? 0.0, this.anchor_y ?? 0.0);
             this.sprite.scale.setTo(this.scale_x ?? 1.0, this.scale_y ?? 1.0);
-            this.sprite.x = get_centered_pos_in_px(this.tile_x_pos, map.tile_width);
-            this.sprite.y = get_centered_pos_in_px(this.tile_y_pos, map.tile_height);
+            let storage_pos_x, storage_pos_y = undefined;
+            if (this.storage_keys.position_px) {
+                const position_px = this.data.storage.get(this.storage_keys.position_px) as StoragePosition;
+                storage_pos_x = position_px.x;
+                storage_pos_y = position_px.y;
+            }
+            this.sprite.x = storage_pos_x ?? snapshot_info?.position?.x_px ?? get_centered_pos_in_px(this.tile_x_pos, map.tile_width);
+            this.sprite.y = storage_pos_y ?? snapshot_info?.position?.y_px ?? get_centered_pos_in_px(this.tile_y_pos, map.tile_height);
             this.sprite_info.setAnimation(this.sprite, this.current_action);
             if (this.snapshot_info?.frame) {
                 this.sprite.frameName = this.snapshot_info.frame;
@@ -852,10 +880,6 @@ export class InteractableObjects {
         map: Map
     ) {
         if (this.not_allowed_tile_test(x_pos, y_pos)) return;
-        const this_event_location_key = IntegerPairKey.get_key(x_pos, y_pos);
-        if (!(this_event_location_key in map.events)) {
-            map.events[this_event_location_key] = [];
-        }
         const activation_directions = [
             reverse_directions[directions.right],
             reverse_directions[directions.left],
@@ -875,6 +899,10 @@ export class InteractableObjects {
             false,
             undefined
         );
+        const this_event_location_key = IntegerPairKey.get_key(new_event.x, new_event.y);
+        if (!(this_event_location_key in map.events)) {
+            map.events[this_event_location_key] = [];
+        }
         map.events[this_event_location_key].push(new_event);
         this.insert_event(new_event.id);
         const collision_layer_shift = this.tile_events_info[event_index]?.collision_layer_shift ?? 0;
@@ -931,10 +959,6 @@ export class InteractableObjects {
                     return;
             }
             if (this.not_allowed_tile_test(x, y)) return;
-            const this_event_location_key = IntegerPairKey.get_key(x, y);
-            if (!(this_event_location_key in map.events)) {
-                map.events[this_event_location_key] = [];
-            }
             const new_event = new RopeEvent(
                 this.game,
                 this.data,
@@ -951,6 +975,10 @@ export class InteractableObjects {
                 event_info.dock_exit_collision_layer ?? map.collision_layer,
                 event_info.rope_collision_layer
             );
+            const this_event_location_key = IntegerPairKey.get_key(new_event.x, new_event.y);
+            if (!(this_event_location_key in map.events)) {
+                map.events[this_event_location_key] = [];
+            }
             map.events[this_event_location_key].push(new_event);
             this.insert_event(new_event.id);
         });
@@ -959,10 +987,6 @@ export class InteractableObjects {
     private set_jump_around_event(x_pos: number, y_pos: number, active_event: boolean, target_layer: number, map: Map) {
         get_surroundings(x_pos, y_pos).forEach((pos, index) => {
             if (this.not_allowed_tile_test(pos.x, pos.y)) return;
-            const this_event_location_key = IntegerPairKey.get_key(pos.x, pos.y);
-            if (!(this_event_location_key in map.events)) {
-                map.events[this_event_location_key] = [];
-            }
             const activation_direction = [
                 reverse_directions[directions.right],
                 reverse_directions[directions.left],
@@ -982,6 +1006,10 @@ export class InteractableObjects {
                 false,
                 undefined
             ) as JumpEvent;
+            const this_event_location_key = IntegerPairKey.get_key(new_event.x, new_event.y);
+            if (!(this_event_location_key in map.events)) {
+                map.events[this_event_location_key] = [];
+            }
             map.events[this_event_location_key].push(new_event);
             this.insert_event(new_event.id);
             this.collision_change_functions.push(() => {
@@ -1065,10 +1093,6 @@ export class InteractableObjects {
             },
         ];
         events_data.forEach(event_data => {
-            const this_location_key = IntegerPairKey.get_key(event_data.x, event_data.y);
-            if (!(this_location_key in map.events)) {
-                map.events[this_location_key] = [];
-            }
             const new_event = new ClimbEvent(
                 this.game,
                 this.data,
@@ -1085,6 +1109,10 @@ export class InteractableObjects {
                 event_data.climbing_only,
                 event_info.dynamic
             );
+            const this_location_key = IntegerPairKey.get_key(new_event.x, new_event.y);
+            if (!(this_location_key in map.events)) {
+                map.events[this_location_key] = [];
+            }
             map.events[this_location_key].push(new_event);
             this.insert_event(new_event.id);
             new_event.collision_layer_shift_from_source = event_data.collision_layer_shift_from_source;
@@ -1227,6 +1255,10 @@ export class InteractableObjects {
      */
     clear_snapshot() {
         this._snapshot_info = null;
+    }
+
+    create_engine_storage_key(property_name: string) {
+        return `__engine__io__${this.map_index}__${property_name}`;
     }
 
     unset(remove_from_middlelayer_group: boolean = true) {

@@ -490,7 +490,9 @@ export abstract class ControllableChar {
         anchor_x?: number,
         anchor_y?: number,
         scale_x?: number,
-        scale_y?: number
+        scale_y?: number,
+        initial_x_px?: number,
+        initial_y_px?: number,
     ) {
         anchor_x = anchor_x ?? ControllableChar.default_anchor.x;
         anchor_y = anchor_y ?? ControllableChar.default_anchor.y;
@@ -501,8 +503,8 @@ export abstract class ControllableChar {
             this.sprite.visible = false;
         }
         this.sprite.anchor.setTo(anchor_x, anchor_y);
-        this.sprite.x = ((this.tile_x_pos + 0.5) * map.tile_width) | 0;
-        this.sprite.y = ((this.tile_y_pos + 0.5) * map.tile_height) | 0;
+        this.sprite.x = initial_x_px ?? get_centered_pos_in_px(this.tile_x_pos, map.tile_width);
+        this.sprite.y = initial_y_px ?? get_centered_pos_in_px(this.tile_y_pos, map.tile_width);
         this.sprite.base_collision_layer = layer;
         this.sprite.roundPx = true;
         if (map.is_world_map) {

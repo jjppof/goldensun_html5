@@ -53,6 +53,7 @@ type FilterSettings = {
 
 export type SnapshotData = {
     storage_data: {[key_name: string]: RawStorageRecord["value"]};
+    engine_storage_data: {[key_name: string]: RawStorageRecord["value"]};
     main_chars: {
         key_name: string;
         in_party: boolean;
@@ -96,6 +97,8 @@ export type SnapshotData = {
             position: {
                 x: number;
                 y: number;
+                x_px: number;
+                y_px: number;
             };
             scale: {
                 x: number;
@@ -131,6 +134,8 @@ export type SnapshotData = {
             position: {
                 x: number;
                 y: number;
+                x_px: number;
+                y_px: number;
             };
             scale: {
                 x: number;
@@ -221,6 +226,7 @@ export class Snapshot {
     generate_snapshot() {
         const snapshot: SnapshotData = {
             storage_data: _.mapValues(this.data.storage.internal_storage, record => record.value),
+            engine_storage_data: _.mapValues(this.data.storage.engine_storage, record => record.value),
             main_chars: _.map(this.data.info.main_char_list, member => {
                 return {
                     key_name: member.key_name,
@@ -277,6 +283,8 @@ export class Snapshot {
                         position: {
                             x: npc.tile_x_pos,
                             y: npc.tile_y_pos,
+                            x_px: npc.x,
+                            y_px: npc.y
                         },
                         scale: {
                             x: npc.sprite?.scale.x ?? null,
@@ -362,6 +370,8 @@ export class Snapshot {
                         position: {
                             x: io.tile_x_pos,
                             y: io.tile_y_pos,
+                            x_px: io.x,
+                            y_px: io.y,
                         },
                         scale: {
                             x: io.sprite?.scale.x ?? null,

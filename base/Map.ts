@@ -85,10 +85,16 @@ export class Map {
     private _generic_sprites: {[key_name: string]: Phaser.Sprite};
     private _active_filters: {[key in EngineFilters]?: boolean};
 
+    private _map_name_window: Window;
+    private _show_map_name: boolean;
+
+    private _internal_map_objs_storage_keys: {
+        npcs: {[map_index: string]: NPC["storage_keys"]},
+        interactable_objects: {[map_index: string]: InteractableObjects["storage_keys"]}
+    };
+
     /** If true, sprites in middlelayer_group won't be sorted. */
     public sprites_sort_paused: boolean;
-    map_name_window: Window;
-    show_map_name: boolean;
 
     constructor(
         game,
@@ -155,8 +161,12 @@ export class Map {
             [EngineFilters.GRAY]: false,
             [EngineFilters.MODE7]: false,
         };
-        this.map_name_window = null;
-        this.show_map_name = show_map_name ?? true;
+        this._map_name_window = null;
+        this._show_map_name = show_map_name ?? true;
+        this._internal_map_objs_storage_keys = {
+            npcs: {},
+            interactable_objects: {},
+        };
     }
 
     /** The list of TileEvents of this map. */
@@ -262,6 +272,15 @@ export class Map {
     /** An object containing which filters are active in this char. */
     get active_filters() {
         return this._active_filters;
+    }
+
+    /** Gets the window object that shows this map's name. */
+    get map_name_window() {
+        return this._map_name_window;
+    }
+    /** Whether this map will show its name on teleport. */
+    get show_map_name() {
+        return this._show_map_name;
     }
 
     /**
@@ -877,9 +896,10 @@ export class Map {
      * @param property_key the property name.
      * @param properties the properties of this NPC, parsed or not.
      * @param not_parsed whether the properties are parsed or not.
+     * @param map_index the map unique index of this NPC.
      * @returns returns the created npc.
      */
-    private create_npc(property_key: string, properties: any, not_parsed: boolean = true) {
+    private create_npc(property_key: string, properties: any, not_parsed: boolean = true, map_index: number) {
         try {
             const npc_index = this.npcs.length;
             const snapshot_info = this.data.snapshot_manager.snapshot?.map_data.npcs[npc_index];
@@ -921,15 +941,18 @@ export class Map {
                 snapshot_info?.move_freely_in_event ??
                 property_info.move_freely_in_event ??
                 npc_db.move_freely_in_event;
+            const internal_storage_keys = this._internal_map_objs_storage_keys.npcs[map_index] ?? {};
+            const storage_keys = Object.assign(internal_storage_keys, property_info.storage_keys);
             const npc = new NPC(
                 this.game,
                 this.data,
                 property_info.key_name,
                 property_info.label,
+                map_index,
                 property_info.active,
                 x,
                 y,
-                property_info.storage_keys,
+                storage_keys,
                 initial_action,
                 initial_animation,
                 enable_footsteps,
@@ -985,9 +1008,10 @@ export class Map {
      * Creates an interactable object.
      * @param property_key the property name.
      * @param raw_property the properties of this interactable object still not parsed.
+     * @param map_index the map unique index of this interactable object.
      * @returns returns the created interactable object.
      */
-    private create_interactable_object(property_key: string, raw_property: string) {
+    private create_interactable_object(property_key: string, raw_property: string, map_index: number) {
         try {
             const property_info = JSON.parse(raw_property);
             const io_index = this.interactable_objects.length;
@@ -1040,13 +1064,16 @@ export class Map {
             const base_collision_layer = snapshot_info?.base_collision_layer ?? property_info.base_collision_layer;
             const enable = snapshot_info?.enable ?? property_info.enable;
             const entangled_by_bush = snapshot_info?.entangled_by_bush ?? property_info.entangled_by_bush;
+            const internal_storage_keys = this._internal_map_objs_storage_keys.interactable_objects[map_index] ?? {};
+            const storage_keys = Object.assign(internal_storage_keys, property_info.storage_keys);
             const interactable_object = new io_class(
                 this.game,
                 this.data,
                 property_info.key_name,
+                map_index,
                 x,
                 y,
-                property_info.storage_keys,
+                storage_keys,
                 property_info.allowed_tiles,
                 base_collision_layer,
                 property_info.not_allowed_tiles,
@@ -1107,8 +1134,9 @@ export class Map {
      */
     private config_interactable_object() {
         for (let i = 0; i < this.interactable_objects.length; ++i) {
+            const snapshot_info = this.data.snapshot_manager.snapshot?.map_data.interactable_objects[i];
             const interactable_object = this.interactable_objects[i];
-            interactable_object.initial_config(this, i);
+            interactable_object.initial_config(this, snapshot_info);
             interactable_object.initialize_related_events(this);
             if (interactable_object.is_rope_dock) {
                 (interactable_object as RopeDock).initialize_rope(this);
@@ -1117,7 +1145,6 @@ export class Map {
             } else if (interactable_object.rollable) {
                 (interactable_object as RollablePillar).config_rolling_pillar(this);
             }
-            const snapshot_info = this.data.snapshot_manager.snapshot?.map_data.interactable_objects[i];
             if (
                 (!snapshot_info && interactable_object.base_collision_layer in this._bodies_positions) ||
                 snapshot_info?.body_in_map
@@ -1142,8 +1169,8 @@ export class Map {
     private config_npc() {
         for (let i = 0; i < this.npcs.length; ++i) {
             const npc = this.npcs[i];
-            npc.init_npc(this);
             const snapshot_info = this.data.snapshot_manager.snapshot?.map_data.npcs[i];
+            npc.init_npc(this, snapshot_info);
             if ((!snapshot_info && npc.base_collision_layer in this._bodies_positions) || snapshot_info?.body_in_map) {
                 const bodies_positions = this._bodies_positions[npc.base_collision_layer];
                 const location_key = IntegerPairKey.get_key(npc.tile_x_pos, npc.tile_y_pos);
@@ -1455,7 +1482,8 @@ export class Map {
                     },
                 ],
             },
-            false
+            false,
+            this.npcs.length
         );
         if (npc) {
             npc.init_npc(this);
@@ -1615,7 +1643,7 @@ export class Map {
         const window_height = 20;
         const window_x = (GAME_WIDTH >> 1) - (window_width >> 1);
         const window_y = GAME_HEIGHT >> 2;
-        this.map_name_window = new Window(this.game, window_x, window_y, window_width, window_height);
+        this._map_name_window = new Window(this.game, window_x, window_y, window_width, window_height);
         this.map_name_window.set_lines_of_text([this.name], {italic: true});
         this.map_name_window.group.transformCallback = () => {
             if (this.map_name_window.open) {
@@ -1713,15 +1741,17 @@ export class Map {
 
         //read the map properties and creates tile events, npcs and interactable objects
         if (this.sprite.properties) {
+            let map_index = 0;
             for (let property_key in this.sprite.properties) {
                 const property = this.sprite.properties[property_key];
                 if (property_key.startsWith("tile_event/")) {
                     this.create_tile_event(property_key, property);
                 } else if (property_key.startsWith("npc/")) {
-                    this.create_npc(property_key, property);
+                    this.create_npc(property_key, property, true, map_index);
                 } else if (property_key.startsWith("interactable_object/")) {
-                    this.create_interactable_object(property_key, property);
+                    this.create_interactable_object(property_key, property, map_index);
                 }
+                ++map_index;
             }
         }
 
@@ -1780,6 +1810,28 @@ export class Map {
                 this.data.hero.sprite.mask.destroy();
                 this.data.hero.sprite.mask = null;
             }
+        }
+    }
+
+    /**
+     * Sets a storage key identifier for a NPC or Interactable Object in order to hold values internally
+     * if this map is unmounted.
+     * @param is_npc is true, will set the key for a NPC, otherwise for an Interactable Object.
+     * @param property the storage key type.
+     * @param storage_key the storage key.
+     * @param obj_index the NPC or Interactable Object index in this map.
+     */
+    set_internal_storage_key(is_npc: boolean, property: keyof (InteractableObjects["storage_keys"] & NPC["storage_keys"]), storage_key: string, obj_index: number) {
+        if (is_npc) {
+            if (!this._internal_map_objs_storage_keys.npcs[obj_index]) {
+                this._internal_map_objs_storage_keys.npcs[obj_index] = {};
+            }
+            this._internal_map_objs_storage_keys.npcs[obj_index][property] = storage_key;
+        } else {
+            if (!this._internal_map_objs_storage_keys.interactable_objects[obj_index]) {
+                this._internal_map_objs_storage_keys.interactable_objects[obj_index] = {};
+            }
+            this._internal_map_objs_storage_keys.interactable_objects[obj_index][property] = storage_key;
         }
     }
 

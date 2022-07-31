@@ -17,5 +17,11 @@
     "chill_djinn": true,
     "kite_djinn": true,
     "door_bush": true,
-    "madra_door_teleport_enable": false
+    "madra_door_teleport_enable": false,
+    "forest_pillar_position": {
+        "x": 24,
+        "y": 9
+    },
+    "forest_pillar_collision_layer": 0,
+    "forest_pillar_animation": "pillar"
 }

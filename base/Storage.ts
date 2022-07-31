@@ -37,10 +37,13 @@ type StorageRecord = RawStorageRecord & {
  * The game storage system. This class holds the game custom states. States can hold
  * values of boolean, number, string and position (x and y) types. When setting a
  * state value, callbacks can be called in the there are some them associated.
+ * There's also in this class an engine storage for internal states management.
+ * User can't control this last one.
  */
 export class Storage {
     private data: GoldenSun;
     private _internal_storage: {[key_name: string]: StorageRecord} = {};
+    private _engine_storage: {[key_name: string]: StorageRecord} = {};
 
     constructor(data) {
         this.data = data;
@@ -48,6 +51,9 @@ export class Storage {
 
     get internal_storage() {
         return this._internal_storage;
+    }
+    get engine_storage() {
+        return this._engine_storage;
     }
 
     /**
@@ -59,6 +65,8 @@ export class Storage {
             let value;
             if (snapshot?.storage_data.hasOwnProperty(key)) {
                 value = snapshot.storage_data[key];
+            } else if (snapshot?.engine_storage_data.hasOwnProperty(key)) {
+                value = snapshot.engine_storage_data[key];
             } else {
                 value = this.data.dbs.storage_db[key];
             }
@@ -89,13 +97,15 @@ export class Storage {
      * @param key_name the state unique key name.
      * @param type the type of the this state value.
      * @param initial_value the initial value of the state.
+     * @param engine_storage if true, will use engine storage instead of default storage.
      */
-    add(key_name: string, type: storage_types, initial_value: RawStorageRecord["value"] = null) {
-        if (key_name in this.internal_storage) {
+    add(key_name: string, type: storage_types, initial_value: RawStorageRecord["value"] = null, engine_storage: boolean = false) {
+        const storage = engine_storage ? this.engine_storage : this.internal_storage;
+        if (key_name in storage) {
             console.warn(`${key_name} already defined in game storage.`);
             return;
         }
-        this.internal_storage[key_name] = {
+        storage[key_name] = {
             key_name: key_name,
             type: type,
             value: initial_value,
@@ -119,18 +129,25 @@ export class Storage {
      * @returns returns the state value.
      */
     get(key_name: string) {
-        return this.internal_storage[key_name].value;
+        if (key_name in this.internal_storage) {
+            return this.internal_storage[key_name].value;
+        } else if (key_name in this.engine_storage) {
+            return this.engine_storage[key_name].value;
+        }
+        return null;
     }
 
     /**
      * Sets a value of a state;
      * @param key_name the state unique key name.
      * @param value the new state value to be set.
+     * @param engine_storage if true, will use engine storage instead of default storage.
      */
-    set(key_name: string, value: RawStorageRecord["value"]) {
-        this.internal_storage[key_name].value = value;
-        for (let id in this.internal_storage[key_name].callbacks) {
-            const callback_obj = this.internal_storage[key_name].callbacks[id];
+    set(key_name: string, value: RawStorageRecord["value"], engine_storage: boolean = false) {
+        const storage = engine_storage ? this.engine_storage : this.internal_storage;
+        storage[key_name].value = value;
+        for (let id in storage[key_name].callbacks) {
+            const callback_obj = storage[key_name].callbacks[id];
             callback_obj.callback();
             if (callback_obj.call_type === callback_call_types.ONCE) {
                 this.remove_callback(key_name, id);
