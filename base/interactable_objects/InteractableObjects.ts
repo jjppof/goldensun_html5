@@ -283,11 +283,17 @@ export class InteractableObjects {
     }
     /** Gets the x position in px. */
     get x(): number {
-        return this.sprite.body ? this.sprite.body.x : this.sprite.x;
+        if (this.sprite) {
+            return this.sprite.body ? this.sprite.body.x : this.sprite.x;
+        }
+        return null;
     }
     /** Gets the y position in px. */
     get y(): number {
-        return this.sprite.body ? this.sprite.body.y : this.sprite.y;
+        if (this.sprite) {
+            return this.sprite.body ? this.sprite.body.y : this.sprite.y;
+        }
+        return null;
     }
     /** The unique label that identifies this Interactable Object. */
     get label() {
