@@ -597,7 +597,7 @@ export class NPC extends ControllableChar {
             this.scale_x ?? npc_db.scale_x,
             this.scale_y ?? npc_db.scale_y,
             snapshot_info?.position.x_px,
-            snapshot_info?.position.y_px,
+            snapshot_info?.position.y_px
         );
         this._initial_x = this.sprite.x;
         this._initial_y = this.sprite.y;

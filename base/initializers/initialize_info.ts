@@ -82,7 +82,7 @@ export async function initialize_game_data(game: Phaser.Game, data: GoldenSun) {
     const load_maps_promise = new Promise(resolve => {
         load_maps_promise_resolve = resolve;
     });
-    data.info.maps_list = initialize_maps(game, data, data.dbs.maps_db, load_maps_promise_resolve);
+    data.info.maps_list = initialize_maps(game, data, data.dbs.maps_db, snapshot, load_maps_promise_resolve);
     await load_maps_promise;
 
     // Initializes CLASSES

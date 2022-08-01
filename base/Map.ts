@@ -89,8 +89,8 @@ export class Map {
     private _show_map_name: boolean;
 
     private _internal_map_objs_storage_keys: {
-        npcs: {[map_index: string]: NPC["storage_keys"]},
-        interactable_objects: {[map_index: string]: InteractableObjects["storage_keys"]}
+        npcs: {[map_index: string]: NPC["storage_keys"]};
+        interactable_objects: {[map_index: string]: InteractableObjects["storage_keys"]};
     };
 
     /** If true, sprites in middlelayer_group won't be sorted. */
@@ -281,6 +281,11 @@ export class Map {
     /** Whether this map will show its name on teleport. */
     get show_map_name() {
         return this._show_map_name;
+    }
+
+    /** The internal storage keys created for objects of this map. */
+    get internal_map_objs_storage_keys() {
+        return this._internal_map_objs_storage_keys;
     }
 
     /**
@@ -1821,7 +1826,12 @@ export class Map {
      * @param storage_key the storage key.
      * @param obj_index the NPC or Interactable Object index in this map.
      */
-    set_internal_storage_key(is_npc: boolean, property: keyof (InteractableObjects["storage_keys"] & NPC["storage_keys"]), storage_key: string, obj_index: number) {
+    set_internal_storage_key(
+        is_npc: boolean,
+        property: keyof (InteractableObjects["storage_keys"] & NPC["storage_keys"]),
+        storage_key: string,
+        obj_index: number
+    ) {
         if (is_npc) {
             if (!this._internal_map_objs_storage_keys.npcs[obj_index]) {
                 this._internal_map_objs_storage_keys.npcs[obj_index] = {};
@@ -1832,6 +1842,16 @@ export class Map {
                 this._internal_map_objs_storage_keys.interactable_objects[obj_index] = {};
             }
             this._internal_map_objs_storage_keys.interactable_objects[obj_index][property] = storage_key;
+        }
+    }
+
+    /**
+     * Initializes internal storage keys with snapshot info.
+     * @param internal_map_objs_storage_keys the snapshot init object.
+     */
+    initialize_internal_storage_key(internal_map_objs_storage_keys: Map["internal_map_objs_storage_keys"]) {
+        if (internal_map_objs_storage_keys) {
+            this._internal_map_objs_storage_keys = internal_map_objs_storage_keys;
         }
     }
 

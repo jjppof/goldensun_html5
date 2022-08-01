@@ -492,7 +492,7 @@ export abstract class ControllableChar {
         scale_x?: number,
         scale_y?: number,
         initial_x_px?: number,
-        initial_y_px?: number,
+        initial_y_px?: number
     ) {
         anchor_x = anchor_x ?? ControllableChar.default_anchor.x;
         anchor_y = anchor_y ?? ControllableChar.default_anchor.y;

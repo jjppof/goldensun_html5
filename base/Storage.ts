@@ -60,35 +60,42 @@ export class Storage {
      * Initializes the storage system.
      */
     init() {
-        const snapshot = this.data.snapshot_manager.snapshot;
-        for (let key in this.data.dbs.storage_db) {
-            let value;
-            if (snapshot?.storage_data.hasOwnProperty(key)) {
-                value = snapshot.storage_data[key];
-            } else if (snapshot?.engine_storage_data.hasOwnProperty(key)) {
-                value = snapshot.engine_storage_data[key];
-            } else {
-                value = this.data.dbs.storage_db[key];
-            }
-            let type: storage_types;
+        const get_type = (key: string, value: RawStorageRecord["value"]): storage_types => {
             switch (typeof value) {
                 case "boolean":
-                    type = storage_types.BOOLEAN;
+                    return storage_types.BOOLEAN;
                     break;
                 case "number":
-                    type = storage_types.NUMBER;
+                    return storage_types.NUMBER;
                     break;
                 case "string":
-                    type = storage_types.STRING;
+                    return storage_types.STRING;
                     break;
                 case "object":
-                    type = storage_types.POSITION;
+                    return storage_types.POSITION;
                     break;
                 default:
                     console.warn(`Invalid data type for "${key}" storage key.`);
-                    continue;
+                    return null;
             }
+        };
+        const snapshot = this.data.snapshot_manager.snapshot;
+        for (let key in this.data.dbs.storage_db) {
+            let value: RawStorageRecord["value"];
+            if (snapshot?.storage_data.hasOwnProperty(key)) {
+                value = snapshot.storage_data[key];
+            } else {
+                value = this.data.dbs.storage_db[key];
+            }
+            const type = get_type(key, value);
             this.add(key, type, value);
+        }
+        if (snapshot) {
+            for (let key in snapshot.engine_storage_data) {
+                const value = snapshot.engine_storage_data[key];
+                const type = get_type(key, value);
+                this.add(key, type, value, true);
+            }
         }
     }
 
@@ -99,7 +106,12 @@ export class Storage {
      * @param initial_value the initial value of the state.
      * @param engine_storage if true, will use engine storage instead of default storage.
      */
-    add(key_name: string, type: storage_types, initial_value: RawStorageRecord["value"] = null, engine_storage: boolean = false) {
+    add(
+        key_name: string,
+        type: storage_types,
+        initial_value: RawStorageRecord["value"] = null,
+        engine_storage: boolean = false
+    ) {
         const storage = engine_storage ? this.engine_storage : this.internal_storage;
         if (key_name in storage) {
             console.warn(`${key_name} already defined in game storage.`);

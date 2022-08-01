@@ -3,7 +3,7 @@ import {event_types, IntegerPairKey} from "../tile_events/TileEvent";
 import {directions, reverse_directions, base_actions, get_centered_pos_in_px, get_front_position} from "../utils";
 import {InteractableObjects} from "./InteractableObjects";
 import {ControllableChar} from "../ControllableChar";
-import { storage_types } from "../Storage";
+import {storage_types} from "../Storage";
 
 /**
  * An interactable object that can be pushed by a ControllableChar.
@@ -105,7 +105,7 @@ export class Pushable extends InteractableObjects {
             char.trying_to_push = true;
             if (char.push_timer === null) {
                 char.set_trying_to_push_direction(char.current_direction);
-                const item_position = this.get_current_position(this.data.map);
+                const item_position = this.get_current_position();
                 const front_pos = get_front_position(
                     item_position.x,
                     item_position.y,
@@ -306,8 +306,7 @@ export class Pushable extends InteractableObjects {
                         this.object_drop_tiles.forEach(drop_tile => {
                             if (drop_tile.x === this.tile_x_pos && drop_tile.y === this.tile_y_pos) {
                                 drop_found = true;
-                                let dest_y_shift_px =
-                                    (drop_tile.dest_y - this.tile_y_pos) * this.data.map.tile_height;
+                                let dest_y_shift_px = (drop_tile.dest_y - this.tile_y_pos) * this.data.map.tile_height;
                                 if (drop_tile.water_animation) {
                                     dest_y_shift_px -= this.data.map.tile_height;
                                 }
@@ -335,12 +334,15 @@ export class Pushable extends InteractableObjects {
                                                 const anim = this.play("pillar_fall_into_water");
                                                 anim.onComplete.addOnce(() => {
                                                     if (this.storage_keys?.animation) {
-                                                        this.data.storage.set(this.storage_keys.animation, "pillar_in_the_water");
+                                                        this.data.storage.set(
+                                                            this.storage_keys.animation,
+                                                            "pillar_in_the_water"
+                                                        );
                                                     }
                                                     pillar_into_the_water = true;
                                                     this.play("pillar_in_the_water");
                                                     promise_resolve();
-                                                })
+                                                });
                                             }
                                         } else {
                                             promise_resolve();
@@ -356,7 +358,8 @@ export class Pushable extends InteractableObjects {
                                             drop_tile.animation_duration,
                                             Phaser.Easing.Quadratic.In,
                                             true
-                                        ).onComplete.addOnce(() => {
+                                        )
+                                        .onComplete.addOnce(() => {
                                             this.anchor_y = Pushable.PILLAR_IN_THE_WATER_ANCHOR_Y;
                                         });
                                 }
@@ -394,7 +397,12 @@ export class Pushable extends InteractableObjects {
                             } else {
                                 storage_key_anchor = this.create_engine_storage_key("anchor");
                                 this.data.storage.add(storage_key_anchor, storage_types.POSITION, value_anchor, true);
-                                this.data.map.set_internal_storage_key(false, "anchor", storage_key_anchor, this.map_index);
+                                this.data.map.set_internal_storage_key(
+                                    false,
+                                    "anchor",
+                                    storage_key_anchor,
+                                    this.map_index
+                                );
                                 this.storage_keys.anchor = storage_key_anchor;
                             }
                             let storage_key_position_px = this.storage_keys?.position_px;
@@ -406,8 +414,18 @@ export class Pushable extends InteractableObjects {
                                 this.data.storage.set(storage_key_position_px, value_position_px);
                             } else {
                                 storage_key_position_px = this.create_engine_storage_key("position_px");
-                                this.data.storage.add(storage_key_position_px, storage_types.POSITION, value_position_px, true);
-                                this.data.map.set_internal_storage_key(false, "position_px", storage_key_position_px, this.map_index);
+                                this.data.storage.add(
+                                    storage_key_position_px,
+                                    storage_types.POSITION,
+                                    value_position_px,
+                                    true
+                                );
+                                this.data.map.set_internal_storage_key(
+                                    false,
+                                    "position_px",
+                                    storage_key_position_px,
+                                    this.map_index
+                                );
                                 this.storage_keys.position_px = storage_key_position_px;
                             }
                         }

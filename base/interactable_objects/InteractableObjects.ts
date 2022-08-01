@@ -429,17 +429,11 @@ export class InteractableObjects {
         return false;
     }
 
-    get_current_position(map: Map) {
-        if (this._sprite) {
-            const x = (this.sprite.x / map.tile_width) | 0;
-            const y = (this.sprite.y / map.tile_height) | 0;
-            return {x: x, y: y};
-        } else {
-            return {
-                x: this.tile_x_pos,
-                y: this.tile_y_pos,
-            };
-        }
+    get_current_position() {
+        return {
+            x: this.tile_x_pos,
+            y: this.tile_y_pos,
+        };
     }
 
     set_tile_position(pos: {x?: number; y?: number}, update_on_map: boolean = true) {
@@ -606,14 +600,21 @@ export class InteractableObjects {
             }
             this.sprite.anchor.setTo(this.anchor_x ?? 0.0, this.anchor_y ?? 0.0);
             this.sprite.scale.setTo(this.scale_x ?? 1.0, this.scale_y ?? 1.0);
-            let storage_pos_x, storage_pos_y = undefined;
+            let storage_pos_x,
+                storage_pos_y = undefined;
             if (this.storage_keys.position_px) {
                 const position_px = this.data.storage.get(this.storage_keys.position_px) as StoragePosition;
                 storage_pos_x = position_px.x;
                 storage_pos_y = position_px.y;
             }
-            this.sprite.x = storage_pos_x ?? snapshot_info?.position?.x_px ?? get_centered_pos_in_px(this.tile_x_pos, map.tile_width);
-            this.sprite.y = storage_pos_y ?? snapshot_info?.position?.y_px ?? get_centered_pos_in_px(this.tile_y_pos, map.tile_height);
+            this.sprite.x =
+                storage_pos_x ??
+                snapshot_info?.position?.x_px ??
+                get_centered_pos_in_px(this.tile_x_pos, map.tile_width);
+            this.sprite.y =
+                storage_pos_y ??
+                snapshot_info?.position?.y_px ??
+                get_centered_pos_in_px(this.tile_y_pos, map.tile_height);
             this.sprite_info.setAnimation(this.sprite, this.current_action);
             if (this.snapshot_info?.frame) {
                 this.sprite.frameName = this.snapshot_info.frame;
@@ -806,7 +807,7 @@ export class InteractableObjects {
         if (!this.data.dbs.interactable_objects_db[this.key_name].events) {
             return;
         }
-        const position = this.get_current_position(map);
+        const position = this.get_current_position();
         for (let i = 0; i < this.data.dbs.interactable_objects_db[this.key_name].events.length; ++i) {
             let x_pos = position.x;
             let y_pos = position.y;

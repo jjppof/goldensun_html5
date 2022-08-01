@@ -14,6 +14,7 @@ import {Breakable} from "./interactable_objects/Breakable";
 import {RollablePillar} from "./interactable_objects/RollingPillar";
 import {RevealFieldPsynergy} from "./field_abilities/RevealFieldPsynergy";
 import {RopeDock} from "./interactable_objects/RopeDock";
+import {Map} from "Map";
 
 type FilterSettings = {
     [EngineFilters.COLORIZE]?: {
@@ -80,6 +81,7 @@ export type SnapshotData = {
     summons_availability: {[key_name: string]: boolean};
     artifacts_global_list: GameInfo["artifacts_global_list"];
     last_visited_town_with_sanctum: GameInfo["last_visited_town_with_sanctum"];
+    internal_map_objs_storage_keys: {[map_key: string]: Map["internal_map_objs_storage_keys"]};
     map_data: {
         key_name: string;
         collision_layer: number;
@@ -265,6 +267,10 @@ export class Snapshot {
             summons_availability: _.mapValues(this.data.info.summons_list, summon => summon.available),
             artifacts_global_list: this.data.info.artifacts_global_list,
             last_visited_town_with_sanctum: this.data.info.last_visited_town_with_sanctum,
+            internal_map_objs_storage_keys: _.mapValues(
+                this.data.info.maps_list,
+                map => map.internal_map_objs_storage_keys
+            ),
             map_data: {
                 key_name: this.data.map.key_name,
                 collision_layer: this.data.map.collision_layer,
@@ -284,7 +290,7 @@ export class Snapshot {
                             x: npc.tile_x_pos,
                             y: npc.tile_y_pos,
                             x_px: npc.x,
-                            y_px: npc.y
+                            y_px: npc.y,
                         },
                         scale: {
                             x: npc.sprite?.scale.x ?? null,

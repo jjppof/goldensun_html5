@@ -1,8 +1,15 @@
+import {SnapshotData} from "Snapshot";
 import {GoldenSun} from "../GoldenSun";
 import {Map} from "../Map";
 import {GameInfo} from "./initialize_info";
 
-export function initialize_maps(game: Phaser.Game, data: GoldenSun, maps_db: any, load_promise_resolve: () => void) {
+export function initialize_maps(
+    game: Phaser.Game,
+    data: GoldenSun,
+    maps_db: any,
+    snapshot: SnapshotData,
+    load_promise_resolve: () => void
+) {
     const maps: GameInfo["maps_list"] = {};
     for (let i = 0; i < maps_db.length; ++i) {
         const map_data = maps_db[i];
@@ -22,6 +29,9 @@ export function initialize_maps(game: Phaser.Game, data: GoldenSun, maps_db: any
             map_data.expected_party_level,
             map_data.background_key,
             map_data.show_map_name
+        );
+        maps[map_data.key_name].initialize_internal_storage_key(
+            snapshot?.internal_map_objs_storage_keys[map_data.key_name]
         );
     }
     let at_least_one_map_loaded = false;

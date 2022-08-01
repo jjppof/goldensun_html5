@@ -80,7 +80,7 @@ export class MoveFieldPsynergy extends FieldAbilities {
 
     fire_push() {
         if (this.data.map.collision_layer === this.target_object.base_collision_layer) {
-            const item_position = this.target_object.get_current_position(this.data.map);
+            const item_position = this.target_object.get_current_position();
             const target_position = get_front_position(
                 item_position.x,
                 item_position.y,
