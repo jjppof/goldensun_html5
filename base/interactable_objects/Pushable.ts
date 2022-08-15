@@ -455,8 +455,24 @@ export class Pushable extends InteractableObjects {
         for (let i = 0; i < object_events.length; ++i) {
             const event = object_events[i];
             if (event.type === event_types.JUMP) {
+                const events_in_map = this.data.map.events[IntegerPairKey.get_key(event.x, event.y)];
                 event.activation_collision_layers.forEach(collision_layer => {
-                    this.data.map.set_collision_in_tile(event.x, event.y, true, collision_layer);
+                    collision_set: {
+                        if (events_in_map?.length > 1) {
+                            for (let j = 0; j < events_in_map.length; ++j) {
+                                const e = events_in_map[j];
+                                if (
+                                    e.id !== event.id &&
+                                    e.type === event_types.JUMP &&
+                                    e.activation_collision_layers.has(collision_layer) &&
+                                    e.is_active()
+                                ) {
+                                    break collision_set;
+                                }
+                            }
+                        }
+                        this.data.map.set_collision_in_tile(event.x, event.y, true, collision_layer);
+                    }
                 });
             }
         }
