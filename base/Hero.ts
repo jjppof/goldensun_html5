@@ -165,7 +165,7 @@ export class Hero extends ControllableChar {
                 } else {
                     desired_direction = this.current_direction;
                 }
-                if (this.force_direction && (this.current_direction & 1) === 1) {
+                if (this.force_direction && ((this.current_direction & 1) === 1 || this.on_stair)) {
                     //sets the speed according to the collision slope
                     this.current_speed.x = this.force_diagonal_speed.x;
                     this.current_speed.y = this.force_diagonal_speed.y;

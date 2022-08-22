@@ -358,7 +358,7 @@ export class Collision {
                     //if player's direction is within 1 of wall_direction
                     if (relative_direction === 1 || relative_direction === 7) {
                         char.force_direction = true;
-                        const direction = (wall_direction + (relative_direction << 1)) & 7;
+                        let direction = (wall_direction + (relative_direction << 1)) & 7;
                         if ((direction & 1) === 1) {
                             //adapting the velocity to the contact slope
                             const going_up = (direction >> 1) & 2;
@@ -366,6 +366,10 @@ export class Collision {
                             //rotates normal vector 90deg
                             char.force_diagonal_speed.x = is_ccw ? normal[1] : -normal[1];
                             char.force_diagonal_speed.y = is_ccw ? -normal[0] : normal[0];
+                            if (char.on_stair) {
+                                //transforms diagonal direction into its x component. Example: down_right -> right
+                                direction = (direction ^ (direction << 1)) & 0b100;
+                            }
                         }
                         char.set_direction(direction);
                     } else {

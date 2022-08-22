@@ -4,6 +4,8 @@ import {TileEvent, event_types} from "./TileEvent";
 export class SpeedEvent extends TileEvent {
     private _speed: number;
     private _speed_activate_directions: Set<directions>;
+    private _on_stairs: boolean;
+    private _previous_on_stairs: boolean;
 
     constructor(
         game,
@@ -17,7 +19,8 @@ export class SpeedEvent extends TileEvent {
         affected_by_reveal,
         key_name: string,
         speed: number,
-        speed_activate_directions
+        speed_activate_directions,
+        on_stairs
     ) {
         super(
             game,
@@ -35,6 +38,8 @@ export class SpeedEvent extends TileEvent {
         );
         this._speed = speed;
         this._speed_activate_directions = new Set();
+        this._on_stairs = on_stairs;
+        this._previous_on_stairs = false;
         if (speed_activate_directions === undefined || speed_activate_directions === "all") {
             get_directions(true).forEach(d => this._speed_activate_directions.add(d));
         } else if (Array.isArray(directions)) {
@@ -55,6 +60,9 @@ export class SpeedEvent extends TileEvent {
         ) {
             this.data.tile_event_manager.unset_triggered_event(this);
             this.data.hero.increase_extra_speed(-this.speed);
+            if (this._on_stairs) {
+                this.data.hero.on_stair = this._previous_on_stairs;
+            }
         }
     }
 
@@ -65,6 +73,10 @@ export class SpeedEvent extends TileEvent {
         ) {
             this.data.tile_event_manager.set_triggered_event(this);
             this.data.hero.increase_extra_speed(this.speed);
+            if (this._on_stairs) {
+                this._previous_on_stairs = this.data.hero.on_stair;
+                this.data.hero.on_stair = this._on_stairs;
+            }
         }
     }
 

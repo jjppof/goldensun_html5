@@ -136,6 +136,9 @@ export abstract class ControllableChar {
     /** Forces char to assume idle action if it's forced to stop while in a game event. */
     public force_idle_action_in_event: boolean;
 
+    /** If true, it will assume that this char is walking over a stair. This will impact this char facing direction. */
+    public on_stair: boolean;
+
     private _colorize_filter: Phaser.Filter.Colorize;
     private _levels_filter: Phaser.Filter.Levels;
     private _color_blend_filter: Phaser.Filter.ColorBlend;
@@ -269,6 +272,7 @@ export abstract class ControllableChar {
         this.force_char_stop_in_event = true;
         this.force_idle_action_in_event = true;
         this._sweat_drops = null;
+        this.on_stair = false;
     }
 
     /** The char key. */

@@ -302,7 +302,8 @@ export class TileEventManager {
                 info.affected_by_reveal,
                 info.key_name,
                 info.speed,
-                info.speed_activate_directions
+                info.speed_activate_directions,
+                info.on_stairs
             );
         } else if (info.type === event_types.TELEPORT) {
             return new TeleportEvent(
