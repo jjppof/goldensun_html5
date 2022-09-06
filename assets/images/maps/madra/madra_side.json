@@ -2122,7 +2122,7 @@
      "tile_event\/47":"{\n\"type\": \"climb\",\n\"x\": 7,\n\"y\": 21,\n\"activation_directions\": \"down\",\n\"activation_collision_layers\": 0,\n\"change_to_collision_layer\": 1\n}",
      "tile_event\/48":"{\n    \"type\": \"teleport\",\n    \"x\": 7,\n    \"y\": 29,\n    \"target\": \"madra_side\",\n    \"activation_directions\": \"down\",\n    \"x_target\": 43,\n    \"y_target\": 1,\n    \"dest_collision_layer\": 1,\n    \"activation_collision_layers\": 1\n}",
      "tile_event\/49":"{\n    \"type\": \"teleport\",\n    \"x\": 43,\n    \"y\": 0,\n    \"target\": \"madra_side\",\n    \"activation_directions\": \"up\",\n    \"x_target\": 7,\n    \"y_target\": 28,\n    \"dest_collision_layer\": 1,\n    \"activation_collision_layers\": 1\n}",
-     "tile_event\/50":"{\n\"type\": \"slider\",\n\"x_target\": 8,\n\"y_target\": 29,\n\"activation_directions\": \"down\",\n\"x\": 8,\n\"y\": 21,\n\"dest_collision_layer\": 0,\n\"activation_collision_layers\": 0,\n\"teleport\": true,\n\"teleport_target\": \"madra_side\",\n\"teleport_init_x\": 44,\n\"teleport_init_y\": 0,\n\"teleport_end_x\": 44,\n\"teleport_end_y\": 4,\n\"ground_hit_animation\": false\n}"
+     "tile_event\/50":"{\n\"type\": \"slider\",\n\"x_target\": 8,\n\"y_target\": 29,\n\"activation_directions\": \"down\",\n\"x\": 8,\n\"y\": 21,\n\"dest_collision_layer\": 0,\n\"activation_collision_layers\": 0,\n\"teleport\": true,\n\"teleport_target\": \"madra_side\",\n\"teleport_init_x\": 44,\n\"teleport_init_y\": 0,\n\"teleport_end_x\": 44,\n\"teleport_end_y\": 4,\n\"ground_hit_animation\": true\n}"
     },
  "propertytypes":
     {

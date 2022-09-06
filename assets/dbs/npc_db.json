@@ -481,6 +481,18 @@
                 "frame_rate": 1,
                 "loop": false
             },
+            "ground": {
+                "spritesheet": {
+                    "json": "assets/images/spritesheets/main_chars/isaac_ground.json",
+                    "image": "assets/images/spritesheets/main_chars/isaac_ground.png"
+                },
+                "animations": [
+                    "down"
+                ],
+                "frames_count": 1,
+                "frame_rate": 1,
+                "loop": false
+            },
             "battle": {
                 "spritesheet": {
                     "json": "assets/images/spritesheets/battle/isaac_battle.json",

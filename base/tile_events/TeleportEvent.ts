@@ -5,6 +5,8 @@ import {RevealFieldPsynergy} from "../field_abilities/RevealFieldPsynergy";
 import {climb_actions} from "./ClimbEvent";
 
 export class TeleportEvent extends TileEvent {
+    private static readonly DEFAULT_FADE_DURATION: number = 500;
+
     private target: string;
     private x_target: number;
     private y_target: number;
@@ -18,6 +20,7 @@ export class TeleportEvent extends TileEvent {
     private skip_checks: boolean;
     private finish_before_fadeout: boolean;
     private skip_map_change_events: boolean;
+    private fade_duration: number;
     private finish_callback: () => void;
     private fadein_callback: () => void;
 
@@ -44,7 +47,8 @@ export class TeleportEvent extends TileEvent {
         fade_camera,
         skip_checks,
         finish_before_fadeout,
-        skip_map_change_events
+        skip_map_change_events,
+        fade_duration
     ) {
         super(
             game,
@@ -73,6 +77,7 @@ export class TeleportEvent extends TileEvent {
         this.skip_checks = skip_checks ?? false;
         this.finish_before_fadeout = finish_before_fadeout ?? false;
         this.skip_map_change_events = skip_map_change_events ?? false;
+        this.fade_duration = fade_duration ?? TeleportEvent.DEFAULT_FADE_DURATION;
         this.finish_callback = null;
         this.fadein_callback = null;
     }
@@ -194,7 +199,7 @@ export class TeleportEvent extends TileEvent {
         };
 
         if (this.fade_camera) {
-            this.game.camera.fade(undefined, undefined, true);
+            this.game.camera.fade(undefined, this.fade_duration, true);
             this.game.camera.onFadeComplete.addOnce(on_camera_fade_in);
         } else {
             on_camera_fade_in();
@@ -255,7 +260,7 @@ export class TeleportEvent extends TileEvent {
         };
 
         if (this.fade_camera) {
-            this.game.camera.flash(0x0, undefined, true);
+            this.game.camera.flash(0x0, this.fade_duration, true);
             if (this.finish_before_fadeout) {
                 on_camera_fade_out();
             } else {

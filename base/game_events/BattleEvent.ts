@@ -62,7 +62,8 @@ export class BattleEvent extends GameEvent {
                         false,
                         true,
                         false,
-                        false
+                        false,
+                        undefined
                     );
                     let promise_resolve;
                     const end_promise = new Promise<void>(resolve => (promise_resolve = resolve));

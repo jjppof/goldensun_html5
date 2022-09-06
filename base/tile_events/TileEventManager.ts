@@ -329,7 +329,8 @@ export class TileEventManager {
                 info.fade_camera,
                 info.skip_checks,
                 info.finish_before_fadeout,
-                false
+                info.skip_map_change_events,
+                info.fade_duration
             );
         } else if (info.type === event_types.SLIDER) {
             return new SliderEvent(
