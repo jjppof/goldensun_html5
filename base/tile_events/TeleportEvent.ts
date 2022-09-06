@@ -16,7 +16,10 @@ export class TeleportEvent extends TileEvent {
     private keep_encounter_cumulator: boolean;
     private fade_camera: boolean;
     private skip_checks: boolean;
+    private finish_before_fadeout: boolean;
+    private skip_map_change_events: boolean;
     private finish_callback: () => void;
+    private fadein_callback: () => void;
 
     constructor(
         game,
@@ -39,7 +42,9 @@ export class TeleportEvent extends TileEvent {
         destination_direction,
         keep_encounter_cumulator,
         fade_camera,
-        skip_checks
+        skip_checks,
+        finish_before_fadeout,
+        skip_map_change_events
     ) {
         super(
             game,
@@ -66,7 +71,10 @@ export class TeleportEvent extends TileEvent {
         this.keep_encounter_cumulator = keep_encounter_cumulator;
         this.fade_camera = fade_camera ?? true;
         this.skip_checks = skip_checks ?? false;
+        this.finish_before_fadeout = finish_before_fadeout ?? false;
+        this.skip_map_change_events = skip_map_change_events ?? false;
         this.finish_callback = null;
+        this.fadein_callback = null;
     }
 
     get open_door() {
@@ -159,6 +167,9 @@ export class TeleportEvent extends TileEvent {
         this.data.hero.stop_char(true);
 
         const on_camera_fade_in = () => {
+            if (this.fadein_callback) {
+                this.fadein_callback();
+            }
             if (this.data.hero.on_reveal) {
                 (this.data.info.field_abilities_list.reveal as RevealFieldPsynergy).finish(true);
             }
@@ -238,15 +249,25 @@ export class TeleportEvent extends TileEvent {
             if (this.finish_callback) {
                 this.finish_callback();
             }
-            this.data.map.fire_game_events();
+            if (!this.skip_map_change_events) {
+                this.data.map.fire_game_events();
+            }
         };
 
         if (this.fade_camera) {
             this.game.camera.flash(0x0, undefined, true);
-            this.game.camera.onFlashComplete.addOnce(on_camera_fade_out);
+            if (this.finish_before_fadeout) {
+                on_camera_fade_out();
+            } else {
+                this.game.camera.onFlashComplete.addOnce(on_camera_fade_out);
+            }
         } else {
             on_camera_fade_out();
         }
+    }
+
+    set_fadein_callback(callback: () => void) {
+        this.fadein_callback = callback;
     }
 
     set_finish_callback(callback: () => void) {

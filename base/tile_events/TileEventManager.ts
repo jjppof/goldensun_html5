@@ -327,7 +327,9 @@ export class TileEventManager {
                 info.destination_direction,
                 info.keep_encounter_cumulator,
                 info.fade_camera,
-                info.skip_checks
+                info.skip_checks,
+                info.finish_before_fadeout,
+                false
             );
         } else if (info.type === event_types.SLIDER) {
             return new SliderEvent(
@@ -344,7 +346,14 @@ export class TileEventManager {
                 info.x_target,
                 info.y_target,
                 info.dest_collision_layer,
-                info.show_dust
+                info.show_dust,
+                info.teleport,
+                info.teleport_target,
+                info.teleport_init_x,
+                info.teleport_init_y,
+                info.teleport_end_x,
+                info.teleport_end_y,
+                info.ground_hit_animation
             );
         } else if (info.type === event_types.JUMP) {
             return new JumpEvent(

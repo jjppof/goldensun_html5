@@ -60,7 +60,9 @@ export class BattleEvent extends GameEvent {
                         reverse_directions[directions.up],
                         false,
                         false,
-                        true
+                        true,
+                        false,
+                        false
                     );
                     let promise_resolve;
                     const end_promise = new Promise<void>(resolve => (promise_resolve = resolve));

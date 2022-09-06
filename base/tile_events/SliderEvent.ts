@@ -1,8 +1,9 @@
-import {base_actions, directions, reverse_directions} from "../utils";
+import {base_actions, directions, get_centered_pos_in_px, reverse_directions} from "../utils";
+import {TeleportEvent} from "./TeleportEvent";
 import {event_types, TileEvent} from "./TileEvent";
 
 export class SliderEvent extends TileEvent {
-    private static readonly TIME_PER_TILE = 60;
+    private static readonly TIME_PER_TILE = 55;
     private static readonly DUST_COUNT = 6;
     private static readonly DUST_KEY = "dust";
 
@@ -10,6 +11,14 @@ export class SliderEvent extends TileEvent {
     private y_target: number;
     private dest_collision_layer: number;
     private show_dust: boolean;
+
+    private teleport: boolean;
+    private teleport_target: string;
+    private teleport_init_x: number;
+    private teleport_init_y: number;
+    private teleport_end_x: number;
+    private teleport_end_y: number;
+    private ground_hit_animation: boolean;
 
     constructor(
         game,
@@ -25,7 +34,14 @@ export class SliderEvent extends TileEvent {
         x_target,
         y_target,
         dest_collision_layer,
-        show_dust
+        show_dust,
+        teleport,
+        teleport_target,
+        teleport_init_x,
+        teleport_init_y,
+        teleport_end_x,
+        teleport_end_y,
+        ground_hit_animation
     ) {
         super(
             game,
@@ -45,6 +61,13 @@ export class SliderEvent extends TileEvent {
         this.y_target = y_target;
         this.dest_collision_layer = dest_collision_layer ?? 0;
         this.show_dust = show_dust ?? true;
+        this.teleport = teleport ?? false;
+        this.teleport_target = teleport_target;
+        this.teleport_init_x = teleport_init_x;
+        this.teleport_init_y = teleport_init_y;
+        this.teleport_end_x = teleport_end_x;
+        this.teleport_end_y = teleport_end_y;
+        this.ground_hit_animation = ground_hit_animation ?? false;
     }
 
     fire() {
@@ -83,27 +106,43 @@ export class SliderEvent extends TileEvent {
                                     this.data.hero.set_frame(directions.down);
                                 });
                             });
-                            const target_x = this.data.map.tile_width * (this.x_target + 0.5);
-                            const target_y = this.data.map.tile_height * (this.y_target + 0.5);
+                            const target_x = get_centered_pos_in_px(this.x_target, this.data.map.tile_width);
+                            const target_y = get_centered_pos_in_px(this.y_target, this.data.map.tile_height);
                             const slide_time = Math.abs(this.y_target - this.y) * SliderEvent.TIME_PER_TILE;
-                            this.game.add
+                            const hero_fall_tween = this.game.add
                                 .tween(this.data.hero.sprite.body)
-                                .to({x: target_x, y: target_y}, slide_time, Phaser.Easing.Linear.None, true)
-                                .onComplete.addOnce(() => {
-                                    this.data.hero.play();
-                                    this.data.hero.update_shadow();
-                                    this.data.hero.shadow.visible = true;
-                                    if (this.dest_collision_layer !== this.data.map.collision_layer) {
-                                        this.data.collision.change_map_body(this.dest_collision_layer);
-                                    }
-                                    this.game.time.events.add(80, () => {
-                                        this.data.hero.sliding = false;
-                                        this.data.hero.toggle_collision(true);
-                                        this.data.tile_event_manager.on_event = false;
-                                    });
+                                .to({x: target_x, y: target_y}, slide_time, Phaser.Easing.Linear.None, true);
+                            hero_fall_tween.onComplete.addOnce(() => {
+                                if (this.teleport) {
+                                    return;
+                                }
+                                this.finish();
+                            });
+                            if (this.teleport) {
+                                let teleport_time = slide_time - SliderEvent.TIME_PER_TILE * 6;
+                                if (teleport_time < 0) {
+                                    teleport_time = slide_time;
+                                }
+                                this.game.time.events.add(teleport_time, () => {
+                                    this.start_teleport(hero_fall_tween);
                                 });
+                            }
                         });
                 });
+        });
+    }
+
+    private finish() {
+        this.data.hero.play();
+        this.data.hero.update_shadow();
+        this.data.hero.shadow.visible = true;
+        if (!this.teleport && this.dest_collision_layer !== this.data.map.collision_layer) {
+            this.data.collision.change_map_body(this.dest_collision_layer);
+        }
+        this.game.time.events.add(80, () => {
+            this.data.hero.sliding = false;
+            this.data.hero.toggle_collision(true);
+            this.data.tile_event_manager.on_event = false;
         });
     }
 
@@ -145,6 +184,51 @@ export class SliderEvent extends TileEvent {
                 dust_sprite.animations.play(animation_key);
             });
         }
+    }
+
+    private start_teleport(hero_fall_tween: Phaser.Tween) {
+        const event = new TeleportEvent(
+            this.game,
+            this.data,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            false,
+            undefined,
+            this.teleport_target,
+            this.teleport_init_x,
+            this.teleport_init_y,
+            false,
+            false,
+            false,
+            this.dest_collision_layer,
+            reverse_directions[directions.down],
+            false,
+            true,
+            true,
+            true,
+            true
+        );
+        event.set_fadein_callback(() => {
+            hero_fall_tween.stop(false);
+        });
+        event.set_finish_callback(() => {
+            event.destroy();
+            this.data.tile_event_manager.on_event = true;
+            const slide_time = Math.abs(this.teleport_end_y - this.teleport_init_y) * SliderEvent.TIME_PER_TILE;
+            const target_x = get_centered_pos_in_px(this.teleport_end_x, this.data.map.tile_width);
+            const target_y = get_centered_pos_in_px(this.teleport_end_y, this.data.map.tile_height);
+            this.game.add
+                .tween(this.data.hero.sprite.body)
+                .to({x: target_x, y: target_y}, slide_time, Phaser.Easing.Linear.None, true)
+                .onComplete.addOnce(() => {
+                    this.finish();
+                });
+        });
+        event.fire();
     }
 
     destroy() {
