@@ -63,6 +63,7 @@ export class InteractableObjects {
         enable?: string;
         entangled_by_bush?: string;
         animation?: string;
+        affected_by_reveal?: string;
     };
     private tile_events_info: {
         [event_id: number]: {
@@ -137,6 +138,7 @@ export class InteractableObjects {
     private _snapshot_info: SnapshotData["map_data"]["interactable_objects"][0];
     private _shapes_collision_active: boolean;
     private _active_filters: {[key in EngineFilters]?: boolean};
+    private _affected_by_reveal: boolean;
 
     constructor(
         game,
@@ -166,7 +168,8 @@ export class InteractableObjects {
         has_shadow,
         animation,
         action,
-        snapshot_info
+        snapshot_info,
+        affected_by_reveal
     ) {
         this.game = game;
         this.data = data;
@@ -194,6 +197,10 @@ export class InteractableObjects {
             entangled_by_bush = this.data.storage.get(this.storage_keys.entangled_by_bush);
         }
         this._entangled_by_bush = entangled_by_bush ?? false;
+        if (this.storage_keys.affected_by_reveal !== undefined) {
+            affected_by_reveal = this.data.storage.get(this.storage_keys.affected_by_reveal);
+        }
+        this._affected_by_reveal = affected_by_reveal ?? false;
         this.not_allowed_tiles = not_allowed_tiles ?? [];
         this._object_drop_tiles = object_drop_tiles ?? [];
         this.events_id = new Set();
@@ -414,6 +421,10 @@ export class InteractableObjects {
     }
     get map_index() {
         return this._map_index;
+    }
+    /** Whether this IO is affected by Reveal psynergy or not. */
+    get affected_by_reveal() {
+        return this._affected_by_reveal;
     }
 
     position_allowed(x: number, y: number) {

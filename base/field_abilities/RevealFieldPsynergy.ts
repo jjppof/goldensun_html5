@@ -68,6 +68,11 @@ export class RevealFieldPsynergy extends FieldAbilities {
                 npc.sprite.visible = !npc.sprite.visible;
             }
         });
+        this.data.map.interactable_objects.forEach(io => {
+            if (io.affected_by_reveal) {
+                io.sprite.visible = !io.sprite.visible;
+            }
+        });
         for (let key in this.data.map.events) {
             const events = this.data.map.events[key];
             events.forEach(event => {

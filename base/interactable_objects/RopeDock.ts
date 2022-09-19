@@ -83,7 +83,8 @@ export class RopeDock extends InteractableObjects {
         has_shadow,
         animation,
         action,
-        snapshot_info
+        snapshot_info,
+        affected_by_reveal
     ) {
         super(
             game,
@@ -113,7 +114,8 @@ export class RopeDock extends InteractableObjects {
             has_shadow,
             animation,
             action,
-            snapshot_info
+            snapshot_info,
+            affected_by_reveal
         );
         this._is_rope_dock = true;
         this._dest_rope_dock = null;

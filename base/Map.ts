@@ -1099,7 +1099,8 @@ export class Map {
                 has_shadow,
                 animation,
                 action,
-                snapshot_info
+                snapshot_info,
+                property_info.affected_by_reveal
             );
             if (interactable_object.pushable) {
                 (interactable_object as Pushable).initialize_pushable(property_info.dock_tile_position);
