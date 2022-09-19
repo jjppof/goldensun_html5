@@ -269,7 +269,7 @@ export abstract class TileEvent {
      * @returns returns an direction.
      */
     get_activation_direction(): directions {
-        return this.activation_directions.values().next().value;
+        return this._initial_activation_directions.values().next().value;
     }
 
     /**
