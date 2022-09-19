@@ -1,7 +1,8 @@
 import {event_types, IntegerPairKey, TileEvent} from "./TileEvent";
-import {get_opposite_direction, directions, get_front_position} from "../utils";
+import {get_opposite_direction, directions, get_front_position, get_centered_pos_in_px} from "../utils";
 import {Breakable} from "../interactable_objects/Breakable";
 import {InteractableObjects} from "../interactable_objects/InteractableObjects";
+import {RevealFieldPsynergy} from "../field_abilities/RevealFieldPsynergy";
 
 export class JumpEvent extends TileEvent {
     private static readonly JUMP_OFFSET = 30;
@@ -118,6 +119,7 @@ export class JumpEvent extends TileEvent {
         const next_pos_key = IntegerPairKey.get_key(next_position.x, next_position.y);
         let active_jump_event_found = false;
         let breakable: Breakable = null;
+        let found_at_least_one_jump_event_affected_by_reveal = false;
         if (next_pos_key in this.data.map.events) {
             for (let i = 0; i < this.data.map.events[next_pos_key].length; ++i) {
                 const event = this.data.map.events[next_pos_key][i];
@@ -128,14 +130,27 @@ export class JumpEvent extends TileEvent {
                 ) {
                     active_jump_event_found = true;
                     if (event.origin_interactable_object?.breakable) {
+                        //ideally, we should see only one breakable in this loop...
                         breakable = event.origin_interactable_object as Breakable;
                     }
-                    break;
+                    found_at_least_one_jump_event_affected_by_reveal ||= Boolean(event.affected_by_reveal.size);
                 }
             }
         }
         if (!active_jump_event_found) {
             return;
+        }
+
+        //cancels jumping if target position is beyond reveal area
+        if (this.data.hero.on_reveal && found_at_least_one_jump_event_affected_by_reveal) {
+            const reveal_psynergy = this.data.info.field_abilities_list[
+                RevealFieldPsynergy.ABILITY_KEY_NAME
+            ] as RevealFieldPsynergy;
+            const x_target = get_centered_pos_in_px(next_position.x, this.data.map.tile_width);
+            const y_target = get_centered_pos_in_px(next_position.y, this.data.map.tile_height);
+            if (reveal_psynergy.should_finish_reveal(x_target, y_target)) {
+                return;
+            }
         }
 
         //starts the jump event

@@ -1,9 +1,10 @@
 import {FieldAbilities} from "./FieldAbilities";
 import * as numbers from "../magic_numbers";
-import {base_actions, directions} from "../utils";
+import {base_actions} from "../utils";
+import {event_types, IntegerPairKey} from "../tile_events/TileEvent";
 
 export class RevealFieldPsynergy extends FieldAbilities {
-    private static readonly ABILITY_KEY_NAME = "reveal";
+    public static readonly ABILITY_KEY_NAME = "reveal";
     private static readonly ACTION_KEY_NAME = base_actions.CAST;
     private reveal_wave: Phaser.Image;
     private reveal_wave_filter: any;
@@ -19,11 +20,11 @@ export class RevealFieldPsynergy extends FieldAbilities {
         this.set_bootstrap_method(this.show_wave.bind(this));
     }
 
-    update() {
+    should_finish_reveal(x_target: number, y_target: number) {
         if (this.controllable_char?.on_reveal) {
             const this_point = {
-                x: this.controllable_char.sprite.x,
-                y: this.controllable_char.sprite.y,
+                x: x_target,
+                y: y_target,
             };
             const this_x_diff = this_point.x - this.casting_point.x;
             const this_y_diff = this_point.y - this.casting_point.y;
@@ -36,6 +37,16 @@ export class RevealFieldPsynergy extends FieldAbilities {
             const limit_sqr_dist =
                 Math.pow(limit_point.x - this.casting_point.x, 2) + Math.pow(limit_point.y - this.casting_point.y, 2);
             if (this_sqr_dist >= limit_sqr_dist) {
+                return true;
+            }
+            return false;
+        }
+        return true;
+    }
+
+    update() {
+        if (this.controllable_char?.on_reveal) {
+            if (this.should_finish_reveal(this.controllable_char.x, this.controllable_char.y)) {
                 this.finish();
             }
         }
@@ -86,7 +97,7 @@ export class RevealFieldPsynergy extends FieldAbilities {
         this.reveal_wave.destroy();
         this.reveal_wave_filter.destroy();
         this.waving_tween.stop();
-        if (stop_char) {
+        if (stop_char && !this.controllable_char.jumping) {
             this.controllable_char.stop_char(true);
         }
         this.data.audio.play_se("psynergy/11");
@@ -108,6 +119,7 @@ export class RevealFieldPsynergy extends FieldAbilities {
 
         if (this.controllable_char.on_reveal) {
             this.finish(true);
+            this.controllable_char.casting_psynergy = true;
         }
         this.casting_point = {
             x: this.controllable_char.sprite.x,
@@ -167,8 +179,32 @@ export class RevealFieldPsynergy extends FieldAbilities {
 
         this.data.audio.play_se("psynergy/10");
 
-        this.end_timer = this.game.time.create(true);
-        this.end_timer.add(10000, this.finish.bind(this));
-        this.end_timer.start();
+        const start_end_timer = () => {
+            this.end_timer = this.game.time.create(true);
+            this.end_timer.add(10000, () => {
+                const this_pos_key = IntegerPairKey.get_key(
+                    this.controllable_char.tile_x_pos,
+                    this.controllable_char.tile_y_pos
+                );
+                if (this_pos_key in this.data.map.events) {
+                    for (let i = 0; i < this.data.map.events[this_pos_key].length; ++i) {
+                        const event = this.data.map.events[this_pos_key][i];
+                        if (
+                            event.type === event_types.JUMP &&
+                            event.activation_collision_layers.has(this.data.map.collision_layer)
+                        ) {
+                            if (event.affected_by_reveal.size) {
+                                //will this cause stack overflow?
+                                start_end_timer();
+                                return;
+                            }
+                        }
+                    }
+                }
+                this.finish();
+            });
+            this.end_timer.start();
+        };
+        start_end_timer();
     }
 }

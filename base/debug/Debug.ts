@@ -326,6 +326,9 @@ export class Debug {
                                 type: event.type,
                                 x: event.x,
                                 y: event.y,
+                                affected_by_reveal: Array.from(event.affected_by_reveal).map(
+                                    dir => reverse_directions[dir]
+                                ),
                                 activation_directions: Array.from(event.activation_directions).map(
                                     dir => reverse_directions[dir]
                                 ),

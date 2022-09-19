@@ -118,7 +118,7 @@ export abstract class TileEvent {
         affected_by_reveal = Array.isArray(affected_by_reveal)
             ? affected_by_reveal
             : affected_by_reveal
-            ? Array.from(this.activation_collision_layers)
+            ? Array.from(this._initial_activation_directions)
             : [];
         this._affected_by_reveal = new Set(affected_by_reveal);
 
