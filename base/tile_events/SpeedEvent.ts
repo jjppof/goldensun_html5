@@ -4,6 +4,7 @@ import {TileEvent, event_types} from "./TileEvent";
 export class SpeedEvent extends TileEvent {
     private _speed: number;
     private _speed_activate_directions: Set<directions>;
+    private _force_axis: "x" | "y";
     private _on_stairs: boolean;
     private _previous_on_stairs: boolean;
 
@@ -20,7 +21,8 @@ export class SpeedEvent extends TileEvent {
         key_name: string,
         speed: number,
         speed_activate_directions,
-        on_stairs
+        on_stairs,
+        force_axis
     ) {
         super(
             game,
@@ -38,6 +40,7 @@ export class SpeedEvent extends TileEvent {
         );
         this._speed = speed;
         this._speed_activate_directions = new Set();
+        this._force_axis = force_axis;
         this._on_stairs = on_stairs;
         this._previous_on_stairs = false;
         if (speed_activate_directions === undefined || speed_activate_directions === "all") {
@@ -59,7 +62,11 @@ export class SpeedEvent extends TileEvent {
             (!this.check_position() || !this._speed_activate_directions.has(this.data.hero.current_direction))
         ) {
             this.data.tile_event_manager.unset_triggered_event(this);
-            this.data.hero.increase_extra_speed(-this.speed);
+            if (this._force_axis) {
+                this.data.hero.increase_forced_extra_speed({[this._force_axis]: -this.speed});
+            } else {
+                this.data.hero.increase_extra_speed(-this.speed);
+            }
             if (this._on_stairs) {
                 this.data.hero.on_stair = this._previous_on_stairs;
             }
@@ -72,7 +79,11 @@ export class SpeedEvent extends TileEvent {
             this._speed_activate_directions.has(this.data.hero.current_direction)
         ) {
             this.data.tile_event_manager.set_triggered_event(this);
-            this.data.hero.increase_extra_speed(this.speed);
+            if (this._force_axis) {
+                this.data.hero.increase_forced_extra_speed({[this._force_axis]: this.speed});
+            } else {
+                this.data.hero.increase_extra_speed(this.speed);
+            }
             if (this._on_stairs) {
                 this._previous_on_stairs = this.data.hero.on_stair;
                 this.data.hero.on_stair = this._on_stairs;

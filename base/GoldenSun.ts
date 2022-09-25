@@ -259,9 +259,7 @@ export class GoldenSun {
         this.game.camera.resetFX();
         this.loading_what = "";
 
-        //initializes start menu
-        this.start_menu = new StartMenu(this.game, this);
-        this.start_menu.open(snapshot => {
+        const start_game = snapshot => {
             this.audio.stop_bgm();
 
             //initializes the snapshot manager
@@ -269,7 +267,17 @@ export class GoldenSun {
 
             //initializes the game
             this.initialize_game();
-        });
+        };
+
+        if (this.dbs.init_db.skip_start_menu) {
+            start_game(null);
+        } else {
+            //initializes start menu
+            this.start_menu = new StartMenu(this.game, this);
+            this.start_menu.open(snapshot => {
+                start_game(snapshot);
+            });
+        }
     }
 
     /**

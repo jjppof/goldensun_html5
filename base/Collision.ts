@@ -306,7 +306,7 @@ export class Collision {
             const direction = (1 + Math.floor((angle - numbers.degree45_half) / numbers.degree45)) & 7;
             return acc | get_direction_mask(direction);
         }, 0);
-        if (normals.length && char.in_movement()) {
+        if (normals.length && char.in_movement() && char.extra_speed_force.x === 0 && char.extra_speed_force.y === 0) {
             const speed_limit = this.data.map.is_world_map
                 ? Collision.SPEED_LIMIT_TO_STOP_WORLD_MAP
                 : Collision.SPEED_LIMIT_TO_STOP;

@@ -303,7 +303,8 @@ export class TileEventManager {
                 info.key_name,
                 info.speed,
                 info.speed_activate_directions,
-                info.on_stairs
+                info.on_stairs,
+                info.force_axis
             );
         } else if (info.type === event_types.TELEPORT) {
             return new TeleportEvent(

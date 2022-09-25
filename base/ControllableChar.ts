@@ -52,6 +52,7 @@ export abstract class ControllableChar {
     protected _temp_speed: {x: number; y: number};
     protected _force_diagonal_speed: {x: number; y: number};
     protected _extra_speed: number;
+    protected _extra_speed_force: {x: number; y: number};
     protected walk_speed: number;
     protected dash_speed: number;
     protected climb_speed: number;
@@ -192,6 +193,7 @@ export abstract class ControllableChar {
         this._temp_speed = {x: 0, y: 0};
         this._force_diagonal_speed = {x: 0, y: 0};
         this._extra_speed = 0;
+        this._extra_speed_force = {x: 0, y: 0};
         this.walk_speed = walk_speed;
         this.dash_speed = dash_speed;
         this.climb_speed = climb_speed;
@@ -396,7 +398,7 @@ export abstract class ControllableChar {
         return this._push_timer;
     }
 
-    /** This char current speed. */
+    /** This char current speed normalized vector. This pretty much indicates the char direction. */
     get current_speed() {
         return this._current_speed;
     }
@@ -411,6 +413,10 @@ export abstract class ControllableChar {
     /** The extra char speed that might be applied to current speed. */
     get extra_speed() {
         return this._extra_speed;
+    }
+    /** The extra char speed that might be applied to current speed even if it's idle. */
+    get extra_speed_force() {
+        return this._extra_speed_force;
     }
 
     /** The char current action. */
@@ -1550,7 +1556,16 @@ export abstract class ControllableChar {
      * @param delta_value the speed variation.
      */
     increase_extra_speed(delta_value: number) {
-        this._extra_speed += delta_value;
+        this._extra_speed += delta_value | 0;
+    }
+
+    /**
+     * Increments the char forced extra speed value.
+     * @param delta_value the x and/or y speed variation object.
+     */
+    increase_forced_extra_speed(delta_value: {x?: number; y?: number}) {
+        this._extra_speed_force.x += delta_value.x | 0 ?? 0;
+        this._extra_speed_force.y += delta_value.y | 0 ?? 0;
     }
 
     /**
@@ -1560,8 +1575,8 @@ export abstract class ControllableChar {
         //when setting temp_speed.x or temp_speed.y, it means that these velocities will still be analyzed in Collision.check_char_collision function
         const delta_time = this.game.time.elapsedMS / numbers.DELTA_TIME_FACTOR;
         const apply_speed = (speed_factor: number) => {
-            this.temp_speed.x = (delta_time * this.current_speed.x * speed_factor) | 0;
-            this.temp_speed.y = (delta_time * this.current_speed.y * speed_factor) | 0;
+            this.temp_speed.x = (delta_time * (this.current_speed.x * speed_factor + this.extra_speed_force.x)) | 0;
+            this.temp_speed.y = (delta_time * (this.current_speed.y * speed_factor + this.extra_speed_force.y)) | 0;
         };
         if (this.ice_sliding_active && this.sliding_on_ice) {
             const speed_factor = ControllableChar.SLIDE_ICE_SPEED + this.extra_speed;
@@ -1582,10 +1597,20 @@ export abstract class ControllableChar {
                 (this.data.map.is_world_map ? numbers.WORLD_MAP_SPEED_WALK_REDUCE : 0);
             apply_speed(speed_factor);
         } else if (this.current_action === base_actions.CLIMB) {
-            this.temp_speed.x = (delta_time * this.current_speed.x * this.climb_speed) | 0;
-            this.temp_speed.y = (delta_time * this.current_speed.y * this.climb_speed) | 0;
+            apply_speed(this.climb_speed);
         } else if (this.current_action === base_actions.IDLE) {
-            this.sprite.body.velocity.y = this.sprite.body.velocity.x = 0;
+            if (this.extra_speed_force.x !== 0) {
+                const speed = (delta_time * this.extra_speed_force.x) | 0;
+                this.sprite.body.velocity.x = this.temp_speed.x = speed;
+            } else {
+                this.sprite.body.velocity.x = 0;
+            }
+            if (this.extra_speed_force.y !== 0) {
+                const speed = (delta_time * this.extra_speed_force.y) | 0;
+                this.sprite.body.velocity.y = this.temp_speed.y = speed;
+            } else {
+                this.sprite.body.velocity.y = 0;
+            }
         }
     }
 

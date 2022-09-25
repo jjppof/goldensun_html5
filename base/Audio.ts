@@ -157,13 +157,13 @@ export class Audio {
      * Pauses the current bgm sound.
      */
     pause_bgm() {
-        this.current_bgm.pause();
+        this.current_bgm?.pause();
     }
 
     /**
      * Stops the current bgm sound.
      */
     stop_bgm() {
-        this.current_bgm.stop();
+        this.current_bgm?.stop();
     }
 }
