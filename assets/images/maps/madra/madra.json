@@ -589,6 +589,7 @@
          "name":"00",
          "objects":[
                 {
+                 "class":"",
                  "height":0,
                  "id":24,
                  "name":"",
@@ -666,13 +667,13 @@
                          "y":48
                         }],
                  "rotation":0,
-                 "type":"",
                  "visible":true,
                  "width":0,
                  "x":144,
                  "y":240
                 }, 
                 {
+                 "class":"",
                  "height":0,
                  "id":25,
                  "name":"",
@@ -778,13 +779,13 @@
                          "y":0
                         }],
                  "rotation":0,
-                 "type":"",
                  "visible":true,
                  "width":0,
                  "x":176,
                  "y":224
                 }, 
                 {
+                 "class":"",
                  "height":0,
                  "id":26,
                  "name":"",
@@ -838,13 +839,13 @@
                          "y":-16
                         }],
                  "rotation":0,
-                 "type":"",
                  "visible":true,
                  "width":0,
                  "x":528,
                  "y":144
                 }, 
                 {
+                 "class":"",
                  "height":0,
                  "id":27,
                  "name":"",
@@ -870,31 +871,30 @@
                          "y":-32
                         }],
                  "rotation":0,
-                 "type":"",
                  "visible":true,
                  "width":0,
                  "x":544,
                  "y":176
                 }, 
                 {
+                 "class":"",
                  "ellipse":true,
                  "height":16,
                  "id":35,
                  "name":"",
                  "rotation":0,
-                 "type":"",
                  "visible":true,
                  "width":16,
                  "x":16,
                  "y":336
                 }, 
                 {
+                 "class":"",
                  "ellipse":true,
                  "height":16,
                  "id":36,
                  "name":"",
                  "rotation":0,
-                 "type":"",
                  "visible":true,
                  "width":16,
                  "x":144,
@@ -913,28 +913,29 @@
          "name":"01",
          "objects":[
                 {
+                 "class":"",
                  "height":64,
                  "id":10,
                  "name":"",
                  "rotation":0,
-                 "type":"",
                  "visible":true,
                  "width":64,
                  "x":336,
                  "y":256
                 }, 
                 {
+                 "class":"",
                  "height":64,
                  "id":11,
                  "name":"",
                  "rotation":0,
-                 "type":"",
                  "visible":true,
                  "width":64,
                  "x":192,
                  "y":336
                 }, 
                 {
+                 "class":"",
                  "height":0,
                  "id":12,
                  "name":"",
@@ -988,13 +989,13 @@
                          "y":64
                         }],
                  "rotation":0,
-                 "type":"",
                  "visible":true,
                  "width":0,
                  "x":304,
                  "y":240
                 }, 
                 {
+                 "class":"",
                  "height":0,
                  "id":13,
                  "name":"",
@@ -1032,13 +1033,13 @@
                          "y":0
                         }],
                  "rotation":0,
-                 "type":"",
                  "visible":true,
                  "width":0,
                  "x":288,
                  "y":352
                 }, 
                 {
+                 "class":"",
                  "height":0,
                  "id":14,
                  "name":"",
@@ -1245,13 +1246,13 @@
                          "y":0.00121527777776009
                         }],
                  "rotation":0,
-                 "type":"",
                  "visible":true,
                  "width":0,
                  "x":448,
                  "y":288
                 }, 
                 {
+                 "class":"",
                  "height":0,
                  "id":15,
                  "name":"",
@@ -1381,13 +1382,13 @@
                          "y":-16
                         }],
                  "rotation":0,
-                 "type":"",
                  "visible":true,
                  "width":0,
                  "x":544,
                  "y":144
                 }, 
                 {
+                 "class":"",
                  "height":0,
                  "id":16,
                  "name":"",
@@ -1553,13 +1554,13 @@
                          "y":-64
                         }],
                  "rotation":0,
-                 "type":"",
                  "visible":true,
                  "width":0,
                  "x":496,
                  "y":128
                 }, 
                 {
+                 "class":"",
                  "height":0,
                  "id":17,
                  "name":"",
@@ -1633,61 +1634,61 @@
                          "y":-16
                         }],
                  "rotation":0,
-                 "type":"",
                  "visible":true,
                  "width":0,
                  "x":176,
                  "y":176
                 }, 
                 {
+                 "class":"",
                  "ellipse":true,
                  "height":16,
                  "id":18,
                  "name":"",
                  "rotation":0,
-                 "type":"",
                  "visible":true,
                  "width":16,
                  "x":496,
                  "y":240
                 }, 
                 {
+                 "class":"",
                  "ellipse":true,
                  "height":16,
                  "id":19,
                  "name":"",
                  "rotation":0,
-                 "type":"",
                  "visible":true,
                  "width":16,
                  "x":448,
                  "y":256
                 }, 
                 {
+                 "class":"",
                  "ellipse":true,
                  "height":16,
                  "id":20,
                  "name":"",
                  "rotation":0,
-                 "type":"",
                  "visible":true,
                  "width":16,
                  "x":368,
                  "y":384
                 }, 
                 {
+                 "class":"",
                  "ellipse":true,
                  "height":16,
                  "id":22,
                  "name":"",
                  "rotation":0,
-                 "type":"",
                  "visible":true,
                  "width":16,
                  "x":560,
                  "y":464
                 }, 
                 {
+                 "class":"",
                  "height":0,
                  "id":23,
                  "name":"",
@@ -1801,18 +1802,17 @@
                          "y":176
                         }],
                  "rotation":0,
-                 "type":"",
                  "visible":true,
                  "width":0,
                  "x":640,
                  "y":368
                 }, 
                 {
+                 "class":"",
                  "height":64,
                  "id":37,
                  "name":"",
                  "rotation":0,
-                 "type":"",
                  "visible":true,
                  "width":80,
                  "x":416,
@@ -1831,6 +1831,7 @@
          "name":"02",
          "objects":[
                 {
+                 "class":"",
                  "height":0,
                  "id":28,
                  "name":"",
@@ -1916,13 +1917,13 @@
                          "y":-32
                         }],
                  "rotation":0,
-                 "type":"",
                  "visible":true,
                  "width":0,
                  "x":496,
                  "y":160
                 }, 
                 {
+                 "class":"",
                  "height":0,
                  "id":29,
                  "name":"",
@@ -1988,24 +1989,24 @@
                          "y":-32
                         }],
                  "rotation":0,
-                 "type":"",
                  "visible":true,
                  "width":0,
                  "x":240,
                  "y":80
                 }, 
                 {
+                 "class":"",
                  "height":48,
                  "id":30,
                  "name":"",
                  "rotation":0,
-                 "type":"",
                  "visible":true,
                  "width":80,
                  "x":416,
                  "y":80
                 }, 
                 {
+                 "class":"",
                  "height":0,
                  "id":32,
                  "name":"",
@@ -2043,13 +2044,13 @@
                          "y":16
                         }],
                  "rotation":0,
-                 "type":"",
                  "visible":true,
                  "width":0,
                  "x":80,
                  "y":192
                 }, 
                 {
+                 "class":"",
                  "height":0,
                  "id":33,
                  "name":"",
@@ -2087,13 +2088,13 @@
                          "y":0
                         }],
                  "rotation":0,
-                 "type":"",
                  "visible":true,
                  "width":0,
                  "x":32,
                  "y":192
                 }, 
                 {
+                 "class":"",
                  "height":0,
                  "id":34,
                  "name":"",
@@ -2115,7 +2116,6 @@
                          "y":0
                         }],
                  "rotation":0,
-                 "type":"",
                  "visible":true,
                  "width":0,
                  "x":64,
@@ -2135,7 +2135,7 @@
      "Name":"madra",
      "door_layer":"buildings_00",
      "interactable_object\/01":"{\n    \"key_name\": \"bush\",\n    \"x\": 23,\n    \"y\": 19,\n    \"base_collision_layer\": 1,\n    \"storage_keys\": {\n        \"enable\": \"madra_door_teleport_enable\",\n        \"entangled_by_bush\": \"door_bush\"\n    },\n    \"toggle_enable_events\": [{\n        \"on_enable\": true,\n        \"event\": {\n            \"type\": \"tile_event_manage\",\n            \"tile_event_key\": \"madra_door_teleport\",\n            \"activate_at\": {\n                \"all\" : true\n            }\n        }\n    }]\n}",
-     "npc\/01":"{\n    \"key_name\": \"village_1\",\n    \"x\": 20,\n    \"y\": 9,\n    \"avatar\": \"potion_shopkeeper\",\n    \"npc_type\": \"shop\",\n    \"movement_type\": \"idle\",\n    \"thought_message\": \"You should stop reading my mind and buy something...\",\n    \"shop_key\": \"madra_test_shop\",\n    \"base_collision_layer\": 1,\n    \"talk_range\": 35\n}",
+     "npc\/01":"{\n    \"key_name\": \"village_1\",\n    \"x\": 20,\n    \"y\": 9,\n    \"avatar\": \"potion_shopkeeper\",\n    \"npc_type\": \"shop\",\n    \"movement_type\": \"idle\",\n    \"back_interaction_message\": \"Please spend all your money here!\",\n    \"thought_message\": \"You should stop reading my mind and buy something...\",\n    \"shop_key\": \"madra_test_shop\",\n    \"base_collision_layer\": 1,\n    \"talk_range\": 35\n}",
      "npc\/02":"{\n  \"key_name\": \"alex\",\n  \"label\": \"alex\",\n  \"storage_keys\": {\n    \"position\": \"alex_position\",\n    \"animation\": \"alex_direction\",\n    \"movement_type\": \"alex_movement_type\"\n  },\n  \"move_freely_in_event\": true,\n  \"npc_type\": \"normal\",\n  \"max_distance\": 25,\n  \"step_duration\": 10,\n  \"wait_duration\": 40,\n  \"base_step\": 8,\n  \"step_max_variation\": 4,\n  \"message\": \"\",\n  \"thought_message\": \"I don't know why you keep insisting on it.${BREAK}It's irrelevant...\",\n  \"avatar\": \"alex\",\n  \"base_collision_layer\": 1,\n  \"events\": [{\n    \"type\": \"branch\",\n    \"condition\": \"=\",\n    \"left_comparator_value\": {\n      \"type\": \"storage\",\n      \"value\": {\n        \"key_name\": \"alex_walked\"\n      }\n    },\n    \"right_comparator_value\": {\n      \"type\": \"value\",\n      \"value\": false\n    },\n    \"events\": [{\n      \"type\": \"dialog\",\n      \"dialog_info\": {\n        \"text\": \"Let's try moving around...\"\n      },\n      \"npc_hero_reciprocal_look\": true,\n      \"reset_reciprocal_look\": false,\n      \"finish_events\": [{\n        \"type\": \"look\",\n        \"look\": true,\n        \"looker_is_npc\": false,\n        \"target_is_npc\": true,\n        \"target_npc_label\": \"alex\"\n      }, {\n        \"type\": \"move\",\n        \"is_npc\": true,\n        \"npc_label\": \"alex\",\n        \"camera_follow\": true,\n        \"dest\": {\n          \"x\": 19,\n          \"y\": 13\n        },\n        \"final_direction\": \"up_right\",\n        \"follow_hero_on_finish\": true,\n        \"finish_events\": [{\n          \"type\": \"look\",\n          \"look\": false,\n          \"looker_is_npc\": false\n        }, {\n          \"type\": \"move\",\n          \"is_npc\": false,\n          \"dash\": true,\n          \"dest\": {\n            \"x\": 21,\n            \"y\": 12\n          },\n          \"final_direction\": \"down_left\",\n          \"finish_events\": [{\n            \"type\": \"dialog\",\n            \"dialog_info\": {\n              \"text\": \"Ok... I see that you can dash...\"\n            },\n            \"finish_events\": [{\n              \"type\": \"set_value\",\n              \"event_value\": {\n                \"type\": \"storage\",\n                \"value\": {\n                  \"key_name\": \"alex_walked\",\n                  \"value\": true\n                }\n              }\n            }, {\n              \"type\": \"set_value\",\n              \"event_value\": {\n                \"type\": \"storage\",\n                \"value\": {\n                  \"key_name\": \"alex_position\",\n                  \"value\": {\n                    \"x\": 19,\n                    \"y\": 13\n                  }\n                }\n              }\n            }, {\n              \"type\": \"set_value\",\n              \"event_value\": {\n                \"type\": \"storage\",\n                \"value\": {\n                  \"key_name\": \"alex_direction\",\n                  \"value\": \"up_right\"\n                }\n              }\n            }, {\n              \"type\": \"set_value\",\n              \"check_npc_storage_values\": true,\n              \"event_value\": {\n                \"type\": \"storage\",\n                \"value\": {\n                  \"key_name\": \"alex_movement_type\",\n                  \"value\": \"random\"\n                }\n              }\n            }]\n          }]\n        }]\n      }]\n    }],\n    \"else_events\": [{\n      \"type\": \"branch\",\n      \"condition\": \"=\",\n      \"left_comparator_value\": {\n        \"type\": \"game_info\",\n        \"value\": {\n          \"type\": \"char\",\n          \"key_name\": \"piers\",\n          \"property\": \"in_party\"\n        }\n      },\n      \"right_comparator_value\": {\n        \"type\": \"value\",\n        \"value\": true\n      },\n      \"events\": [{\n        \"type\": \"dialog\",\n        \"end_with_yes_no\": true,\n        \"npc_hero_reciprocal_look\": true,\n        \"reset_reciprocal_look\": false,\n        \"dialog_info\": [{\n          \"text\": \"It seems you're making new friends...${BREAK}You have been busy, haven't you?\",\n          \"consider_hero_direction\": true\n        }],\n        \"yes_no_events\": {\n          \"yes\": [{\n            \"type\": \"dialog\",\n            \"dialog_info\": [{\n              \"text\": \"Maybe now you can ask your friend to teach you Warp.\"\n            }, {\n              \"avatar\": \"piers\",\n              \"voice_key\": \"adult_male_1\",\n              \"text\": \"What Psynergy is this?\"\n            }, {\n              \"text\": \"...\"\n            }]\n          }],\n          \"no\": [{\n            \"type\": \"dialog\",\n            \"dialog_info\": [{\n              \"avatar\": \"piers\",\n              \"voice_key\": \"adult_male_1\",\n              \"text\": \"Is he a Water Adept?\"\n            }, {\n              \"text\": \"What a coincidence, no?${BREAK}Maybe now you can ask your friend to teach you Warp.\"\n            }]\n          }]\n        }\n      }],\n      \"else_events\": [{\n        \"type\": \"emoticon\",\n        \"emoticon\": \"unhappy\",\n        \"face_hero\": true,\n        \"reset_direction\": false,\n        \"finish_events\": [{\n          \"type\": \"dialog\",\n          \"dialog_info\": {\n            \"text\": \"Now I'm tired... ${BREAK}Call me another day so I can teach you Warp.\"\n          },\n          \"npc_hero_reciprocal_look\": true\n        }]\n      }]\n    }]\n  }]\n}",
      "npc\/03":"{\n    \"key_name\": \"chest\",\n    \"storage_keys\":{\n        \"animation\": \"adepts_clothes_chest\"\n    },\n    \"x\": 14,\n    \"y\": 3,\n    \"npc_type\": \"normal\",\n    \"movement_type\": \"idle\",\n    \"base_collision_layer\": 2,\n    \"events\": [\n        {\n            \"type\": \"branch\",\n            \"condition\": \"=\",\n            \"left_comparator_value\": {\n                \"type\": \"storage\",\n                \"value\": {\n                    \"key_name\": \"adepts_clothes_chest\"\n                }\n            },\n            \"right_comparator_value\": {\n                \"type\": \"value\",\n                \"value\": \"closed\"\n            },\n            \"events\": [{\n                \"type\": \"chest\",\n                \"item\": \"adepts_clothes\",\n                \"finish_events\": [{\n                    \"type\": \"set_value\",\n                    \"event_value\": {\n                        \"type\": \"storage\",\n                        \"value\": {\n                            \"key_name\": \"adepts_clothes_chest\",\n                            \"value\": \"empty\"\n                        }\n                    }\n                }]\n            }],\n            \"else_events\": [{\n                \"type\": \"dialog\",\n                \"dialog_info\": {\n                    \"text\": \"${HERO} checked the chest...${BREAK}but the chest was empty.\"\n                }\n            }]\n        }\n    ]\n}",
      "npc\/04":"{\n    \"key_name\": \"foo\",\n    \"x\": 25,\n    \"y\": 15,\n    \"base_collision_layer\": 1,\n    \"storage_keys\":{\n        \"affected_by_reveal\": \"herb_box_madra\"\n    },\n    \"npc_type\": \"sprite\",\n    \"movement_type\": \"idle\",\n    \"animation\": \"hidden_item\",\n    \"sprite_misc_db_key\": \"psynergy_particle\",\n    \"action\": \"psynergy_particle\",\n    \"visible\": false,\n    \"events\": [\n        {\n            \"type\": \"branch\",\n            \"condition\": \"=\",\n            \"left_comparator_value\": {\n                \"type\": \"storage\",\n                \"value\": {\n                    \"key_name\": \"herb_box_madra\"\n                }\n            },\n            \"right_comparator_value\": {\n                \"type\": \"value\",\n                \"value\": true\n            },\n            \"events\": [{\n                \"type\": \"chest\",\n                \"custom_init_text\": \"${HERO} checked the wooden box...\",\n                \"item\": \"herb\",\n                \"no_chest\": true,\n                \"hide_on_finish\": true,\n                \"finish_events\": [{\n                    \"type\": \"set_value\",\n                    \"check_npc_storage_values\": true,\n                    \"event_value\": {\n                        \"type\": \"storage\",\n                        \"value\": {\n                            \"key_name\": \"herb_box_madra\",\n                            \"value\": false\n                        }\n                    }\n                }]\n            }],\n            \"else_events\": [{\n                \"type\": \"dialog\",\n                \"dialog_info\": {\n                    \"text\": \"${HERO} checked the wooden box...${BREAK}but didn't find anything.\"\n                }\n            }]\n        }\n    ]\n}",
@@ -2297,7 +2297,7 @@
      "tile_event\/69":"string"
     },
  "renderorder":"right-down",
- "tiledversion":"1.8.4",
+ "tiledversion":"1.9.1",
  "tileheight":16,
  "tilesets":[
         {

@@ -8,6 +8,7 @@ import {
     get_centered_pos_in_px,
     get_distance,
     get_tile_position,
+    get_sqr_distance,
 } from "./utils";
 import {Footsteps} from "./utils/Footsteps";
 import {EngineFilters, GoldenSun} from "./GoldenSun";
@@ -18,6 +19,7 @@ import {RollablePillar} from "./interactable_objects/RollingPillar";
 import {StoragePosition} from "./Storage";
 import {FieldAbilities} from "field_abilities/FieldAbilities";
 import {climb_actions} from "./tile_events/ClimbEvent";
+import {NPC} from "NPC";
 
 /**
  * All chars that can be controlled by human (Hero) or code/event procedures (NPC)
@@ -680,16 +682,15 @@ export abstract class ControllableChar {
     /**
      * Returns if this char is enough close to a target char.
      * @param target_char The target char.
-     * @param distance the minimal distance to be considered as close.
      * @returns Returns whether it's close or not.
      */
-    is_close(target_char: ControllableChar, distance: number) {
+    is_close(target_char: NPC) {
         const reference_angle = (8 - this.transition_direction) * numbers.degree45;
         let lower_limit = reference_angle - ControllableChar.INTERACTION_RANGE_ANGLE;
         let upper_limit = reference_angle + ControllableChar.INTERACTION_RANGE_ANGLE;
         const relative_point = {
-            x: target_char.sprite.x - this.sprite.x,
-            y: target_char.sprite.y - this.sprite.y,
+            x: target_char.x - this.x,
+            y: target_char.y - this.y,
         };
         let angle_shift = 0;
         if (lower_limit < 0) {
@@ -701,8 +702,29 @@ export abstract class ControllableChar {
         upper_limit += angle_shift;
         const target_angle = range_360(-Math.atan2(relative_point.y, relative_point.x) + angle_shift);
         const angle_condition = target_angle >= lower_limit && target_angle <= upper_limit;
-        const distance_condition = Math.pow(relative_point.x, 2) + Math.pow(relative_point.y, 2) <= distance * distance;
+        const distance_condition =
+            get_sqr_distance(0, relative_point.x, 0, relative_point.y) <=
+            target_char.talk_range * target_char.talk_range;
         return angle_condition && distance_condition;
+    }
+
+    /**
+     * Checks whether this char is interacting with another one from the back.
+     * @param target_char the char that this char is interacting with.
+     * @returns returns whether this char is interacting from the back or not.
+     */
+    interacting_from_back(target_char: ControllableChar) {
+        const relative_point = {
+            x: target_char.x - this.x,
+            y: target_char.y - this.y,
+        };
+        const char_dir = target_char.current_direction;
+        const angle_shift = numbers.degree45 * ((8 - ((char_dir + 6) % 8)) % 8);
+        const interaction_angle = range_360(Math.atan2(relative_point.y, relative_point.x)) + angle_shift;
+        if (interaction_angle < numbers.degree180) {
+            return true;
+        }
+        return false;
     }
 
     /**

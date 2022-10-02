@@ -140,7 +140,7 @@ export class GameEventManager {
             ) {
                 continue;
             }
-            const is_close_check = this.data.hero.is_close(npc, npc.talk_range);
+            const is_close_check = this.data.hero.is_close(npc);
             if (is_close_check) {
                 this.data.hero.stop_char();
                 npc.stop_char();
@@ -156,11 +156,15 @@ export class GameEventManager {
      * @param npc the NPC.
      */
     private async set_npc_event(npc: NPC) {
+        if (this.data.hero.interacting_from_back(npc)) {
+            this.manage_npc_dialog(npc, npc.back_interaction_message);
+            return;
+        }
         switch (npc.npc_type) {
             case npc_types.NORMAL:
             case npc_types.SPRITE:
                 if (npc.message) {
-                    this.manage_npc_dialog(npc);
+                    this.manage_npc_dialog(npc, npc.message);
                 } else {
                     this.fire_npc_events(npc);
                 }
@@ -246,8 +250,9 @@ export class GameEventManager {
     /**
      * Starts common npc dialogs.
      * @param npc The NPC to dialog with.
+     * @param message The NPC dialog message.
      */
-    private async manage_npc_dialog(npc: NPC) {
+    private async manage_npc_dialog(npc: NPC, message: string) {
         const previous_npc_direction = await this.handle_npc_interaction_start(npc);
         const previous_move_freely = npc.move_freely_in_event;
         npc.move_freely_in_event = false;
@@ -256,7 +261,7 @@ export class GameEventManager {
         const previous_force_idle_action_in_event = npc.force_idle_action_in_event;
         npc.force_idle_action_in_event = true;
         const dialog_manager = new DialogManager(this.game, this.data);
-        dialog_manager.set_dialog(npc.message, {
+        dialog_manager.set_dialog(message, {
             avatar: npc.avatar,
             voice_key: npc.voice_key,
             hero_direction: this.data.hero.current_direction,

@@ -968,6 +968,7 @@ export class Map {
                 movement_type,
                 property_info.message,
                 property_info.thought_message,
+                property_info.back_interaction_message,
                 avatar,
                 property_info.shop_key,
                 property_info.inn_key,

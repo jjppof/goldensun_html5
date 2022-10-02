@@ -37,6 +37,7 @@ export class NPC extends ControllableChar {
     private _npc_type: npc_types;
     private _message: string;
     private _thought_message: string;
+    private _back_interaction_message: string;
     private _avatar: string;
     private _voice_key: string;
     private _base_collision_layer: number;
@@ -107,6 +108,7 @@ export class NPC extends ControllableChar {
         movement_type,
         message,
         thought_message,
+        back_interaction_message,
         avatar,
         shop_key,
         inn_key,
@@ -160,6 +162,7 @@ export class NPC extends ControllableChar {
         this.move_freely_in_event = move_freely_in_event ?? false;
         this._message = message ?? "";
         this._thought_message = thought_message ?? "";
+        this._back_interaction_message = back_interaction_message ?? "";
         this._avatar = avatar ?? null;
         this._voice_key = voice_key ?? "";
         this._shop_key = shop_key;
@@ -211,6 +214,10 @@ export class NPC extends ControllableChar {
     /** The default interaction message by using Mind Read of this NPC. */
     get thought_message() {
         return this._thought_message;
+    }
+    /** The message to be displayed if interacting from the back. */
+    get back_interaction_message() {
+        return this._back_interaction_message;
     }
     /** The avatar key of this NPC. */
     get avatar() {
