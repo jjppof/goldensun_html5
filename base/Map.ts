@@ -993,7 +993,8 @@ export class Map {
                 wait_duration,
                 base_step,
                 step_max_variation,
-                move_freely_in_event
+                move_freely_in_event,
+                property_info.allow_interaction_when_inactive
             );
             this.npcs.push(npc);
             if (npc.label) {

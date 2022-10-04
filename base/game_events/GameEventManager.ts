@@ -135,7 +135,7 @@ export class GameEventManager {
             const npc = this.data.map.npcs[i];
             if (
                 npc.interaction_pattern === interaction_patterns.NO_INTERACTION ||
-                !npc.active ||
+                !(npc.active || npc.allow_interaction_when_inactive) ||
                 npc.base_collision_layer !== this.data.map.collision_layer
             ) {
                 continue;
@@ -156,7 +156,7 @@ export class GameEventManager {
      * @param npc the NPC.
      */
     private async set_npc_event(npc: NPC) {
-        if (this.data.hero.interacting_from_back(npc)) {
+        if (npc.back_interaction_message && this.data.hero.interacting_from_back(npc)) {
             this.manage_npc_dialog(npc, npc.back_interaction_message);
             return;
         }
@@ -231,20 +231,21 @@ export class GameEventManager {
      * @param npc The NPC that the hero is interacting with.
      */
     async set_npc_and_hero_directions(npc: NPC) {
-        const npc_x = npc.sprite.x;
-        const npc_y = npc.sprite.y;
         const interaction_pattern = npc.interaction_pattern;
         const interaction_directions = GameEventManager.get_interaction_directions(
-            this.data.hero.sprite.x,
-            this.data.hero.sprite.y,
-            npc_x,
-            npc_y,
+            this.data.hero.x,
+            this.data.hero.y,
+            npc.x,
+            npc.y,
             interaction_pattern,
             npc.body_radius
         );
-        const hero_promise = this.data.hero.face_direction(interaction_directions.hero_direction);
-        const npc_promise = npc.face_direction(interaction_directions.target_direction);
-        await Promise.all([hero_promise, npc_promise]);
+        const promises = [];
+        promises.push(this.data.hero.face_direction(interaction_directions.hero_direction));
+        if (interaction_directions.target_direction !== undefined) {
+            promises.push(npc.face_direction(interaction_directions.target_direction));
+        }
+        await Promise.all(promises);
     }
 
     /**

@@ -79,9 +79,9 @@ export class NPC extends ControllableChar {
     private _step_max_variation: number;
     private _step_destination: {x: number; y: number};
     private initially_visible: boolean;
-    private previous_visible_state: boolean;
     private _snapshot_info: SnapshotData["map_data"]["npcs"][0];
     private _map_index: number;
+    private _allow_interaction_when_inactive: boolean;
 
     /** If true, this NPC will move freely while a game event is happening. */
     public move_freely_in_event: boolean;
@@ -133,7 +133,8 @@ export class NPC extends ControllableChar {
         wait_duration,
         base_step,
         step_max_variation,
-        move_freely_in_event
+        move_freely_in_event,
+        allow_interaction_when_inactive
     ) {
         super(
             game,
@@ -201,6 +202,7 @@ export class NPC extends ControllableChar {
         this._base_step = base_step;
         this._step_max_variation = step_max_variation;
         this._map_index = map_index;
+        this._allow_interaction_when_inactive = allow_interaction_when_inactive ?? false;
     }
 
     /** The list of GameEvents related to this NPC. */
@@ -278,6 +280,10 @@ export class NPC extends ControllableChar {
     /** The map unique index of this NPC. */
     get map_index() {
         return this._map_index;
+    }
+    /** If true, the hero will be allowed to interact with this NPC even if it's inactive. */
+    get allow_interaction_when_inactive() {
+        return this._allow_interaction_when_inactive;
     }
 
     /**
@@ -551,7 +557,7 @@ export class NPC extends ControllableChar {
                 if (this.storage_keys.visible !== undefined) {
                     this.sprite.visible = this.data.storage.get(this.storage_keys.visible) as boolean;
                 } else {
-                    this.sprite.visible = this.previous_visible_state;
+                    this.sprite.visible = true;
                 }
             }
             if (this.shadow) {
@@ -561,7 +567,6 @@ export class NPC extends ControllableChar {
         } else {
             this.sprite?.body?.removeCollisionGroup(this.data.collision.hero_collision_group);
             if (this.sprite) {
-                this.previous_visible_state = this.sprite.visible;
                 this.sprite.visible = false;
             }
             if (this.shadow) {
@@ -615,9 +620,8 @@ export class NPC extends ControllableChar {
                 this.shadow.scale.setTo(1, 1);
             }
         }
-        if (this.affected_by_reveal || !this.initially_visible) {
+        if (!this.initially_visible) {
             this.sprite.visible = false;
-            this.previous_visible_state = this.sprite.visible;
         }
         this.sprite.is_npc = true;
         if (this.snapshot_info && this.snapshot_info.send_to_back !== null) {

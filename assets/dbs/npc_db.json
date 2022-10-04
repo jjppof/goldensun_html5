@@ -1,7 +1,7 @@
 [
     {
         "key_name": "foo",
-        "interaction_pattern": "simple",
+        "interaction_pattern": "simple_interaction",
         "no_shadow": true,
         "ignore_physics": true
     },{

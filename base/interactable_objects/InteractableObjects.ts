@@ -1150,6 +1150,9 @@ export class InteractableObjects {
             if (this.sprite) {
                 this.sprite.visible = true;
             }
+            if (this.shadow) {
+                this.shadow.visible = true;
+            }
             this._active = true;
         } else {
             this.sprite?.body?.removeCollisionGroup(this.data.collision.hero_collision_group);
@@ -1161,6 +1164,9 @@ export class InteractableObjects {
             }
             if (this.sprite) {
                 this.sprite.visible = false;
+            }
+            if (this.shadow) {
+                this.shadow.visible = false;
             }
             this._active = false;
         }
