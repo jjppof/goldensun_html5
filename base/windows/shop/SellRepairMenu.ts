@@ -77,8 +77,10 @@ export class SellRepairMenu {
     }
 
     get_selected_item() {
-        if (this.inv_win.item_grid.length < this.inv_win_pos.line + 1 ||
-            this.inv_win.item_grid[this.inv_win_pos.line].length < this.inv_win_pos.col + 1) {
+        if (
+            this.inv_win.item_grid.length < this.inv_win_pos.line + 1 ||
+            this.inv_win.item_grid[this.inv_win_pos.line].length < this.inv_win_pos.col + 1
+        ) {
             return null;
         }
         return this.inv_win.item_grid[this.inv_win_pos.line][this.inv_win_pos.col];
