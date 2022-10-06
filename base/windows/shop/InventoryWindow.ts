@@ -226,6 +226,7 @@ export class InventoryWindow {
     }
 
     next_col() {
+        if (this.item_grid.length === 0) return;
         if (this.item_grid.length === 1 && this.item_grid[this.cursor_pos.line].length === 1) return;
 
         if (this.cursor_pos.col < this.item_grid[this.cursor_pos.line].length - 1) {
@@ -240,7 +241,11 @@ export class InventoryWindow {
     }
 
     previous_col() {
-        if (this.item_grid.length === 1 && this.item_grid[this.cursor_pos.line]?.length === 1) return;
+        if (this.item_grid.length === 0) return;
+        if (this.item_grid.length === 1 && this.item_grid[this.cursor_pos.line]?.length === 1) {
+            this.set_cursor(0, 0);
+            return;
+        }
 
         if (this.cursor_pos.col > 0) {
             this.set_cursor(this.cursor_pos.line, this.cursor_pos.col - 1);
@@ -254,7 +259,7 @@ export class InventoryWindow {
     }
 
     next_line() {
-        if (this.item_grid.length === 1) return;
+        if (this.item_grid.length <= 1) return;
 
         if (this.cursor_pos.line === this.item_grid.length - 1) {
             this.set_cursor(0, this.cursor_pos.col);
@@ -266,7 +271,7 @@ export class InventoryWindow {
     }
 
     previous_line() {
-        if (this.item_grid.length === 1) return;
+        if (this.item_grid.length <= 1) return;
 
         if (this.cursor_pos.line === 0) {
             if (this.cursor_pos.col > this.item_grid[this.item_grid.length - 1].length - 1)
