@@ -76,6 +76,16 @@ export class SellRepairMenu {
         this.selected_char_index = 0;
     }
 
+    get_selected_item() {
+        if (
+            this.inv_win.item_grid.length < this.inv_win_pos.line + 1 ||
+            this.inv_win.item_grid[this.inv_win_pos.line].length < this.inv_win_pos.col + 1
+        ) {
+            return null;
+        }
+        return this.inv_win.item_grid[this.inv_win_pos.line][this.inv_win_pos.col];
+    }
+
     on_item_repair() {
         let exec = () => {
             this.inv_win.kill_item_at(this.inv_win_pos.line, this.inv_win_pos.col);
@@ -110,7 +120,11 @@ export class SellRepairMenu {
         this.data.control_manager.reset();
         let exec = () => {
             this.inv_win_pos = this.inv_win.cursor_pos;
-            this.selected_item = this.inv_win.item_grid[this.inv_win_pos.line][this.inv_win_pos.col];
+            this.selected_item = this.get_selected_item();
+
+            if (this.selected_item === null) {
+                return;
+            }
 
             if (!this.selected_item.broken) {
                 let item_breakable =
@@ -204,7 +218,11 @@ export class SellRepairMenu {
     on_sell_item_select() {
         let exec = () => {
             this.inv_win_pos = this.inv_win.cursor_pos;
-            this.selected_item = this.inv_win.item_grid[this.inv_win_pos.line][this.inv_win_pos.col];
+            this.selected_item = this.get_selected_item();
+
+            if (this.selected_item === null) {
+                return;
+            }
 
             const item = this.data.info.items_list[this.selected_item.key_name];
             if (item.important_item) {
