@@ -7,8 +7,19 @@ export class LookEvent extends GameEvent {
     private target_is_npc: boolean;
     private target_npc_label: string;
 
-    constructor(game, data, active, key_name, look, looker_is_npc, looker_npc_label, target_is_npc, target_npc_label) {
-        super(game, data, event_types.LOOK, active, key_name);
+    constructor(
+        game,
+        data,
+        active,
+        key_name,
+        keep_reveal,
+        look,
+        looker_is_npc,
+        looker_npc_label,
+        target_is_npc,
+        target_npc_label
+    ) {
+        super(game, data, event_types.LOOK, active, key_name, keep_reveal);
         this.look = look;
         this.looker_is_npc = looker_is_npc;
         this.looker_npc_label = looker_npc_label;

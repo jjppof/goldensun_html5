@@ -10,8 +10,8 @@ export class SetIoCollisionEvent extends GameEvent {
     private io_label: string;
     private control_type: control_types;
 
-    constructor(game, data, active, key_name, io_label, control_type) {
-        super(game, data, event_types.SET_IO_COLLISION, active, key_name);
+    constructor(game, data, active, key_name, keep_reveal, io_label, control_type) {
+        super(game, data, event_types.SET_IO_COLLISION, active, key_name, keep_reveal);
         this.io_label = io_label;
         this.control_type = control_type;
     }

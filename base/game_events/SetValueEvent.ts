@@ -6,8 +6,8 @@ export class SetValueEvent extends GameEvent {
     private event_value: EventValue;
     private check_npc_storage_values: boolean;
 
-    constructor(game, data, active, key_name, event_value, check_npc_storage_values) {
-        super(game, data, event_types.SET_VALUE, active, key_name);
+    constructor(game, data, active, key_name, keep_reveal, event_value, check_npc_storage_values) {
+        super(game, data, event_types.SET_VALUE, active, key_name, keep_reveal);
         this.event_value = event_value;
         this.check_npc_storage_values = check_npc_storage_values ?? false;
     }

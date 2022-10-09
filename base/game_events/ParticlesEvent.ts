@@ -11,8 +11,8 @@ export class ParticlesEvent extends GameEvent {
     private particles_info: ParticlesInfo;
     private group: Phaser.Group;
 
-    constructor(game, data, active, key_name, particles_info, group) {
-        super(game, data, event_types.PARTICLES, active, key_name);
+    constructor(game, data, active, key_name, keep_reveal, particles_info, group) {
+        super(game, data, event_types.PARTICLES, active, key_name, keep_reveal);
         this.particles_info = particles_info;
         switch (group) {
             case game_groups.LOWER:

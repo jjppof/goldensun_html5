@@ -16,6 +16,7 @@ export class CharAnimPlayEvent extends GameEvent {
         data,
         active,
         key_name,
+        keep_reveal,
         is_npc,
         npc_label,
         action,
@@ -26,7 +27,7 @@ export class CharAnimPlayEvent extends GameEvent {
         reset_frame_on_stop,
         finish_events
     ) {
-        super(game, data, event_types.CHAR_ANIM_PLAY, active, key_name);
+        super(game, data, event_types.CHAR_ANIM_PLAY, active, key_name, keep_reveal);
         this.npc_label = npc_label;
         this.is_npc = is_npc;
         this.action = action;

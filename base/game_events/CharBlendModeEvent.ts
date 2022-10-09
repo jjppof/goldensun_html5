@@ -5,8 +5,8 @@ export class CharBlendModeEvent extends GameEvent {
     private npc_label: string;
     private blend_mode: string;
 
-    constructor(game, data, active, key_name, is_npc, npc_label, blend_mode) {
-        super(game, data, event_types.CHAR_BLEND_MODE, active, key_name);
+    constructor(game, data, active, key_name, keep_reveal, is_npc, npc_label, blend_mode) {
+        super(game, data, event_types.CHAR_BLEND_MODE, active, key_name, keep_reveal);
         this.blend_mode = blend_mode ?? "normal";
         this.is_npc = is_npc;
         this.npc_label = npc_label;

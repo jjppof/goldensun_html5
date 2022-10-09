@@ -14,8 +14,18 @@ export class CameraMoveEvent extends GameEvent {
     private return_to_target_duration: number;
     private finish_events: GameEvent[];
 
-    constructor(game, data, active, key_name, positions, reset_follow, return_to_target_duration, finish_events) {
-        super(game, data, event_types.CAMERA_MOVE, active, key_name);
+    constructor(
+        game,
+        data,
+        active,
+        key_name,
+        keep_reveal,
+        positions,
+        reset_follow,
+        return_to_target_duration,
+        finish_events
+    ) {
+        super(game, data, event_types.CAMERA_MOVE, active, key_name, keep_reveal);
         this.positions = positions ?? [];
         this.reset_follow = reset_follow ?? false;
         this.return_to_target_duration = return_to_target_duration ?? 0;

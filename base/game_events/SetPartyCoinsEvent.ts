@@ -9,8 +9,8 @@ export class SetPartyCoinsEvent extends GameEvent {
     private control_type: control_types;
     private amount: number;
 
-    constructor(game, data, active, key_name, control_type, amount) {
-        super(game, data, event_types.SET_PARTY_COINS, active, key_name);
+    constructor(game, data, active, key_name, keep_reveal, control_type, amount) {
+        super(game, data, event_types.SET_PARTY_COINS, active, key_name, keep_reveal);
         this.control_type = control_type;
         this.amount = amount;
     }

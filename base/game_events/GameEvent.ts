@@ -116,6 +116,7 @@ export abstract class GameEvent {
     private _id: number;
     private _active: boolean;
     private _key_name: string;
+    private _keep_reveal: boolean;
     private _origin_npc: NPC;
 
     /** The GameEvents id incrementer. */
@@ -125,7 +126,14 @@ export abstract class GameEvent {
     /** The events object where the keys are the events labels. */
     public static labeled_events: {[key_name: number]: GameEvent};
 
-    constructor(game: Phaser.Game, data: GoldenSun, type: event_types, active: boolean, key_name: string) {
+    constructor(
+        game: Phaser.Game,
+        data: GoldenSun,
+        type: event_types,
+        active: boolean,
+        key_name: string,
+        keep_reveal: boolean
+    ) {
         this.game = game;
         this.data = data;
         this._type = type;
@@ -136,6 +144,7 @@ export abstract class GameEvent {
         if (this.key_name) {
             GameEvent.labeled_events[this.key_name] = this;
         }
+        this._keep_reveal = keep_reveal ?? false;
         this._origin_npc = null;
     }
 
@@ -155,6 +164,10 @@ export abstract class GameEvent {
     get key_name() {
         return this._key_name;
     }
+    /** If true, Reveal Psynergy won't be stopped on this event fire. */
+    get keep_reveal() {
+        return this._keep_reveal;
+    }
     /** If this GameEvent was originated by a NPC, this var holds this NPC reference. */
     get origin_npc() {
         return this._origin_npc;
@@ -162,7 +175,7 @@ export abstract class GameEvent {
 
     /** Check if "Reveal" is currently active. If yes, then cancel it. */
     check_reveal() {
-        if (this.data.hero.on_reveal) {
+        if (this.data.hero.on_reveal && !this.keep_reveal) {
             (this.data.info.field_abilities_list.reveal as RevealFieldPsynergy).finish(false, false);
         }
     }

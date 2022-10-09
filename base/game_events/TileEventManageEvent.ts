@@ -8,8 +8,8 @@ export class TileEventManageEvent extends GameEvent {
     private pos: {x: number; y: number};
     private collision_layers: number[];
 
-    constructor(game, data, active, key_name, tile_event_key, activate_at, pos, collision_layers) {
-        super(game, data, event_types.TILE_EVENT_MANAGE, active, key_name);
+    constructor(game, data, active, key_name, keep_reveal, tile_event_key, activate_at, pos, collision_layers) {
+        super(game, data, event_types.TILE_EVENT_MANAGE, active, key_name, keep_reveal);
         this.tile_event_key = tile_event_key;
         this.activate_at = activate_at;
         this.pos = pos;

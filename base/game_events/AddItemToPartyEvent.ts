@@ -5,8 +5,8 @@ export class AddItemToPartyEvent extends GameEvent {
     private item_key: string;
     private quantity: number;
 
-    constructor(game, data, active, key_name, item_key, quantity) {
-        super(game, data, event_types.ADD_ITEM_TO_PARTY, active, key_name);
+    constructor(game, data, active, key_name, keep_reveal, item_key, quantity) {
+        super(game, data, event_types.ADD_ITEM_TO_PARTY, active, key_name, keep_reveal);
         this.item_key = item_key;
         this.quantity = quantity ?? 1;
     }

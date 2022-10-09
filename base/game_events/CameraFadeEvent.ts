@@ -10,8 +10,8 @@ export class CameraFadeEvent extends GameEvent {
     private fade_type: fade_types;
     private duration: number;
 
-    constructor(game, data, active, key_name, fade_type, duration, finish_events) {
-        super(game, data, event_types.CAMERA_FADE, active, key_name);
+    constructor(game, data, active, key_name, keep_reveal, fade_type, duration, finish_events) {
+        super(game, data, event_types.CAMERA_FADE, active, key_name, keep_reveal);
         this.fade_type = fade_type;
         this.duration = duration ?? 500;
 

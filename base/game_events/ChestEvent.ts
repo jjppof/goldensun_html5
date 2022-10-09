@@ -26,6 +26,7 @@ export class ChestEvent extends GameEvent {
         data,
         active,
         key_name,
+        keep_reveal,
         item_key_name,
         quantity,
         finish_events,
@@ -33,7 +34,7 @@ export class ChestEvent extends GameEvent {
         no_chest,
         hide_on_finish
     ) {
-        super(game, data, event_types.CHEST, active, key_name);
+        super(game, data, event_types.CHEST, active, key_name, keep_reveal);
         this.item = this.data.info.items_list[item_key_name];
         this.quantity = quantity ?? 1;
         this.no_chest = no_chest ?? false;

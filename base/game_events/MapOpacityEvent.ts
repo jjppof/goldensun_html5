@@ -7,8 +7,8 @@ export class MapOpacityEvent extends GameEvent {
     private opacity: number;
     private duration: number;
 
-    constructor(game, data, active, key_name, map_layer_name, finish_events, opacity, duration) {
-        super(game, data, event_types.MAP_OPACITY, active, key_name);
+    constructor(game, data, active, key_name, keep_reveal, map_layer_name, finish_events, opacity, duration) {
+        super(game, data, event_types.MAP_OPACITY, active, key_name, keep_reveal);
         this.map_layer_name = map_layer_name;
         this.finish_events = [];
         if (finish_events !== undefined) {

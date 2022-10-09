@@ -6,8 +6,8 @@ export class CastingAuraEvent extends GameEvent {
     private npc_label: string;
     private enable: boolean;
 
-    constructor(game, data, active, key_name, is_npc, npc_label, enable) {
-        super(game, data, event_types.CASTING_AURA, active, key_name);
+    constructor(game, data, active, key_name, keep_reveal, is_npc, npc_label, enable) {
+        super(game, data, event_types.CASTING_AURA, active, key_name, keep_reveal);
         this.npc_label = npc_label;
         this.is_npc = is_npc;
         this.enable = enable;

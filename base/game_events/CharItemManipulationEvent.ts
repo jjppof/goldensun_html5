@@ -23,6 +23,7 @@ export class CharItemManipulationEvent extends GameEvent {
         data,
         active,
         key_name,
+        keep_reveal,
         char_key,
         control_type,
         item_key,
@@ -32,7 +33,7 @@ export class CharItemManipulationEvent extends GameEvent {
         broken,
         amount
     ) {
-        super(game, data, event_types.CHAR_ITEM_MANIPULATION, active, key_name);
+        super(game, data, event_types.CHAR_ITEM_MANIPULATION, active, key_name, keep_reveal);
         this.char_key = char_key;
         this.control_type = control_type;
         this.item_key = item_key;

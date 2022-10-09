@@ -39,6 +39,7 @@ export class GenericSpriteEvent extends GameEvent {
         data,
         active,
         key_name,
+        keep_reveal,
         control_type,
         generic_sprite_key_name,
         misc_sprite_key,
@@ -59,7 +60,7 @@ export class GenericSpriteEvent extends GameEvent {
         animation,
         collision_layer
     ) {
-        super(game, data, event_types.GENERIC_SPRITE, active, key_name);
+        super(game, data, event_types.GENERIC_SPRITE, active, key_name, keep_reveal);
         this.control_type = control_type;
         this.generic_sprite_key_name = generic_sprite_key_name;
         this.misc_sprite_key = misc_sprite_key;

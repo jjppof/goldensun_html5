@@ -306,6 +306,7 @@ export class GameEventManager {
                     this.data,
                     info.active,
                     info.key_name,
+                    info.keep_reveal,
                     info.background_key,
                     info.enemy_party_key,
                     info.return_to_sanctum,
@@ -317,6 +318,7 @@ export class GameEventManager {
                     this.data,
                     info.active,
                     info.key_name,
+                    info.keep_reveal,
                     info.condition,
                     info.left_comparator_value,
                     info.right_comparator_value,
@@ -329,6 +331,7 @@ export class GameEventManager {
                     this.data,
                     info.active,
                     info.key_name,
+                    info.keep_reveal,
                     info.event_value,
                     info.check_npc_storage_values
                 );
@@ -338,6 +341,7 @@ export class GameEventManager {
                     this.data,
                     info.active,
                     info.key_name,
+                    info.keep_reveal,
                     info.is_npc,
                     info.dash,
                     info.dest_unit_in_tile,
@@ -361,6 +365,7 @@ export class GameEventManager {
                     this.data,
                     info.active,
                     info.key_name,
+                    info.keep_reveal,
                     info.dialog_info,
                     info.npc_hero_reciprocal_look,
                     info.reset_reciprocal_look,
@@ -374,6 +379,7 @@ export class GameEventManager {
                     this.data,
                     info.active,
                     info.key_name,
+                    info.keep_reveal,
                     info.look,
                     info.looker_is_npc,
                     info.looker_npc_label,
@@ -386,6 +392,7 @@ export class GameEventManager {
                     this.data,
                     info.active,
                     info.key_name,
+                    info.keep_reveal,
                     info.item,
                     info.quantity,
                     info.finish_events,
@@ -394,13 +401,21 @@ export class GameEventManager {
                     info.hide_on_finish
                 );
             case event_types.PSYNERGY_STONE:
-                return new PsynergyStoneEvent(this.game, this.data, info.active, info.key_name, info.finish_events);
+                return new PsynergyStoneEvent(
+                    this.game,
+                    this.data,
+                    info.active,
+                    info.key_name,
+                    info.key_name,
+                    info.finish_events
+                );
             case event_types.TIMER:
                 return new TimerEvent(
                     this.game,
                     this.data,
                     info.active,
                     info.key_name,
+                    info.keep_reveal,
                     info.duration,
                     info.finish_events
                 );
@@ -410,6 +425,7 @@ export class GameEventManager {
                     this.data,
                     info.active,
                     info.key_name,
+                    info.keep_reveal,
                     info.char_key_name,
                     info.join,
                     info.show_dialog,
@@ -421,6 +437,7 @@ export class GameEventManager {
                     this.data,
                     info.active,
                     info.key_name,
+                    info.keep_reveal,
                     info.summon_key,
                     info.animate,
                     info.finish_events
@@ -431,6 +448,7 @@ export class GameEventManager {
                     this.data,
                     info.active,
                     info.key_name,
+                    info.keep_reveal,
                     info.djinn_key,
                     info.has_fight,
                     info.enemy_party_key,
@@ -446,6 +464,7 @@ export class GameEventManager {
                     this.data,
                     info.active,
                     info.key_name,
+                    info.keep_reveal,
                     info.djinn_key,
                     info.status_key
                 );
@@ -455,6 +474,7 @@ export class GameEventManager {
                     this.data,
                     info.active,
                     info.key_name,
+                    info.keep_reveal,
                     info.is_npc,
                     info.npc_index,
                     info.npc_label,
@@ -472,6 +492,7 @@ export class GameEventManager {
                     this.data,
                     info.active,
                     info.key_name,
+                    info.keep_reveal,
                     info.direction,
                     info.is_npc,
                     info.npc_index,
@@ -486,6 +507,7 @@ export class GameEventManager {
                     this.data,
                     info.active,
                     info.key_name,
+                    info.keep_reveal,
                     info.emoticon,
                     info.duration,
                     info.sound_effect,
@@ -503,19 +525,28 @@ export class GameEventManager {
                     this.data,
                     info.active,
                     info.key_name,
+                    info.keep_reveal,
                     info.tile_event_key,
                     info.activate_at,
                     info.pos,
                     info.collision_layers
                 );
             case event_types.DESTROYER:
-                return new DestroyerEvent(this.game, this.data, info.active, info.key_name, info.target_event_key);
+                return new DestroyerEvent(
+                    this.game,
+                    this.data,
+                    info.active,
+                    info.key_name,
+                    info.key_name,
+                    info.target_event_key
+                );
             case event_types.CHAR_LEVEL_CHANGE:
                 return new CharLevelChangeEvent(
                     this.game,
                     this.data,
                     info.active,
                     info.key_name,
+                    info.keep_reveal,
                     info.target_char_key,
                     info.target_level_value
                 );
@@ -525,6 +556,7 @@ export class GameEventManager {
                     this.data,
                     info.active,
                     info.key_name,
+                    info.keep_reveal,
                     info.map_layer_name,
                     info.finish_events,
                     info.opacity,
@@ -536,6 +568,7 @@ export class GameEventManager {
                     this.data,
                     info.active,
                     info.key_name,
+                    info.keep_reveal,
                     info.map_layer_name,
                     info.blend_mode
                 );
@@ -545,6 +578,7 @@ export class GameEventManager {
                     this.data,
                     info.active,
                     info.key_name,
+                    info.keep_reveal,
                     info.io_label,
                     info.action,
                     info.animation,
@@ -560,6 +594,7 @@ export class GameEventManager {
                     this.data,
                     info.active,
                     info.key_name,
+                    info.keep_reveal,
                     info.is_npc,
                     info.npc_label,
                     info.action,
@@ -576,6 +611,7 @@ export class GameEventManager {
                     this.data,
                     info.active,
                     info.key_name,
+                    info.keep_reveal,
                     info.is_npc,
                     info.npc_label,
                     info.active
@@ -586,6 +622,7 @@ export class GameEventManager {
                     this.data,
                     info.active,
                     info.key_name,
+                    info.keep_reveal,
                     info.audio_type,
                     info.audio_key,
                     info.volume,
@@ -598,6 +635,7 @@ export class GameEventManager {
                     this.data,
                     info.active,
                     info.key_name,
+                    info.keep_reveal,
                     info.control_type,
                     info.volume
                 );
@@ -607,6 +645,7 @@ export class GameEventManager {
                     this.data,
                     info.active,
                     info.key_name,
+                    info.keep_reveal,
                     info.control_type,
                     info.amount
                 );
@@ -616,6 +655,7 @@ export class GameEventManager {
                     this.data,
                     info.active,
                     info.key_name,
+                    info.keep_reveal,
                     info.char_key,
                     info.control_type,
                     info.amount
@@ -626,6 +666,7 @@ export class GameEventManager {
                     this.data,
                     info.active,
                     info.key_name,
+                    info.keep_reveal,
                     info.char_key,
                     info.control_type,
                     info.item_key,
@@ -636,13 +677,21 @@ export class GameEventManager {
                     info.amount
                 );
             case event_types.CAMERA_SHAKE:
-                return new CameraShakeEvent(this.game, this.data, info.active, info.key_name, info.enable);
+                return new CameraShakeEvent(
+                    this.game,
+                    this.data,
+                    info.active,
+                    info.key_name,
+                    info.key_name,
+                    info.enable
+                );
             case event_types.CAMERA_MOVE:
                 return new CameraMoveEvent(
                     this.game,
                     this.data,
                     info.active,
                     info.key_name,
+                    info.keep_reveal,
                     info.positions,
                     info.reset_follow,
                     info.return_to_target_duration,
@@ -654,6 +703,7 @@ export class GameEventManager {
                     this.data,
                     info.active,
                     info.key_name,
+                    info.keep_reveal,
                     info.fade_type,
                     info.duration,
                     info.finish_events
@@ -664,6 +714,7 @@ export class GameEventManager {
                     this.data,
                     info.active,
                     info.key_name,
+                    info.keep_reveal,
                     info.color_key,
                     info.intensity,
                     info.gray,
@@ -676,6 +727,7 @@ export class GameEventManager {
                     this.data,
                     info.active,
                     info.key_name,
+                    info.keep_reveal,
                     info.is_npc,
                     info.npc_label,
                     info.color_key,
@@ -688,6 +740,7 @@ export class GameEventManager {
                     this.data,
                     info.active,
                     info.key_name,
+                    info.keep_reveal,
                     info.is_npc,
                     info.npc_label,
                     info.enable,
@@ -699,6 +752,7 @@ export class GameEventManager {
                     this.data,
                     info.active,
                     info.key_name,
+                    info.keep_reveal,
                     info.is_npc,
                     info.npc_label,
                     info.enable,
@@ -711,6 +765,7 @@ export class GameEventManager {
                     this.data,
                     info.active,
                     info.key_name,
+                    info.keep_reveal,
                     info.is_npc,
                     info.npc_label,
                     info.enable
@@ -721,6 +776,7 @@ export class GameEventManager {
                     this.data,
                     info.active,
                     info.key_name,
+                    info.keep_reveal,
                     info.label,
                     info.create,
                     info.x,
@@ -734,6 +790,7 @@ export class GameEventManager {
                     this.data,
                     info.active,
                     info.key_name,
+                    info.keep_reveal,
                     info.is_npc,
                     info.npc_label,
                     info.control_type
@@ -744,6 +801,7 @@ export class GameEventManager {
                     this.data,
                     info.active,
                     info.key_name,
+                    info.keep_reveal,
                     info.io_label,
                     info.control_type
                 );
@@ -753,6 +811,7 @@ export class GameEventManager {
                     this.data,
                     info.active,
                     info.key_name,
+                    info.keep_reveal,
                     info.char_key,
                     info.ability
                 );
@@ -762,6 +821,7 @@ export class GameEventManager {
                     this.data,
                     info.active,
                     info.key_name,
+                    info.keep_reveal,
                     info.keys,
                     info.change_events,
                     info.callback_call_type
@@ -772,6 +832,7 @@ export class GameEventManager {
                     this.data,
                     info.active,
                     info.key_name,
+                    info.keep_reveal,
                     info.follow,
                     info.is_hero,
                     info.npc_label,
@@ -785,6 +846,7 @@ export class GameEventManager {
                     this.data,
                     info.active,
                     info.key_name,
+                    info.keep_reveal,
                     info.target_char_key,
                     info.permanent_status,
                     info.add,
@@ -796,6 +858,7 @@ export class GameEventManager {
                     this.data,
                     info.active,
                     info.key_name,
+                    info.keep_reveal,
                     info.target_collision_layer
                 );
             case event_types.CREATE_STORAGE_VAR:
@@ -804,6 +867,7 @@ export class GameEventManager {
                     this.data,
                     info.active,
                     info.key_name,
+                    info.keep_reveal,
                     info.var_name,
                     info.initial_value,
                     info.add
@@ -814,6 +878,7 @@ export class GameEventManager {
                     this.data,
                     info.active,
                     info.key_name,
+                    info.keep_reveal,
                     info.char_key,
                     info.control_type,
                     info.item_key,
@@ -828,6 +893,7 @@ export class GameEventManager {
                     this.data,
                     info.active,
                     info.key_name,
+                    info.keep_reveal,
                     info.item_key,
                     info.quantity
                 );
@@ -837,6 +903,7 @@ export class GameEventManager {
                     this.data,
                     info.active,
                     info.key_name,
+                    info.keep_reveal,
                     info.control_type,
                     info.generic_sprite_key_name,
                     info.misc_sprite_key,
@@ -863,6 +930,7 @@ export class GameEventManager {
                     this.data,
                     info.active,
                     info.key_name,
+                    info.keep_reveal,
                     info.particles_info,
                     info.group
                 );
@@ -872,6 +940,7 @@ export class GameEventManager {
                     this.data,
                     info.active,
                     info.key_name,
+                    info.keep_reveal,
                     info.is_npc,
                     info.npc_label,
                     info.enable,
@@ -883,6 +952,7 @@ export class GameEventManager {
                     this.data,
                     info.active,
                     info.key_name,
+                    info.keep_reveal,
                     info.is_npc,
                     info.npc_label,
                     info.enable
@@ -893,6 +963,7 @@ export class GameEventManager {
                     this.data,
                     info.active,
                     info.key_name,
+                    info.keep_reveal,
                     info.is_npc,
                     info.npc_label,
                     info.blend_mode

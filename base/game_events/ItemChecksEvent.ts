@@ -22,6 +22,7 @@ export class ItemChecksEvent extends GameEvent {
         data,
         active,
         key_name,
+        keep_reveal,
         char_key,
         control_type,
         item_key,
@@ -30,7 +31,7 @@ export class ItemChecksEvent extends GameEvent {
         check_ok_events,
         check_fail_events
     ) {
-        super(game, data, event_types.ITEM_CHECKS, active, key_name);
+        super(game, data, event_types.ITEM_CHECKS, active, key_name, keep_reveal);
         this.char_key = char_key;
         this.control_type = control_type;
         this.item_key = item_key;

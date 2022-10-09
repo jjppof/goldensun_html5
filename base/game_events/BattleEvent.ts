@@ -12,8 +12,18 @@ export class BattleEvent extends GameEvent {
     private finish_callback: (victory: boolean) => void;
     private before_fade_finish_callback: (victory: boolean) => void;
 
-    constructor(game, data, active, key_name, background_key, enemy_party_key, return_to_sanctum, finish_events) {
-        super(game, data, event_types.BATTLE, active, key_name);
+    constructor(
+        game,
+        data,
+        active,
+        key_name,
+        keep_reveal,
+        background_key,
+        enemy_party_key,
+        return_to_sanctum,
+        finish_events
+    ) {
+        super(game, data, event_types.BATTLE, active, key_name, keep_reveal);
         this.background_key = background_key;
         this.enemy_party_key = enemy_party_key;
         this.return_to_sanctum = return_to_sanctum ?? true;

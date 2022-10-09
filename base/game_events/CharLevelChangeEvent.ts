@@ -4,8 +4,8 @@ export class CharLevelChangeEvent extends GameEvent {
     private target_char_key: string;
     private target_level_value: number;
 
-    constructor(game, data, active, key_name, target_char_key, target_level_value) {
-        super(game, data, event_types.CHAR_LEVEL_CHANGE, active, key_name);
+    constructor(game, data, active, key_name, keep_reveal, target_char_key, target_level_value) {
+        super(game, data, event_types.CHAR_LEVEL_CHANGE, active, key_name, keep_reveal);
         this.target_char_key = target_char_key;
         this.target_level_value = target_level_value;
     }

@@ -12,8 +12,8 @@ export class AudioPlayEvent extends GameEvent {
     private volume: number;
     private loop: boolean;
 
-    constructor(game, data, active, key_name, audio_type, audio_key, volume, loop, finish_events) {
-        super(game, data, event_types.AUDIO_PLAY, active, key_name);
+    constructor(game, data, active, key_name, keep_reveal, audio_type, audio_key, volume, loop, finish_events) {
+        super(game, data, event_types.AUDIO_PLAY, active, key_name, keep_reveal);
         this.audio_type = audio_type;
         this.audio_key = audio_key;
         this.volume = volume;

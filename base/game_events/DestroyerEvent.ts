@@ -3,8 +3,8 @@ import {GameEvent, event_types} from "./GameEvent";
 export class DestroyerEvent extends GameEvent {
     private target_event_key: string;
 
-    constructor(game, data, active, key_name, target_event_key) {
-        super(game, data, event_types.DESTROYER, active, key_name);
+    constructor(game, data, active, key_name, keep_reveal, target_event_key) {
+        super(game, data, event_types.DESTROYER, active, key_name, keep_reveal);
         this.target_event_key = target_event_key;
     }
 

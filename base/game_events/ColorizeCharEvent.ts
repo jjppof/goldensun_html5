@@ -7,8 +7,8 @@ export class ColorizeCharEvent extends GameEvent {
     private intensity: number;
     private gray: number;
 
-    constructor(game, data, active, key_name, is_npc, npc_label, color_key, intensity, gray) {
-        super(game, data, event_types.COLORIZE_CHAR, active, key_name);
+    constructor(game, data, active, key_name, keep_reveal, is_npc, npc_label, color_key, intensity, gray) {
+        super(game, data, event_types.COLORIZE_CHAR, active, key_name, keep_reveal);
         this.color_key = color_key;
         this.intensity = intensity;
         this.gray = gray;

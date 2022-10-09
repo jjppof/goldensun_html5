@@ -4,8 +4,8 @@ export class GrantAbilityEvent extends GameEvent {
     private ability: string;
     private char_key: string;
 
-    constructor(game, data, active, key_name, char_key, ability) {
-        super(game, data, event_types.GRANT_ABILITY, active, key_name);
+    constructor(game, data, active, key_name, keep_reveal, char_key, ability) {
+        super(game, data, event_types.GRANT_ABILITY, active, key_name, keep_reveal);
         this.char_key = char_key;
         this.ability = ability;
     }

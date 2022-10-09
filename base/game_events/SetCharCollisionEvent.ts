@@ -12,8 +12,8 @@ export class SetCharCollisionEvent extends GameEvent {
     private npc_label: string;
     private control_type: control_types;
 
-    constructor(game, data, active, key_name, is_npc, npc_label, control_type) {
-        super(game, data, event_types.SET_CHAR_COLLISION, active, key_name);
+    constructor(game, data, active, key_name, keep_reveal, is_npc, npc_label, control_type) {
+        super(game, data, event_types.SET_CHAR_COLLISION, active, key_name, keep_reveal);
         this.is_npc = is_npc;
         this.npc_label = npc_label;
         this.control_type = control_type;

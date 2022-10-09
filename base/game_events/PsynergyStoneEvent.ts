@@ -17,8 +17,8 @@ export class PsynergyStoneEvent extends GameEvent {
     private finish_events: GameEvent[];
     private control_key: number;
 
-    constructor(game, data, active, key_name, finish_events) {
-        super(game, data, event_types.PSYNERGY_STONE, active, key_name);
+    constructor(game, data, active, key_name, keep_reveal, finish_events) {
+        super(game, data, event_types.PSYNERGY_STONE, active, key_name, keep_reveal);
         this.control_enable = false;
         this.dialog_manager = null;
 

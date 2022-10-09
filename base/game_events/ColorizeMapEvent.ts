@@ -7,8 +7,8 @@ export class ColorizeMapEvent extends GameEvent {
     private gray: number;
     private duration: number;
 
-    constructor(game, data, active, key_name, color_key, intensity, gray, duration, finish_events) {
-        super(game, data, event_types.COLORIZE_MAP, active, key_name);
+    constructor(game, data, active, key_name, keep_reveal, color_key, intensity, gray, duration, finish_events) {
+        super(game, data, event_types.COLORIZE_MAP, active, key_name, keep_reveal);
         this.color_key = color_key;
         this.intensity = intensity;
         this.gray = gray;

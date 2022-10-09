@@ -10,8 +10,8 @@ export class TintCharEvent extends GameEvent {
         b: number; //[0, 1]
     };
 
-    constructor(game, data, active, key_name, is_npc, npc_label, enable, color) {
-        super(game, data, event_types.TINT_CHAR, active, key_name);
+    constructor(game, data, active, key_name, keep_reveal, is_npc, npc_label, enable, color) {
+        super(game, data, event_types.TINT_CHAR, active, key_name, keep_reveal);
         this.enable = enable ?? true;
         this.color = color ?? {r: -1, g: -1, b: -1};
         this.is_npc = is_npc;

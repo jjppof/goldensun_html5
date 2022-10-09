@@ -38,6 +38,7 @@ export class EmoticonEvent extends GameEvent {
         data,
         active,
         key_name,
+        keep_reveal,
         emoticon,
         duration,
         sound_effect,
@@ -49,7 +50,7 @@ export class EmoticonEvent extends GameEvent {
         reset_direction,
         finish_events
     ) {
-        super(game, data, event_types.EMOTICON, active, key_name);
+        super(game, data, event_types.EMOTICON, active, key_name, keep_reveal);
         this.emoticon = emoticon;
         this.duration = duration ?? EmoticonEvent.DEFAULT_DURATION;
         this.sound_effect = sound_effect;

@@ -14,8 +14,8 @@ export class CustomCollisionBodyEvent extends GameEvent {
         collision_layer?: number;
     };
 
-    constructor(game, data, active, key_name, label, create, x, y, body_type, properties) {
-        super(game, data, event_types.CUSTOM_COLLISION_BODY, active, key_name);
+    constructor(game, data, active, key_name, keep_reveal, label, create, x, y, body_type, properties) {
+        super(game, data, event_types.CUSTOM_COLLISION_BODY, active, key_name, keep_reveal);
         this.label = label;
         this.create = create;
         this.x = x;

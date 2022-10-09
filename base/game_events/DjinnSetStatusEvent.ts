@@ -11,8 +11,8 @@ export class DjinnSetStatusEvent extends GameEvent {
     /** The status to set */
     private status: djinn_status;
 
-    constructor(game, data, active, key_name, djinn_key, status_key) {
-        super(game, data, event_types.DJINN_SET_STATUS, active, key_name);
+    constructor(game, data, active, key_name, keep_reveal, djinn_key, status_key) {
+        super(game, data, event_types.DJINN_SET_STATUS, active, key_name, keep_reveal);
 
         //djinn
         this.djinn_key = djinn_key;
