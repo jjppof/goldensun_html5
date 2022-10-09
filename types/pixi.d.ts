@@ -305,6 +305,7 @@ declare module PIXI {
         click(e: InteractionData): void;
         displayObjectUpdateTransform(parent?: DisplayObjectContainer): void;
         generateTexture(resolution?: number, scaleMode?: number, renderer?: PixiRenderer | number): Phaser.RenderTexture;
+        kill(): void;
         mousedown(e: InteractionData): void;
         mouseout(e: InteractionData): void;
         mouseover(e: InteractionData): void;

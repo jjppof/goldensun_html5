@@ -1,5 +1,4 @@
 import {Window, TextObj} from "../../Window";
-import {kill_all_sprites} from "../../utils";
 import {item_types} from "../../Item";
 import {effect_operators, effect_types} from "../../Effect";
 import {GoldenSun} from "../../GoldenSun";
@@ -219,12 +218,19 @@ export class EquipCompare {
         this.make_arrow(stat_diff, line);
     }
 
+    kill_all_sprites(group: Phaser.Group, destroy = false) {
+        group.children.forEach(child => {
+            if (destroy) group.remove(child, true);
+            else child.kill();
+        });
+    }
+
     /*Compare the same item for a different character*/
     change_character(key_name: string) {
         this.selected_char = this.data.info.party_data.members.filter(c => {
             return c.key_name === key_name;
         })[0];
-        kill_all_sprites(this.arrow_group);
+        this.kill_all_sprites(this.arrow_group);
 
         this.show_stat_compare();
     }
@@ -323,8 +329,8 @@ export class EquipCompare {
 
     Input: destroy [boolean] - If true, sprites are destroyed*/
     close(callback?: () => void, destroy: boolean = false) {
-        kill_all_sprites(this.arrow_group, destroy);
-        if (destroy) kill_all_sprites(this.text_group, destroy);
+        this.kill_all_sprites(this.arrow_group, destroy);
+        if (destroy) this.kill_all_sprites(this.text_group, destroy);
 
         this.selected_item = null;
         this.selected_char = null;

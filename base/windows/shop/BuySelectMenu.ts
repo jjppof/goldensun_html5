@@ -1,5 +1,4 @@
 import {Window} from "../../Window";
-import {kill_all_sprites} from "../../utils";
 import {GoldenSun} from "../../GoldenSun";
 import {Button} from "../../XGamepad";
 import {CursorManager, PointVariants} from "../../utils/CursorManager";
@@ -291,6 +290,13 @@ export class BuySelectMenu {
         this.set_item(this.selected_index % MAX_PER_PAGE);
     }
 
+    kill_all_sprites(group: Phaser.Group, destroy = false) {
+        group.children.forEach(child => {
+            if (destroy) group.remove(child, true);
+            else child.kill();
+        });
+    }
+
     /*Displays a specific page of items
 
     Input: index [number] - Index of the page to be displayed*/
@@ -309,10 +315,10 @@ export class BuySelectMenu {
             this.selected_index = this.pages[this.current_page].length - 1;
         }
 
-        kill_all_sprites(this.sprite_group);
-        kill_all_sprites(this.tag_group);
-        kill_all_sprites(this.text_group);
-        kill_all_sprites(this.bg_group);
+        this.kill_all_sprites(this.sprite_group);
+        this.kill_all_sprites(this.tag_group);
+        this.kill_all_sprites(this.text_group);
+        this.kill_all_sprites(this.bg_group);
         this.unset_item(this.selected_index);
         this.set_sprites(page);
         this.check_arrows();
@@ -499,10 +505,10 @@ export class BuySelectMenu {
     close(callback?: () => void, destroy: boolean = false) {
         this.unset_item(this.selected_index);
 
-        kill_all_sprites(this.sprite_group, destroy);
-        kill_all_sprites(this.tag_group, destroy);
-        kill_all_sprites(this.text_group, destroy);
-        kill_all_sprites(this.bg_group, destroy);
+        this.kill_all_sprites(this.sprite_group, destroy);
+        this.kill_all_sprites(this.tag_group, destroy);
+        this.kill_all_sprites(this.text_group, destroy);
+        this.kill_all_sprites(this.bg_group, destroy);
 
         this.items = {};
         this.pages = [];

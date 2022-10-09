@@ -1,5 +1,4 @@
 import {Window, TextObj} from "../../Window";
-import {kill_all_sprites} from "../../utils";
 import {GoldenSun} from "../../GoldenSun";
 import {Button} from "../../XGamepad";
 import {MainChar, ItemSlot} from "../../MainChar";
@@ -132,6 +131,13 @@ export class InventoryWindow {
         this.text.shadow.visible = true;
     }
 
+    kill_all_sprites(group: Phaser.Group, destroy = false) {
+        group.children.forEach(child => {
+            if (destroy) group.remove(child, true);
+            else child.kill();
+        });
+    }
+
     /*Changes the character whose inventory is being shown
 
     Input: key_name [number] - The character's key name*/
@@ -141,8 +147,8 @@ export class InventoryWindow {
         })[0];
         this.make_item_grid();
 
-        kill_all_sprites(this.sprite_group);
-        kill_all_sprites(this.icon_group);
+        this.kill_all_sprites(this.sprite_group);
+        this.kill_all_sprites(this.icon_group);
         if (this.expanded) this.set_text();
         this.set_sprites();
     }
@@ -392,8 +398,8 @@ export class InventoryWindow {
         })[0];
         this.selected_item = item;
 
-        kill_all_sprites(this.sprite_group);
-        kill_all_sprites(this.icon_group);
+        this.kill_all_sprites(this.sprite_group);
+        this.kill_all_sprites(this.icon_group);
 
         this.make_item_grid();
         this.set_sprites();
@@ -423,8 +429,8 @@ export class InventoryWindow {
 
     Input: destroy [boolean] - If true, sprites are destroyed*/
     close(callback?: () => void, destroy = false) {
-        kill_all_sprites(this.sprite_group, destroy);
-        kill_all_sprites(this.icon_group, destroy);
+        this.kill_all_sprites(this.sprite_group, destroy);
+        this.kill_all_sprites(this.icon_group, destroy);
 
         this.text.text.visible = false;
         this.text.shadow.visible = false;

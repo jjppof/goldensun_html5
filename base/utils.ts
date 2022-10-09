@@ -279,18 +279,6 @@ export function get_text_width(game: Phaser.Game, text: string, italic = false) 
 }
 
 /**
- * Either kills or destroys each sprite in the group
- * @param group The parent group
- * @param destroy If true, child is destroyed instead
- */
-export function kill_all_sprites(group, destroy = false) {
-    group.children.forEach(child => {
-        if (destroy) child.parent.remove(child, true);
-        else child.kill();
-    });
-}
-
-/**
  * Gets the center position of a tile in pixels.
  * @param tile_pos the tile position.
  * @param tile_size the tile size.

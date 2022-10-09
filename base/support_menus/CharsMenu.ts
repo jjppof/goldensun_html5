@@ -276,7 +276,10 @@ export class CharsMenu {
             this.selected_index = this.lines[this.current_line].length - 1;
         }
 
-        utils.kill_all_sprites(this.char_group);
+        this.char_group.children.forEach(child => {
+            child.kill();
+        });
+
         this.set_chars();
         this.check_arrows();
         this.select_char(this.selected_index, no_cursor);
