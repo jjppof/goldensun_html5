@@ -8,12 +8,14 @@
         // Library versions
         "moduleResolution": "node",
         "module": "commonjs",
-        "target": "ES2017",
+        // "target": "ES2017",
+        "target": "ES5",
 
         // Types
         "lib": [
             "DOM",
-            "ESNext"
+            "ESNext",
+            "ES2021.String"
         ],
         "typeRoots": [
             "types/p2.d.ts",

@@ -17,18 +17,22 @@ function createWindow() {
         title: "Golden Sun Engine - HTML5",
         icon: path.join(__dirname, "../static/favicon.ico"),
         webPreferences: {
-            preload: path.join(__dirname, 'preload.js'),
             experimentalFeatures: true,
-            spellcheck: false,
+            // spellcheck: false,  //not available in electron 4
+            devTools: false,
+            backgroundThrottling: false,
+            contextIsolation: false,
+            // disableDialogs: true, //not available in electron 4
+            // autoplayPolicy: "no-user-gesture-required", //not available in electron 4
+            // enableWebSQL: false //not available in electron 4
         }
     });
 
     win.loadFile('../index-electron.html');
 }
-
-app.commandLine.appendSwitch('limit-fps', 60);
-// app.commandLine.appendSwitch('disable-gpu-vsync');
-// app.commandLine.appendSwitch('disable-frame-rate-limit');
+app.commandLine.appendSwitch('limit-fps', '60');
+app.commandLine.appendSwitch('disable-gpu-vsync');
+// app.commandLine.appendSwitch('show-fps-counter');
 app.commandLine.appendSwitch('force_high_performance_gpu');
 
 app.whenReady().then(() => {

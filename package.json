@@ -36,11 +36,12 @@
   "devDependencies": {
     "@types/lodash": "~4.14",
     "@types/mathjs": "~6.0",
-    "electron": "~15.5",
+    "electron": "4.2.12",
     "husky": "^5",
     "pinst": "~2.1",
     "prettier": "~2.6",
     "ts-loader": "~8.3",
+    "tslib": "~2.4.0",
     "typedoc": "~0.22",
     "typescript": "~4.6",
     "webpack": "~4.46",
@@ -49,6 +50,7 @@
   },
   "dependencies": {
     "@turf/turf": "^6",
+    "core-js": "~3.25.5",
     "lodash": "^4",
     "mathjs": "~9.5",
     "rxjs": "~6.6"

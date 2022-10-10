@@ -1,3 +1,4 @@
+import 'core-js';
 import * as numbers from "./magic_numbers";
 import {Debug} from "./debug/Debug";
 import {load_all} from "./initializers/assets_loader";
@@ -168,9 +169,9 @@ export class GoldenSun {
      * If it's running under electron's engine, initializes it.
      */
     private init_electron() {
-        this.electron_app = (window as any).is_electron_env ?? false;
+        this.electron_app = (window as any).require ?? false;
         if (this.electron_app) {
-            this.ipcRenderer = (window as any).ipcRenderer;
+            this.ipcRenderer = (window as any).require("electron").ipcRenderer;
         }
     }
 
