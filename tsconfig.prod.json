@@ -8,12 +8,13 @@
         // Library versions
         "moduleResolution": "node",
         "module": "commonjs",
-        "target": "ES2017",
+        "target": "ES5",
 
         // Types
         "lib": [
             "DOM",
             "ESNext",
+            "ES2021.String"
         ],
         "typeRoots": [
             "types/p2.d.ts",
@@ -37,7 +38,7 @@
         "removeComments": true,
 
         // Maps
-        "sourceMap": true,
+        "sourceMap": false,
         // "mapRoot": "debug/maps",
         // "sourceRoot": "debug/src",
 

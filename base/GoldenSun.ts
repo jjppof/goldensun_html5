@@ -1,4 +1,4 @@
-import 'core-js';
+import "core-js";
 import * as numbers from "./magic_numbers";
 import {Debug} from "./debug/Debug";
 import {load_all} from "./initializers/assets_loader";

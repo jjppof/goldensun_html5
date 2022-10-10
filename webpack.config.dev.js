@@ -1,7 +1,8 @@
 const path = require('path');
+const { merge } = require('webpack-merge');
+const common = require('./webpack.config.common.js');
 
-module.exports = {
-    entry: './base/GoldenSun.ts',
+module.exports = merge(common, {
     devtool: 'inline-source-map',
     devServer: {
         contentBase: __dirname,
@@ -33,13 +34,5 @@ module.exports = {
                 exclude: /node_modules/,
             },
         ],
-    },
-    resolve: {
-        extensions: ['.ts', '.js'],
-    },
-    output: {
-        filename: 'bundle.js',
-        path: path.join(__dirname, 'dist'),
-        publicPath: "/dist/",
-    },
-};
+    }
+});
