@@ -13,12 +13,12 @@ An **Golden Sun Engine** entirely built in HTML5 with [PhaserJS CE 2.19.0](http:
 - If you found any bug, please create an [issue](https://github.com/jjppof/goldensun_html5/issues/new) for it.
 - Issues are not very well explained, feel free to reach me for details about them.
 - Check the [wiki](https://github.com/jjppof/goldensun_html5/wiki) for database configuration, tutorials and project tech information.
-- There's no production environment for now, but I'm planning to deploy a desktop application.
+- This project deployment is a desktop application.
 - Check the [latest updates](https://github.com/jjppof/goldensun_html5/discussions/categories/updates).
 
 ## Development environment
 
-GS-HTML5 supports both Javascript and Typescript. We use [Webpack](https://webpack.js.org/) to build the bundle and serve the development environment.
+GS-HTML5 supports both Javascript (legacy) and Typescript. We use [Webpack](https://webpack.js.org/) to build the bundle and serve the development environment.
 - I strongly recomend using [Visual Studio Code](https://code.visualstudio.com/download) to develop.
 - Install dev dependencies by running `npm install` in the root folder.
 - Use `npm start` to start the development server.
