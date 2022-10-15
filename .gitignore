@@ -6,6 +6,7 @@ package-lock.json
 code_docs/
 dist/
 logs/
+deploy/
 node_modules/
 *.bak
 *.db

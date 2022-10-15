@@ -1,4 +1,5 @@
 const path = require('path');
+const url = require('url');
 const {
     app,
     BrowserWindow,
@@ -28,7 +29,11 @@ function createWindow() {
         }
     });
 
-    win.loadFile('../index-electron.html');
+    win.loadURL(url.format({
+        pathname: path.join(__dirname, '../index-electron.html'),
+        protocol: 'file:',
+        slashes: true
+    }));
 }
 app.commandLine.appendSwitch('limit-fps', '60');
 app.commandLine.appendSwitch('disable-gpu-vsync');
