@@ -33,7 +33,9 @@ export class SaveMenu {
     }
 
     download_snapshot() {
-        this.data.snapshot_manager.generate_snapshot();
+        if (!this.data.hero.on_reveal) {
+            this.data.snapshot_manager.generate_snapshot();
+        }
     }
 
     set_button_tween() {

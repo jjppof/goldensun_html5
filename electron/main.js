@@ -7,10 +7,11 @@ const {
 } = require('electron');
 
 function createWindow() {
+    const is_dev_env = process.argv[2] !== undefined && process.argv[2] == "dev";
     const win = new BrowserWindow({
         width: 480,
         height: 320,
-        resizable: false,
+        resizable: is_dev_env ? true : false,
         center: true,
         useContentSize: true,
         autoHideMenuBar: true,
@@ -20,7 +21,7 @@ function createWindow() {
         webPreferences: {
             experimentalFeatures: true,
             // spellcheck: false,  //not available in electron 4
-            devTools: false,
+            devTools: is_dev_env ? true : false,
             backgroundThrottling: false,
             contextIsolation: false,
             // disableDialogs: true, //not available in electron 4
