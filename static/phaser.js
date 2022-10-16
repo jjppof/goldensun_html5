@@ -21519,7 +21519,7 @@ PIXI.CanvasBuffer = function (width, height)
      * @property context
      * @type CanvasRenderingContext2D
      */
-    this.context = this.canvas.getContext('2d');
+    this.context = this.canvas.getContext('2d', { antialias: false, powerPreference: "high-performance" });
 
     this.canvas.width = width;
     this.canvas.height = height;
@@ -21662,7 +21662,7 @@ PIXI.CanvasTinter.getTintedTexture = function (sprite, color)
  */
 PIXI.CanvasTinter.tintWithMultiply = function (texture, color, canvas)
 {
-    var context = canvas.getContext('2d');
+    var context = canvas.getContext('2d', { antialias: false, powerPreference: "high-performance" });
 
     var crop = texture.crop;
     var w = crop.width;
@@ -21703,7 +21703,7 @@ PIXI.CanvasTinter.tintWithMultiply = function (texture, color, canvas)
  */
 PIXI.CanvasTinter.tintWithPerPixel = function (texture, color, canvas)
 {
-    var context = canvas.getContext('2d');
+    var context = canvas.getContext('2d', { antialias: false, powerPreference: "high-performance" });
 
     var crop = texture.crop;
     var w = crop.width;
@@ -21852,7 +21852,7 @@ PIXI.CanvasRenderer = function (game, config)
      * @property context
      * @type CanvasRenderingContext2D
      */
-    this.context = this.view.getContext('2d', { alpha: this.transparent });
+    this.context = this.view.getContext('2d', { alpha: this.transparent, antialias: false, powerPreference: "high-performance" });
 
     if (!this.context)
     {
@@ -38386,7 +38386,7 @@ Phaser.Input.prototype = {
         this.activePointer = this.mousePointer;
 
         this.hitCanvas = Phaser.CanvasPool.create(this, 1, 1);
-        this.hitContext = this.hitCanvas.getContext('2d');
+        this.hitContext = this.hitCanvas.getContext('2d', { antialias: false, powerPreference: "high-performance" });
 
         if (this.game.device.mspointer && (config.mspointer !== false))
         {
@@ -52023,7 +52023,7 @@ Phaser.BitmapData = function (game, key, width, height, skipPool)
      * @property {CanvasRenderingContext2D} context - The 2d context of the canvas.
      * @default
      */
-    this.context = this.canvas.getContext('2d', { alpha: true });
+    this.context = this.canvas.getContext('2d', { alpha: true, antialias: false, powerPreference: "high-performance" });
 
     /**
      * @property {CanvasRenderingContext2D} ctx - A reference to BitmapData.context.
@@ -52246,7 +52246,7 @@ Phaser.BitmapData.prototype = {
         }
 
         var c = this._swapCanvas;
-        var ctx = c.getContext('2d');
+        var ctx = c.getContext('2d', { antialias: false, powerPreference: "high-performance" });
         var h = this.height;
         var src = this.canvas;
 
@@ -52308,7 +52308,7 @@ Phaser.BitmapData.prototype = {
         }
 
         var c = this._swapCanvas;
-        var ctx = c.getContext('2d');
+        var ctx = c.getContext('2d', { antialias: false, powerPreference: "high-performance" });
         var w = this.width;
         var src = this.canvas;
 
@@ -58666,7 +58666,7 @@ Phaser.Text = function (game, x, y, text, style)
     /**
      * @property {HTMLCanvasElement} context - The context of the canvas element that the text is rendered to.
      */
-    this.context = this.canvas.getContext('2d');
+    this.context = this.canvas.getContext('2d', { antialias: false, powerPreference: "high-performance" });
 
     /**
      * @property {array} colors - An array of the color values as specified by {@link Phaser.Text#addColor addColor}.
@@ -60869,7 +60869,7 @@ Object.defineProperty(Phaser.Text.prototype, 'testString', {
 Phaser.Text.fontPropertiesCache = {};
 
 Phaser.Text.fontPropertiesCanvas = document.createElement('canvas');
-Phaser.Text.fontPropertiesContext = Phaser.Text.fontPropertiesCanvas.getContext('2d');
+Phaser.Text.fontPropertiesContext = Phaser.Text.fontPropertiesCanvas.getContext('2d', { antialias: false, powerPreference: "high-performance" });
 
 /**
  * @author       Richard Davey <rich@photonstorm.com>
@@ -64698,7 +64698,7 @@ Phaser.Device._initialize = function ()
     function _checkCanvasFeatures ()
     {
         var canvas = Phaser.CanvasPool.create(this, 6, 1);
-        var context = canvas.getContext('2d');
+        var context = canvas.getContext('2d', { antialias: false, powerPreference: "high-performance" });
 
         context.fillStyle = 'rgba(10, 20, 30, 0.5)';
 
@@ -65178,7 +65178,7 @@ Phaser.Device._initialize = function ()
         }
 
         var elem = Phaser.CanvasPool.create(this, 1, 1);
-        var ctx = elem.getContext('2d');
+        var ctx = elem.getContext('2d', { antialias: false, powerPreference: "high-performance" });
 
         if (!ctx)
         {
@@ -74386,7 +74386,7 @@ Phaser.Cache.prototype = {
      */
     addCanvas: function (key, canvas, context)
     {
-        if (context === undefined) { context = canvas.getContext('2d'); }
+        if (context === undefined) { context = canvas.getContext('2d', { antialias: false, powerPreference: "high-performance" }); }
 
         this._cache.canvas[key] = { canvas: canvas, context: context };
     },
@@ -85373,7 +85373,7 @@ Phaser.Utils.Debug.prototype = {
             this.game.scale.onSizeChange.add(this.resize, this);
 
             this.canvas = Phaser.CanvasPool.create(this, this.game.width, this.game.height);
-            this.context = this.canvas.getContext('2d');
+            this.context = this.canvas.getContext('2d', { antialias: false, powerPreference: "high-performance" });
         }
 
         this._line = new Phaser.Line();
@@ -102988,7 +102988,7 @@ Phaser.TilemapLayer = function (game, tilemap, index, width, height)
      * @property {CanvasRenderingContext2D} context
      * @private
      */
-    this.context = this.canvas.getContext('2d');
+    this.context = this.canvas.getContext('2d', { antialias: false, powerPreference: "high-performance" });
 
     this.setTexture(new PIXI.Texture(new PIXI.BaseTexture(this.canvas, null, this.game.resolution)));
 
@@ -103779,7 +103779,7 @@ Phaser.TilemapLayer.prototype.shiftCanvas = function (context, x, y)
             copyCanvas.height = copyH;
         }
 
-        var copyContext = copyCanvas.getContext('2d');
+        var copyContext = copyCanvas.getContext('2d', { antialias: false, powerPreference: "high-performance" });
         copyContext.clearRect(0, 0, copyW, copyH);
         copyContext.drawImage(canvas, dx, dy, copyW, copyH, 0, 0, copyW, copyH);
 

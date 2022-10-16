@@ -34,9 +34,11 @@ export abstract class IntegerPairKey {
 }
 
 /**
- * This class is responsible for the type of events that are placed in
- * the map. Generally, this kind of events are fired when the hero reaches
- * the position of where an event of this type is placed.
+ * This class is responsible for the class of events that are placed on the map.
+ * Generally, this kind of event is fired when the hero reaches the position where
+ * an event of this type is placed. Use these events to make the hero jump, slide, climb,
+ * teleport, etc. Tile Events are set as map properties (and sometimes, Interactable
+ * Objects can also create some Tile Events automatically).
  */
 export abstract class TileEvent {
     protected game: Phaser.Game;
@@ -116,7 +118,7 @@ export abstract class TileEvent {
         this._activation_directions = activation_directions;
 
         affected_by_reveal = Array.isArray(affected_by_reveal)
-            ? affected_by_reveal
+            ? TileEvent.format_activation_directions(affected_by_reveal)
             : affected_by_reveal
             ? Array.from(this._initial_activation_directions)
             : [];
@@ -163,7 +165,7 @@ export abstract class TileEvent {
     get origin_interactable_object() {
         return this._origin_interactable_object;
     }
-    /** The set of directions that are causes this event to have its activation toggled when reveal is casted. */
+    /** The set of directions that cause this event to have its activation toggled when reveal is casted. */
     get affected_by_reveal() {
         return this._affected_by_reveal;
     }
