@@ -17,6 +17,7 @@
     ],
     "last_visited_town_with_sanctum": {
         "map_key": "madra_church",
+        "collision_layer": 0,
         "tile_position": {
             "x": 15.5,
             "y": 24
