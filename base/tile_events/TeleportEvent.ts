@@ -6,6 +6,7 @@ import {climb_actions} from "./ClimbEvent";
 
 export class TeleportEvent extends TileEvent {
     private static readonly DEFAULT_FADE_DURATION: number = 500;
+    private static readonly DEFAULT_DOOR_OPEN_SFX: string = "door/open_door";
 
     private target: string;
     private x_target: number;
@@ -23,6 +24,16 @@ export class TeleportEvent extends TileEvent {
     private fade_duration: number;
     private finish_callback: () => void;
     private fadein_callback: () => void;
+    private door_settings: {
+        replace_map: {
+            tile_layer: string;
+            from_tile_id: number;
+            to_tile_id: number;
+            offset_x: number;
+            offset_y: number;
+        }[];
+        door_open_sfx: string;
+    };
 
     constructor(
         game,
@@ -48,7 +59,8 @@ export class TeleportEvent extends TileEvent {
         skip_checks,
         finish_before_fadeout,
         skip_map_change_events,
-        fade_duration
+        fade_duration,
+        door_settings
     ) {
         super(
             game,
@@ -80,6 +92,7 @@ export class TeleportEvent extends TileEvent {
         this.fade_duration = fade_duration ?? TeleportEvent.DEFAULT_FADE_DURATION;
         this.finish_callback = null;
         this.fadein_callback = null;
+        this.door_settings = door_settings ?? null;
     }
 
     get open_door() {
@@ -98,15 +111,21 @@ export class TeleportEvent extends TileEvent {
         }
         this.data.tile_event_manager.on_event = true;
         this.data.hero.teleporting = true;
-        if (this.open_door) {
+        if (this.open_door && this.door_settings) {
             if (!this.data.hero.stop_by_colliding) {
                 this.data.tile_event_manager.on_event = false;
                 this.data.hero.teleporting = false;
                 return;
             }
-            this.data.audio.play_se("door/open_door");
+            this.data.audio.play_se(this.door_settings.door_open_sfx ?? TeleportEvent.DEFAULT_DOOR_OPEN_SFX);
             this.data.hero.play(base_actions.WALK, reverse_directions[directions.up]);
-            this.set_open_door_tile();
+            this.door_settings.replace_map.forEach(replace_info => {
+                const from_tile_id = replace_info.from_tile_id + 1;
+                const to_tile_id = replace_info.to_tile_id + 1;
+                const x = this.x + replace_info.offset_x;
+                const y = this.y + replace_info.offset_y - 1;
+                this.data.map.sprite.replace(from_tile_id, to_tile_id, x, y, 1, 1, replace_info.tile_layer);
+            });
             this.game.physics.p2.pause();
             const time = 400;
             const tween_x = this.data.map.tile_width * (this.x + 0.5);
@@ -277,33 +296,6 @@ export class TeleportEvent extends TileEvent {
 
     set_finish_callback(callback: () => void) {
         this.finish_callback = callback;
-    }
-
-    private set_open_door_tile() {
-        const layer = _.find(this.data.map.sprite.layers, {
-            name: this.data.map.sprite.properties.door_layer,
-        });
-        const sample_tile = this.data.map.sprite.getTile(this.x, this.y - 1, layer.name);
-        const door_type_index = sample_tile.properties.door_type;
-        const tiles = _.filter(this.data.map.sprite.tilesets[0].tileProperties, key => {
-            return key.door_type === door_type_index && "close_door" in key && key.id === sample_tile.properties.id;
-        });
-        let tile, source_index, close_door_index, offsets, base_x, base_y, target_index;
-        for (let i = 0; i < tiles.length; ++i) {
-            tile = tiles[i];
-            source_index = (tile.index | 0) + 1;
-            close_door_index = tile.close_door;
-            offsets = tile.base_offset.split(",");
-            base_x = this.x + (offsets[0] | 0);
-            base_y = this.y + (offsets[1] | 0) - 1;
-            target_index =
-                parseInt(
-                    _.findKey(this.data.map.sprite.tilesets[0].tileProperties, {
-                        open_door: close_door_index,
-                    })
-                ) + 1;
-            this.data.map.sprite.replace(source_index, target_index, base_x, base_y, 1, 1, layer.name);
-        }
     }
 
     destroy() {

@@ -223,10 +223,10 @@
             0, 0, 0, 0, 0, 93, 94, 95, 96, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 97, 0, 99, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 104, 105, 106, 107, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 115, 116, 117, 118, 0, 0, 0, 0, 0, 0, 0, 106, 106, 119, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 126, 127, 128, 129, 0, 0, 0, 0, 166, 167, 168, 117, 117, 118, 0, 0, 120, 105, 106, 107, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 137, 138, 139, 140, 0, 0, 0, 0, 177, 178, 179, 180, 181, 182, 0, 0, 115, 116, 117, 118, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 148, 149, 150, 151, 0, 0, 0, 0, 188, 189, 190, 191, 192, 193, 0, 0, 177, 180, 130, 129, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 188, 191, 141, 140, 0, 0, 0, 0, 165, 165, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 126, 181, 128, 129, 0, 0, 0, 0, 166, 167, 168, 117, 117, 118, 0, 0, 120, 105, 106, 107, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 137, 192, 139, 140, 0, 0, 0, 0, 177, 178, 179, 180, 181, 182, 0, 0, 115, 116, 117, 118, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 148, 149, 150, 151, 0, 0, 0, 0, 188, 189, 190, 191, 192, 193, 0, 0, 177, 180, 181, 129, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 188, 191, 192, 140, 0, 0, 0, 0, 165, 165, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 176, 176, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 104, 105, 106, 119, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 187, 187, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 115, 116, 117, 118, 0, 104, 0, 0, 0, 107, 0, 0, 0, 0, 0, 0, 0, 198, 198, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -2167,13 +2167,13 @@
      "tile_event\/22":"{\"type\": \"speed\", \"x\": 30, \"y\": 19, \"speed\": 20, \"activation_collision_layers\": 1}",
      "tile_event\/23":"{\"type\": \"climb\", \"x\": 10, \"y\": 16, \"activation_directions\": \"up\", \"activation_collision_layers\": 0}",
      "tile_event\/24":"{\"type\": \"climb\", \"x\": 10, \"y\": 15, \"activation_directions\": \"down\", \"activation_collision_layers\": 0}",
-     "tile_event\/25":"{\"type\": \"teleport\", \"x\": 28, \"y\": 12, \"target\": \"madra_inn\", \"activation_directions\": \"up\", \"x_target\": 29, \"y_target\": 17, \"open_door\": true, \"dest_collision_layer\": 0, \"activation_collision_layers\": 1}",
-     "tile_event\/26":"{\"type\": \"teleport\", \"x\": 28, \"y\": 8, \"target\": \"madra_inn_up\", \"activation_directions\": \"up\", \"x_target\": 17.5, \"y_target\": 17.5, \"open_door\": true, \"dest_collision_layer\": 0, \"activation_collision_layers\": 2}",
+     "tile_event\/25":"{\n  \"type\": \"teleport\",\n  \"x\": 28,\n  \"y\": 12,\n  \"target\": \"madra_inn\",\n  \"activation_directions\": \"up\",\n  \"x_target\": 29,\n  \"y_target\": 17,\n  \"dest_collision_layer\": 0,\n  \"activation_collision_layers\": 1,\n  \"open_door\": true,\n  \"door_settings\": {\n    \"replace_map\": [\n      {\n        \"tile_layer\": \"buildings_00\",\n        \"from_tile_id\": 191,\n        \"to_tile_id\": 137,\n        \"offset_x\": 0,\n        \"offset_y\": 0\n      },{\n        \"tile_layer\": \"buildings_00\",\n        \"from_tile_id\": 180,\n        \"to_tile_id\": 126,\n        \"offset_x\": 0,\n        \"offset_y\": -1\n      }\n    ]\n  }\n}\n",
+     "tile_event\/26":"{\n  \"type\": \"teleport\",\n  \"x\": 28,\n  \"y\": 8,\n  \"target\": \"madra_inn_up\",\n  \"activation_directions\": \"up\",\n  \"x_target\": 17.5,\n  \"y_target\": 17.5,\n  \"open_door\": true,\n  \"dest_collision_layer\": 0,\n  \"activation_collision_layers\": 2,\n  \"door_settings\": {\n    \"replace_map\": [\n      {\n        \"tile_layer\": \"buildings_00\",\n        \"from_tile_id\": 191,\n        \"to_tile_id\": 137,\n        \"offset_x\": 0,\n        \"offset_y\": 0\n      },{\n        \"tile_layer\": \"buildings_00\",\n        \"from_tile_id\": 180,\n        \"to_tile_id\": 126,\n        \"offset_x\": 0,\n        \"offset_y\": -1\n      }\n    ]\n  }\n}\n",
      "tile_event\/27":"{\"type\": \"jump\", \"x\": 16, \"y\": 7, \"activation_directions\": \"left\", \"activation_collision_layers\": 2}",
      "tile_event\/28":"{\"type\": \"jump\", \"x\": 16, \"y\": 6, \"activation_directions\": \"left\", \"activation_collision_layers\": 2}",
      "tile_event\/29":"{\"type\": \"jump\", \"x\": 14, \"y\": 7, \"activation_directions\": \"right\", \"activation_collision_layers\": 2}",
      "tile_event\/30":"{\"type\": \"jump\", \"x\": 14, \"y\": 6, \"activation_directions\": \"right\", \"activation_collision_layers\": 2}",
-     "tile_event\/31":"{\n    \"type\": \"teleport\",\n    \"key_name\": \"madra_door_teleport\",\n    \"x\": 23,\n    \"y\": 20,\n    \"target\": \"madra_house_1\",\n    \"activation_directions\": \"up\",\n    \"x_target\": 12.5,\n    \"y_target\": 18.5,\n    \"open_door\": true,\n    \"dest_collision_layer\": 0,\n    \"activation_collision_layers\": 1,\n    \"active_storage_key\": \"madra_door_teleport_enable\"\n}",
+     "tile_event\/31":"{\n  \"type\": \"teleport\",\n  \"key_name\": \"madra_door_teleport\",\n  \"x\": 23,\n  \"y\": 20,\n  \"target\": \"madra_house_1\",\n  \"activation_directions\": \"up\",\n  \"x_target\": 12.5,\n  \"y_target\": 18.5,\n  \"open_door\": true,\n  \"dest_collision_layer\": 0,\n  \"activation_collision_layers\": 1,\n  \"active_storage_key\": \"madra_door_teleport_enable\",\n  \"door_settings\": {\n    \"replace_map\": [\n      {\n        \"tile_layer\": \"buildings_00\",\n        \"from_tile_id\": 191,\n        \"to_tile_id\": 137,\n        \"offset_x\": 0,\n        \"offset_y\": 0\n      },\n      {\n        \"tile_layer\": \"buildings_00\",\n        \"from_tile_id\": 180,\n        \"to_tile_id\": 126,\n        \"offset_x\": 0,\n        \"offset_y\": -1\n      }\n    ]\n  }\n}\n",
      "tile_event\/32":"{\"type\": \"step\", \"x\": 12, \"y\": 11, \"activation_directions\": \"left\", \"step_direction\": \"up\", \"activation_collision_layers\": 1}",
      "tile_event\/33":"{\"type\": \"step\", \"x\": 12, \"y\": 12, \"activation_directions\": \"left\", \"step_direction\": \"up\", \"activation_collision_layers\": 1}",
      "tile_event\/34":"{\"type\": \"step\", \"x\": 11, \"y\": 11, \"activation_directions\": \"right\", \"step_direction\": \"down\", \"activation_collision_layers\": 1}",
@@ -2210,7 +2210,7 @@
      "tile_event\/65":"{\n\"type\": \"slider\",\n\"x_target\": 7,\n\"y_target\": 18,\n\"activation_directions\": \"down\",\n\"x\": 7,\n\"y\": 15,\n\"dest_collision_layer\": 0,\n\"activation_collision_layers\": 2\n}",
      "tile_event\/66":"{\n  \"type\": \"event_trigger\",\n  \"activation_directions\": \"all\",\n  \"active_storage_key\": \"ember_djinn\",\n  \"x\": 7,\n  \"y\": 13,\n  \"activation_collision_layers\": 2,\n  \"remove_from_field\": true,\n  \"events\": [{\n    \"type\": \"camera_follow\",\n    \"is_hero\": false,\n    \"npc_label\": \"ember_djinn\",\n    \"follow\": true,\n    \"transition_duration\": 400,\n    \"transition_end_events\": [{\n      \"type\": \"face_direction\",\n      \"direction\": \"up\",\n      \"is_npc\": true,\n      \"npc_label\": \"ember_djinn\",\n      \"wait_after\": 500,\n      \"finish_events\": [{\n        \"type\": \"look\",\n        \"look\": true,\n        \"looker_is_npc\": false,\n        \"target_is_npc\": true,\n        \"target_npc_label\": \"ember_djinn\"\n      }, {\n        \"type\": \"jump\",\n        \"is_npc\": true,\n        \"npc_label\": \"ember_djinn\",\n        \"wait_after\": 500,\n        \"finish_events\": [{\n          \"type\": \"move\",\n          \"is_npc\": true,\n          \"npc_label\": \"ember_djinn\",\n          \"dest\": {\n            \"x\": 5,\n            \"y\": 15\n          },\n          \"wait_after\": 500,\n          \"finish_events\": [{\n            \"type\": \"jump\",\n            \"is_npc\": true,\n            \"npc_label\": \"ember_djinn\",\n            \"jump_height\": 16,\n            \"duration\": 150,\n            \"dest\": {\n              \"tile_x\": 3,\n              \"tile_y\": 15\n            },\n            \"wait_after\": 500,\n            \"finish_events\": [{\n              \"type\": \"move\",\n              \"is_npc\": true,\n              \"npc_label\": \"ember_djinn\",\n              \"dest\": {\n                \"x\": 3,\n                \"y\": 18\n              },\n              \"wait_after\": 500,\n              \"final_direction\": \"up\",\n              \"follow_hero_on_finish\": true\n            }, {\n              \"type\": \"look\",\n              \"look\": false,\n              \"looker_is_npc\": false\n            }]\n          }]\n        }]\n      }]\n    }]\n  }]\n}",
      "tile_event\/67":"{\n    \"type\": \"event_trigger\",\n    \"activation_directions\": \"all\",\n    \"active_storage_key\": \"ember_djinn\",\n    \"x\": 3,\n    \"y\": 15,\n    \"activation_collision_layers\": 2,\n    \"remove_from_field\": true,\n    \"events\": [{\n      \"type\": \"look\",\n      \"look\": true,\n      \"looker_is_npc\": false,\n      \"target_is_npc\": true,\n      \"target_npc_label\": \"ember_djinn\"\n    },{\n      \"type\": \"move\",\n      \"is_npc\": true,\n      \"npc_label\": \"ember_djinn\",\n      \"dest\": {\"x\": 3, \"y\": 22},\n      \"wait_after\": 500,\n      \"final_direction\": \"up\",\n      \"camera_follow\": true,\n      \"camera_unfollow_char_on_finish\": true,\n      \"finish_events\": [{\n        \"type\": \"look\",\n        \"look\": false,\n        \"looker_is_npc\": false\n      },{\n        \"type\": \"timer\",\n        \"duration\": 200,\n        \"finish_events\": [{\n          \"type\": \"jump\",\n          \"is_npc\": true,\n          \"npc_label\": \"ember_djinn\",\n          \"wait_after\": 500,\n          \"finish_events\": [{\n            \"type\": \"camera_follow\",\n            \"is_hero\": true,\n            \"transition_duration\": 200\n          }]\n        }]\n      }]\n    }]\n}",
-     "tile_event\/68":"{\n    \"type\": \"teleport\",\n    \"x\": 19,\n    \"y\": 26,\n    \"target\": \"madra_church\",\n    \"activation_directions\": \"up\",\n    \"x_target\": 15.5,\n    \"y_target\": 24,\n    \"open_door\": true,\n    \"dest_collision_layer\": 0,\n    \"activation_collision_layers\": 1\n}",
+     "tile_event\/68":"{\n  \"type\": \"teleport\",\n  \"x\": 19,\n  \"y\": 26,\n  \"target\": \"madra_church\",\n  \"activation_directions\": \"up\",\n  \"x_target\": 15.5,\n  \"y_target\": 24,\n  \"open_door\": true,\n  \"dest_collision_layer\": 0,\n  \"activation_collision_layers\": 1,\n  \"door_settings\": {\n    \"replace_map\": [\n      {\n        \"tile_layer\": \"buildings_00\",\n        \"from_tile_id\": 191,\n        \"to_tile_id\": 137,\n        \"offset_x\": 0,\n        \"offset_y\": 0\n      },\n      {\n        \"tile_layer\": \"buildings_00\",\n        \"from_tile_id\": 180,\n        \"to_tile_id\": 126,\n        \"offset_x\": 0,\n        \"offset_y\": -1\n      }\n    ]\n  }\n}\n",
      "tile_event\/69":"{\n    \"type\": \"teleport\",\n    \"x\": 33,\n    \"y\": 11,\n    \"target\": \"madra_cave\",\n    \"activation_directions\": \"down\",\n    \"x_target\": 9,\n    \"y_target\": 1,\n    \"start_climbing\": true,\n    \"dest_collision_layer\": 1,\n    \"activation_collision_layers\": 0\n}"
     },
  "propertytypes":
@@ -2311,96 +2311,6 @@
          "spacing":0,
          "tilecount":374,
          "tileheight":16,
-         "tileproperties":
-            {
-             "126":
-                {
-                 "base_offset":"0,-1",
-                 "door_type":"01",
-                 "id":3,
-                 "open_door":"02"
-                },
-             "129":
-                {
-                 "base_offset":"0,-1",
-                 "close_door":"02",
-                 "door_type":"01",
-                 "id":2
-                },
-             "137":
-                {
-                 "base_offset":"0,0",
-                 "door_type":"01",
-                 "id":3,
-                 "open_door":"01"
-                },
-             "140":
-                {
-                 "base_offset":"0,0",
-                 "close_door":"01",
-                 "door_type":"01",
-                 "id":2
-                },
-             "180":
-                {
-                 "base_offset":"0,-1",
-                 "close_door":"02",
-                 "door_type":"01",
-                 "id":1
-                },
-             "191":
-                {
-                 "base_offset":"0,0",
-                 "close_door":"01",
-                 "door_type":"01",
-                 "id":1
-                }
-            },
-         "tilepropertytypes":
-            {
-             "126":
-                {
-                 "base_offset":"string",
-                 "door_type":"string",
-                 "id":"int",
-                 "open_door":"string"
-                },
-             "129":
-                {
-                 "base_offset":"string",
-                 "close_door":"string",
-                 "door_type":"string",
-                 "id":"int"
-                },
-             "137":
-                {
-                 "base_offset":"string",
-                 "door_type":"string",
-                 "id":"int",
-                 "open_door":"string"
-                },
-             "140":
-                {
-                 "base_offset":"string",
-                 "close_door":"string",
-                 "door_type":"string",
-                 "id":"int"
-                },
-             "180":
-                {
-                 "base_offset":"string",
-                 "close_door":"string",
-                 "door_type":"string",
-                 "id":"int"
-                },
-             "191":
-                {
-                 "base_offset":"string",
-                 "close_door":"string",
-                 "door_type":"string",
-                 "id":"int"
-                }
-            },
          "tilewidth":16
         }],
  "tilewidth":16,

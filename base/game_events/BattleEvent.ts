@@ -73,6 +73,7 @@ export class BattleEvent extends GameEvent {
                         true,
                         false,
                         false,
+                        undefined,
                         undefined
                     );
                     let promise_resolve;

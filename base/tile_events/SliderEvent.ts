@@ -215,7 +215,8 @@ export class SliderEvent extends TileEvent {
             true,
             true,
             true,
-            300
+            300,
+            undefined
         );
         event.set_fadein_callback(() => {
             hero_fall_tween.stop(false);

@@ -330,7 +330,8 @@ export class TileEventManager {
                 info.skip_checks,
                 info.finish_before_fadeout,
                 info.skip_map_change_events,
-                info.fade_duration
+                info.fade_duration,
+                info.door_settings
             );
         } else if (info.type === event_types.SLIDER) {
             return new SliderEvent(
