@@ -94,6 +94,8 @@ export enum event_types {
     CHAR_HUE = "char_hue",
     FLAME_CHAR = "flame_char",
     CHAR_BLEND_MODE = "char_blend_mode",
+    EVENT_CALLER = "event_caller",
+    EVENT_ACTIVATION = "event_activation",
 }
 
 /**
@@ -189,10 +191,12 @@ export abstract class GameEvent {
      * @returns if the child class has an async fire function, returns its Promise.
      */
     fire(origin_npc?: NPC) {
-        if (!this.active) return;
+        if (!this.active) {
+            return;
+        }
         this.check_reveal();
         this._origin_npc = origin_npc;
-        return this._fire();
+        this._fire();
     }
 
     /**
@@ -217,6 +221,14 @@ export abstract class GameEvent {
      * It should never be called.
      */
     protected abstract _destroy(): void;
+
+    /**
+     * Actives or deactives this event.
+     * @param activate whether to active or not.
+     */
+    set_event_activation(activate: boolean) {
+        this._active = activate;
+    }
 
     /**
      * A helper function that defines the ControllableChar based on inputs.

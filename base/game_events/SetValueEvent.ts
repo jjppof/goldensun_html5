@@ -28,15 +28,21 @@ export class SetValueEvent extends GameEvent {
                         _.set(this.data.hero, detailed_value.property, detailed_value.value);
                         break;
                     case game_info_types.NPC:
-                        const npc = this.data.map.npcs[detailed_value.index];
+                        const npc = detailed_value.label
+                            ? this.data.map.npcs_label_map[detailed_value.label]
+                            : this.data.map.npcs[detailed_value.index];
                         _.set(npc, detailed_value.property, detailed_value.value);
                         break;
                     case game_info_types.INTERACTABLE_OBJECT:
-                        const interactable_object = this.data.map.interactable_objects[detailed_value.index];
+                        const interactable_object = detailed_value.label
+                            ? this.data.map.interactable_objects_label_map[detailed_value.label]
+                            : this.data.map.interactable_objects[detailed_value.index];
                         _.set(interactable_object, detailed_value.property, detailed_value.value);
                         break;
                     case game_info_types.EVENT:
-                        const event = TileEvent.get_event(detailed_value.index);
+                        const event = detailed_value.label
+                            ? TileEvent.get_labeled_event(detailed_value.label)
+                            : TileEvent.get_event(detailed_value.index);
                         _.set(event, detailed_value.property, detailed_value.value);
                         break;
                 }

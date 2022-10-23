@@ -60,6 +60,8 @@ import {ParticlesEvent} from "./ParticlesEvent";
 import {CharHueEvent} from "./CharHueEvent";
 import {FlameCharEvent} from "./FlameCharEvent";
 import {CharBlendModeEvent} from "./CharBlendModeEvent";
+import {EventCallerEvent} from "./EventCallerEvent";
+import {EventActivationEvent} from "./EventActivationEvent";
 
 export enum interaction_patterns {
     NO_INTERACTION = "no_interaction",
@@ -967,6 +969,26 @@ export class GameEventManager {
                     info.is_npc,
                     info.npc_label,
                     info.blend_mode
+                );
+            case event_types.EVENT_CALLER:
+                return new EventCallerEvent(
+                    this.game,
+                    this.data,
+                    info.active,
+                    info.key_name,
+                    info.keep_reveal,
+                    info.event_label,
+                    info.activate_event_before
+                );
+            case event_types.EVENT_ACTIVATION:
+                return new EventActivationEvent(
+                    this.game,
+                    this.data,
+                    info.active,
+                    info.key_name,
+                    info.keep_reveal,
+                    info.event_label,
+                    info.activate
                 );
             default:
                 console.warn(`Game event type ${info.type} not found.`);
