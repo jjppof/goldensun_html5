@@ -117,7 +117,21 @@ export class StartMenu {
         this.input.onchange = async e => {
             const file = (<HTMLInputElement>e.target).files[0];
             try {
-                const snapshot = JSON.parse(await file.text());
+                let snapshot;
+                if (this.data.electron_app) {
+                    //Blob.text() is only available on chrome 76 onwards
+                    const reader = new FileReader();
+                    let promise_resolve;
+                    const promise = new Promise(resolve => (promise_resolve = resolve));
+                    reader.addEventListener("load", e => {
+                        snapshot = JSON.parse(e.target.result as string);
+                        promise_resolve();
+                    });
+                    reader.readAsBinaryString(file);
+                    await promise;
+                } else {
+                    snapshot = JSON.parse(await file.text());
+                }
                 this.horizontal_menu.close(() => {
                     this.choose_callback(snapshot);
                 });
