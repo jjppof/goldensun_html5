@@ -123,7 +123,7 @@ export class TeleportEvent extends TileEvent {
                 const from_tile_id = replace_info.from_tile_id + 1;
                 const to_tile_id = replace_info.to_tile_id + 1;
                 const x = this.x + replace_info.offset_x;
-                const y = this.y + replace_info.offset_y - 1;
+                const y = this.y + replace_info.offset_y;
                 this.data.map.sprite.replace(from_tile_id, to_tile_id, x, y, 1, 1, replace_info.tile_layer);
             });
             this.game.physics.p2.pause();
