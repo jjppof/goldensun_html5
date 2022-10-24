@@ -493,6 +493,21 @@
                 "frame_rate": 1,
                 "loop": false
             },
+            "stair": {
+                "spritesheet": {
+                    "json": "assets/images/spritesheets/main_chars/isaac_stair.json",
+                    "image": "assets/images/spritesheets/main_chars/isaac_stair.png"
+                },
+                "animations": [
+                    "down_to_up_in",
+                    "down_to_up_out",
+                    "up_to_down_in",
+                    "up_to_down_out"
+                ],
+                "frames_count": 3,
+                "frame_rate": 10,
+                "loop": false
+            },
             "battle": {
                 "spritesheet": {
                     "json": "assets/images/spritesheets/battle/isaac_battle.json",

@@ -34,6 +34,7 @@ export class TeleportEvent extends TileEvent {
         }[];
         door_open_sfx: string;
     };
+    private spiral_stair: "up" | "down";
 
     constructor(
         game,
@@ -60,7 +61,8 @@ export class TeleportEvent extends TileEvent {
         finish_before_fadeout,
         skip_map_change_events,
         fade_duration,
-        door_settings
+        door_settings,
+        spiral_stair
     ) {
         super(
             game,
@@ -93,6 +95,7 @@ export class TeleportEvent extends TileEvent {
         this.finish_callback = null;
         this.fadein_callback = null;
         this.door_settings = door_settings ?? null;
+        this.spiral_stair = spiral_stair ?? null;
     }
 
     get open_door() {
@@ -112,25 +115,48 @@ export class TeleportEvent extends TileEvent {
         this.data.tile_event_manager.on_event = true;
         this.data.hero.teleporting = true;
         if (this.open_door && this.door_settings) {
-            if (!this.data.hero.stop_by_colliding) {
-                this.data.tile_event_manager.on_event = false;
-                this.data.hero.teleporting = false;
-                return;
-            }
-            this.data.audio.play_se(this.door_settings.door_open_sfx ?? TeleportEvent.DEFAULT_DOOR_OPEN_SFX);
-            this.data.hero.play(base_actions.WALK, reverse_directions[directions.up]);
-            this.door_settings.replace_map.forEach(replace_info => {
-                const from_tile_id = replace_info.from_tile_id + 1;
-                const to_tile_id = replace_info.to_tile_id + 1;
-                const x = this.x + replace_info.offset_x;
-                const y = this.y + replace_info.offset_y;
-                this.data.map.sprite.replace(from_tile_id, to_tile_id, x, y, 1, 1, replace_info.tile_layer);
-            });
-            this.game.physics.p2.pause();
-            const time = 400;
-            const tween_x = this.data.map.tile_width * (this.x + 0.5);
-            const tween_y = this.data.hero.sprite.y - 15;
-            this.game.add.tween(this.data.hero.shadow).to(
+            this.open_door_teleport();
+        } else if (this.start_climbing) {
+            this.climbing_teleport();
+        } else if (this.spiral_stair) {
+            this.spiral_stair_teleport();
+        } else {
+            this.data.audio.play_se("door/default");
+            this.camera_fade_in();
+        }
+    }
+
+    private open_door_teleport() {
+        if (!this.data.hero.stop_by_colliding) {
+            this.data.tile_event_manager.on_event = false;
+            this.data.hero.teleporting = false;
+            return;
+        }
+        this.data.audio.play_se(this.door_settings.door_open_sfx ?? TeleportEvent.DEFAULT_DOOR_OPEN_SFX);
+        this.data.hero.play(base_actions.WALK, reverse_directions[directions.up]);
+        this.door_settings.replace_map.forEach(replace_info => {
+            const from_tile_id = replace_info.from_tile_id + 1;
+            const to_tile_id = replace_info.to_tile_id + 1;
+            const x = this.x + replace_info.offset_x;
+            const y = this.y + replace_info.offset_y;
+            this.data.map.sprite.replace(from_tile_id, to_tile_id, x, y, 1, 1, replace_info.tile_layer);
+        });
+        this.game.physics.p2.pause();
+        const time = 400;
+        const tween_x = this.data.map.tile_width * (this.x + 0.5);
+        const tween_y = this.data.hero.sprite.y - 15;
+        this.game.add.tween(this.data.hero.shadow).to(
+            {
+                x: tween_x,
+                y: tween_y,
+            },
+            time,
+            Phaser.Easing.Linear.None,
+            true
+        );
+        this.game.add
+            .tween(this.data.hero.sprite.body)
+            .to(
                 {
                     x: tween_x,
                     y: tween_y,
@@ -138,62 +164,67 @@ export class TeleportEvent extends TileEvent {
                 time,
                 Phaser.Easing.Linear.None,
                 true
-            );
+            )
+            .onComplete.addOnce(() => {
+                this.camera_fade_in();
+            });
+    }
+
+    private climbing_teleport() {
+        if (!this.data.hero.stop_by_colliding) {
+            this.data.tile_event_manager.on_event = false;
+            this.data.hero.teleporting = false;
+            return;
+        }
+        this.data.map.sprites_sort_paused = true;
+        const turn_animation = this.data.hero.play(base_actions.CLIMB, climb_actions.TURN);
+        turn_animation.onComplete.addOnce(() => {
+            this.data.hero.shadow.visible = false;
+            const x_tween = this.data.map.tile_width * (this.x + 0.5);
+            const y_tween = this.data.hero.sprite.y + 25;
+            this.game.physics.p2.pause();
             this.game.add
                 .tween(this.data.hero.sprite.body)
-                .to(
-                    {
-                        x: tween_x,
-                        y: tween_y,
-                    },
-                    time,
-                    Phaser.Easing.Linear.None,
-                    true
-                )
-                .onComplete.addOnce(() => {
-                    this.camera_fade_in();
-                });
-        } else if (this.start_climbing) {
-            if (!this.data.hero.stop_by_colliding) {
-                this.data.tile_event_manager.on_event = false;
-                this.data.hero.teleporting = false;
-                return;
-            }
-            this.data.map.sprites_sort_paused = true;
-            const turn_animation = this.data.hero.play(base_actions.CLIMB, climb_actions.TURN);
-            turn_animation.onComplete.addOnce(() => {
-                this.data.hero.shadow.visible = false;
-                const x_tween = this.data.map.tile_width * (this.x + 0.5);
-                const y_tween = this.data.hero.sprite.y + 25;
-                this.game.physics.p2.pause();
-                this.game.add
-                    .tween(this.data.hero.sprite.body)
-                    .to({x: x_tween, y: y_tween}, 300, Phaser.Easing.Linear.None, true);
-                const start_animation = this.data.hero.play(base_actions.CLIMB, climb_actions.START);
-                start_animation.onComplete.addOnce(() => {
-                    this.data.hero.sprite.anchor.y -= 0.1;
-                    this.data.hero.play(base_actions.CLIMB, climb_actions.IDLE);
-                    this.data.map.sprites_sort_paused = false;
-                    this.data.hero.climbing = true;
-                    this.data.hero.change_action(base_actions.CLIMB);
-                    this.data.hero.idle_climbing = true;
-                    this.data.audio.play_se("door/default");
-                    this.camera_fade_in();
-                });
+                .to({x: x_tween, y: y_tween}, 300, Phaser.Easing.Linear.None, true);
+            const start_animation = this.data.hero.play(base_actions.CLIMB, climb_actions.START);
+            start_animation.onComplete.addOnce(() => {
+                this.data.hero.sprite.anchor.y -= 0.1;
+                this.data.hero.play(base_actions.CLIMB, climb_actions.IDLE);
+                this.data.map.sprites_sort_paused = false;
+                this.data.hero.climbing = true;
+                this.data.hero.change_action(base_actions.CLIMB);
+                this.data.hero.idle_climbing = true;
+                this.data.audio.play_se("door/default");
+                this.camera_fade_in();
             });
-        } else {
-            this.data.audio.play_se("door/default");
-            this.camera_fade_in();
+        });
+    }
+
+    private spiral_stair_teleport() {
+        let animation: string;
+        if (this.spiral_stair === "down") {
+            animation = "up_to_down_in";
+            this.data.audio.play_se("door/stair_down");
+        } else if (this.spiral_stair === "up") {
+            animation = "down_to_up_in";
+            this.data.audio.play_se("door/stair_up");
         }
+        const get_in_animation = this.data.hero.play(base_actions.STAIR, animation);
+        this.data.hero.shadow.visible = false;
+        get_in_animation.onComplete.addOnce(() => {
+            this.data.hero.sprite.visible = false;
+        });
+        this.camera_fade_in();
     }
 
     private camera_fade_in() {
-        this.data.hero.stop_char(true);
+        this.data.hero.stop_char(this.spiral_stair ? false : true);
 
         const on_camera_fade_in = () => {
             if (this.fadein_callback) {
                 this.fadein_callback();
             }
+
             if (this.data.hero.on_reveal) {
                 (this.data.info.field_abilities_list.reveal as RevealFieldPsynergy).finish(true);
             }
@@ -209,7 +240,7 @@ export class TeleportEvent extends TileEvent {
                 this.data.hero.shadow.visible = true;
                 this.data.hero.sprite.anchor.y += 0.1;
             }
-            if (!this.data.hero.climbing) {
+            if (!this.data.hero.climbing && !this.spiral_stair) {
                 this.data.hero.set_direction(destination_direction);
                 this.data.hero.play(base_actions.IDLE, reverse_directions[this.data.hero.current_direction]);
             }
@@ -245,7 +276,11 @@ export class TeleportEvent extends TileEvent {
             this.data.debug.update_debug_physics(this.data.hero.sprite.body.debug);
         }
         this.data.hero.sprite.body.x = get_centered_pos_in_px(this.x_target, this.data.map.tile_width);
-        this.data.hero.sprite.body.y = get_centered_pos_in_px(this.y_target, this.data.map.tile_height);
+        if (this.spiral_stair) {
+            this.data.hero.sprite.body.y = this.y_target * this.data.map.tile_height + 1;
+        } else {
+            this.data.hero.sprite.body.y = get_centered_pos_in_px(this.y_target, this.data.map.tile_height);
+        }
         this.game.physics.p2.resume();
         this.camera_fade_out(curr_map_name);
     }
@@ -283,6 +318,21 @@ export class TeleportEvent extends TileEvent {
             if (this.finish_before_fadeout) {
                 on_camera_fade_out();
             } else {
+                if (this.spiral_stair) {
+                    let animation: string;
+                    if (this.spiral_stair === "down") {
+                        animation = "up_to_down_out";
+                    } else if (this.spiral_stair === "up") {
+                        animation = "down_to_up_out";
+                    }
+                    this.data.hero.sprite.visible = true;
+                    const get_in_animation = this.data.hero.play(base_actions.STAIR, animation);
+                    get_in_animation.onComplete.addOnce(() => {
+                        this.data.hero.shadow.visible = true;
+                        this.data.hero.set_direction(directions.down);
+                        this.data.hero.play(base_actions.IDLE, reverse_directions[this.data.hero.current_direction]);
+                    });
+                }
                 this.game.camera.onFlashComplete.addOnce(on_camera_fade_out);
             }
         } else {

@@ -161,6 +161,14 @@
                 "open_door": {
                     "start": 1.18,
                     "end": 1.666
+                },
+                "stair_up": {
+                    "start": 1.666,
+                    "end": 2.556
+                },
+                "stair_down": {
+                    "start": 2.556,
+                    "end": 3.576
                 }
             }
         }
