@@ -44,11 +44,9 @@
         ],
         "vulnerabilities": [
             {
-                "type": "temporary_status",
                 "chance": 0.25,
                 "status_key_name": "delusion"
             },{
-                "type": "temporary_status",
                 "chance": 0.25,
                 "status_key_name": "sleep"
             }
@@ -137,11 +135,9 @@
         ],
         "vulnerabilities": [
             {
-                "type": "temporary_status",
                 "chance": 0.25,
                 "status_key_name": "delusion"
             },{
-                "type": "temporary_status",
                 "chance": 0.25,
                 "status_key_name": "sleep"
             }

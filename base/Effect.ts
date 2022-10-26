@@ -455,14 +455,23 @@ export class Effect {
         ability: Ability,
         magnitude: number
     ) {
-        let vulnerability = _.find(target.class.vulnerabilities, {
+        const vulnerability = _.find(target.class.vulnerabilities, {
             status_key_name: effect_obj.status_key_name,
         });
-        vulnerability = vulnerability === undefined ? 0 : vulnerability.chance;
+        const vulnerability_chance = vulnerability !== undefined ? vulnerability.chance : 0;
         const ratio = diminishing_ratios.STATUS[magnitude];
 
         let added_effect: Effect = null;
-        if (BattleFormulas.ailment_success(caster, target, effect_obj.chance, ratio, ability.element, vulnerability)) {
+        if (
+            BattleFormulas.ailment_success(
+                caster,
+                target,
+                effect_obj.chance,
+                ratio,
+                ability.element,
+                vulnerability_chance
+            )
+        ) {
             added_effect = target.add_effect(this, ability, true).effect;
             if (added_effect.type === effect_types.TEMPORARY_STATUS) {
                 if (

@@ -3,7 +3,7 @@
 import {elements, ordered_elements} from "./utils";
 import * as _ from "lodash";
 import {GameInfo} from "./initializers/initialize_info";
-import {main_stats, Player} from "./Player";
+import {main_stats, permanent_status, Player, temporary_status} from "./Player";
 
 export class Classes {
     public key_name: string;
@@ -15,7 +15,10 @@ export class Classes {
         level: number;
     }[];
     public class_type: number;
-    public vulnerabilities: any;
+    public vulnerabilities: {
+        chance: number;
+        status_key_name: permanent_status | temporary_status;
+    }[];
 
     constructor(
         key_name,
@@ -43,7 +46,7 @@ export class Classes {
         this.boost_stats[main_stats.LUCK] = luk_boost;
         this.ability_level_pairs = ability_level_pairs;
         this.class_type = class_type;
-        this.vulnerabilities = vulnerabilities === undefined ? [] : vulnerabilities;
+        this.vulnerabilities = vulnerabilities ?? [];
     }
 
     static choose_right_class(

@@ -3,6 +3,7 @@ import {ordered_elements} from "./utils";
 import * as _ from "lodash";
 import * as numbers from "./magic_numbers";
 import {effect_types} from "./Effect";
+import {Classes} from "./Classes";
 
 export class Enemy extends Player {
     public items: {
@@ -18,7 +19,7 @@ export class Enemy extends Player {
     public item_reward: string;
     public item_reward_chance: number;
     public exp_reward: number;
-    public class: any;
+    public class: Classes;
     public current_hp_recovery: number;
     public current_pp_recovery: number;
 
@@ -48,10 +49,20 @@ export class Enemy extends Player {
         this.status_sprite_shift = enemy_data.status_sprite_shift ?? 0;
         this.battle_animations_variations = Object.assign({}, enemy_data.battle_animations_variations);
         this.fighter_type = fighter_types.ENEMY;
-        this.class = {
-            name: "No Class",
-            vulnerabilities: enemy_data.vulnerabilities ?? [],
-        };
+        this.class = new Classes(
+            "no_class",
+            "No Class",
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            enemy_data.vulnerabilities
+        );
         this.current_exp = -1;
         this.effects = [];
         this.set_base_attributes();
