@@ -6,7 +6,14 @@ import {event_types, GameEvent} from "./game_events/GameEvent";
 import {EngineFilters, GoldenSun} from "./GoldenSun";
 import * as _ from "lodash";
 import {ControllableChar} from "./ControllableChar";
-import {base_actions, directions, get_px_position, get_text_width, parse_blend_mode} from "./utils";
+import {
+    base_actions,
+    directions,
+    get_px_position,
+    get_text_width,
+    parse_blend_mode,
+    weighted_random_pick,
+} from "./utils";
 import {BattleEvent} from "./game_events/BattleEvent";
 import {Djinn} from "./Djinn";
 import {Pushable} from "./interactable_objects/Pushable";
@@ -1407,7 +1414,8 @@ export class Map {
             const background_key = zone_bg_key ?? tile_bg_key ?? this.background_key;
 
             if (parties.length) {
-                const party = _.sample(parties);
+                const weights = parties.map(party => this.data.dbs.enemies_parties_db[party].weight ?? 1);
+                const party = weighted_random_pick(parties, weights);
                 const event = this.data.game_event_manager.get_event_instance({
                     type: event_types.BATTLE,
                     background_key: background_key,

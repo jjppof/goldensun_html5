@@ -513,3 +513,28 @@ export async function promised_wait(game: Phaser.Game, time: number, callback?: 
     timer.start();
     await promise;
 }
+
+/**
+ * Picks an item from an input array randomly based on weights list.
+ * Items and weights array must agree.
+ * @param items array of items to has one element picked.
+ * @param weights weights for each element of items array.
+ * @returns returns one element of items.
+ */
+export function weighted_random_pick<T>(items: T[], weights: number[]) {
+    for (let i = 0; i < weights.length; ++i) {
+        weights[i] += weights[i - 1] || 0;
+    }
+
+    const random = Math.random() * weights[weights.length - 1];
+
+    let choosen = 0;
+    for (let i = 0; i < weights.length; ++i) {
+        if (weights[i] > random) {
+            choosen = i;
+            break;
+        }
+    }
+
+    return items[choosen];
+}
