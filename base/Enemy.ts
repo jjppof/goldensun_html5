@@ -112,6 +112,6 @@ export class Enemy extends Player {
     }
 }
 
-export function get_enemy_instance(enemy_data, suffix) {
+export function get_enemy_instance(enemy_data, suffix: string) {
     return new Enemy(enemy_data, enemy_data.name + suffix);
 }

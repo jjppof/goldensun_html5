@@ -1,4 +1,4 @@
-import {GoldenSun} from "../GoldenSun";
+import {EngineFilters, GoldenSun} from "../GoldenSun";
 import {weapon_types} from "../Item";
 import {permanent_status, Player, temporary_status} from "../Player";
 import {SpriteBase} from "../SpriteBase";
@@ -75,6 +75,7 @@ export class PlayerSprite {
     public player_instance: MainChar | Enemy;
     private _active: boolean;
     public force_stage_update: boolean;
+    private hue_angle: number;
 
     constructor(
         game: Phaser.Game,
@@ -84,7 +85,8 @@ export class PlayerSprite {
         sprite_base: SpriteBase,
         is_ally: boolean,
         initial_action: battle_actions,
-        initial_position: battle_positions
+        initial_position: battle_positions,
+        hue_angle: number
     ) {
         this.game = game;
         this.data = data;
@@ -107,6 +109,7 @@ export class PlayerSprite {
         this.status_timer = this.game.time.create(false);
         this._active = false;
         this.force_stage_update = false;
+        this.hue_angle = hue_angle;
     }
 
     get x() {
@@ -234,6 +237,8 @@ export class PlayerSprite {
         const flame_filter = this.game.add.filter("Flame") as Phaser.Filter.Flame;
         this.char_sprite.available_filters[flame_filter.key] = flame_filter;
 
+        this.reset_hue_angle();
+
         if (this.is_ally) {
             const player = this.player_instance as MainChar;
             const weapon_slot = player.equip_slots.weapon;
@@ -303,6 +308,14 @@ export class PlayerSprite {
 
     get_animation_key(action: battle_actions, position: battle_positions) {
         return this.sprite_base.getAnimationKey(base_actions.BATTLE, `${action}_${position}`);
+    }
+
+    reset_hue_angle() {
+        if (!this.is_ally && this.hue_angle) {
+            const hue_filter = this.char_sprite.available_filters[EngineFilters.HUE] as Phaser.Filter.Hue;
+            hue_filter.angle = this.hue_angle;
+            this.char_sprite.filters = [hue_filter];
+        }
     }
 
     async unmount_by_dissolving() {
@@ -413,6 +426,10 @@ export class PlayerSprite {
         this.on_status_change_subs.unsubscribe();
         this.status_timer.stop();
         this.status_timer.destroy();
+        this.char_sprite.filters = undefined;
+        for (let filter_key in this.char_sprite.available_filters) {
+            (this.char_sprite.available_filters[filter_key] as Phaser.Filter).destroy();
+        }
         this.parent_group.remove(this.group);
         this.group.destroy(true);
     }

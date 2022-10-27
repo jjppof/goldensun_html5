@@ -259,7 +259,8 @@ export class BattleStage {
                 sprite_base,
                 true,
                 battle_actions.IDLE,
-                battle_positions.BACK
+                battle_positions.BACK,
+                undefined
             );
             player_sprite.initialize_player();
             info.sprite = player_sprite;
@@ -276,7 +277,8 @@ export class BattleStage {
                 sprite_base,
                 false,
                 battle_actions.IDLE,
-                battle_positions.FRONT
+                battle_positions.FRONT,
+                info.hue_angle
             );
             player_sprite.initialize_player();
             info.sprite = player_sprite;

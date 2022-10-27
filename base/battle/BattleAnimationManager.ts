@@ -171,6 +171,7 @@ export class BattleAnimationManager {
         animation.play(play_promise_resolve);
         await play_promise;
         this.render_functions = this.render_functions.filter(f => f !== render_function);
+        this.data.battle_instance.battle_stage.enemies_info.forEach(info => info.sprite.reset_hue_angle());
     }
 
     render() {

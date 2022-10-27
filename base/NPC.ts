@@ -770,9 +770,18 @@ export class NPC extends ControllableChar {
      */
     unset() {
         if (this.sprite) {
+            this.sprite.filters = undefined;
             this.data.middlelayer_group.removeChild(this.sprite);
             this.sprite.destroy();
         }
+        this.colorize_filter.destroy();
+        this.levels_filter.destroy();
+        this.color_blend_filter.destroy();
+        this.hue_filter.destroy();
+        this.tint_filter.destroy();
+        this.gray_filter.destroy();
+        this.flame_filter.destroy();
+        this.outline_filter.destroy();
         if (this.shadow) {
             this.data.middlelayer_group.removeChild(this.shadow);
             this.shadow.destroy();

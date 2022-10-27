@@ -415,7 +415,7 @@ export class BattleAnimation {
         });
     }
 
-    play(finish_callback) {
+    play(finish_callback: () => void) {
         this.running = true;
         this.promises = [];
         this.play_number_property_sequence(this.x_sequence, "x");
@@ -453,6 +453,10 @@ export class BattleAnimation {
     unmount_animation(finish_callback) {
         Promise.all(this.promises).then(() => {
             this.sprites.forEach(sprite => {
+                sprite.filters = undefined;
+                for (let filter_key in sprite.available_filters) {
+                    (sprite.available_filters[filter_key] as Phaser.Filter).destroy();
+                }
                 sprite.destroy();
             });
             this.trails_objs.forEach(obj => {

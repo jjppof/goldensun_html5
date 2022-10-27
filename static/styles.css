@@ -19,7 +19,7 @@ body.electron {
     display: none;
 }
 .bottom-warning {
-    position: absolute;
+    position: fixed;
     bottom: 0px;
     width: 100%;
     padding: 1rem 0 !important;

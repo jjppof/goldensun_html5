@@ -52,12 +52,14 @@ export type PlayerInfo = {
     entered_in_battle?: boolean;
     battle_key?: string;
     sprite?: PlayerSprite;
+    hue_angle?: number;
 };
 
 export type EnemyPartyMember = {
     key: string;
     min: number;
     max: number;
+    hue_angle: number;
 };
 
 export class Battle {
@@ -137,6 +139,7 @@ export class Battle {
             for (let i = 0; i < qtd; ++i) {
                 this.enemies_info.push({
                     sprite_key: member_info.key + SpriteBase.ACTION_ANIM_SEPARATOR + base_actions.BATTLE,
+                    hue_angle: member_info.hue_angle ?? 0,
                 });
 
                 if (this.enemies_info[counter].sprite_key in battle_keys_count) {

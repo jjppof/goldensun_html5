@@ -1287,8 +1287,16 @@ export class InteractableObjects {
 
     unset(remove_from_middlelayer_group: boolean = true) {
         if (this.sprite) {
+            this.sprite.filters = undefined;
             this.sprite.destroy();
         }
+        this.colorize_filter.destroy();
+        this.levels_filter.destroy();
+        this.color_blend_filter.destroy();
+        this.hue_filter.destroy();
+        this.tint_filter.destroy();
+        this.gray_filter.destroy();
+        this.flame_filter.destroy();
         this._extra_sprites.forEach(sprite => {
             if (sprite) {
                 sprite.destroy(true);
