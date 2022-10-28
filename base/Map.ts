@@ -3,7 +3,7 @@ import {InteractableObjects} from "./interactable_objects/InteractableObjects";
 import {IntegerPairKey, TileEvent} from "./tile_events/TileEvent";
 import * as numbers from "./magic_numbers";
 import {event_types, GameEvent} from "./game_events/GameEvent";
-import {EngineFilters, GoldenSun} from "./GoldenSun";
+import {GoldenSun} from "./GoldenSun";
 import * as _ from "lodash";
 import {ControllableChar} from "./ControllableChar";
 import {
@@ -13,6 +13,7 @@ import {
     get_text_width,
     parse_blend_mode,
     weighted_random_pick,
+    engine_filters,
 } from "./utils";
 import {BattleEvent} from "./game_events/BattleEvent";
 import {Djinn} from "./Djinn";
@@ -90,7 +91,7 @@ export class Map {
     };
     private _paused: boolean;
     private _generic_sprites: {[key_name: string]: Phaser.Sprite};
-    private _active_filters: {[key in EngineFilters]?: boolean};
+    private _active_filters: {[key in engine_filters]?: boolean};
 
     private _map_name_window: Window;
     private _show_map_name: boolean;
@@ -164,9 +165,9 @@ export class Map {
         this.sprites_sort_paused = false;
         this._generic_sprites = {};
         this._active_filters = {
-            [EngineFilters.COLORIZE]: false,
-            [EngineFilters.GRAY]: false,
-            [EngineFilters.MODE7]: false,
+            [engine_filters.COLORIZE]: false,
+            [engine_filters.GRAY]: false,
+            [engine_filters.MODE7]: false,
         };
         this._map_name_window = null;
         this._show_map_name = show_map_name ?? true;

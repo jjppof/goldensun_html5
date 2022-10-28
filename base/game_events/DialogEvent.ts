@@ -3,6 +3,7 @@ import {GameEvent, event_types} from "./GameEvent";
 import {Button} from "../XGamepad";
 import {YesNoMenu} from "../windows/YesNoMenu";
 import {GAME_HEIGHT} from "../magic_numbers";
+import {base_actions} from "../utils";
 
 type DialogInfo = {
     text: string;
@@ -146,12 +147,29 @@ export class DialogEvent extends GameEvent {
                 ) {
                     this.yes_no_menu = new YesNoMenu(this.game, this.data);
                     const y_pos = this.dialog_manager.window_y > GAME_HEIGHT >> 1 ? 5 : null;
+                    const previous_force_idle_action_in_event = this.data.hero.force_idle_action_in_event;
                     this.yes_no_menu.open(
                         {
-                            yes: () =>
-                                this.next(() => this.yes_no_events.yes.forEach(event => event.fire(this.origin_npc))),
-                            no: () =>
-                                this.next(() => this.yes_no_events.no.forEach(event => event.fire(this.origin_npc))),
+                            yes: () => {
+                                this.data.hero.force_idle_action_in_event = false;
+                                const confirm_anim = this.data.hero.play(base_actions.YES);
+                                confirm_anim.onComplete.addOnce(
+                                    () =>
+                                        (this.data.hero.force_idle_action_in_event =
+                                            previous_force_idle_action_in_event)
+                                );
+                                this.next(() => this.yes_no_events.yes.forEach(event => event.fire(this.origin_npc)));
+                            },
+                            no: () => {
+                                this.data.hero.force_idle_action_in_event = false;
+                                const confirm_anim = this.data.hero.play(base_actions.NO);
+                                confirm_anim.onComplete.addOnce(
+                                    () =>
+                                        (this.data.hero.force_idle_action_in_event =
+                                            previous_force_idle_action_in_event)
+                                );
+                                this.next(() => this.yes_no_events.no.forEach(event => event.fire(this.origin_npc)));
+                            },
                         },
                         {
                             ...(y_pos !== null && {y: y_pos}),

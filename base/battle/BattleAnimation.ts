@@ -1,6 +1,6 @@
-import {EngineFilters, GoldenSun} from "../GoldenSun";
+import {GoldenSun} from "../GoldenSun";
 import * as numbers from "../magic_numbers";
-import {elements, element_colors_in_battle, range_360} from "../utils";
+import {elements, element_colors_in_battle, range_360, engine_filters} from "../utils";
 import {BattleStage, DEFAULT_POS_ANGLE} from "./BattleStage";
 import * as _ from "lodash";
 import {battle_actions, PlayerSprite} from "./PlayerSprite";
@@ -848,7 +848,7 @@ export class BattleAnimation {
 
     play_general_filter(
         sequence: GeneralFilterAttr[],
-        filter_key: EngineFilters,
+        filter_key: engine_filters,
         set_filter?: (sequence: GeneralFilterAttr, filter: Phaser.Filter) => void
     ) {
         for (let i = 0; i < sequence.length; ++i) {
@@ -879,7 +879,7 @@ export class BattleAnimation {
     play_levels_filter(sequence: BattleAnimation["levels_filter_sequence"]) {
         this.play_general_filter(
             sequence,
-            EngineFilters.LEVELS,
+            engine_filters.LEVELS,
             (filter_seq: BattleAnimation["levels_filter_sequence"][0], filter: Phaser.Filter.Levels) => {
                 filter.min_input = filter_seq.min_input ?? filter.min_input;
                 filter.max_input = filter_seq.max_input ?? filter.max_input;
@@ -891,7 +891,7 @@ export class BattleAnimation {
     play_color_blend_filter(sequence: BattleAnimation["color_blend_filter_sequence"]) {
         this.play_general_filter(
             sequence,
-            EngineFilters.COLOR_BLEND,
+            engine_filters.COLOR_BLEND,
             (filter_seq: BattleAnimation["color_blend_filter_sequence"][0], filter: Phaser.Filter.ColorBlend) => {
                 filter.r = filter_seq.r ?? filter.r;
                 filter.g = filter_seq.g ?? filter.g;
@@ -901,13 +901,13 @@ export class BattleAnimation {
     }
 
     play_flame_filter(sequence: BattleAnimation["flame_filter_sequence"]) {
-        this.play_general_filter(sequence, EngineFilters.FLAME);
+        this.play_general_filter(sequence, engine_filters.FLAME);
     }
 
     play_tint_filter(sequence: BattleAnimation["tint_sequence"]) {
         this.play_general_filter(
             sequence,
-            EngineFilters.TINT,
+            engine_filters.TINT,
             (filter_seq: BattleAnimation["tint_sequence"][0], filter: Phaser.Filter.Tint) => {
                 filter.r = filter_seq.r ?? filter.r;
                 filter.g = filter_seq.g ?? filter.g;
@@ -919,7 +919,7 @@ export class BattleAnimation {
     play_colorize_filter(sequence: BattleAnimation["colorize_sequence"]) {
         this.play_general_filter(
             sequence,
-            EngineFilters.COLORIZE,
+            engine_filters.COLORIZE,
             (filter_seq: BattleAnimation["colorize_sequence"][0], filter: Phaser.Filter.Colorize) => {
                 filter.color = filter_seq.color ?? filter.color;
                 filter.intensity = filter_seq.intensity ?? filter.intensity;

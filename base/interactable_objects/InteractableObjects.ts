@@ -10,10 +10,11 @@ import {
     get_surroundings,
     mount_collision_polygon,
     reverse_directions,
+    engine_filters,
 } from "../utils";
 import {JumpEvent} from "../tile_events/JumpEvent";
 import {ClimbEvent} from "../tile_events/ClimbEvent";
-import {EngineFilters, GoldenSun} from "../GoldenSun";
+import {GoldenSun} from "../GoldenSun";
 import {Map} from "../Map";
 import {RopeEvent} from "../tile_events/RopeEvent";
 import {GameEvent} from "../game_events/GameEvent";
@@ -137,7 +138,7 @@ export class InteractableObjects {
     private _current_action: string;
     private _snapshot_info: SnapshotData["map_data"]["interactable_objects"][0];
     private _shapes_collision_active: boolean;
-    private _active_filters: {[key in EngineFilters]?: boolean};
+    private _active_filters: {[key in engine_filters]?: boolean};
     private _affected_by_reveal: boolean;
 
     constructor(
@@ -265,14 +266,14 @@ export class InteractableObjects {
         this._current_action = action;
         this._shapes_collision_active = false;
         this._active_filters = {
-            [EngineFilters.COLORIZE]: false,
-            [EngineFilters.OUTLINE]: false,
-            [EngineFilters.LEVELS]: false,
-            [EngineFilters.COLOR_BLEND]: false,
-            [EngineFilters.HUE]: false,
-            [EngineFilters.TINT]: false,
-            [EngineFilters.GRAY]: false,
-            [EngineFilters.FLAME]: false,
+            [engine_filters.COLORIZE]: false,
+            [engine_filters.OUTLINE]: false,
+            [engine_filters.LEVELS]: false,
+            [engine_filters.COLOR_BLEND]: false,
+            [engine_filters.HUE]: false,
+            [engine_filters.TINT]: false,
+            [engine_filters.GRAY]: false,
+            [engine_filters.FLAME]: false,
         };
         this._map_index = map_index;
     }
@@ -650,38 +651,38 @@ export class InteractableObjects {
             }
             if (this.snapshot_info?.active_filters) {
                 const active_filters = this.snapshot_info.active_filters;
-                if (active_filters[EngineFilters.COLORIZE]) {
+                if (active_filters[engine_filters.COLORIZE]) {
                     this.manage_filter(this.colorize_filter, true);
                     this.colorize_filter.intensity = this.snapshot_info.filter_settings.colorize.intensity;
                     this.colorize_filter.color = this.snapshot_info.filter_settings.colorize.color;
                 }
-                if (active_filters[EngineFilters.LEVELS]) {
+                if (active_filters[engine_filters.LEVELS]) {
                     this.manage_filter(this.levels_filter, true);
                     this.levels_filter.min_input = this.snapshot_info.filter_settings.levels.min_input;
                     this.levels_filter.max_input = this.snapshot_info.filter_settings.levels.max_input;
                     this.levels_filter.gamma = this.snapshot_info.filter_settings.levels.gamma;
                 }
-                if (active_filters[EngineFilters.COLOR_BLEND]) {
+                if (active_filters[engine_filters.COLOR_BLEND]) {
                     this.manage_filter(this.color_blend_filter, true);
                     this.color_blend_filter.r = this.snapshot_info.filter_settings.color_blend.r;
                     this.color_blend_filter.g = this.snapshot_info.filter_settings.color_blend.g;
                     this.color_blend_filter.b = this.snapshot_info.filter_settings.color_blend.b;
                 }
-                if (active_filters[EngineFilters.HUE]) {
+                if (active_filters[engine_filters.HUE]) {
                     this.manage_filter(this.hue_filter, true);
                     this.hue_filter.angle = this.snapshot_info.filter_settings.hue.angle;
                 }
-                if (active_filters[EngineFilters.GRAY]) {
+                if (active_filters[engine_filters.GRAY]) {
                     this.manage_filter(this.gray_filter, true);
                     this.gray_filter.intensity = this.snapshot_info.filter_settings.gray.intensity;
                 }
-                if (active_filters[EngineFilters.TINT]) {
+                if (active_filters[engine_filters.TINT]) {
                     this.manage_filter(this.tint_filter, true);
                     this.tint_filter.r = this.snapshot_info.filter_settings.tint.r;
                     this.tint_filter.g = this.snapshot_info.filter_settings.tint.g;
                     this.tint_filter.b = this.snapshot_info.filter_settings.tint.b;
                 }
-                if (active_filters[EngineFilters.FLAME]) {
+                if (active_filters[engine_filters.FLAME]) {
                     this.manage_filter(this.flame_filter, true);
                 }
             }

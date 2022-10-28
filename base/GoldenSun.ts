@@ -26,18 +26,6 @@ import {StartMenu} from "./main_menus/StartMenu";
 import {initialize_save_menu, SaveMenu} from "./main_menus/SaveMenu";
 import {ParticlesWrapper} from "./ParticlesWrapper";
 
-export enum EngineFilters {
-    COLORIZE = "colorize",
-    OUTLINE = "outline",
-    LEVELS = "levels",
-    COLOR_BLEND = "color_blend",
-    HUE = "hue",
-    TINT = "tint",
-    GRAY = "gray",
-    FLAME = "flame",
-    MODE7 = "mode7",
-}
-
 /**
  * The project has basically two important folders: assets and base. All the source code is located inside base folder.
  * All the game assets (images, database files, sounds, etc) are located inside assets folder. An engine user will only

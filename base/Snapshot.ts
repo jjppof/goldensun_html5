@@ -1,5 +1,5 @@
 import {djinn_status} from "./Djinn";
-import {EngineFilters, GoldenSun} from "./GoldenSun";
+import {GoldenSun} from "./GoldenSun";
 import {GameInfo} from "./initializers/initialize_info";
 import {InteractableObjects} from "./interactable_objects/InteractableObjects";
 import {ItemSlot} from "./MainChar";
@@ -9,7 +9,7 @@ import {RawStorageRecord} from "./Storage";
 import {TileEvent} from "./tile_events/TileEvent";
 import * as _ from "lodash";
 import {Button} from "./XGamepad";
-import {reverse_directions} from "./utils";
+import {reverse_directions, engine_filters} from "./utils";
 import {Breakable} from "./interactable_objects/Breakable";
 import {RollablePillar} from "./interactable_objects/RollingPillar";
 import {RevealFieldPsynergy} from "./field_abilities/RevealFieldPsynergy";
@@ -17,32 +17,32 @@ import {RopeDock} from "./interactable_objects/RopeDock";
 import {Map} from "Map";
 
 type FilterSettings = {
-    [EngineFilters.COLORIZE]?: {
+    [engine_filters.COLORIZE]?: {
         intensity: Phaser.Filter.Colorize["intensity"];
         color: Phaser.Filter.Colorize["color"];
     };
-    [EngineFilters.LEVELS]?: {
+    [engine_filters.LEVELS]?: {
         min_input: number;
         max_input: number;
         gamma: number;
     };
-    [EngineFilters.COLOR_BLEND]?: {
+    [engine_filters.COLOR_BLEND]?: {
         r: number;
         g: number;
         b: number;
     };
-    [EngineFilters.TINT]?: {
+    [engine_filters.TINT]?: {
         r: number;
         g: number;
         b: number;
     };
-    [EngineFilters.HUE]?: {
+    [engine_filters.HUE]?: {
         angle: number;
     };
-    [EngineFilters.GRAY]?: {
+    [engine_filters.GRAY]?: {
         intensity: number;
     };
-    [EngineFilters.OUTLINE]?: {
+    [engine_filters.OUTLINE]?: {
         texture_width: number;
         texture_height: number;
         r: number;
@@ -127,7 +127,7 @@ export type SnapshotData = {
             body_in_map: boolean;
             shapes_collision_active: boolean;
             move_freely_in_event: boolean;
-            active_filters: {[key in EngineFilters]?: boolean};
+            active_filters: {[key in engine_filters]?: boolean};
             filter_settings?: FilterSettings;
         }[];
         interactable_objects: {
@@ -183,7 +183,7 @@ export type SnapshotData = {
             allow_jumping_through_it: boolean;
             body_in_map: boolean;
             shapes_collision_active: boolean;
-            active_filters: {[key in EngineFilters]?: boolean};
+            active_filters: {[key in engine_filters]?: boolean};
             filter_settings?: FilterSettings;
         }[];
         tile_events: {

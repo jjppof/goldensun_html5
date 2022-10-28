@@ -9,9 +9,10 @@ import {
     get_distance,
     get_tile_position,
     get_sqr_distance,
+    engine_filters,
 } from "./utils";
 import {Footsteps} from "./utils/Footsteps";
-import {EngineFilters, GoldenSun} from "./GoldenSun";
+import {GoldenSun} from "./GoldenSun";
 import {SpriteBase} from "./SpriteBase";
 import {Map} from "./Map";
 import {Pushable} from "./interactable_objects/Pushable";
@@ -150,7 +151,7 @@ export abstract class ControllableChar {
     private _gray_filter: Phaser.Filter.Gray;
     private _flame_filter: Phaser.Filter.Flame;
     private _outline_filter: Phaser.Filter.Outline;
-    private _active_filters: {[key in EngineFilters]?: boolean};
+    private _active_filters: {[key in engine_filters]?: boolean};
     protected _push_timer: Phaser.Timer;
     private _footsteps: Footsteps;
     private _sweat_drops: Phaser.Sprite;
@@ -256,14 +257,14 @@ export abstract class ControllableChar {
         this._flame_filter = this.game.add.filter("Flame") as Phaser.Filter.Flame;
         this._outline_filter = this.game.add.filter("Outline") as Phaser.Filter.Outline;
         this._active_filters = {
-            [EngineFilters.COLORIZE]: false,
-            [EngineFilters.OUTLINE]: false,
-            [EngineFilters.LEVELS]: false,
-            [EngineFilters.COLOR_BLEND]: false,
-            [EngineFilters.HUE]: false,
-            [EngineFilters.TINT]: false,
-            [EngineFilters.GRAY]: false,
-            [EngineFilters.FLAME]: false,
+            [engine_filters.COLORIZE]: false,
+            [engine_filters.OUTLINE]: false,
+            [engine_filters.LEVELS]: false,
+            [engine_filters.COLOR_BLEND]: false,
+            [engine_filters.HUE]: false,
+            [engine_filters.TINT]: false,
+            [engine_filters.GRAY]: false,
+            [engine_filters.FLAME]: false,
         };
         this.trying_to_push = false;
         this._trying_to_push_direction = null;

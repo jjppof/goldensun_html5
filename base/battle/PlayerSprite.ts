@@ -1,8 +1,8 @@
-import {EngineFilters, GoldenSun} from "../GoldenSun";
+import {GoldenSun} from "../GoldenSun";
 import {weapon_types} from "../Item";
 import {permanent_status, Player, temporary_status} from "../Player";
 import {SpriteBase} from "../SpriteBase";
-import {base_actions} from "../utils";
+import {base_actions, engine_filters} from "../utils";
 import {PlayerInfo} from "./Battle";
 import {SEMI_MAJOR_AXIS, SEMI_MINOR_AXIS} from "./BattleStage";
 import * as _ from "lodash";
@@ -312,7 +312,7 @@ export class PlayerSprite {
 
     reset_hue_angle() {
         if (!this.is_ally && this.hue_angle) {
-            const hue_filter = this.char_sprite.available_filters[EngineFilters.HUE] as Phaser.Filter.Hue;
+            const hue_filter = this.char_sprite.available_filters[engine_filters.HUE] as Phaser.Filter.Hue;
             hue_filter.angle = this.hue_angle;
             this.char_sprite.filters = [hue_filter];
         }

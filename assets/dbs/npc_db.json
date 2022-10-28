@@ -481,6 +481,44 @@
                 "frame_rate": 1,
                 "loop": false
             },
+            "yes": {
+                "spritesheet": {
+                    "json": "assets/images/spritesheets/main_chars/isaac_yes.json",
+                    "image": "assets/images/spritesheets/main_chars/isaac_yes.png"
+                },
+                "animations": [
+                    "down",
+                    "up",
+                    "left",
+                    "right",
+                    "down_left",
+                    "down_right",
+                    "up_left",
+                    "up_right"
+                ],
+                "frames_count": 3,
+                "frame_rate": [[8, 8, 4]],
+                "loop": false
+            },
+            "no": {
+                "spritesheet": {
+                    "json": "assets/images/spritesheets/main_chars/isaac_no.json",
+                    "image": "assets/images/spritesheets/main_chars/isaac_no.png"
+                },
+                "animations": [
+                    "down",
+                    "up",
+                    "left",
+                    "right",
+                    "down_left",
+                    "down_right",
+                    "up_left",
+                    "up_right"
+                ],
+                "frames_count": 4,
+                "frame_rate": 8,
+                "loop": false
+            },
             "ground": {
                 "spritesheet": {
                     "json": "assets/images/spritesheets/main_chars/isaac_ground.json",

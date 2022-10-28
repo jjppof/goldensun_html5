@@ -96,6 +96,21 @@ export enum base_actions {
     SQUAT = "squat",
     GROUND = "ground",
     STAIR = "stair",
+    YES = "yes",
+    NO = "no",
+}
+
+/** The filters that this engine supports */
+export enum engine_filters {
+    COLORIZE = "colorize",
+    OUTLINE = "outline",
+    LEVELS = "levels",
+    COLOR_BLEND = "color_blend",
+    HUE = "hue",
+    TINT = "tint",
+    GRAY = "gray",
+    FLAME = "flame",
+    MODE7 = "mode7",
 }
 
 /**

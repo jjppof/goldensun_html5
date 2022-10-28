@@ -6,6 +6,7 @@ import {
     mount_collision_polygon,
     next_px_step,
     range_360,
+    engine_filters,
 } from "./utils";
 import {ControllableChar} from "./ControllableChar";
 import {interaction_patterns} from "./game_events/GameEventManager";
@@ -13,7 +14,6 @@ import {Map} from "./Map";
 import * as numbers from "./magic_numbers";
 import * as _ from "lodash";
 import {SnapshotData} from "./Snapshot";
-import {EngineFilters} from "./GoldenSun";
 
 export enum npc_movement_types {
     IDLE = "idle",
@@ -638,41 +638,41 @@ export class NPC extends ControllableChar {
         }
         if (this.snapshot_info?.active_filters) {
             const active_filters = this.snapshot_info.active_filters;
-            if (active_filters[EngineFilters.COLORIZE]) {
+            if (active_filters[engine_filters.COLORIZE]) {
                 this.manage_filter(this.colorize_filter, true);
                 this.colorize_filter.intensity = this.snapshot_info.filter_settings.colorize.intensity;
                 this.colorize_filter.color = this.snapshot_info.filter_settings.colorize.color;
             }
-            if (active_filters[EngineFilters.LEVELS]) {
+            if (active_filters[engine_filters.LEVELS]) {
                 this.manage_filter(this.levels_filter, true);
                 this.levels_filter.min_input = this.snapshot_info.filter_settings.levels.min_input;
                 this.levels_filter.max_input = this.snapshot_info.filter_settings.levels.max_input;
                 this.levels_filter.gamma = this.snapshot_info.filter_settings.levels.gamma;
             }
-            if (active_filters[EngineFilters.COLOR_BLEND]) {
+            if (active_filters[engine_filters.COLOR_BLEND]) {
                 this.manage_filter(this.color_blend_filter, true);
                 this.color_blend_filter.r = this.snapshot_info.filter_settings.color_blend.r;
                 this.color_blend_filter.g = this.snapshot_info.filter_settings.color_blend.g;
                 this.color_blend_filter.b = this.snapshot_info.filter_settings.color_blend.b;
             }
-            if (active_filters[EngineFilters.HUE]) {
+            if (active_filters[engine_filters.HUE]) {
                 this.manage_filter(this.hue_filter, true);
                 this.hue_filter.angle = this.snapshot_info.filter_settings.hue.angle;
             }
-            if (active_filters[EngineFilters.GRAY]) {
+            if (active_filters[engine_filters.GRAY]) {
                 this.manage_filter(this.gray_filter, true);
                 this.gray_filter.intensity = this.snapshot_info.filter_settings.gray.intensity;
             }
-            if (active_filters[EngineFilters.TINT]) {
+            if (active_filters[engine_filters.TINT]) {
                 this.manage_filter(this.tint_filter, true);
                 this.tint_filter.r = this.snapshot_info.filter_settings.tint.r;
                 this.tint_filter.g = this.snapshot_info.filter_settings.tint.g;
                 this.tint_filter.b = this.snapshot_info.filter_settings.tint.b;
             }
-            if (active_filters[EngineFilters.FLAME]) {
+            if (active_filters[engine_filters.FLAME]) {
                 this.manage_filter(this.flame_filter, true);
             }
-            if (active_filters[EngineFilters.OUTLINE]) {
+            if (active_filters[engine_filters.OUTLINE]) {
                 this.manage_filter(this.outline_filter, true);
                 this.outline_filter.texture_width = this.snapshot_info.filter_settings.outline.texture_width;
                 this.outline_filter.texture_height = this.snapshot_info.filter_settings.outline.texture_height;
