@@ -533,88 +533,32 @@ export class Battle {
         }
 
         //check whether this char is paralyzed
-        if (action.caster.is_paralyzed()) {
-            if (action.caster.temporary_status.has(temporary_status.SLEEP)) {
-                await this.battle_log.add(`${action.caster.name} is asleep!`);
-            } else if (action.caster.temporary_status.has(temporary_status.STUN)) {
-                await this.battle_log.add(`${action.caster.name} is paralyzed and cannot move!`);
-            } else if (action.caster.paralyzed_by_effect) {
-                await this.battle_log.add(`${action.caster.name} is paralyzed and cannot move!`);
-                action.caster.paralyzed_by_effect = false;
-            }
-
+        if (await this.check_if_char_is_paralyzed(action)) {
             await this.wait_for_key();
             this.check_phases();
             return;
         }
 
         //check whether the char will skip this turn due to cursed item
-        //Curse check: 1/4 chance of not being able to move
-        if (action.caster.has_permanent_status(permanent_status.EQUIP_CURSE) && Math.random() < 0.25) {
-            await this.battle_log.add(`${action.caster.name} is bound and cannot move!`);
+        if (await this.check_if_curse_will_take_effect(action)) {
             await this.wait_for_key();
             this.check_phases();
             return;
         }
 
         //check whether all targets are downed and change ability to "defend" in the case it's true
-        for (let i = 0; i < action.targets.length; ++i) {
-            const target = action.targets[i];
-            if (target.magnitude && target.target?.instance.has_permanent_status(permanent_status.DOWNED)) {
-                target.magnitude = null;
-            }
-        }
-        if (action.targets.every(target => target.magnitude === null)) {
-            action.key_name = "defend";
-            action.djinn_key_name = "";
-            action.item_slot = undefined;
-            action.battle_animation_key = "no_animation";
-        }
+        this.check_if_all_targets_are_downed(action);
 
-        let ability = this.data.info.abilities_list[action.key_name];
+        //gets the ability of this phase
+        let ability = await this.get_phase_ability(action);
 
-        //rerolls enemy ability
-        if (
-            action.caster.fighter_type === fighter_types.ENEMY &&
-            !this.data.info.abilities_list[action.key_name].priority_move
-        ) {
-            Object.assign(
-                action,
-                EnemyAI.roll_action(
-                    this.data,
-                    action.caster as Enemy,
-                    this.enemies_info.map(info => info.instance) as Enemy[],
-                    this.data.info.party_data.members
-                )
-            );
-            ability = this.data.info.abilities_list[action.key_name];
-            await this.set_action_animation_settings(action, ability);
-        }
-
+        //gets item's name in the case this ability is related to an item
         let item_name = action.item_slot ? this.data.info.items_list[action.item_slot.key_name].name : "";
 
         //change the current ability to unleash ability from weapon
-        if (
-            action.caster.fighter_type === fighter_types.ALLY &&
-            ability !== undefined &&
-            ability.can_switch_to_unleash
-        ) {
-            const caster = action.caster as MainChar;
-            if (
-                caster.equip_slots.weapon &&
-                this.data.info.items_list[caster.equip_slots.weapon.key_name].unleash_ability
-            ) {
-                const weapon = this.data.info.items_list[caster.equip_slots.weapon.key_name];
-
-                if (Math.random() < weapon.unleash_rate) {
-                    item_name = weapon.name;
-                    action.key_name = weapon.unleash_ability;
-                    ability = this.data.info.abilities_list[weapon.unleash_ability];
-
-                    await this.set_action_animation_settings(action, ability);
-                }
-            }
-        }
+        const unleash_info = await this.check_if_ability_will_unleash(action, ability, item_name);
+        ability = unleash_info.ability;
+        item_name = unleash_info.item_name;
 
         //check whether this ability exists
         if (ability === undefined) {
@@ -624,6 +568,7 @@ export class Battle {
             return;
         }
 
+        //logs ability to be casted
         const djinn_name = action.djinn_key_name ? this.data.info.djinni_list[action.djinn_key_name].name : undefined;
         await this.battle_log.add_ability(
             action.caster,
@@ -654,40 +599,11 @@ export class Battle {
             action.caster.current_pp -= ability.pp_cost;
         }
 
-        //change djinn status
-        if (ability.ability_category === ability_categories.DJINN) {
-            if (ability.effects.some(effect => effect.type === effect_types.SET_DJINN)) {
-                this.data.info.djinni_list[action.djinn_key_name].set_status(djinn_status.SET);
-            } else {
-                this.data.info.djinni_list[action.key_name].set_status(djinn_status.STANDBY);
-            }
-        } else if (ability.ability_category === ability_categories.SUMMON) {
-            //deal with summon ability type
-            const requirements = this.data.info.summons_list[ability.key_name].requirements;
-            const standby_djinni = Djinn.get_standby_djinni(
-                this.data.info.djinni_list,
-                MainChar.get_active_players(this.data.info.party_data, Battle.MAX_CHARS_IN_BATTLE)
-            );
-
-            const has_available_djinni = _.every(requirements, (requirement, element) => {
-                return standby_djinni[element] >= requirement;
-            });
-
-            //check if is possible to cast a summon
-            if (!has_available_djinni) {
-                await this.battle_log.add(`${action.caster.name} summons ${ability.name} but`);
-                await this.battle_log.add(`doesn't have enough standby Djinn!`);
-                await this.wait_for_key();
-                this.check_phases();
-                return;
-            } else {
-                //set djinni used in this summon to recovery mode
-                Djinn.set_to_recovery(
-                    this.data.info.djinni_list,
-                    MainChar.get_active_players(this.data.info.party_data, Battle.MAX_CHARS_IN_BATTLE),
-                    requirements
-                );
-            }
+        //deals with abilities related to djinn and summons
+        if (await this.manage_djinn_or_summon_ability(action, ability)) {
+            await this.wait_for_key();
+            this.check_phases();
+            return;
         }
 
         //check if item is broken
@@ -715,15 +631,13 @@ export class Battle {
         }
 
         //apply ability effects
+        let end_turn_effect = false;
         for (let i = 0; i < ability.effects.length; ++i) {
             const effect = ability.effects[i];
-            if (effect.usage !== effect_usages.ON_USE) continue;
-            const end_turn = await this.apply_effects(action, ability, effect);
-            if (end_turn) {
-                this.battle_phase = battle_phases.ROUND_END;
-                this.check_phases();
-                return;
+            if (effect.usage !== effect_usages.ON_USE) {
+                continue;
             }
+            end_turn_effect = await this.apply_effects(action, ability, effect);
         }
 
         this.battle_stage.pause_players_update = false;
@@ -731,81 +645,19 @@ export class Battle {
         await Promise.all([this.battle_stage.reset_chars_position(), this.battle_stage.set_stage_default_position()]);
 
         //summon's power buff after cast
-        if (ability.ability_category === ability_categories.SUMMON) {
-            const requirements = this.data.info.summons_list[ability.key_name].requirements;
-            for (let i = 0; i < ordered_elements.length; ++i) {
-                const element = ordered_elements[i];
-                const power = BattleFormulas.summon_power(requirements[element]);
-                if (power > 0) {
-                    action.caster.add_effect(
-                        {
-                            type: "power",
-                            quantity: power,
-                            operator: "plus",
-                            element: element,
-                        },
-                        ability,
-                        true
-                    );
-
-                    await this.battle_log.add(
-                        `${action.caster.name}'s ${element_names[element]} Power rises by ${power}!`
-                    );
-                    await this.wait_for_key();
-                }
-            }
-        }
+        await this.apply_summon_power_buff(action, ability);
 
         //some checks related to items
-        if (action.item_slot) {
-            const item: Item = this.data.info.items_list[action.item_slot.key_name];
-            if (item.use_type === use_types.SINGLE_USE) {
-                //consume item on usage
-                if (action.caster.fighter_type === fighter_types.ALLY) {
-                    (action.caster as MainChar).remove_item(action.item_slot, 1);
-                } else {
-                    --action.item_slot.quantity;
-                }
-            } else if (item.use_type === use_types.BREAKS_WHEN_USE) {
-                //check if item is going to break
-                if (Math.random() < Item.BREAKS_CHANCE) {
-                    action.item_slot.broken = true;
-                    await this.battle_log.add(`${item.name} broke...`);
-                    await this.wait_for_key();
-                }
-            }
-        }
+        await this.apply_item_ability_side_effects(action);
 
         //check for poison damage
-        const poison_status = action.caster.is_poisoned();
-        if (poison_status) {
-            let damage = BattleFormulas.battle_poison_damage(action.caster, poison_status);
-            if (damage > action.caster.current_hp) {
-                damage = action.caster.current_hp;
-            }
-
-            action.caster.current_hp = _.clamp(action.caster.current_hp - damage, 0, action.caster.max_hp);
-            const poison_name = poison_status === permanent_status.POISON ? "poison" : "venom";
-
-            await this.battle_log.add(`The ${poison_name} does ${damage.toString()} damage to ${action.caster.name}!`);
-            this.battle_menu.chars_status_window.update_chars_info();
-
-            await this.wait_for_key();
-            await this.check_downed(action.caster);
-        }
+        await this.check_poison_damage(action);
 
         //check for death curse end
-        if (action.caster.has_temporary_status(temporary_status.DEATH_CURSE)) {
-            const this_effect = _.find(action.caster.effects, {
-                status_key_name: temporary_status.DEATH_CURSE,
-            });
+        await this.check_death_curse(action);
 
-            if (action.caster.get_effect_turns_count(this_effect) === 1) {
-                action.caster.current_hp = 0;
-                await this.down_a_char(action.caster);
-                await this.battle_log.add(`The Grim Reaper calls out to ${action.caster.name}`);
-                await this.wait_for_key();
-            }
+        if (end_turn_effect) {
+            this.battle_phase = battle_phases.ROUND_END;
         }
 
         this.check_phases();
@@ -978,6 +830,216 @@ export class Battle {
                     }
                     player.remove_effect(damage_input_effect);
                 }
+            }
+        }
+    }
+
+    async check_if_char_is_paralyzed(action: PlayerAbility) {
+        if (action.caster.is_paralyzed()) {
+            if (action.caster.temporary_status.has(temporary_status.SLEEP)) {
+                await this.battle_log.add(`${action.caster.name} is asleep!`);
+            } else if (action.caster.temporary_status.has(temporary_status.STUN)) {
+                await this.battle_log.add(`${action.caster.name} is paralyzed and cannot move!`);
+            } else if (action.caster.paralyzed_by_effect) {
+                await this.battle_log.add(`${action.caster.name} is paralyzed and cannot move!`);
+                action.caster.paralyzed_by_effect = false;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    async check_if_curse_will_take_effect(action: PlayerAbility) {
+        //Curse check: 1/4 chance of not being able to move
+        if (action.caster.has_permanent_status(permanent_status.EQUIP_CURSE) && Math.random() < 0.25) {
+            await this.battle_log.add(`${action.caster.name} is bound and cannot move!`);
+            return true;
+        }
+        return false;
+    }
+
+    check_if_all_targets_are_downed(action: PlayerAbility) {
+        for (let i = 0; i < action.targets.length; ++i) {
+            const target = action.targets[i];
+            if (target.magnitude && target.target?.instance.has_permanent_status(permanent_status.DOWNED)) {
+                target.magnitude = null;
+            }
+        }
+        if (action.targets.every(target => target.magnitude === null)) {
+            action.key_name = "defend";
+            action.djinn_key_name = "";
+            action.item_slot = undefined;
+            action.battle_animation_key = "no_animation";
+        }
+    }
+
+    async get_phase_ability(action: PlayerAbility) {
+        let ability = this.data.info.abilities_list[action.key_name];
+
+        //rerolls enemy ability
+        if (
+            action.caster.fighter_type === fighter_types.ENEMY &&
+            !this.data.info.abilities_list[action.key_name].priority_move
+        ) {
+            Object.assign(
+                action,
+                EnemyAI.roll_action(
+                    this.data,
+                    action.caster as Enemy,
+                    this.enemies_info.map(info => info.instance) as Enemy[],
+                    this.data.info.party_data.members
+                )
+            );
+            ability = this.data.info.abilities_list[action.key_name];
+            await this.set_action_animation_settings(action, ability);
+        }
+
+        return ability;
+    }
+
+    async check_if_ability_will_unleash(action: PlayerAbility, ability: Ability, item_name: string) {
+        if (
+            action.caster.fighter_type === fighter_types.ALLY &&
+            ability !== undefined &&
+            ability.can_switch_to_unleash
+        ) {
+            const caster = action.caster as MainChar;
+            if (
+                caster.equip_slots.weapon &&
+                this.data.info.items_list[caster.equip_slots.weapon.key_name].unleash_ability
+            ) {
+                const weapon = this.data.info.items_list[caster.equip_slots.weapon.key_name];
+
+                if (Math.random() < weapon.unleash_rate) {
+                    item_name = weapon.name;
+                    action.key_name = weapon.unleash_ability;
+                    ability = this.data.info.abilities_list[weapon.unleash_ability];
+
+                    await this.set_action_animation_settings(action, ability);
+                }
+            }
+        }
+        return {
+            ability: ability,
+            item_name: item_name,
+        };
+    }
+
+    async manage_djinn_or_summon_ability(action: PlayerAbility, ability: Ability) {
+        if (ability.ability_category === ability_categories.DJINN) {
+            //change djinn status
+            if (ability.effects.some(effect => effect.type === effect_types.SET_DJINN)) {
+                this.data.info.djinni_list[action.djinn_key_name].set_status(djinn_status.SET);
+            } else {
+                this.data.info.djinni_list[action.key_name].set_status(djinn_status.STANDBY);
+            }
+        } else if (ability.ability_category === ability_categories.SUMMON) {
+            //deal with summon ability type
+            const requirements = this.data.info.summons_list[ability.key_name].requirements;
+            const standby_djinni = Djinn.get_standby_djinni(
+                this.data.info.djinni_list,
+                MainChar.get_active_players(this.data.info.party_data, Battle.MAX_CHARS_IN_BATTLE)
+            );
+
+            const has_available_djinni = _.every(requirements, (requirement, element) => {
+                return standby_djinni[element] >= requirement;
+            });
+
+            //check if is possible to cast a summon
+            if (!has_available_djinni) {
+                await this.battle_log.add(`${action.caster.name} summons ${ability.name} but`);
+                await this.battle_log.add(`doesn't have enough standby Djinn!`);
+                return true;
+            } else {
+                //set djinni used in this summon to recovery mode
+                Djinn.set_to_recovery(
+                    this.data.info.djinni_list,
+                    MainChar.get_active_players(this.data.info.party_data, Battle.MAX_CHARS_IN_BATTLE),
+                    requirements
+                );
+            }
+        }
+        return false;
+    }
+
+    async apply_summon_power_buff(action: PlayerAbility, ability: Ability) {
+        if (ability.ability_category === ability_categories.SUMMON) {
+            const requirements = this.data.info.summons_list[ability.key_name].requirements;
+            for (let i = 0; i < ordered_elements.length; ++i) {
+                const element = ordered_elements[i];
+                const power = BattleFormulas.summon_power(requirements[element]);
+                if (power > 0) {
+                    action.caster.add_effect(
+                        {
+                            type: "power",
+                            quantity: power,
+                            operator: "plus",
+                            element: element,
+                        },
+                        ability,
+                        true
+                    );
+
+                    await this.battle_log.add(
+                        `${action.caster.name}'s ${element_names[element]} Power rises by ${power}!`
+                    );
+                    await this.wait_for_key();
+                }
+            }
+        }
+    }
+
+    async apply_item_ability_side_effects(action: PlayerAbility) {
+        if (action.item_slot) {
+            const item: Item = this.data.info.items_list[action.item_slot.key_name];
+            if (item.use_type === use_types.SINGLE_USE) {
+                //consume item on usage
+                if (action.caster.fighter_type === fighter_types.ALLY) {
+                    (action.caster as MainChar).remove_item(action.item_slot, 1);
+                } else {
+                    --action.item_slot.quantity;
+                }
+            } else if (item.use_type === use_types.BREAKS_WHEN_USE) {
+                //check if item is going to break
+                if (Math.random() < Item.BREAKS_CHANCE) {
+                    action.item_slot.broken = true;
+                    await this.battle_log.add(`${item.name} broke...`);
+                    await this.wait_for_key();
+                }
+            }
+        }
+    }
+
+    async check_poison_damage(action: PlayerAbility) {
+        const poison_status = action.caster.is_poisoned();
+        if (poison_status) {
+            let damage = BattleFormulas.battle_poison_damage(action.caster, poison_status);
+            if (damage > action.caster.current_hp) {
+                damage = action.caster.current_hp;
+            }
+
+            action.caster.current_hp = _.clamp(action.caster.current_hp - damage, 0, action.caster.max_hp);
+            const poison_name = poison_status === permanent_status.POISON ? "poison" : "venom";
+
+            await this.battle_log.add(`The ${poison_name} does ${damage.toString()} damage to ${action.caster.name}!`);
+            this.battle_menu.chars_status_window.update_chars_info();
+
+            await this.wait_for_key();
+            await this.check_downed(action.caster);
+        }
+    }
+
+    async check_death_curse(action: PlayerAbility) {
+        if (action.caster.has_temporary_status(temporary_status.DEATH_CURSE)) {
+            const this_effect = _.find(action.caster.effects, {
+                status_key_name: temporary_status.DEATH_CURSE,
+            });
+
+            if (action.caster.get_effect_turns_count(this_effect) === 1) {
+                action.caster.current_hp = 0;
+                await this.down_a_char(action.caster);
+                await this.battle_log.add(`The Grim Reaper calls out to ${action.caster.name}`);
+                await this.wait_for_key();
             }
         }
     }
