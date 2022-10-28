@@ -82,11 +82,7 @@ export const effect_operators_symbols: {[effect_operator in effect_operators]: s
 export enum effect_usages {
     NOT_APPLY = "not_apply",
     ON_USE = "on_use",
-    ON_TAKE = "on_take",
-    BATTLE_ROUND_START = "battle_round_start",
     BATTLE_ROUND_END = "battle_round_end",
-    PLAYER_TURN_START = "player_turn_start",
-    PLAYER_TURN_END = "player_turn_end",
 }
 
 export const effect_msg = {

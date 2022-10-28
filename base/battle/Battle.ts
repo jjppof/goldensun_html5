@@ -93,6 +93,11 @@ export class Battle {
     public allies_abilities: PlayerAbilities;
     public enemies_abilities: PlayerAbilities;
     public turns_actions: PlayerAbility[];
+    public round_end_effects: {
+        action: PlayerAbility;
+        ability: Ability;
+        effect: any;
+    }[];
 
     public allies_map_sprite: {[player_key: string]: PlayerSprite};
     public enemies_map_sprite: {[player_key: string]: PlayerSprite};
@@ -171,6 +176,7 @@ export class Battle {
 
         this.battle_phase = battle_phases.NONE;
         this.on_going_effects = [];
+        this.round_end_effects = [];
         this.allies_defeated = false;
         this.enemies_defeated = false;
         this.battle_finishing = false;
@@ -634,10 +640,15 @@ export class Battle {
         let end_turn_effect = false;
         for (let i = 0; i < ability.effects.length; ++i) {
             const effect = ability.effects[i];
-            if (effect.usage !== effect_usages.ON_USE) {
-                continue;
+            if (effect.usage === effect_usages.ON_USE) {
+                end_turn_effect = await this.apply_effects(action, ability, effect);
+            } else if (effect.usage === effect_usages.BATTLE_ROUND_END) {
+                this.round_end_effects.push({
+                    action: action,
+                    ability: ability,
+                    effect: effect,
+                });
             }
-            end_turn_effect = await this.apply_effects(action, ability, effect);
         }
 
         this.battle_stage.pause_players_update = false;
@@ -1057,8 +1068,16 @@ And Candle Curse (countdown to death) can be "advanced".
 So, if a character will die after 5 turns and you land another Curse on them, it will drop the remaining count to 4.
 */
 
-    async apply_effects(action: PlayerAbility, ability: Ability, effect: Effect) {
+    async apply_effects(action: PlayerAbility, ability: Ability, effect_obj: any) {
         let effect_result: ReturnType<Player["add_effect"]>;
+
+        if (effect_obj.type === effect_types.END_THE_ROUND) {
+            await this.battle_log.add(`Everybody is resting!`);
+            await this.wait_for_key();
+            return true;
+        } else if (effect_obj.type === effect_types.FLEE) {
+            return false;
+        }
 
         for (let j = 0; j < action.targets.length; ++j) {
             const target_info = action.targets[j];
@@ -1067,21 +1086,21 @@ So, if a character will die after 5 turns and you land another Curse on them, it
             const target_instance = target_info.target.instance;
             if (target_instance.has_permanent_status(permanent_status.DOWNED)) continue;
 
-            switch (effect.type) {
+            switch (effect_obj.type) {
                 case effect_types.PERMANENT_STATUS:
-                    if (effect.add_status) {
-                        if (target_instance.has_permanent_status(effect.status_key_name as permanent_status)) break;
+                    if (effect_obj.add_status) {
+                        if (target_instance.has_permanent_status(effect_obj.status_key_name as permanent_status)) break;
                         if (
-                            effect.status_key_name === permanent_status.POISON &&
+                            effect_obj.status_key_name === permanent_status.POISON &&
                             target_instance.has_permanent_status(permanent_status.VENOM)
                         )
                             break;
                     }
 
                 case effect_types.TEMPORARY_STATUS:
-                    if (effect.add_status) {
+                    if (effect_obj.add_status) {
                         const added_effect = Effect.add_status_to_player(
-                            effect,
+                            effect_obj,
                             action.caster,
                             target_instance,
                             ability,
@@ -1101,13 +1120,13 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                                 });
                                 player_sprite.set_action(battle_actions.DOWNED);
                             }
-                            await this.battle_log.add(on_catch_status_msg[effect.status_key_name](target_instance));
+                            await this.battle_log.add(on_catch_status_msg[effect_obj.status_key_name](target_instance));
                         } else {
                             await this.battle_log.add(`But it has no effect on ${target_instance.name}!`);
                         }
                         await this.wait_for_key();
                     } else {
-                        const removed_effects = Effect.remove_status_from_player(effect, target_instance);
+                        const removed_effects = Effect.remove_status_from_player(effect_obj, target_instance);
                         for (let i = 0; i < removed_effects.length; ++i) {
                             const removed_effect = removed_effects[i];
                             if (
@@ -1132,7 +1151,7 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                     break;
 
                 case effect_types.CURRENT_HP:
-                    effect_result = target_instance.add_effect(effect, ability, true);
+                    effect_result = target_instance.add_effect(effect_obj, ability, true);
                     if (effect_result.effect.show_msg) {
                         const damage = effect_result.changes.before - effect_result.changes.after;
                         await this.battle_log.add_damage(damage, target_instance);
@@ -1159,8 +1178,8 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                 case effect_types.LUCK:
                 case effect_types.POWER:
                 case effect_types.RESIST:
-                    effect_result = target_instance.add_effect(effect, ability, true);
-                    if (effect.remove_buff) {
+                    effect_result = target_instance.add_effect(effect_obj, ability, true);
+                    if (effect_obj.remove_buff) {
                         this.on_going_effects = this.on_going_effects.filter(
                             effect => !effect_result.changes.removed_effects.includes(effect)
                         );
@@ -1182,13 +1201,13 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                             const text = diff >= 0 ? "rises" : "drops";
                             let element_info = "";
 
-                            if ([effect_types.POWER, effect_types.RESIST].includes(effect.type)) {
+                            if ([effect_types.POWER, effect_types.RESIST].includes(effect_obj.type)) {
                                 element_info = element_names[effect_result.effect.element] + " ";
                             }
 
                             await this.battle_log.add(
                                 `${target_instance.name}'s ${element_info}${
-                                    effect_names[effect.type]
+                                    effect_names[effect_obj.type]
                                 } ${text} by ${Math.abs(diff)}!`
                             );
                             this.battle_menu.chars_status_window.update_chars_info();
@@ -1198,7 +1217,7 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                     }
 
                 case effect_types.PARALYZE:
-                    target_instance.add_effect(effect, ability, true);
+                    target_instance.add_effect(effect_obj, ability, true);
                     if (target_instance.paralyzed_by_effect) {
                         await this.battle_log.add(`${target_instance.name} has become unable to move!`);
                     } else {
@@ -1207,40 +1226,39 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                     await this.wait_for_key();
                     break;
 
-                case effect_types.END_THE_ROUND:
-                    await this.battle_log.add(`Everybody is resting!`);
-                    await this.wait_for_key();
-                    return true;
-
                 case effect_types.TURNS:
                     await this.battle_log.add(`${action.caster.name} readies for action!`);
                     await this.wait_for_key();
 
-                    this.on_going_effects.push(target_instance.add_effect(effect, ability, true).effect);
+                    this.on_going_effects.push(target_instance.add_effect(effect_obj, ability, true).effect);
                     break;
 
                 case effect_types.DAMAGE_MODIFIER:
-                    await this.battle_log.add(effect_msg[effect.effect_msg](target_instance));
+                    await this.battle_log.add(effect_msg[effect_obj.effect_msg](target_instance));
                     await this.wait_for_key();
 
-                    this.on_going_effects.push(target_instance.add_effect(effect, ability, true).effect);
+                    this.on_going_effects.push(target_instance.add_effect(effect_obj, ability, true).effect);
                     break;
 
                 case effect_types.COUNTER_STRIKE:
                     break;
-                case effect_types.FLEE:
-                    break;
 
                 default:
-                    this.on_going_effects.push(target_instance.add_effect(effect, ability, true).effect);
+                    this.on_going_effects.push(target_instance.add_effect(effect_obj, ability, true).effect);
             }
         }
         return false;
     }
 
     async battle_phase_round_end() {
-        let effects_to_remove = [];
-        let effect_groups = {};
+        for (let i = 0; i < this.round_end_effects.length; ++i) {
+            const effect_info = this.round_end_effects[i];
+            await this.apply_effects(effect_info.action, effect_info.ability, effect_info.effect);
+        }
+        this.round_end_effects = [];
+
+        const effects_to_remove = [];
+        const effect_groups = {};
 
         for (let i = 0; i < this.on_going_effects.length; ++i) {
             const effect = this.on_going_effects[i];

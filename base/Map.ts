@@ -1485,8 +1485,8 @@ export class Map {
             null,
             {
                 key_name: Djinn.sprite_base_key(djinn.element),
-                initial_x: this.data.hero.tile_x_pos - 2,
-                initial_y: this.data.hero.tile_y_pos - 2,
+                x: this.data.hero.tile_x_pos - 2,
+                y: this.data.hero.tile_y_pos - 2,
                 npc_type: npc_types.NORMAL,
                 initial_action: base_actions.IDLE,
                 movement_type: npc_movement_types.IDLE,
