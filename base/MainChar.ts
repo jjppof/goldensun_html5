@@ -51,6 +51,7 @@ export class MainChar extends Player {
     private static readonly ELEM_LV_DELTA = 1;
     private static readonly ELEM_POWER_DELTA = 5;
     private static readonly ELEM_RESIST_DELTA = 5;
+    private static readonly MAX_GENERAL_ITEM_NUMBER = 30;
     public static readonly MAX_ITEMS_PER_CHAR = 30;
 
     private info: GameInfo;
@@ -345,17 +346,18 @@ export class MainChar extends Player {
      * @returns return true if the item was added.
      */
     add_item(item_key_name: string, quantity: number, equip: boolean) {
-        let found = false;
-        if (this.info.items_list[item_key_name].type === item_types.GENERAL_ITEM) {
-            this.items.forEach(item_slot => {
-                if (item_slot.key_name === item_key_name) {
-                    found = true;
-                    item_slot.quantity += quantity;
-                }
-            });
+        if (quantity > MainChar.MAX_GENERAL_ITEM_NUMBER) {
+            return false;
         }
-        if (found || this.items.length === MainChar.MAX_ITEMS_PER_CHAR) {
-            return found;
+        if (this.info.items_list[item_key_name].type === item_types.GENERAL_ITEM) {
+            const found_item_slot = this.items.find(item_slot => item_slot.key_name === item_key_name);
+            if (found_item_slot && found_item_slot.quantity + quantity <= MainChar.MAX_GENERAL_ITEM_NUMBER) {
+                found_item_slot.quantity += quantity;
+                return true;
+            }
+        }
+        if (this.items.length === MainChar.MAX_ITEMS_PER_CHAR) {
+            return false;
         }
         this.items.push({
             key_name: item_key_name,
@@ -893,8 +895,7 @@ export class MainChar extends Player {
     static add_item_to_party(party_data: PartyData, item: Item, quantity: number) {
         for (let i = 0; i < party_data.members.length; ++i) {
             const char = party_data.members[i];
-            if (char.items.length < MainChar.MAX_ITEMS_PER_CHAR) {
-                char.add_item(item.key_name, quantity, false);
+            if (char.add_item(item.key_name, quantity, false)) {
                 return true;
             }
         }
