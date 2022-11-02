@@ -63,13 +63,17 @@ export class BattleStatusItems extends StatusComponent {
     }
 
     public on_change() {
-        if (!this.char_items[this.current_col][this.current_line])
+        const zero_items = this.char_items.length === 0;
+        if (zero_items) {
+            this.current_line = this.current_col = 0;
+        } else if (!this.char_items[this.current_col][this.current_line]) {
             this.current_line = this.char_items[this.current_col].length - 1;
+        }
 
         this.select_option();
 
-        const chosen_item = this.char_items[this.current_col][this.current_line];
-        this.update_description(this.data.info.items_list[chosen_item.key_name].description);
+        const chosen_item = zero_items ? null : this.char_items[this.current_col][this.current_line];
+        this.update_description(zero_items ? "" : this.data.info.items_list[chosen_item.key_name].description);
     }
 
     public on_left() {
@@ -97,6 +101,7 @@ export class BattleStatusItems extends StatusComponent {
     }
 
     public on_up() {
+        if (this.char_items.length === 0) return;
         if (this.char_items[this.current_col].length <= 1) return;
 
         if (this.current_line === 0) {
@@ -115,6 +120,7 @@ export class BattleStatusItems extends StatusComponent {
     }
 
     public on_down() {
+        if (this.char_items.length === 0) return;
         if (this.char_items[this.current_col].length <= 1) return;
 
         if (this.current_line + 1 === this.char_items[this.current_col].length) {
@@ -143,7 +149,7 @@ export class BattleStatusItems extends StatusComponent {
         if (!this.char_items[this.current_col]) this.current_col = this.char_items.length - 1;
         const items = this.char_items[this.current_col];
 
-        items.forEach((item_slot, index) => {
+        items?.forEach((item_slot, index) => {
             const item_key = item_slot.key_name;
             const item = this.data.info.items_list[item_slot.key_name];
             const name = item.name;

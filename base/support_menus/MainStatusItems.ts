@@ -77,13 +77,17 @@ export class MainStatusItems extends StatusComponent {
     }
 
     public on_change() {
-        if (!this.char_items[this.current_col][this.current_line])
+        const zero_items = this.char_items.length === 0;
+        if (zero_items) {
+            this.current_line = this.current_col = 0;
+        } else if (!this.char_items[this.current_col][this.current_line]) {
             this.current_line = this.char_items[this.current_col].length - 1;
+        }
 
-        const chosen_item = this.char_items[this.current_col][this.current_line];
+        const chosen_item = zero_items ? null : this.char_items[this.current_col][this.current_line];
         this.select_option();
 
-        const eq_slot = item_equip_slot[this.data.info.items_list[chosen_item.key_name].type];
+        const eq_slot = zero_items ? null : item_equip_slot[this.data.info.items_list[chosen_item.key_name].type];
         const slots = [equip_slots.WEAPON, equip_slots.BODY, equip_slots.CHEST, equip_slots.HEAD];
 
         const eq_highlight = {x: 0, y: 0, width: 0, height: 0};
@@ -98,7 +102,7 @@ export class MainStatusItems extends StatusComponent {
         }
 
         (this.manager as MainStatusMenu).update_eq_highlight(eq_highlight);
-        this.update_description(this.data.info.items_list[chosen_item.key_name].description);
+        this.update_description(zero_items ? "" : this.data.info.items_list[chosen_item.key_name].description);
     }
 
     public on_left() {
@@ -126,6 +130,7 @@ export class MainStatusItems extends StatusComponent {
     }
 
     public on_up() {
+        if (this.char_items.length === 0) return;
         if (this.char_items[this.current_col].length <= 1) return;
 
         if (this.current_line === 0) {
@@ -144,6 +149,7 @@ export class MainStatusItems extends StatusComponent {
     }
 
     public on_down() {
+        if (this.char_items.length === 0) return;
         if (this.char_items[this.current_col].length <= 1) return;
 
         if (this.current_line + 1 === this.char_items[this.current_col].length) {
@@ -168,7 +174,7 @@ export class MainStatusItems extends StatusComponent {
 
         const items = this.char_items[this.current_col];
 
-        items.forEach((item, index) => {
+        items?.forEach((item, index) => {
             const item_key = item.key_name;
             const name = this.data.info.items_list[item.key_name].name;
             const broken = item.broken;
