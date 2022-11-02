@@ -254,6 +254,10 @@ export class MainItemMenu {
     }
 
     char_choose() {
+        if (this.data.info.party_data.members[this.selected_char_index].items.length === 0) {
+            this.open_char_select();
+            return;
+        }
         if (this.gear_overview_window.open) {
             this.close_gear_window();
         }
@@ -261,8 +265,9 @@ export class MainItemMenu {
             if (
                 this.data.info.party_data.members[this.selected_char_index].key_name ===
                 this.item_options_window.char.key_name
-            )
+            ) {
                 return;
+            }
             this.chars_menu.deactivate();
         } else {
             this.chars_menu.deactivate();
