@@ -208,8 +208,8 @@ export class Debug {
             if (_.isNumber(value)) {
                 input_slider.disabled = false;
                 input_value.disabled = false;
-                input_slider.value = value.toString();
-                input_value.value = value.toString();
+                input_slider.value = (value as number).toString();
+                input_value.value = (value as number).toString();
             } else {
                 input_slider.disabled = true;
                 input_value.disabled = true;

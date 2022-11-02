@@ -4,6 +4,7 @@ import {directions, get_centered_pos_in_px, get_sqr_distance} from "../utils";
 import {NPC} from "../NPC";
 import {Camera} from "../Camera";
 import {ControllableChar} from "../ControllableChar";
+import {StoragePosition} from "Storage";
 
 export class MoveEvent extends GameEvent {
     private static readonly MINIMAL_DISTANCE = 3;
@@ -132,12 +133,18 @@ export class MoveEvent extends GameEvent {
         let dest_value: {x: number; y: number};
 
         if (this.dest.hasOwnProperty("type")) {
-            dest_value = this.data.game_event_manager.get_value(this.dest as EventValue);
+            dest_value = this.data.game_event_manager.get_value(this.dest as EventValue) as StoragePosition;
         } else {
             const dest_pos = this.dest as typeof dest_value;
             dest_value = {
-                x: typeof dest_pos.x === "object" ? this.data.game_event_manager.get_value(dest_pos.x) : dest_pos.x,
-                y: typeof dest_pos.y === "object" ? this.data.game_event_manager.get_value(dest_pos.y) : dest_pos.y,
+                x:
+                    typeof dest_pos.x === "object"
+                        ? (this.data.game_event_manager.get_value(dest_pos.x) as number)
+                        : dest_pos.x,
+                y:
+                    typeof dest_pos.y === "object"
+                        ? (this.data.game_event_manager.get_value(dest_pos.y) as number)
+                        : dest_pos.y,
             };
         }
         const dest = {
