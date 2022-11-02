@@ -331,6 +331,9 @@ export class MainChar extends Player {
     private init_items() {
         this.items.forEach((item_slot, index) => {
             item_slot.index = index;
+            if (!item_slot.quantity) {
+                item_slot.quantity = 1;
+            }
             if (item_slot.equipped) {
                 this.equip_item(index, true);
             }

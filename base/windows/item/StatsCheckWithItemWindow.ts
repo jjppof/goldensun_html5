@@ -140,9 +140,9 @@ export class StatsCheckWithItemWindow {
             preview_stats = this.char.preview_stats_without_item_effect(effect_type, effect_obj, equip_slot_key_name);
         }
         if (this.char.equip_slots[equip_slot_property] === null) {
-            if (effect_obj === undefined) return;
-            this.update_preview_text(preview_stats, effect_type);
-            this.up_arrows[effect_type].visible = true;
+            if (effect_obj === undefined) {
+                return;
+            }
         } else {
             const equipped_effect_obj = _.find(
                 this.data.info.items_list[this.char.equip_slots[equip_slot_property].key_name].effects,
@@ -161,15 +161,14 @@ export class StatsCheckWithItemWindow {
                     this.char.equip_slots[equip_slot_property].key_name
                 );
             }
-            const current_stats = this.char[current_stats_property];
-            if (preview_stats > current_stats) {
-                this.up_arrows[effect_type].visible = true;
-                this.update_preview_text(preview_stats, effect_type);
-            } else if (preview_stats < current_stats) {
-                this.down_arrows[effect_type].visible = true;
-                this.update_preview_text(preview_stats, effect_type);
-            }
         }
+        const current_stats = this.char[current_stats_property];
+        if (preview_stats > current_stats) {
+            this.up_arrows[effect_type].visible = true;
+        } else if (preview_stats < current_stats) {
+            this.down_arrows[effect_type].visible = true;
+        }
+        this.update_preview_text(preview_stats, effect_type);
     }
 
     update_preview_text(value, effect_type) {
