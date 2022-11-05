@@ -7,6 +7,7 @@ import {Item} from "../../Item";
 import {ItemQuantityManagerWindow} from "./ItemQuantityManagerWindow";
 import {MainItemMenu} from "../../main_menus/MainItemMenu";
 import {CursorManager, PointVariants} from "../../utils/CursorManager";
+import * as _ from "lodash";
 
 const WIN_WIDTH = 132;
 const WIN_HEIGHT = 36;
@@ -50,6 +51,7 @@ export class UseGiveItemWindow {
     public choosing_char: boolean;
     public asking_for_equip: boolean;
     public giving: boolean;
+    public trade_item: ItemSlot;
 
     public base_window: Window;
     public item_quantity_manager_window: ItemQuantityManagerWindow;
@@ -78,6 +80,7 @@ export class UseGiveItemWindow {
         this.choosing_char = false;
         this.asking_for_equip = false;
         this.giving = false;
+        this.trade_item = null;
 
         this.base_window = new Window(this.game, WIN_X, WIN_Y, WIN_WIDTH, WIN_HEIGHT);
         this.item_quantity_manager_window = null;
@@ -226,6 +229,9 @@ export class UseGiveItemWindow {
         }
 
         this.char.remove_item(this.item_obj, dest_item_obj.quantity);
+        if (this.trade_item) {
+            this.char.add_item(this.trade_item.key_name, this.trade_item.quantity, false);
+        }
         dest_char.add_item(dest_item_obj.key_name, dest_item_obj.quantity, equip);
 
         this.base_window.update_text("", this.action_text);
@@ -239,30 +245,107 @@ export class UseGiveItemWindow {
         this.yes_text.text.visible = this.no_text.text.visible = false;
         this.yes_text.shadow.visible = this.no_text.shadow.visible = false;
 
-        const on_action_window_close = () => {
-            const char_index = this.data.info.party_data.members.indexOf(this.char);
-            this.item_menu.item_options_window.close(() => {
-                this.item_menu.item_options_window.close_callback(true, char_index);
-            });
-            this.close();
-        };
-
         const action_window_text = equip ? "Equipped it." : "Given.";
         this.item_menu.item_options_window.open_action_message_window(action_window_text, () => {
             if (equip && this.item.curses_when_equipped) {
                 this.item_menu.item_options_window.open_action_message_window("You were cursed!", () => {
-                    on_action_window_close();
+                    this.finish_give();
                 });
             } else {
-                on_action_window_close();
+                this.finish_give();
             }
         });
     }
 
-    init_give(dest_char: MainChar) {
-        const chars_menu = this.item_menu.chars_menu;
-        this.asking_for_equip = this.item.equipable_chars.includes(dest_char.key_name);
+    finish_give() {
+        this.item_menu.item_choose_window.close();
+        const char_index = this.data.info.party_data.members.indexOf(this.char);
+        this.item_menu.item_options_window.close(() => {
+            this.item_menu.item_options_window.close_callback(true, char_index);
+        });
+        this.close();
+        this.item_menu.set_guide_window_text();
+    }
 
+    init_give(dest_char: MainChar) {
+        this.trade_item = null;
+        const chars_menu = this.item_menu.chars_menu;
+        let will_swap_general_item = true;
+        if (this.item.carry_up_to_30) {
+            const target_slot_candidate = dest_char.items.find(item_slot => item_slot.key_name === this.item.key_name);
+            if (target_slot_candidate) {
+                if (target_slot_candidate.quantity >= MainChar.MAX_GENERAL_ITEM_NUMBER) {
+                    this.item_menu.item_options_window.open_action_message_window("Can't hold more!", () => {
+                        this.finish_give();
+                    });
+                    return;
+                } else if (
+                    dest_char.inventory_is_full &&
+                    target_slot_candidate.quantity < MainChar.MAX_GENERAL_ITEM_NUMBER
+                ) {
+                    will_swap_general_item = false;
+                }
+            }
+        }
+        if (dest_char.inventory_is_full && will_swap_general_item) {
+            this.base_window.close(undefined, false);
+            this.item_menu.set_guide_window_text("Swap it for what?");
+            this.item_menu.item_choose_window.open(
+                chars_menu.selected_index,
+                undefined, //close callback
+                () => {
+                    //open callback
+                    this.item_menu.item_choose_window.grant_control(
+                        () => {
+                            //on cancel
+                            this.item_menu.item_choose_window.close();
+                            this.base_window.show(undefined, false);
+                            this.choosing_character();
+                        },
+                        () => {
+                            //on select
+                            const item_win = this.item_menu.item_choose_window;
+                            const selected_item_obj = item_win.item_objs[item_win.selected_element_index];
+                            const selected_item = this.data.info.items_list[selected_item_obj.key_name];
+                            if (selected_item.carry_up_to_30) {
+                                const this_char_same_item = this.char.items.find(
+                                    item_slot => item_slot.key_name === selected_item.key_name
+                                );
+                                if (
+                                    this_char_same_item &&
+                                    this_char_same_item.quantity + selected_item_obj.quantity >
+                                        MainChar.MAX_GENERAL_ITEM_NUMBER
+                                ) {
+                                    this.item_menu.item_options_window.open_action_message_window(
+                                        "Can't trade it!",
+                                        () => {
+                                            this.finish_give();
+                                        }
+                                    );
+                                    return;
+                                }
+                            }
+                            this.trade_item = selected_item_obj;
+                            dest_char.remove_item(selected_item_obj, selected_item_obj.quantity);
+                            this.give_check_if_equip(dest_char);
+                        }
+                    );
+                },
+                {
+                    page: 0,
+                    index: 0,
+                }
+            );
+        } else {
+            this.give_check_if_equip(dest_char);
+        }
+    }
+
+    give_check_if_equip(dest_char: MainChar) {
+        if (this.trade_item) {
+            this.base_window.show(undefined, false);
+        }
+        this.asking_for_equip = this.item.equipable_chars.includes(dest_char.key_name);
         if (this.asking_for_equip) {
             this.set_header();
             this.set_answer_index(YES_Y);
@@ -277,10 +360,30 @@ export class UseGiveItemWindow {
                 loop_config: {vertical: true},
             });
         } else {
-            if (this.item_obj.quantity > 1) {
-                const dest_char = chars_menu.lines[chars_menu.current_line][chars_menu.selected_index];
-
-                this.item_quantity_manager_window.open(this.item_obj, this.item, this.char, undefined, dest_char);
+            if (this.item_obj.quantity > 1 && this.trade_item === null) {
+                let disable_count = 0;
+                const dest_char_same_item = dest_char.items.find(
+                    item_slot => item_slot.key_name === this.item.key_name
+                );
+                if (
+                    dest_char_same_item &&
+                    this.item_obj.quantity + dest_char_same_item.quantity > MainChar.MAX_GENERAL_ITEM_NUMBER
+                ) {
+                    disable_count = _.clamp(
+                        MainChar.MAX_GENERAL_ITEM_NUMBER - dest_char_same_item.quantity,
+                        0,
+                        MainChar.MAX_GENERAL_ITEM_NUMBER
+                    );
+                }
+                this.item_quantity_manager_window.open(
+                    this.item_obj,
+                    this.item,
+                    this.char,
+                    undefined,
+                    dest_char,
+                    undefined,
+                    disable_count
+                );
                 this.item_quantity_manager_window.grant_control(() => {
                     this.item_quantity_manager_window.close();
                     this.choosing_character();
@@ -331,7 +434,11 @@ export class UseGiveItemWindow {
         const dest_char = chars_menu.lines[chars_menu.current_line][chars_menu.selected_index];
 
         if (this.giving) {
-            this.init_give(dest_char);
+            if (this.char.key_name !== dest_char.key_name) {
+                this.init_give(dest_char);
+            } else {
+                this.choosing_character();
+            }
         } else {
             this.init_use(dest_char);
         }

@@ -202,7 +202,8 @@ export class ItemQuantityManagerWindow {
         char: MainChar,
         close_callback?: Function,
         destination_char?: MainChar,
-        open_callback?: Function
+        open_callback?: Function,
+        custom_quantity?: number
     ) {
         this.data.cursor_manager.move_to(
             {x: CURSOR_X, y: CURSOR_Y},
@@ -230,7 +231,7 @@ export class ItemQuantityManagerWindow {
 
                 this.update_position();
                 this.set_header();
-                this.item_counter.config(this.item_obj.quantity, this.choosen_quantity);
+                this.item_counter.config(custom_quantity ?? this.item_obj.quantity, this.choosen_quantity);
 
                 this.group.visible = true;
                 this.on_change(this.choosen_quantity);

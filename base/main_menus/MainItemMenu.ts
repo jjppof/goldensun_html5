@@ -356,11 +356,15 @@ export class MainItemMenu {
         this.item_choose_window.deactivate();
     }
 
-    set_guide_window_text() {
-        if (this.choosing_item) {
-            this.guide_window.update_text(this.guide_window_msgs.choosing_item, this.guide_window_text);
+    set_guide_window_text(custom_text?: string) {
+        if (custom_text !== undefined) {
+            this.guide_window.update_text(custom_text, this.guide_window_text);
         } else {
-            this.guide_window.update_text(this.guide_window_msgs.choosing_char, this.guide_window_text);
+            if (this.choosing_item) {
+                this.guide_window.update_text(this.guide_window_msgs.choosing_item, this.guide_window_text);
+            } else {
+                this.guide_window.update_text(this.guide_window_msgs.choosing_char, this.guide_window_text);
+            }
         }
     }
 

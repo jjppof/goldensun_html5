@@ -51,8 +51,8 @@ export class MainChar extends Player {
     private static readonly ELEM_LV_DELTA = 1;
     private static readonly ELEM_POWER_DELTA = 5;
     private static readonly ELEM_RESIST_DELTA = 5;
-    private static readonly MAX_GENERAL_ITEM_NUMBER = 30;
-    public static readonly MAX_ITEMS_PER_CHAR = 30;
+    public static readonly MAX_GENERAL_ITEM_NUMBER = 30;
+    public static readonly MAX_ITEMS_PER_CHAR = 15;
 
     private info: GameInfo;
     private starting_level: number;
@@ -264,6 +264,13 @@ export class MainChar extends Player {
     }
 
     /**
+     * Checks if this char inventory is full.
+     */
+    get inventory_is_full() {
+        return this.items.length >= MainChar.MAX_ITEMS_PER_CHAR;
+    }
+
+    /**
      * Updates this char class.
      */
     update_class() {
@@ -352,7 +359,7 @@ export class MainChar extends Player {
         if (quantity > MainChar.MAX_GENERAL_ITEM_NUMBER) {
             return false;
         }
-        if (this.info.items_list[item_key_name].type === item_types.GENERAL_ITEM) {
+        if (this.info.items_list[item_key_name].carry_up_to_30) {
             const found_item_slot = this.items.find(item_slot => item_slot.key_name === item_key_name);
             if (found_item_slot && found_item_slot.quantity + quantity <= MainChar.MAX_GENERAL_ITEM_NUMBER) {
                 found_item_slot.quantity += quantity;
