@@ -954,19 +954,25 @@ export class MainChar extends Player {
     static distribute_djinn(party_data: PartyData) {
         const members = party_data.members;
         const djinn_per_char_min = _.meanBy(members, char => char.djinni.length) | 0;
-        const djinn_buffer = [];
-        _.sortBy(members, c => c.djinni.length)
-            .reverse()
-            .forEach(char => {
-                if (char.djinni.length > djinn_per_char_min + 1) {
-                    const last_djinni = _.last(char.djinni);
-                    char.remove_djinn(last_djinni);
-                    djinn_buffer.push(last_djinni);
-                } else if (djinn_buffer.length && char.djinni.length < djinn_per_char_min) {
-                    const djinni_to_add = djinn_buffer.pop();
-                    char.add_djinn(djinni_to_add);
-                }
-            });
+        const need_djinn: MainChar[] = [];
+        const djinn_buffer: string[] = [];
+        _.sortBy(members, c => c.djinni.length).forEach(char => {
+            if (char.djinni.length < djinn_per_char_min) {
+                need_djinn.push(char);
+            } else if (char.djinni.length > djinn_per_char_min + 1) {
+                const last_djinni = _.last(char.djinni);
+                char.remove_djinn(last_djinni);
+                djinn_buffer.push(last_djinni);
+            } else if (need_djinn.length && char.djinni.length > djinn_per_char_min) {
+                const last_djinni = _.last(char.djinni);
+                char.remove_djinn(last_djinni);
+                const char_to_grant_djinni = need_djinn.pop();
+                char_to_grant_djinni.add_djinn(last_djinni);
+            } else if (djinn_buffer.length && char.djinni.length < djinn_per_char_min) {
+                const djinni_to_add = djinn_buffer.pop();
+                char.add_djinn(djinni_to_add);
+            }
+        });
     }
 
     /**
