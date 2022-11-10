@@ -77,9 +77,11 @@
             "attack": "attack"
         },
         "battle_spritesheet": {
-            "spritesheet": "assets/images/spritesheets/battle/briggs_battle.json",
-            "spritesheet_img": "assets/images/spritesheets/battle/briggs_battle.png",
-            "positions": [
+            "spritesheet": {
+                "json": "assets/images/spritesheets/battle/briggs_battle.json",
+                "image": "assets/images/spritesheets/battle/briggs_battle.png"
+            },
+            "animations": [
                 "idle_back", 
                 "idle_front",
                 "attack_back",
@@ -89,7 +91,7 @@
                 "attack_init_back",
                 "attack_init_front"
             ],
-            "frames_number": [4,4,2,2,1,1,1,1],
+            "frames_count": [4,4,2,2,1,1,1,1],
             "frame_rate": [3,3,10,10,1,1,1,1],
             "loop": [true,true,false,false,false,false,false,false]
         }
@@ -168,9 +170,11 @@
             "attack": "attack"
         },
         "battle_spritesheet": {
-            "spritesheet": "assets/images/spritesheets/battle/sea_fighter_battle.json",
-            "spritesheet_img": "assets/images/spritesheets/battle/sea_fighter_battle.png",
-            "positions": [
+            "spritesheet": {
+                "json": "assets/images/spritesheets/battle/sea_fighter_battle.json",
+                "image": "assets/images/spritesheets/battle/sea_fighter_battle.png"
+            },
+            "animations": [
                 "idle_back", 
                 "idle_front",
                 "attack_back",
@@ -180,7 +184,7 @@
                 "attack_init_back",
                 "attack_init_front"
             ],
-            "frames_number": [4,4,2,2,1,1,1,1],
+            "frames_count": [4,4,2,2,1,1,1,1],
             "frame_rate": [3,3,10,10,1,1,1,1],
             "loop": [true,true,false,false,false,false,false,false]
         }
@@ -240,9 +244,11 @@
             "attack": "attack"
         },
         "battle_spritesheet": {
-            "spritesheet": "assets/images/spritesheets/battle/mini_goblin_battle.json",
-            "spritesheet_img": "assets/images/spritesheets/battle/mini_goblin_battle.png",
-            "positions": [
+            "spritesheet": {
+                "json": "assets/images/spritesheets/battle/mini_goblin_battle.json",
+                "image": "assets/images/spritesheets/battle/mini_goblin_battle.png"
+            },
+            "animations": [
                 "idle_back", 
                 "idle_front",
                 "attack_back",
@@ -252,7 +258,7 @@
                 "attack_init_back",
                 "attack_init_front"
             ],
-            "frames_number": [4,4,2,2,1,1,1,1],
+            "frames_count": [4,4,2,2,1,1,1,1],
             "frame_rate": [3,3,10,10,1,1,1,1],
             "loop": [true,true,false,false,false,false,false,false]
         }
@@ -310,9 +316,11 @@
             "attack": "attack"
         },
         "battle_spritesheet": {
-            "spritesheet": "assets/images/spritesheets/battle/jupiter_djinn_battle.json",
-            "spritesheet_img": "assets/images/spritesheets/battle/jupiter_djinn_battle.png",
-            "positions": [
+            "spritesheet": {
+                "json": "assets/images/spritesheets/battle/jupiter_djinn_battle.json",
+                "image": "assets/images/spritesheets/battle/jupiter_djinn_battle.png"
+            },
+            "animations": [
                 "idle_back", 
                 "idle_front",
                 "attack_back",
@@ -322,7 +330,7 @@
                 "cast_back",
                 "cast_front"
             ],
-            "frames_number": [3,3,1,1,1,1,1,1],
+            "frames_count": [3,3,1,1,1,1,1,1],
             "frame_rate": [4,4,1,1,1,1,1,1],
             "loop": [true,true,false,false,false,false,false,false]
         }
@@ -376,9 +384,11 @@
             "attack": "attack"
         },
         "battle_spritesheet": {
-            "spritesheet": "assets/images/spritesheets/battle/venus_djinn_battle.json",
-            "spritesheet_img": "assets/images/spritesheets/battle/venus_djinn_battle.png",
-            "positions": [
+            "spritesheet": {
+                "json": "assets/images/spritesheets/battle/venus_djinn_battle.json",
+                "image": "assets/images/spritesheets/battle/venus_djinn_battle.png"
+            },
+            "animations": [
                 "idle_back", 
                 "idle_front",
                 "attack_back",
@@ -388,7 +398,7 @@
                 "cast_back",
                 "cast_front"
             ],
-            "frames_number": [4,4,1,1,1,1,1,1],
+            "frames_count": [4,4,1,1,1,1,1,1],
             "frame_rate": [[4,4,2,4],[4,4,2,4],1,1,1,1,1,1],
             "loop": [true,true,false,false,false,false,false,false]
         }
