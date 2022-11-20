@@ -689,11 +689,18 @@ export class Battle {
                     action.caster.fighter_type === fighter_types.ALLY
                         ? this.enemies_map_sprite
                         : this.allies_map_sprite,
+                allies:
+                    action.caster.fighter_type === fighter_types.ALLY
+                        ? this.allies_map_sprite
+                        : this.enemies_map_sprite,
             };
             const caster_sprite = caster_targets_sprites.caster[action.caster_battle_key];
             const target_sprites = action.targets.flatMap(info => {
                 return info.magnitude ? [caster_targets_sprites.targets[info.target.battle_key]] : [];
             });
+            const allies_sprites = Object.values(caster_targets_sprites.allies).filter(
+                ally => ally.battle_key !== action.caster_battle_key
+            );
             const group_caster =
                 action.caster.fighter_type === fighter_types.ALLY
                     ? this.battle_stage.group_allies
@@ -720,6 +727,7 @@ export class Battle {
                     cast_animation,
                     caster_sprite,
                     target_sprites,
+                    allies_sprites,
                     group_caster,
                     group_taker,
                     this.battle_stage
@@ -733,6 +741,7 @@ export class Battle {
                 action.caster_battle_key,
                 caster_sprite,
                 target_sprites,
+                allies_sprites,
                 group_caster,
                 group_taker,
                 this.battle_stage

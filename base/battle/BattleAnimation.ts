@@ -9,6 +9,13 @@ import {ParticlesInfo} from "../ParticlesWrapper";
 export const CAST_STAGE_POSITION = 0.5242024;
 export const MIRRORED_CAST_STAGE_POSITION = -0.7151327;
 
+enum target_types {
+    CASTER = "caster",
+    TARGETS = "targets",
+    ALLIES = "allies",
+    BACKGROUND = "background",
+}
+
 export enum battle_positions {
     OVER = "over",
     BETWEEN = "between",
@@ -101,7 +108,7 @@ export class BattleAnimation {
     public flame_filter_sequence: GeneralFilterAttr[] = [];
     public play_sequence: {
         start_delay: number | number[];
-        sprite_index: string | number | number[];
+        sprite_index: target_types | number | number[];
         reverse: boolean;
         frame_rate: number;
         repeat: boolean;
@@ -131,6 +138,7 @@ export class BattleAnimation {
     };
     public caster_sprite: PlayerSprite;
     public targets_sprites: PlayerSprite[];
+    public allies_sprites: PlayerSprite[];
     public background_sprites: Phaser.TileSprite[];
     public group_caster: Phaser.Group;
     public group_enemy: Phaser.Group;
@@ -158,7 +166,7 @@ export class BattleAnimation {
     };
 
     //tween type can be 'initial' for first position
-    //sprite_index: "targets" is the target, "caster" is the caster, "background" is the background sprite, 0...n is the sprites_key_names index
+    //sprite_index: "targets" is the target, "caster" is the caster, "allies" are the allies, "background" is the background sprite, 0...n is the sprites_key_names index
     //property "to" value can be "targets" or an actual value. In the case of "targets" is the the corresponding property value. In the case of using "targets", a "shift" property is available to be added to the resulting value
     //values in rad can have "direction" set to "clockwise", "counter_clockwise" or "closest" if "absolute" is true
     //in sprite_keys, position can be: "between", "over" or "behind"
@@ -243,6 +251,7 @@ export class BattleAnimation {
     initialize(
         caster_sprite: PlayerSprite,
         targets_sprites: PlayerSprite[],
+        allies_sprites: PlayerSprite[],
         group_caster: Phaser.Group,
         group_enemy: Phaser.Group,
         super_group: Phaser.Group,
@@ -263,6 +272,7 @@ export class BattleAnimation {
             y: this.caster_sprite.y,
         };
         this.targets_sprites = targets_sprites;
+        this.allies_sprites = allies_sprites;
         this.background_sprites = background_sprites;
         this.group_caster = group_caster;
         this.group_enemy = group_enemy;
@@ -486,7 +496,7 @@ export class BattleAnimation {
         };
     } {
         if (obj_propety) {
-            if (seq.sprite_index === "background") {
+            if (seq.sprite_index === target_types.BACKGROUND) {
                 return this.background_sprites.reduce((prev, cur, index) => {
                     prev[`${cur.key}/${index}`] = {
                         obj: _.get(cur, obj_propety),
@@ -495,7 +505,7 @@ export class BattleAnimation {
                     };
                     return prev;
                 }, {});
-            } else if (seq.sprite_index === "caster") {
+            } else if (seq.sprite_index === target_types.CASTER) {
                 return {
                     [this.caster_sprite.key]: {
                         obj: _.get(this.caster_sprite, obj_propety) as keyof PlayerSprite,
@@ -503,8 +513,9 @@ export class BattleAnimation {
                         index: 0,
                     },
                 };
-            } else if (seq.sprite_index === "targets") {
-                return this.targets_sprites.reduce((prev, cur, index) => {
+            } else if (seq.sprite_index === target_types.TARGETS || seq.sprite_index === target_types.ALLIES) {
+                const sprites = seq.sprite_index === target_types.TARGETS ? this.targets_sprites : this.allies_sprites;
+                return sprites.reduce((prev, cur, index) => {
                     prev[`${cur.key}/${index}`] = {
                         obj: _.get(cur, obj_propety),
                         sprite: cur,
@@ -533,7 +544,7 @@ export class BattleAnimation {
                 }
             }
         } else {
-            if (seq.sprite_index === "background") {
+            if (seq.sprite_index === target_types.BACKGROUND) {
                 return this.background_sprites.reduce((prev, cur, index) => {
                     prev[`${cur.key}/${index}`] = {
                         obj: cur,
@@ -541,10 +552,11 @@ export class BattleAnimation {
                     };
                     return prev;
                 }, {});
-            } else if (seq.sprite_index === "caster") {
+            } else if (seq.sprite_index === target_types.CASTER) {
                 return {[this.caster_sprite.key]: {obj: this.caster_sprite, index: 0}};
-            } else if (seq.sprite_index === "targets") {
-                return this.targets_sprites.reduce((prev, cur, index) => {
+            } else if (seq.sprite_index === target_types.TARGETS || seq.sprite_index === target_types.ALLIES) {
+                const sprites = seq.sprite_index === target_types.TARGETS ? this.targets_sprites : this.allies_sprites;
+                return sprites.reduce((prev, cur, index) => {
                     prev[`${cur.key}/${index}`] = {
                         obj: cur,
                         index: index,
@@ -617,10 +629,16 @@ export class BattleAnimation {
                     }
                     const seq_to = Array.isArray(seq.to) ? seq.to[sprite_info.index] : seq.to;
                     let to_value: number = seq_to as number;
-                    if (["targets", "caster"].includes(seq_to as string)) {
+                    if (
+                        [target_types.TARGETS, target_types.ALLIES, target_types.CASTER].includes(
+                            seq_to as target_types
+                        )
+                    ) {
                         let player_sprite = this.caster_sprite;
-                        if (seq_to === "targets") {
+                        if (seq_to === target_types.TARGETS) {
                             player_sprite = this.targets_sprites[this.targets_sprites.length >> 1];
+                        } else if (seq_to === target_types.ALLIES) {
+                            player_sprite = this.allies_sprites[this.allies_sprites.length >> 1];
                         }
                         let shift_sign = 1;
                         if (seq.shift_direction !== undefined) {
@@ -997,21 +1015,23 @@ export class BattleAnimation {
         shift_x: number,
         shift_y: number
     ): {x: number; y: number} {
-        if (x === "caster") {
+        if (x === target_types.CASTER) {
             x = this.caster_sprite.x;
             if (this.mirrored) {
                 x = numbers.GAME_WIDTH - (x as number);
             }
-        } else if (x === "targets") {
-            x = _.mean(this.targets_sprites.map(target => target.x));
+        } else if (x === target_types.TARGETS || x === target_types.ALLIES) {
+            const sprites = x === target_types.TARGETS ? this.targets_sprites : this.allies_sprites;
+            x = _.mean(sprites.map(target => target.x));
             if (this.mirrored) {
                 x = numbers.GAME_WIDTH - (x as number);
             }
         }
-        if (y === "caster") {
+        if (y === target_types.CASTER) {
             y = this.caster_sprite.y;
-        } else if (y === "targets") {
-            y = _.mean(this.targets_sprites.map(target => target.y));
+        } else if (y === target_types.TARGETS || y === target_types.ALLIES) {
+            const sprites = y === target_types.TARGETS ? this.targets_sprites : this.allies_sprites;
+            y = _.mean(sprites.map(target => target.y));
         }
         (x as number) += shift_x ?? 0;
         (y as number) += shift_y ?? 0;
