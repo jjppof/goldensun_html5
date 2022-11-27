@@ -331,6 +331,28 @@ export class Battle {
         await this.wait_for_key();
         if (flee_succeed) {
             this.battle_phase = battle_phases.FLEE;
+            this.battle_stage.pause_players_update = true;
+            const animation_recipe = this.data.info.misc_battle_animations_recipes["flee"];
+            const flee_animation = BattleAnimationManager.get_animation_instance(
+                this.game,
+                this.data,
+                animation_recipe,
+                false
+            );
+            const caster_sprite = this.allies_map_sprite[this.data.info.party_data.members[0].key_name];
+            const target_sprites = this.data.info.party_data.members.filter(member => {
+                return !member.has_permanent_status(permanent_status.DOWNED);
+            }).map(member => this.allies_map_sprite[member.key_name]);
+            await this.animation_manager.play_animation(
+                flee_animation,
+                caster_sprite,
+                target_sprites,
+                [],
+                this.battle_stage.group_allies,
+                this.battle_stage.group_allies,
+                this.battle_stage
+            );
+            this.battle_stage.pause_players_update = false;
         } else {
             await this.battle_log.add(`But there's no escape!`);
             await this.wait_for_key();

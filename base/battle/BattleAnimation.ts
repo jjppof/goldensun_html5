@@ -58,21 +58,23 @@ type GeometryInfo = {
     keep_core_white: boolean;
 };
 
+type SpriteKey = {
+    key_name: string;
+    per_target: boolean;
+    position: string;
+    count: number;
+    trails: boolean;
+    trails_factor: number;
+    frames_number: number;
+    type: sprite_types;
+    geometry_info: GeometryInfo;
+};
+
 export class BattleAnimation {
     public game: Phaser.Game;
     public data: GoldenSun;
     public key_name: string;
-    public sprites_keys: {
-        key_name: string;
-        per_target: boolean;
-        position: string;
-        count: number;
-        trails: boolean;
-        trails_factor: number;
-        frames_number: number;
-        type: sprite_types;
-        geometry_info: GeometryInfo;
-    }[];
+    public sprites_keys: SpriteKey[] | target_types;
     public x_sequence: DefaultAttr[] = [];
     public y_sequence: DefaultAttr[] = [];
     public x_ellipse_axis_factor_sequence: DefaultAttr[] = [];
@@ -125,7 +127,7 @@ export class BattleAnimation {
     }[] = [];
     public particles_sequence: ParticlesInfo;
     public running: boolean;
-    public sprites: (Phaser.Sprite | Phaser.Graphics)[];
+    public sprites: (Phaser.Sprite | Phaser.Graphics | Phaser.TileSprite | PlayerSprite)[];
     public sprites_prev_properties: {
         [key: string]: {
             [property: string]: any;
@@ -164,6 +166,7 @@ export class BattleAnimation {
         x: number;
         y: number;
     };
+    private destroy_sprites: boolean;
 
     //tween type can be 'initial' for first position
     //sprite_index: "targets" is the target, "caster" is the caster, "allies" are the allies, "background" is the background sprite, 0...n is the sprites_key_names index
@@ -246,6 +249,7 @@ export class BattleAnimation {
             [battle_positions.BETWEEN]: this.game.add.group(),
             [battle_positions.OVER]: this.game.add.group(),
         };
+        this.destroy_sprites = true;
     }
 
     initialize(
@@ -296,93 +300,117 @@ export class BattleAnimation {
                 this.ability_sprites_groups[position].x += numbers.GAME_WIDTH;
             });
         }
-        for (let i = 0; i < this.sprites_keys.length; ++i) {
-            const sprite_info = this.sprites_keys[i];
-            let trail_image: Phaser.Image;
-            if (sprite_info.trails) {
-                const trail_bitmap_data = this.game.make.bitmapData(numbers.GAME_WIDTH, numbers.GAME_HEIGHT);
-                trail_bitmap_data.smoothed = false;
-                trail_bitmap_data.fill(0, 0, 0, 1);
-                trail_bitmap_data.trail_factor = sprite_info.trails_factor;
-                trail_image = this.game.make.image(0, 0, trail_bitmap_data);
-                trail_image.blendMode = Phaser.blendModes.SCREEN;
-                this.trails_bmps.push(trail_bitmap_data);
-                this.trails_objs.push(trail_image);
-                this.ability_sprites_groups[sprite_info.position].addChild(trail_image);
+        if (typeof this.sprites_keys === "string") {
+            this.destroy_sprites = false;
+            let sprites: (Phaser.Sprite | PlayerSprite | Phaser.TileSprite)[] = [];
+            switch (this.sprites_keys) {
+                case target_types.ALLIES:
+                    sprites = this.allies_sprites;
+                    break;
+                case target_types.BACKGROUND:
+                    sprites = this.background_sprites;
+                    break;
+                case target_types.CASTER:
+                    sprites = [this.caster_sprite];
+                    break;
+                case target_types.TARGETS:
+                    sprites = this.targets_sprites;
+                    break;
             }
-            if (!sprite_info.per_target) {
-                const count = sprite_info.count ? sprite_info.count : 1;
-                for (let j = 0; j < count; ++j) {
-                    let psy_sprite: Phaser.Sprite | Phaser.Graphics;
-                    const sprite_type = sprite_info.type ?? sprite_types.SPRITE;
-                    let color;
-                    const get_color = (color: string) => {
-                        if (color === "element") {
-                            return element_colors_in_battle[this.element];
-                        } else {
-                            return parseInt(sprite_info.geometry_info.color, 16);
-                        }
-                    };
-                    switch (sprite_type) {
-                        case sprite_types.SPRITE:
-                            psy_sprite = this.game.add.sprite(this.init_pos.x, this.init_pos.y, sprite_key);
-                            const frames = Phaser.Animation.generateFrameNames(
-                                sprite_info.key_name + "/",
-                                0,
-                                sprite_info.frames_number ?? psy_sprite.animations.frameTotal,
-                                "",
-                                3
-                            );
-                            psy_sprite.animations.add(sprite_info.key_name, frames);
-                            psy_sprite.animations.frameName = frames[0];
-                            break;
-                        case sprite_types.RING:
-                            psy_sprite = this.game.add.graphics(this.init_pos.x, this.init_pos.y);
-                            color = sprite_info.geometry_info.keep_core_white
-                                ? 0xffffff
-                                : get_color(sprite_info.geometry_info.color);
-                            psy_sprite.lineStyle(sprite_info.geometry_info.thickness, color);
-                            psy_sprite.arc(0, 0, sprite_info.geometry_info.radius, 0, numbers.degree360, false);
-                            break;
-                        case sprite_types.RECTANGLE:
-                            psy_sprite = this.game.add.graphics(this.init_pos.x, this.init_pos.y);
-                            color = sprite_info.geometry_info.keep_core_white
-                                ? 0xffffff
-                                : get_color(sprite_info.geometry_info.color);
-                            psy_sprite.beginFill(color, 1);
-                            psy_sprite.drawRect(
-                                0,
-                                0,
-                                sprite_info.geometry_info.width,
-                                sprite_info.geometry_info.height
-                            );
-                            psy_sprite.endFill();
-                            break;
-                        case sprite_types.CIRCLE:
-                            psy_sprite = this.game.add.graphics(this.init_pos.x, this.init_pos.y);
-                            color = sprite_info.geometry_info.keep_core_white
-                                ? 0xffffff
-                                : get_color(sprite_info.geometry_info.color);
-                            psy_sprite.beginFill(color, 1);
-                            psy_sprite.drawCircle(0, 0, sprite_info.geometry_info.radius << 1);
-                            psy_sprite.endFill();
-                            break;
-                    }
-                    if (psy_sprite instanceof Phaser.Graphics) {
-                        const graphic = psy_sprite;
-                        psy_sprite = this.game.add.sprite(psy_sprite.x, psy_sprite.y, psy_sprite.generateTexture());
-                        graphic.destroy();
-                        psy_sprite.data.color = get_color(sprite_info.geometry_info.color);
-                        psy_sprite.data.keep_core_white = sprite_info.geometry_info.keep_core_white;
-                    }
-                    this.ability_sprites_groups[sprite_info.position].addChild(psy_sprite);
-                    psy_sprite.data.custom_key = `${sprite_type}/${i}/${j}`;
-                    psy_sprite.data.trail_image = trail_image;
-                    psy_sprite.data.ignore_trim = true;
-                    this.sprites.push(psy_sprite);
+            for (let i = 0; i < sprites.length; ++i) {
+                const sprite = sprites[i];
+                sprite.data.custom_key = `${this.sprites_keys}/${i}`;
+                this.sprites.push(sprite);
+            }
+        } else {
+            for (let i = 0; i < this.sprites_keys.length; ++i) {
+                const sprite_info = this.sprites_keys[i] as SpriteKey;
+                let trail_image: Phaser.Image;
+                if (sprite_info.trails) {
+                    const trail_bitmap_data = this.game.make.bitmapData(numbers.GAME_WIDTH, numbers.GAME_HEIGHT);
+                    trail_bitmap_data.smoothed = false;
+                    trail_bitmap_data.fill(0, 0, 0, 1);
+                    trail_bitmap_data.trail_factor = sprite_info.trails_factor;
+                    trail_image = this.game.make.image(0, 0, trail_bitmap_data);
+                    trail_image.blendMode = Phaser.blendModes.SCREEN;
+                    this.trails_bmps.push(trail_bitmap_data);
+                    this.trails_objs.push(trail_image);
+                    this.ability_sprites_groups[sprite_info.position].addChild(trail_image);
                 }
-            } else {
-                //TODO: create one sprite for each target
+                if (!sprite_info.per_target) {
+                    const count = sprite_info.count ? sprite_info.count : 1;
+                    for (let j = 0; j < count; ++j) {
+                        let psy_sprite: Phaser.Sprite | Phaser.Graphics;
+                        const sprite_type = sprite_info.type ?? sprite_types.SPRITE;
+                        let color;
+                        const get_color = (color: string) => {
+                            if (color === "element") {
+                                return element_colors_in_battle[this.element];
+                            } else {
+                                return parseInt(sprite_info.geometry_info.color, 16);
+                            }
+                        };
+                        switch (sprite_type) {
+                            case sprite_types.SPRITE:
+                                psy_sprite = this.game.add.sprite(this.init_pos.x, this.init_pos.y, sprite_key);
+                                const frames = Phaser.Animation.generateFrameNames(
+                                    sprite_info.key_name + "/",
+                                    0,
+                                    sprite_info.frames_number ?? psy_sprite.animations.frameTotal,
+                                    "",
+                                    3
+                                );
+                                psy_sprite.animations.add(sprite_info.key_name, frames);
+                                psy_sprite.animations.frameName = frames[0];
+                                break;
+                            case sprite_types.RING:
+                                psy_sprite = this.game.add.graphics(this.init_pos.x, this.init_pos.y);
+                                color = sprite_info.geometry_info.keep_core_white
+                                    ? 0xffffff
+                                    : get_color(sprite_info.geometry_info.color);
+                                psy_sprite.lineStyle(sprite_info.geometry_info.thickness, color);
+                                psy_sprite.arc(0, 0, sprite_info.geometry_info.radius, 0, numbers.degree360, false);
+                                break;
+                            case sprite_types.RECTANGLE:
+                                psy_sprite = this.game.add.graphics(this.init_pos.x, this.init_pos.y);
+                                color = sprite_info.geometry_info.keep_core_white
+                                    ? 0xffffff
+                                    : get_color(sprite_info.geometry_info.color);
+                                psy_sprite.beginFill(color, 1);
+                                psy_sprite.drawRect(
+                                    0,
+                                    0,
+                                    sprite_info.geometry_info.width,
+                                    sprite_info.geometry_info.height
+                                );
+                                psy_sprite.endFill();
+                                break;
+                            case sprite_types.CIRCLE:
+                                psy_sprite = this.game.add.graphics(this.init_pos.x, this.init_pos.y);
+                                color = sprite_info.geometry_info.keep_core_white
+                                    ? 0xffffff
+                                    : get_color(sprite_info.geometry_info.color);
+                                psy_sprite.beginFill(color, 1);
+                                psy_sprite.drawCircle(0, 0, sprite_info.geometry_info.radius << 1);
+                                psy_sprite.endFill();
+                                break;
+                        }
+                        if (psy_sprite instanceof Phaser.Graphics) {
+                            const graphic = psy_sprite;
+                            psy_sprite = this.game.add.sprite(psy_sprite.x, psy_sprite.y, psy_sprite.generateTexture());
+                            graphic.destroy();
+                            psy_sprite.data.color = get_color(sprite_info.geometry_info.color);
+                            psy_sprite.data.keep_core_white = sprite_info.geometry_info.keep_core_white;
+                        }
+                        this.ability_sprites_groups[sprite_info.position].addChild(psy_sprite);
+                        psy_sprite.data.custom_key = `${sprite_type}/${i}/${j}`;
+                        psy_sprite.data.trail_image = trail_image;
+                        psy_sprite.data.ignore_trim = true;
+                        this.sprites.push(psy_sprite);
+                    }
+                } else {
+                    //TODO: create one sprite for each target
+                }
             }
         }
         this.set_filters();
@@ -462,13 +490,15 @@ export class BattleAnimation {
 
     unmount_animation(finish_callback) {
         Promise.all(this.promises).then(() => {
-            this.sprites.forEach(sprite => {
-                sprite.filters = undefined;
-                for (let filter_key in sprite.available_filters) {
-                    (sprite.available_filters[filter_key] as Phaser.Filter).destroy();
-                }
-                sprite.destroy();
-            });
+            if (this.destroy_sprites) {
+                this.sprites.forEach(sprite => {
+                    sprite.filters = undefined;
+                    for (let filter_key in sprite.available_filters) {
+                        (sprite.available_filters[filter_key] as Phaser.Filter).destroy();
+                    }
+                    sprite.destroy();
+                });
+            }
             this.trails_objs.forEach(obj => {
                 obj.destroy(true);
             });

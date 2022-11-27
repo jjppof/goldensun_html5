@@ -1,0 +1,34 @@
+{
+    "key_name": "flee",
+    "sprites": "targets",
+    "x_sequence": [{
+        "to": [65, 65, 65],
+        "start_delay": [0, 150, 300],
+        "duration": 200,
+        "is_absolute": false,
+        "tween": "Quadratic.In",
+        "sprite_index": [2, 1, 0]
+    },{
+        "to": [50, 50, 50],
+        "start_delay": [0, 0, 0],
+        "duration": 80,
+        "is_absolute": false,
+        "tween": "Linear.None",
+        "sprite_index": [2, 1, 0]
+    }],
+    "y_sequence": [{
+        "to": [-25, -25, -25],
+        "start_delay": [0, 150, 300],
+        "duration": 200,
+        "is_absolute": false,
+        "tween": "Quadratic.In",
+        "sprite_index": [2, 1, 0]
+    },{
+        "to": [-5, -5, -5],
+        "start_delay": [0, 0, 0],
+        "duration": 80,
+        "is_absolute": false,
+        "tween": "Linear.None",
+        "sprite_index": [2, 1, 0]
+    }]
+}
