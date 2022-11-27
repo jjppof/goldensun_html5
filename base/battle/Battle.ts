@@ -340,9 +340,11 @@ export class Battle {
                 false
             );
             const caster_sprite = this.allies_map_sprite[this.data.info.party_data.members[0].key_name];
-            const target_sprites = this.data.info.party_data.members.filter(member => {
-                return !member.has_permanent_status(permanent_status.DOWNED);
-            }).map(member => this.allies_map_sprite[member.key_name]);
+            const target_sprites = this.data.info.party_data.members
+                .filter(member => {
+                    return !member.has_permanent_status(permanent_status.DOWNED);
+                })
+                .map(member => this.allies_map_sprite[member.key_name]);
             await this.animation_manager.play_animation(
                 flee_animation,
                 caster_sprite,

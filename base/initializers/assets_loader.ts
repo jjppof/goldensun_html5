@@ -26,7 +26,10 @@ function load_db_files(game) {
     game.load.json("inn_db", "assets/dbs/inn_db.json");
     game.load.json("storage_db", "assets/dbs/storage_db.json");
     game.load.json("abilities_cast_db", "assets/dbs/common_abilities_animations/abilities_cast_db.json");
-    game.load.json("misc_battle_animations_db", "assets/dbs/common_abilities_animations/misc_battle_animations_db.json");
+    game.load.json(
+        "misc_battle_animations_db",
+        "assets/dbs/common_abilities_animations/misc_battle_animations_db.json"
+    );
 }
 
 function load_misc(game) {

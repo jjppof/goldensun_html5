@@ -22,23 +22,29 @@ export enum battle_positions {
     BEHIND = "behind",
 }
 
+type CompactValuesSpecifier = {
+    starting_value: number;
+    cumulator: number;
+    reverse?: boolean;
+};
+
 type DefaultAttr = {
-    start_delay: number | number[];
-    to: string | number | number[];
+    start_delay: number | number[] | CompactValuesSpecifier;
+    to: string | number | number[] | CompactValuesSpecifier;
     is_absolute: boolean;
     tween: string;
     duration: number | string;
     sprite_index?: string | number | number[];
     yoyo?: boolean;
-    shift?: number | number[];
+    shift?: number | number[] | CompactValuesSpecifier;
     shift_direction?: ("in_center" | "out_center") | ("in_center" | "out_center")[];
     direction?: string;
     remove?: boolean;
 };
 
 type GeneralFilterAttr = {
-    start_delay: number | number[];
-    sprite_index: string | number | number[];
+    start_delay: number | number[] | CompactValuesSpecifier;
+    sprite_index: string | number | number[] | CompactValuesSpecifier;
     remove: boolean;
 };
 
@@ -453,6 +459,14 @@ export class BattleAnimation {
         });
     }
 
+    get_expanded_values(recipe: CompactValuesSpecifier, number: number) {
+        const result = new Array<number>(number);
+        for (let i = 0; i < number; ++i) {
+            result[i] = recipe.starting_value + i * recipe.cumulator;
+        }
+        return recipe.reverse ? result.reverse() : result;
+    }
+
     play(finish_callback: () => void) {
         this.running = true;
         this.promises = [];
@@ -631,6 +645,18 @@ export class BattleAnimation {
         for (let i = 0; i < sequence.length; ++i) {
             const seq = sequence[i];
             const sprites = this.get_sprites(seq, obj_propety);
+            if (!Array.isArray(seq.start_delay) && typeof seq.start_delay === "object") {
+                seq.start_delay = this.get_expanded_values(
+                    seq.start_delay as CompactValuesSpecifier,
+                    Object.keys(sprites).length
+                );
+            }
+            if (!Array.isArray(seq.to) && typeof seq.to === "object") {
+                seq.to = this.get_expanded_values(seq.to as CompactValuesSpecifier, Object.keys(sprites).length);
+            }
+            if (!Array.isArray(seq.shift) && typeof seq.shift === "object") {
+                seq.shift = this.get_expanded_values(seq.shift as CompactValuesSpecifier, Object.keys(sprites).length);
+            }
             let promises_set = false;
             _.forEach(sprites, (sprite_info, key) => {
                 const this_sprite = sprite_info.obj;
@@ -689,7 +715,8 @@ export class BattleAnimation {
                             }
                         }
                         const shift =
-                            ((Array.isArray(seq.shift) ? seq.shift[sprite_info.index] : seq.shift) ?? 0) * shift_sign;
+                            ((Array.isArray(seq.shift) ? seq.shift[sprite_info.index] : (seq.shift as number)) ?? 0) *
+                            shift_sign;
                         to_value = player_sprite[property_to_set] + shift;
                         if (this.mirrored && property_to_set === "x") {
                             to_value = numbers.GAME_WIDTH - to_value;
@@ -727,7 +754,7 @@ export class BattleAnimation {
                     }
                     const start_delay = Array.isArray(seq.start_delay)
                         ? seq.start_delay[sprite_info.index]
-                        : seq.start_delay;
+                        : (seq.start_delay as number);
                     if (seq.duration === "instantly") {
                         let resolve_function;
                         if (!promises_set) {
@@ -902,6 +929,12 @@ export class BattleAnimation {
         for (let i = 0; i < sequence.length; ++i) {
             const filter_seq = sequence[i];
             const sprites = this.get_sprites(filter_seq);
+            if (!Array.isArray(filter_seq.start_delay) && typeof filter_seq.start_delay === "object") {
+                filter_seq.start_delay = this.get_expanded_values(
+                    filter_seq.start_delay as CompactValuesSpecifier,
+                    Object.keys(sprites).length
+                );
+            }
             _.forEach(sprites, sprite_info => {
                 const sprite = sprite_info.obj as PlayerSprite | Phaser.Sprite;
                 let resolve_function;
@@ -909,7 +942,7 @@ export class BattleAnimation {
                 this.promises.push(this_promise);
                 const start_delay = Array.isArray(filter_seq.start_delay)
                     ? filter_seq.start_delay[sprite_info.index]
-                    : filter_seq.start_delay;
+                    : (filter_seq.start_delay as number);
                 this.game.time.events.add(start_delay, () => {
                     const filter = sprite.available_filters[filter_key];
                     this.manage_filter(filter as Phaser.Filter, sprite, filter_seq.remove);

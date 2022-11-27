@@ -211,6 +211,9 @@ export class PlayerSprite {
     get battle_key() {
         return `${this.battle_action}_${this.battle_position}`;
     }
+    get key() {
+        return this.battle_key;
+    }
 
     get animations() {
         return this.char_sprite.animations;
@@ -218,10 +221,6 @@ export class PlayerSprite {
 
     get active() {
         return this._active;
-    }
-
-    get key() {
-        return this.player_info.battle_key;
     }
 
     initialize_player() {

@@ -16,7 +16,9 @@ export function initialize_misc_battle_anim_recipes(
     data.set_whats_loading("misc battle anims");
     game.load.onLoadComplete.addOnce(() => {
         for (let misc_battle_anim_key in misc_battle_animations_db) {
-            misc_battle_animations_recipes[misc_battle_anim_key] = game.cache.getJSON(`misc_battle_animation_${misc_battle_anim_key}`);
+            misc_battle_animations_recipes[misc_battle_anim_key] = game.cache.getJSON(
+                `misc_battle_animation_${misc_battle_anim_key}`
+            );
         }
         load_promise_resolve();
     });
