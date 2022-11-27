@@ -44,7 +44,7 @@ type DefaultAttr = {
 
 type GeneralFilterAttr = {
     start_delay: number | number[] | CompactValuesSpecifier;
-    sprite_index: string | number | number[] | CompactValuesSpecifier;
+    sprite_index: string | number | number[];
     remove: boolean;
 };
 
