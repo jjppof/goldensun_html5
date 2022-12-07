@@ -32,6 +32,8 @@ const STANDBY_COUNT_SHIFT_Y = [8, 16];
 const INITIAL_PADDING__DJINNI_X = 9;
 const INITIAL_PADDING__DJINNI_Y = 9;
 
+const LOW_HP_THRESHOLD = 0.25;
+
 type InfoSprite = {
     group: Phaser.Group;
     name: TextObj;
@@ -146,10 +148,11 @@ export class CharsStatusWindow {
 
             const base_x_pos = i * WIDTH_PER_CHAR + INITIAL_PADDING_X;
             const group_key = char.key_name + "_status";
+            const hp_color = this.get_char_hp_color(char);
 
             info_sprites_obj.group = this.status_window.define_internal_group(group_key);
             info_sprites_obj.name = this.status_window.set_text_in_position(char.name, base_x_pos, this.name_y, {
-                color: this.status_window.font_color,
+                color: hp_color,
                 with_bg: this.compact,
                 internal_group_key: group_key,
             });
@@ -170,7 +173,7 @@ export class CharsStatusWindow {
             const x_number_pos = base_x_pos + STAT_X;
 
             info_sprites_obj.hp_header = this.status_window.set_text_in_position("HP", base_x_pos, y_pos, {
-                color: this.status_window.font_color,
+                color: hp_color,
                 internal_group_key: group_key,
             });
             info_sprites_obj.hp = this.status_window.set_text_in_position(
@@ -179,7 +182,7 @@ export class CharsStatusWindow {
                 y_pos,
                 {
                     right_align: true,
-                    color: this.status_window.font_color,
+                    color: hp_color,
                     internal_group_key: group_key,
                 }
             );
@@ -291,10 +294,13 @@ export class CharsStatusWindow {
             const base_x_pos = i * WIDTH_PER_CHAR + INITIAL_PADDING_X + (show_djinn_info ? DJINN_INFO_WIDTH : 0);
             const x_number_pos = base_x_pos + STAT_X;
 
+            this.status_window.update_text_color(this.get_char_hp_color(char), info_sprite.hp_header);
             this.status_window.update_text(char.name, info_sprite.name);
             this.status_window.update_text_position({x: base_x_pos}, info_sprite.name);
+            this.status_window.update_text_color(this.get_char_hp_color(char), info_sprite.name);
             this.status_window.update_text(String(char.current_hp), info_sprite.hp);
             this.status_window.update_text_position({x: x_number_pos}, info_sprite.hp);
+            this.status_window.update_text_color(this.get_char_hp_color(char), info_sprite.hp);
             this.status_window.update_text(String(char.current_pp), info_sprite.pp);
             this.status_window.update_text_position({x: x_number_pos}, info_sprite.pp);
 
@@ -364,5 +370,14 @@ export class CharsStatusWindow {
     /*Destroys this window*/
     destroy() {
         this.status_window.destroy(false);
+    }
+
+    get_char_hp_color(curr_char: MainChar) {
+        if (curr_char.current_hp <= 0)
+            return numbers.RED_FONT_COLOR;
+        else if (curr_char.current_hp <= curr_char.max_hp*LOW_HP_THRESHOLD)
+            return numbers.YELLOW_FONT_COLOR;
+        else
+            return this.status_window.font_color;
     }
 }
