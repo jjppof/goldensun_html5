@@ -398,6 +398,7 @@ export class GameEventManager {
                     info.item,
                     info.quantity,
                     info.finish_events,
+                    info.inventory_full_events,
                     info.custom_init_text,
                     info.no_chest,
                     info.hide_on_finish

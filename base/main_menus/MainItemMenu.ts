@@ -254,6 +254,10 @@ export class MainItemMenu {
     }
 
     char_choose() {
+        if (this.data.info.party_data.members[this.selected_char_index].items.length === 0) {
+            this.open_char_select();
+            return;
+        }
         if (this.gear_overview_window.open) {
             this.close_gear_window();
         }
@@ -261,8 +265,9 @@ export class MainItemMenu {
             if (
                 this.data.info.party_data.members[this.selected_char_index].key_name ===
                 this.item_options_window.char.key_name
-            )
+            ) {
                 return;
+            }
             this.chars_menu.deactivate();
         } else {
             this.chars_menu.deactivate();
@@ -351,11 +356,15 @@ export class MainItemMenu {
         this.item_choose_window.deactivate();
     }
 
-    set_guide_window_text() {
-        if (this.choosing_item) {
-            this.guide_window.update_text(this.guide_window_msgs.choosing_item, this.guide_window_text);
+    set_guide_window_text(custom_text?: string) {
+        if (custom_text !== undefined) {
+            this.guide_window.update_text(custom_text, this.guide_window_text);
         } else {
-            this.guide_window.update_text(this.guide_window_msgs.choosing_char, this.guide_window_text);
+            if (this.choosing_item) {
+                this.guide_window.update_text(this.guide_window_msgs.choosing_item, this.guide_window_text);
+            } else {
+                this.guide_window.update_text(this.guide_window_msgs.choosing_char, this.guide_window_text);
+            }
         }
     }
 

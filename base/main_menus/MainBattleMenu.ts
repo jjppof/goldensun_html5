@@ -208,7 +208,9 @@ export class MainBattleMenu {
                 this.on_ability_choose(this.summon_window, true, "summon", this.djinni_already_used);
                 break;
             case "item":
-                this.on_ability_choose(this.item_window, false, "item");
+                if (this.data.info.party_data.members[this.current_char_index].items.length) {
+                    this.on_ability_choose(this.item_window, false, "item");
+                }
                 break;
             case "defend":
                 this.inner_horizontal_menu.deactivate(true);

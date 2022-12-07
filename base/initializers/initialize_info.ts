@@ -21,6 +21,7 @@ import {GoldenSun} from "../GoldenSun";
 import {initialize_summons} from "./summons";
 import {initialize_npcs_data} from "./npcs";
 import {initialize_cast_recipes} from "./cast_recipes";
+import {initialize_misc_battle_anim_recipes} from "./misc_battle_anim_recipes";
 import {ShopItem, Shop} from "../main_menus/ShopMenu";
 import {Button} from "../XGamepad";
 import {Inn} from "main_menus/InnMenu";
@@ -72,6 +73,7 @@ export type GameInfo = {
     summons_list: {[summon_key: string]: Summon};
     field_abilities_list: {[field_psynergy_key: string]: FieldAbilities};
     abilities_cast_recipes: {[ability_cast_key: string]: any};
+    misc_battle_animations_recipes: {[misc_battle_anim_key: string]: any};
 };
 
 export async function initialize_game_data(game: Phaser.Game, data: GoldenSun) {
@@ -191,6 +193,19 @@ export async function initialize_game_data(game: Phaser.Game, data: GoldenSun) {
         load_abilities_cast_anim_promise_resolve
     );
     await load_abilities_cast_anim_promise;
+
+    // Initializes MISC BATTLE ANIMATIONS DB
+    let load_misc_battle_animations_promise_resolve;
+    const load_misc_battle_animations_promise = new Promise(
+        resolve => (load_misc_battle_animations_promise_resolve = resolve)
+    );
+    data.info.misc_battle_animations_recipes = initialize_misc_battle_anim_recipes(
+        game,
+        data,
+        data.dbs.misc_battle_animations_db,
+        load_misc_battle_animations_promise_resolve
+    );
+    await load_misc_battle_animations_promise;
 
     // Initializes ARTIFACTS GLOBAL LIST
     data.info.artifacts_global_list = snapshot?.artifacts_global_list ?? data.dbs.init_db.artifacts_global_list;

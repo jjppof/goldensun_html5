@@ -124,6 +124,7 @@ export class BattleAnimationManager {
         caster_battle_key: string,
         caster_sprite: PlayerSprite,
         targets_sprites: PlayerSprite[],
+        allies_sprites: PlayerSprite[],
         group_caster: Phaser.Group,
         group_taker: Phaser.Group,
         battle_stage: BattleStage
@@ -135,6 +136,7 @@ export class BattleAnimationManager {
             this.animations[key],
             caster_sprite,
             targets_sprites,
+            allies_sprites,
             group_caster,
             group_taker,
             battle_stage,
@@ -147,6 +149,7 @@ export class BattleAnimationManager {
         animation: BattleAnimation,
         caster_sprite: PlayerSprite,
         targets_sprites: PlayerSprite[],
+        allies_sprites: PlayerSprite[],
         group_caster: Phaser.Group,
         group_taker: Phaser.Group,
         battle_stage: BattleStage,
@@ -155,6 +158,7 @@ export class BattleAnimationManager {
         animation.initialize(
             caster_sprite,
             targets_sprites,
+            allies_sprites,
             group_caster,
             group_taker,
             battle_stage.battle_group,

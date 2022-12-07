@@ -294,13 +294,15 @@ export class CharsStatusWindow {
             const base_x_pos = i * WIDTH_PER_CHAR + INITIAL_PADDING_X + (show_djinn_info ? DJINN_INFO_WIDTH : 0);
             const x_number_pos = base_x_pos + STAT_X;
 
-            this.status_window.update_text_color(this.get_char_hp_color(char), info_sprite.hp_header);
+            const hp_color = this.get_char_hp_color(char);
+
+            this.status_window.update_text_color(hp_color, info_sprite.hp_header);
             this.status_window.update_text(char.name, info_sprite.name);
             this.status_window.update_text_position({x: base_x_pos}, info_sprite.name);
-            this.status_window.update_text_color(this.get_char_hp_color(char), info_sprite.name);
+            this.status_window.update_text_color(hp_color, info_sprite.name);
             this.status_window.update_text(String(char.current_hp), info_sprite.hp);
             this.status_window.update_text_position({x: x_number_pos}, info_sprite.hp);
-            this.status_window.update_text_color(this.get_char_hp_color(char), info_sprite.hp);
+            this.status_window.update_text_color(hp_color, info_sprite.hp);
             this.status_window.update_text(String(char.current_pp), info_sprite.pp);
             this.status_window.update_text_position({x: x_number_pos}, info_sprite.pp);
 

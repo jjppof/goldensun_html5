@@ -292,7 +292,7 @@ export class Effect {
                 };
                 return mathjs.evaluate(effect_obj.expression, scope) | 0;
             } else {
-                return Effect.apply_operator(base_value, value, effect_obj.operator);
+                return Effect.apply_operator(base_value, value, effect_obj.operator) | 0;
             }
         }
     }
