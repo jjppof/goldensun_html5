@@ -375,11 +375,8 @@ export class CharsStatusWindow {
     }
 
     get_char_hp_color(curr_char: MainChar) {
-        if (curr_char.current_hp <= 0)
-            return numbers.RED_FONT_COLOR;
-        else if (curr_char.current_hp <= curr_char.max_hp*LOW_HP_THRESHOLD)
-            return numbers.YELLOW_FONT_COLOR;
-        else
-            return this.status_window.font_color;
+        if (curr_char.current_hp <= 0) return numbers.RED_FONT_COLOR;
+        else if (curr_char.current_hp <= curr_char.max_hp * LOW_HP_THRESHOLD) return numbers.YELLOW_FONT_COLOR;
+        else return this.status_window.font_color;
     }
 }
