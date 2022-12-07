@@ -9,28 +9,41 @@ import {ParticlesInfo} from "../ParticlesWrapper";
 export const CAST_STAGE_POSITION = 0.5242024;
 export const MIRRORED_CAST_STAGE_POSITION = -0.7151327;
 
+enum target_types {
+    CASTER = "caster",
+    TARGETS = "targets",
+    ALLIES = "allies",
+    BACKGROUND = "background",
+}
+
 export enum battle_positions {
     OVER = "over",
     BETWEEN = "between",
     BEHIND = "behind",
 }
 
+type CompactValuesSpecifier = {
+    starting_value: number;
+    cumulator: number;
+    reverse?: boolean;
+};
+
 type DefaultAttr = {
-    start_delay: number | number[];
-    to: string | number | number[];
+    start_delay: number | number[] | CompactValuesSpecifier;
+    to: string | number | number[] | CompactValuesSpecifier;
     is_absolute: boolean;
     tween: string;
     duration: number | string;
     sprite_index?: string | number | number[];
     yoyo?: boolean;
-    shift?: number | number[];
+    shift?: number | number[] | CompactValuesSpecifier;
     shift_direction?: ("in_center" | "out_center") | ("in_center" | "out_center")[];
     direction?: string;
     remove?: boolean;
 };
 
 type GeneralFilterAttr = {
-    start_delay: number | number[];
+    start_delay: number | number[] | CompactValuesSpecifier;
     sprite_index: string | number | number[];
     remove: boolean;
 };
@@ -51,21 +64,23 @@ type GeometryInfo = {
     keep_core_white: boolean;
 };
 
+type SpriteKey = {
+    key_name: string;
+    per_target: boolean;
+    position: string;
+    count: number;
+    trails: boolean;
+    trails_factor: number;
+    frames_number: number;
+    type: sprite_types;
+    geometry_info: GeometryInfo;
+};
+
 export class BattleAnimation {
     public game: Phaser.Game;
     public data: GoldenSun;
     public key_name: string;
-    public sprites_keys: {
-        key_name: string;
-        per_target: boolean;
-        position: string;
-        count: number;
-        trails: boolean;
-        trails_factor: number;
-        frames_number: number;
-        type: sprite_types;
-        geometry_info: GeometryInfo;
-    }[];
+    public sprites_keys: SpriteKey[] | target_types;
     public x_sequence: DefaultAttr[] = [];
     public y_sequence: DefaultAttr[] = [];
     public x_ellipse_axis_factor_sequence: DefaultAttr[] = [];
@@ -101,7 +116,7 @@ export class BattleAnimation {
     public flame_filter_sequence: GeneralFilterAttr[] = [];
     public play_sequence: {
         start_delay: number | number[];
-        sprite_index: string | number | number[];
+        sprite_index: target_types | number | number[];
         reverse: boolean;
         frame_rate: number;
         repeat: boolean;
@@ -118,7 +133,7 @@ export class BattleAnimation {
     }[] = [];
     public particles_sequence: ParticlesInfo;
     public running: boolean;
-    public sprites: (Phaser.Sprite | Phaser.Graphics)[];
+    public sprites: (Phaser.Sprite | Phaser.Graphics | Phaser.TileSprite | PlayerSprite)[];
     public sprites_prev_properties: {
         [key: string]: {
             [property: string]: any;
@@ -131,6 +146,7 @@ export class BattleAnimation {
     };
     public caster_sprite: PlayerSprite;
     public targets_sprites: PlayerSprite[];
+    public allies_sprites: PlayerSprite[];
     public background_sprites: Phaser.TileSprite[];
     public group_caster: Phaser.Group;
     public group_enemy: Phaser.Group;
@@ -156,9 +172,10 @@ export class BattleAnimation {
         x: number;
         y: number;
     };
+    private destroy_sprites: boolean;
 
     //tween type can be 'initial' for first position
-    //sprite_index: "targets" is the target, "caster" is the caster, "background" is the background sprite, 0...n is the sprites_key_names index
+    //sprite_index: "targets" is the target, "caster" is the caster, "allies" are the allies, "background" is the background sprite, 0...n is the sprites_key_names index
     //property "to" value can be "targets" or an actual value. In the case of "targets" is the the corresponding property value. In the case of using "targets", a "shift" property is available to be added to the resulting value
     //values in rad can have "direction" set to "clockwise", "counter_clockwise" or "closest" if "absolute" is true
     //in sprite_keys, position can be: "between", "over" or "behind"
@@ -238,11 +255,13 @@ export class BattleAnimation {
             [battle_positions.BETWEEN]: this.game.add.group(),
             [battle_positions.OVER]: this.game.add.group(),
         };
+        this.destroy_sprites = true;
     }
 
     initialize(
         caster_sprite: PlayerSprite,
         targets_sprites: PlayerSprite[],
+        allies_sprites: PlayerSprite[],
         group_caster: Phaser.Group,
         group_enemy: Phaser.Group,
         super_group: Phaser.Group,
@@ -263,6 +282,7 @@ export class BattleAnimation {
             y: this.caster_sprite.y,
         };
         this.targets_sprites = targets_sprites;
+        this.allies_sprites = allies_sprites;
         this.background_sprites = background_sprites;
         this.group_caster = group_caster;
         this.group_enemy = group_enemy;
@@ -286,93 +306,117 @@ export class BattleAnimation {
                 this.ability_sprites_groups[position].x += numbers.GAME_WIDTH;
             });
         }
-        for (let i = 0; i < this.sprites_keys.length; ++i) {
-            const sprite_info = this.sprites_keys[i];
-            let trail_image: Phaser.Image;
-            if (sprite_info.trails) {
-                const trail_bitmap_data = this.game.make.bitmapData(numbers.GAME_WIDTH, numbers.GAME_HEIGHT);
-                trail_bitmap_data.smoothed = false;
-                trail_bitmap_data.fill(0, 0, 0, 1);
-                trail_bitmap_data.trail_factor = sprite_info.trails_factor;
-                trail_image = this.game.make.image(0, 0, trail_bitmap_data);
-                trail_image.blendMode = Phaser.blendModes.SCREEN;
-                this.trails_bmps.push(trail_bitmap_data);
-                this.trails_objs.push(trail_image);
-                this.ability_sprites_groups[sprite_info.position].addChild(trail_image);
+        if (typeof this.sprites_keys === "string") {
+            this.destroy_sprites = false;
+            let sprites: (Phaser.Sprite | PlayerSprite | Phaser.TileSprite)[] = [];
+            switch (this.sprites_keys) {
+                case target_types.ALLIES:
+                    sprites = this.allies_sprites;
+                    break;
+                case target_types.BACKGROUND:
+                    sprites = this.background_sprites;
+                    break;
+                case target_types.CASTER:
+                    sprites = [this.caster_sprite];
+                    break;
+                case target_types.TARGETS:
+                    sprites = this.targets_sprites;
+                    break;
             }
-            if (!sprite_info.per_target) {
-                const count = sprite_info.count ? sprite_info.count : 1;
-                for (let j = 0; j < count; ++j) {
-                    let psy_sprite: Phaser.Sprite | Phaser.Graphics;
-                    const sprite_type = sprite_info.type ?? sprite_types.SPRITE;
-                    let color;
-                    const get_color = (color: string) => {
-                        if (color === "element") {
-                            return element_colors_in_battle[this.element];
-                        } else {
-                            return parseInt(sprite_info.geometry_info.color, 16);
-                        }
-                    };
-                    switch (sprite_type) {
-                        case sprite_types.SPRITE:
-                            psy_sprite = this.game.add.sprite(this.init_pos.x, this.init_pos.y, sprite_key);
-                            const frames = Phaser.Animation.generateFrameNames(
-                                sprite_info.key_name + "/",
-                                0,
-                                sprite_info.frames_number ?? psy_sprite.animations.frameTotal,
-                                "",
-                                3
-                            );
-                            psy_sprite.animations.add(sprite_info.key_name, frames);
-                            psy_sprite.animations.frameName = frames[0];
-                            break;
-                        case sprite_types.RING:
-                            psy_sprite = this.game.add.graphics(this.init_pos.x, this.init_pos.y);
-                            color = sprite_info.geometry_info.keep_core_white
-                                ? 0xffffff
-                                : get_color(sprite_info.geometry_info.color);
-                            psy_sprite.lineStyle(sprite_info.geometry_info.thickness, color);
-                            psy_sprite.arc(0, 0, sprite_info.geometry_info.radius, 0, numbers.degree360, false);
-                            break;
-                        case sprite_types.RECTANGLE:
-                            psy_sprite = this.game.add.graphics(this.init_pos.x, this.init_pos.y);
-                            color = sprite_info.geometry_info.keep_core_white
-                                ? 0xffffff
-                                : get_color(sprite_info.geometry_info.color);
-                            psy_sprite.beginFill(color, 1);
-                            psy_sprite.drawRect(
-                                0,
-                                0,
-                                sprite_info.geometry_info.width,
-                                sprite_info.geometry_info.height
-                            );
-                            psy_sprite.endFill();
-                            break;
-                        case sprite_types.CIRCLE:
-                            psy_sprite = this.game.add.graphics(this.init_pos.x, this.init_pos.y);
-                            color = sprite_info.geometry_info.keep_core_white
-                                ? 0xffffff
-                                : get_color(sprite_info.geometry_info.color);
-                            psy_sprite.beginFill(color, 1);
-                            psy_sprite.drawCircle(0, 0, sprite_info.geometry_info.radius << 1);
-                            psy_sprite.endFill();
-                            break;
-                    }
-                    if (psy_sprite instanceof Phaser.Graphics) {
-                        const graphic = psy_sprite;
-                        psy_sprite = this.game.add.sprite(psy_sprite.x, psy_sprite.y, psy_sprite.generateTexture());
-                        graphic.destroy();
-                        psy_sprite.data.color = get_color(sprite_info.geometry_info.color);
-                        psy_sprite.data.keep_core_white = sprite_info.geometry_info.keep_core_white;
-                    }
-                    this.ability_sprites_groups[sprite_info.position].addChild(psy_sprite);
-                    psy_sprite.data.custom_key = `${sprite_type}/${i}/${j}`;
-                    psy_sprite.data.trail_image = trail_image;
-                    psy_sprite.data.ignore_trim = true;
-                    this.sprites.push(psy_sprite);
+            for (let i = 0; i < sprites.length; ++i) {
+                const sprite = sprites[i];
+                sprite.data.custom_key = `${this.sprites_keys}/${i}`;
+                this.sprites.push(sprite);
+            }
+        } else {
+            for (let i = 0; i < this.sprites_keys.length; ++i) {
+                const sprite_info = this.sprites_keys[i] as SpriteKey;
+                let trail_image: Phaser.Image;
+                if (sprite_info.trails) {
+                    const trail_bitmap_data = this.game.make.bitmapData(numbers.GAME_WIDTH, numbers.GAME_HEIGHT);
+                    trail_bitmap_data.smoothed = false;
+                    trail_bitmap_data.fill(0, 0, 0, 1);
+                    trail_bitmap_data.trail_factor = sprite_info.trails_factor;
+                    trail_image = this.game.make.image(0, 0, trail_bitmap_data);
+                    trail_image.blendMode = Phaser.blendModes.SCREEN;
+                    this.trails_bmps.push(trail_bitmap_data);
+                    this.trails_objs.push(trail_image);
+                    this.ability_sprites_groups[sprite_info.position].addChild(trail_image);
                 }
-            } else {
-                //TODO: create one sprite for each target
+                if (!sprite_info.per_target) {
+                    const count = sprite_info.count ? sprite_info.count : 1;
+                    for (let j = 0; j < count; ++j) {
+                        let psy_sprite: Phaser.Sprite | Phaser.Graphics;
+                        const sprite_type = sprite_info.type ?? sprite_types.SPRITE;
+                        let color;
+                        const get_color = (color: string) => {
+                            if (color === "element") {
+                                return element_colors_in_battle[this.element];
+                            } else {
+                                return parseInt(sprite_info.geometry_info.color, 16);
+                            }
+                        };
+                        switch (sprite_type) {
+                            case sprite_types.SPRITE:
+                                psy_sprite = this.game.add.sprite(this.init_pos.x, this.init_pos.y, sprite_key);
+                                const frames = Phaser.Animation.generateFrameNames(
+                                    sprite_info.key_name + "/",
+                                    0,
+                                    sprite_info.frames_number ?? psy_sprite.animations.frameTotal,
+                                    "",
+                                    3
+                                );
+                                psy_sprite.animations.add(sprite_info.key_name, frames);
+                                psy_sprite.animations.frameName = frames[0];
+                                break;
+                            case sprite_types.RING:
+                                psy_sprite = this.game.add.graphics(this.init_pos.x, this.init_pos.y);
+                                color = sprite_info.geometry_info.keep_core_white
+                                    ? 0xffffff
+                                    : get_color(sprite_info.geometry_info.color);
+                                psy_sprite.lineStyle(sprite_info.geometry_info.thickness, color);
+                                psy_sprite.arc(0, 0, sprite_info.geometry_info.radius, 0, numbers.degree360, false);
+                                break;
+                            case sprite_types.RECTANGLE:
+                                psy_sprite = this.game.add.graphics(this.init_pos.x, this.init_pos.y);
+                                color = sprite_info.geometry_info.keep_core_white
+                                    ? 0xffffff
+                                    : get_color(sprite_info.geometry_info.color);
+                                psy_sprite.beginFill(color, 1);
+                                psy_sprite.drawRect(
+                                    0,
+                                    0,
+                                    sprite_info.geometry_info.width,
+                                    sprite_info.geometry_info.height
+                                );
+                                psy_sprite.endFill();
+                                break;
+                            case sprite_types.CIRCLE:
+                                psy_sprite = this.game.add.graphics(this.init_pos.x, this.init_pos.y);
+                                color = sprite_info.geometry_info.keep_core_white
+                                    ? 0xffffff
+                                    : get_color(sprite_info.geometry_info.color);
+                                psy_sprite.beginFill(color, 1);
+                                psy_sprite.drawCircle(0, 0, sprite_info.geometry_info.radius << 1);
+                                psy_sprite.endFill();
+                                break;
+                        }
+                        if (psy_sprite instanceof Phaser.Graphics) {
+                            const graphic = psy_sprite;
+                            psy_sprite = this.game.add.sprite(psy_sprite.x, psy_sprite.y, psy_sprite.generateTexture());
+                            graphic.destroy();
+                            psy_sprite.data.color = get_color(sprite_info.geometry_info.color);
+                            psy_sprite.data.keep_core_white = sprite_info.geometry_info.keep_core_white;
+                        }
+                        this.ability_sprites_groups[sprite_info.position].addChild(psy_sprite);
+                        psy_sprite.data.custom_key = `${sprite_type}/${i}/${j}`;
+                        psy_sprite.data.trail_image = trail_image;
+                        psy_sprite.data.ignore_trim = true;
+                        this.sprites.push(psy_sprite);
+                    }
+                } else {
+                    //TODO: create one sprite for each target
+                }
             }
         }
         this.set_filters();
@@ -415,6 +459,14 @@ export class BattleAnimation {
         });
     }
 
+    get_expanded_values(recipe: CompactValuesSpecifier, number: number) {
+        const result = new Array<number>(number);
+        for (let i = 0; i < number; ++i) {
+            result[i] = recipe.starting_value + i * recipe.cumulator;
+        }
+        return recipe.reverse ? result.reverse() : result;
+    }
+
     play(finish_callback: () => void) {
         this.running = true;
         this.promises = [];
@@ -452,13 +504,15 @@ export class BattleAnimation {
 
     unmount_animation(finish_callback) {
         Promise.all(this.promises).then(() => {
-            this.sprites.forEach(sprite => {
-                sprite.filters = undefined;
-                for (let filter_key in sprite.available_filters) {
-                    (sprite.available_filters[filter_key] as Phaser.Filter).destroy();
-                }
-                sprite.destroy();
-            });
+            if (this.destroy_sprites) {
+                this.sprites.forEach(sprite => {
+                    sprite.filters = undefined;
+                    for (let filter_key in sprite.available_filters) {
+                        (sprite.available_filters[filter_key] as Phaser.Filter).destroy();
+                    }
+                    sprite.destroy();
+                });
+            }
             this.trails_objs.forEach(obj => {
                 obj.destroy(true);
             });
@@ -486,7 +540,7 @@ export class BattleAnimation {
         };
     } {
         if (obj_propety) {
-            if (seq.sprite_index === "background") {
+            if (seq.sprite_index === target_types.BACKGROUND) {
                 return this.background_sprites.reduce((prev, cur, index) => {
                     prev[`${cur.key}/${index}`] = {
                         obj: _.get(cur, obj_propety),
@@ -495,7 +549,7 @@ export class BattleAnimation {
                     };
                     return prev;
                 }, {});
-            } else if (seq.sprite_index === "caster") {
+            } else if (seq.sprite_index === target_types.CASTER) {
                 return {
                     [this.caster_sprite.key]: {
                         obj: _.get(this.caster_sprite, obj_propety) as keyof PlayerSprite,
@@ -503,8 +557,9 @@ export class BattleAnimation {
                         index: 0,
                     },
                 };
-            } else if (seq.sprite_index === "targets") {
-                return this.targets_sprites.reduce((prev, cur, index) => {
+            } else if (seq.sprite_index === target_types.TARGETS || seq.sprite_index === target_types.ALLIES) {
+                const sprites = seq.sprite_index === target_types.TARGETS ? this.targets_sprites : this.allies_sprites;
+                return sprites.reduce((prev, cur, index) => {
                     prev[`${cur.key}/${index}`] = {
                         obj: _.get(cur, obj_propety),
                         sprite: cur,
@@ -533,7 +588,7 @@ export class BattleAnimation {
                 }
             }
         } else {
-            if (seq.sprite_index === "background") {
+            if (seq.sprite_index === target_types.BACKGROUND) {
                 return this.background_sprites.reduce((prev, cur, index) => {
                     prev[`${cur.key}/${index}`] = {
                         obj: cur,
@@ -541,10 +596,11 @@ export class BattleAnimation {
                     };
                     return prev;
                 }, {});
-            } else if (seq.sprite_index === "caster") {
+            } else if (seq.sprite_index === target_types.CASTER) {
                 return {[this.caster_sprite.key]: {obj: this.caster_sprite, index: 0}};
-            } else if (seq.sprite_index === "targets") {
-                return this.targets_sprites.reduce((prev, cur, index) => {
+            } else if (seq.sprite_index === target_types.TARGETS || seq.sprite_index === target_types.ALLIES) {
+                const sprites = seq.sprite_index === target_types.TARGETS ? this.targets_sprites : this.allies_sprites;
+                return sprites.reduce((prev, cur, index) => {
                     prev[`${cur.key}/${index}`] = {
                         obj: cur,
                         index: index,
@@ -589,6 +645,18 @@ export class BattleAnimation {
         for (let i = 0; i < sequence.length; ++i) {
             const seq = sequence[i];
             const sprites = this.get_sprites(seq, obj_propety);
+            if (!Array.isArray(seq.start_delay) && typeof seq.start_delay === "object") {
+                seq.start_delay = this.get_expanded_values(
+                    seq.start_delay as CompactValuesSpecifier,
+                    Object.keys(sprites).length
+                );
+            }
+            if (!Array.isArray(seq.to) && typeof seq.to === "object") {
+                seq.to = this.get_expanded_values(seq.to as CompactValuesSpecifier, Object.keys(sprites).length);
+            }
+            if (!Array.isArray(seq.shift) && typeof seq.shift === "object") {
+                seq.shift = this.get_expanded_values(seq.shift as CompactValuesSpecifier, Object.keys(sprites).length);
+            }
             let promises_set = false;
             _.forEach(sprites, (sprite_info, key) => {
                 const this_sprite = sprite_info.obj;
@@ -617,10 +685,16 @@ export class BattleAnimation {
                     }
                     const seq_to = Array.isArray(seq.to) ? seq.to[sprite_info.index] : seq.to;
                     let to_value: number = seq_to as number;
-                    if (["targets", "caster"].includes(seq_to as string)) {
+                    if (
+                        [target_types.TARGETS, target_types.ALLIES, target_types.CASTER].includes(
+                            seq_to as target_types
+                        )
+                    ) {
                         let player_sprite = this.caster_sprite;
-                        if (seq_to === "targets") {
+                        if (seq_to === target_types.TARGETS) {
                             player_sprite = this.targets_sprites[this.targets_sprites.length >> 1];
+                        } else if (seq_to === target_types.ALLIES) {
+                            player_sprite = this.allies_sprites[this.allies_sprites.length >> 1];
                         }
                         let shift_sign = 1;
                         if (seq.shift_direction !== undefined) {
@@ -641,7 +715,8 @@ export class BattleAnimation {
                             }
                         }
                         const shift =
-                            ((Array.isArray(seq.shift) ? seq.shift[sprite_info.index] : seq.shift) ?? 0) * shift_sign;
+                            ((Array.isArray(seq.shift) ? seq.shift[sprite_info.index] : (seq.shift as number)) ?? 0) *
+                            shift_sign;
                         to_value = player_sprite[property_to_set] + shift;
                         if (this.mirrored && property_to_set === "x") {
                             to_value = numbers.GAME_WIDTH - to_value;
@@ -679,7 +754,7 @@ export class BattleAnimation {
                     }
                     const start_delay = Array.isArray(seq.start_delay)
                         ? seq.start_delay[sprite_info.index]
-                        : seq.start_delay;
+                        : (seq.start_delay as number);
                     if (seq.duration === "instantly") {
                         let resolve_function;
                         if (!promises_set) {
@@ -854,6 +929,12 @@ export class BattleAnimation {
         for (let i = 0; i < sequence.length; ++i) {
             const filter_seq = sequence[i];
             const sprites = this.get_sprites(filter_seq);
+            if (!Array.isArray(filter_seq.start_delay) && typeof filter_seq.start_delay === "object") {
+                filter_seq.start_delay = this.get_expanded_values(
+                    filter_seq.start_delay as CompactValuesSpecifier,
+                    Object.keys(sprites).length
+                );
+            }
             _.forEach(sprites, sprite_info => {
                 const sprite = sprite_info.obj as PlayerSprite | Phaser.Sprite;
                 let resolve_function;
@@ -861,7 +942,7 @@ export class BattleAnimation {
                 this.promises.push(this_promise);
                 const start_delay = Array.isArray(filter_seq.start_delay)
                     ? filter_seq.start_delay[sprite_info.index]
-                    : filter_seq.start_delay;
+                    : (filter_seq.start_delay as number);
                 this.game.time.events.add(start_delay, () => {
                     const filter = sprite.available_filters[filter_key];
                     this.manage_filter(filter as Phaser.Filter, sprite, filter_seq.remove);
@@ -997,21 +1078,23 @@ export class BattleAnimation {
         shift_x: number,
         shift_y: number
     ): {x: number; y: number} {
-        if (x === "caster") {
+        if (x === target_types.CASTER) {
             x = this.caster_sprite.x;
             if (this.mirrored) {
                 x = numbers.GAME_WIDTH - (x as number);
             }
-        } else if (x === "targets") {
-            x = _.mean(this.targets_sprites.map(target => target.x));
+        } else if (x === target_types.TARGETS || x === target_types.ALLIES) {
+            const sprites = x === target_types.TARGETS ? this.targets_sprites : this.allies_sprites;
+            x = _.mean(sprites.map(target => target.x));
             if (this.mirrored) {
                 x = numbers.GAME_WIDTH - (x as number);
             }
         }
-        if (y === "caster") {
+        if (y === target_types.CASTER) {
             y = this.caster_sprite.y;
-        } else if (y === "targets") {
-            y = _.mean(this.targets_sprites.map(target => target.y));
+        } else if (y === target_types.TARGETS || y === target_types.ALLIES) {
+            const sprites = y === target_types.TARGETS ? this.targets_sprites : this.allies_sprites;
+            y = _.mean(sprites.map(target => target.y));
         }
         (x as number) += shift_x ?? 0;
         (y as number) += shift_y ?? 0;

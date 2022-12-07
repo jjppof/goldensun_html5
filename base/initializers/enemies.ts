@@ -17,14 +17,29 @@ export function initialize_enemies(
         };
         info.sprite_base = new SpriteBase(info.data.key_name, [base_actions.BATTLE]);
 
-        const action = info.data.battle_spritesheet;
-        if (action !== undefined) {
-            info.sprite_base.setActionSpritesheet(base_actions.BATTLE, action.spritesheet_img, action.spritesheet);
-            info.sprite_base.setActionAnimations(base_actions.BATTLE, action.positions, action.frames_number);
-            info.sprite_base.setActionFrameRate(base_actions.BATTLE, action.frame_rate);
-            info.sprite_base.setActionLoop(base_actions.BATTLE, action.loop);
-            info.sprite_base.generateAllFrames();
-            info.sprite_base.loadSpritesheets(game, false);
+        const battle_spritesheet = info.data.battle_spritesheet;
+        if (battle_spritesheet !== undefined) {
+            let action;
+            if (typeof battle_spritesheet !== "string") {
+                action = battle_spritesheet;
+            } else {
+                const alias = enemies_db.find(dt => dt.key_name === battle_spritesheet);
+                if (alias) {
+                    action = alias.battle_spritesheet;
+                }
+            }
+            if (action) {
+                info.sprite_base.setActionSpritesheet(
+                    base_actions.BATTLE,
+                    action.spritesheet.image,
+                    action.spritesheet.json
+                );
+                info.sprite_base.setActionAnimations(base_actions.BATTLE, action.animations, action.frames_count);
+                info.sprite_base.setActionFrameRate(base_actions.BATTLE, action.frame_rate);
+                info.sprite_base.setActionLoop(base_actions.BATTLE, action.loop);
+                info.sprite_base.generateAllFrames();
+                info.sprite_base.loadSpritesheets(game, false);
+            }
         }
         enemies_list[info.data.key_name] = info;
     }

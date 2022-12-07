@@ -2,7 +2,7 @@ import {ItemCounter} from "../../utils/ItemCounter";
 import {Window, TextObj} from "../../Window";
 import {GoldenSun} from "../../GoldenSun";
 import {Button} from "../../XGamepad";
-import {ItemSlot} from "../../MainChar";
+import {ItemSlot, MainChar} from "../../MainChar";
 import {CursorManager} from "../../utils/CursorManager";
 import {ShopItem} from "../../main_menus/ShopMenu";
 
@@ -106,9 +106,10 @@ export class ShopItemQuantityWindow {
                 this.base_price = this.data.info.items_list[shop_item_obj.key_name].price;
                 this.window.update_text(String(this.base_price), this.coins_val_text);
 
-                let owned = !char_item_obj ? 0 : char_item_obj.quantity;
-                let available_quantity = shop_item_obj.quantity === -1 ? 30 : shop_item_obj.quantity;
-                if (available_quantity + owned > 30) available_quantity = 30 - owned;
+                const count_limit = MainChar.MAX_GENERAL_ITEM_NUMBER;
+                const owned = !char_item_obj ? 0 : char_item_obj.quantity;
+                let available_quantity = shop_item_obj.quantity === -1 ? count_limit : shop_item_obj.quantity;
+                if (available_quantity + owned > count_limit) available_quantity = count_limit - owned;
                 if (use_coins && this.base_price * available_quantity > this.data.info.party_data.coins) {
                     available_quantity = (this.data.info.party_data.coins / this.base_price) | 0;
                 }

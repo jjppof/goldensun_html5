@@ -51,7 +51,7 @@ const STATUS_SPRITES_KEY_NAME = "battle_status_sprites";
 
 export class PlayerSprite {
     private game: Phaser.Game;
-    private data: GoldenSun;
+    private _data: GoldenSun;
     public is_ally: boolean;
     private battle_action: battle_actions;
     private battle_position: battle_positions;
@@ -76,6 +76,7 @@ export class PlayerSprite {
     private _active: boolean;
     public force_stage_update: boolean;
     private hue_angle: number;
+    private internal_data: any;
 
     constructor(
         game: Phaser.Game,
@@ -89,7 +90,7 @@ export class PlayerSprite {
         hue_angle: number
     ) {
         this.game = game;
-        this.data = data;
+        this._data = data;
         this.parent_group = parent_group;
         this.group = this.game.add.group();
         this.parent_group.add(this.group);
@@ -105,11 +106,12 @@ export class PlayerSprite {
         this.battle_action = initial_action;
         this.battle_position = initial_position;
         this.current_status_index = 0;
-        this.status_sprite_base = this.data.info.misc_sprite_base_list[STATUS_SPRITES_KEY_NAME];
+        this.status_sprite_base = this._data.info.misc_sprite_base_list[STATUS_SPRITES_KEY_NAME];
         this.status_timer = this.game.time.create(false);
         this._active = false;
         this.force_stage_update = false;
         this.hue_angle = hue_angle;
+        this.internal_data = {};
     }
 
     get x() {
@@ -168,11 +170,22 @@ export class PlayerSprite {
         this.group.alpha = alpha;
     }
 
+    get tint() {
+        return this.char_sprite.tint;
+    }
+    set tint(tint: number) {
+        this.char_sprite.tint = tint;
+    }
+
     get blendMode() {
         return this.char_sprite.blendMode;
     }
     set blendMode(blendMode) {
         this.char_sprite.blendMode = blendMode;
+    }
+
+    get data() {
+        return this.internal_data;
     }
 
     get filters() {
@@ -198,6 +211,9 @@ export class PlayerSprite {
     get battle_key() {
         return `${this.battle_action}_${this.battle_position}`;
     }
+    get key() {
+        return this.battle_key;
+    }
 
     get animations() {
         return this.char_sprite.animations;
@@ -205,10 +221,6 @@ export class PlayerSprite {
 
     get active() {
         return this._active;
-    }
-
-    get key() {
-        return this.player_info.battle_key;
     }
 
     initialize_player() {
@@ -243,7 +255,7 @@ export class PlayerSprite {
             const player = this.player_instance as MainChar;
             const weapon_slot = player.equip_slots.weapon;
             if (weapon_slot !== null) {
-                this.current_weapon_type = this.data.info.items_list[weapon_slot.key_name].weapon_type;
+                this.current_weapon_type = this._data.info.items_list[weapon_slot.key_name].weapon_type;
                 if (player.weapons_sprite_base.hasAction(this.current_weapon_type)) {
                     const weapon_sprite_key = player.weapons_sprite_base.getSpriteKey(this.current_weapon_type);
                     this.weapon_sprite = this.group.create(0, 0, weapon_sprite_key);

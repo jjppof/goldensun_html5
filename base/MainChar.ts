@@ -51,7 +51,8 @@ export class MainChar extends Player {
     private static readonly ELEM_LV_DELTA = 1;
     private static readonly ELEM_POWER_DELTA = 5;
     private static readonly ELEM_RESIST_DELTA = 5;
-    public static readonly MAX_ITEMS_PER_CHAR = 30;
+    public static readonly MAX_GENERAL_ITEM_NUMBER = 30;
+    public static readonly MAX_ITEMS_PER_CHAR = 15;
 
     private info: GameInfo;
     private starting_level: number;
@@ -263,6 +264,13 @@ export class MainChar extends Player {
     }
 
     /**
+     * Checks if this char inventory is full.
+     */
+    get inventory_is_full() {
+        return this.items.length >= MainChar.MAX_ITEMS_PER_CHAR;
+    }
+
+    /**
      * Updates this char class.
      */
     update_class() {
@@ -330,6 +338,9 @@ export class MainChar extends Player {
     private init_items() {
         this.items.forEach((item_slot, index) => {
             item_slot.index = index;
+            if (!item_slot.quantity) {
+                item_slot.quantity = 1;
+            }
             if (item_slot.equipped) {
                 this.equip_item(index, true);
             }
@@ -345,17 +356,18 @@ export class MainChar extends Player {
      * @returns return true if the item was added.
      */
     add_item(item_key_name: string, quantity: number, equip: boolean) {
-        let found = false;
-        if (this.info.items_list[item_key_name].type === item_types.GENERAL_ITEM) {
-            this.items.forEach(item_slot => {
-                if (item_slot.key_name === item_key_name) {
-                    found = true;
-                    item_slot.quantity += quantity;
-                }
-            });
+        if (quantity > MainChar.MAX_GENERAL_ITEM_NUMBER) {
+            return false;
         }
-        if (found || this.items.length === MainChar.MAX_ITEMS_PER_CHAR) {
-            return found;
+        if (this.info.items_list[item_key_name].carry_up_to_30) {
+            const found_item_slot = this.items.find(item_slot => item_slot.key_name === item_key_name);
+            if (found_item_slot && found_item_slot.quantity + quantity <= MainChar.MAX_GENERAL_ITEM_NUMBER) {
+                found_item_slot.quantity += quantity;
+                return true;
+            }
+        }
+        if (this.items.length === MainChar.MAX_ITEMS_PER_CHAR) {
+            return false;
         }
         this.items.push({
             key_name: item_key_name,
@@ -893,8 +905,7 @@ export class MainChar extends Player {
     static add_item_to_party(party_data: PartyData, item: Item, quantity: number) {
         for (let i = 0; i < party_data.members.length; ++i) {
             const char = party_data.members[i];
-            if (char.items.length < MainChar.MAX_ITEMS_PER_CHAR) {
-                char.add_item(item.key_name, quantity, false);
+            if (char.add_item(item.key_name, quantity, false)) {
                 return true;
             }
         }
@@ -943,19 +954,25 @@ export class MainChar extends Player {
     static distribute_djinn(party_data: PartyData) {
         const members = party_data.members;
         const djinn_per_char_min = _.meanBy(members, char => char.djinni.length) | 0;
-        const djinn_buffer = [];
-        _.sortBy(members, c => c.djinni.length)
-            .reverse()
-            .forEach(char => {
-                if (char.djinni.length > djinn_per_char_min + 1) {
-                    const last_djinni = _.last(char.djinni);
-                    char.remove_djinn(last_djinni);
-                    djinn_buffer.push(last_djinni);
-                } else if (djinn_buffer.length && char.djinni.length < djinn_per_char_min) {
-                    const djinni_to_add = djinn_buffer.pop();
-                    char.add_djinn(djinni_to_add);
-                }
-            });
+        const need_djinn: MainChar[] = [];
+        const djinn_buffer: string[] = [];
+        _.sortBy(members, c => c.djinni.length).forEach(char => {
+            if (char.djinni.length < djinn_per_char_min) {
+                need_djinn.push(char);
+            } else if (char.djinni.length > djinn_per_char_min + 1) {
+                const last_djinni = _.last(char.djinni);
+                char.remove_djinn(last_djinni);
+                djinn_buffer.push(last_djinni);
+            } else if (need_djinn.length && char.djinni.length > djinn_per_char_min) {
+                const last_djinni = _.last(char.djinni);
+                char.remove_djinn(last_djinni);
+                const char_to_grant_djinni = need_djinn.pop();
+                char_to_grant_djinni.add_djinn(last_djinni);
+            } else if (djinn_buffer.length && char.djinni.length < djinn_per_char_min) {
+                const djinni_to_add = djinn_buffer.pop();
+                char.add_djinn(djinni_to_add);
+            }
+        });
     }
 
     /**

@@ -11,9 +11,7 @@ import {YesNoMenu} from "../YesNoMenu";
 import {ShopkeepDialog} from "./ShopkeepDialog";
 import {ItemSlot, item_equip_slot, MainChar} from "../../MainChar";
 
-const MAX_INVENTORY_SIZE = 15;
 const MAX_ITEMS_PER_PAGE = 7;
-const MAX_STACK_SIZE = 30;
 
 const SELL_MULTIPLIER = 3 / 4;
 const REPAIR_MULTIPLIER = 1 / 4;
@@ -366,7 +364,7 @@ export class BuyArtifactsMenu {
             this.char_display.lines[this.char_display.current_line][this.char_display.selected_index];
         this.selected_char_index = this.char_display.selected_index;
 
-        if (this.selected_character.items.length === MAX_INVENTORY_SIZE) {
+        if (this.selected_character.items.length === MainChar.MAX_ITEMS_PER_CHAR) {
             let text = this.npc_dialog.get_message("inventory_full");
             text = this.npc_dialog.replace_text(text, this.selected_character.name);
             this.npc_dialog.update_dialog(text, false, false);
@@ -405,7 +403,7 @@ export class BuyArtifactsMenu {
             }
         }
 
-        if (this.selected_character.items.length === MAX_INVENTORY_SIZE) {
+        if (this.selected_character.items.length === MainChar.MAX_ITEMS_PER_CHAR) {
             let text = this.npc_dialog.get_message("inventory_full");
             text = this.npc_dialog.replace_text(text, this.selected_character.name);
             this.npc_dialog.update_dialog(text, false, false);
@@ -414,7 +412,7 @@ export class BuyArtifactsMenu {
                 game_ticket ? this.on_cancel_game_ticket.bind(this) : this.on_cancel_char_select.bind(this),
                 this.on_buy_item_select.bind(this, game_ticket)
             );
-        } else if (have_quant === MAX_STACK_SIZE) {
+        } else if (have_quant === MainChar.MAX_GENERAL_ITEM_NUMBER) {
             let item_name = this.data.info.items_list[this.selected_item.key_name].name;
 
             let text = this.npc_dialog.get_message("stack_full");

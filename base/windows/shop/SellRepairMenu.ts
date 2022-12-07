@@ -318,6 +318,12 @@ export class SellRepairMenu {
     }
 
     on_character_select(msg_key = "sell_follow_up", item_pos = {line: 0, col: 0}) {
+        if (
+            this.char_display.lines[this.char_display.current_line][this.char_display.selected_index].items.length === 0
+        ) {
+            this.char_display.grant_control(this.close_menu.bind(this), this.on_character_select.bind(this));
+            return;
+        }
         let start = () => {
             let open_windows = [{name: WindowNames.ITEM_DESC_WIN}, {name: WindowNames.ITEM_PRICE_WIN}];
             this.show_windows(open_windows, () => {
@@ -342,15 +348,19 @@ export class SellRepairMenu {
                 if (this.inv_win.is_open) {
                     this.inv_win.refresh(this.selected_character.key_name, undefined);
                     finish();
-                } else this.inv_win.open(this.selected_character.key_name, undefined, false, finish);
+                } else {
+                    this.inv_win.open(this.selected_character.key_name, undefined, false, finish);
+                }
             });
         };
 
-        if (this.quant_win.is_open)
+        if (this.quant_win.is_open) {
             this.quant_win.close(() => {
                 start;
             });
-        else start();
+        } else {
+            start();
+        }
     }
 
     open_inventory_view(msg_key = "sell_follow_up") {
