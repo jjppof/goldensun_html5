@@ -24,6 +24,7 @@ export class BattleCursorManager {
     private range_cursor_position: number;
     private ability_range: ability_ranges;
     private bindings_key: number;
+    private include_downed: boolean;
 
     private cursors_tweens: Phaser.Tween[];
     private cursors: Phaser.Sprite[];
@@ -32,6 +33,7 @@ export class BattleCursorManager {
         this.game = game;
         this.data = data;
         this.stage = stage;
+        this.include_downed = false;
     }
 
     private set_targets() {
@@ -93,7 +95,7 @@ export class BattleCursorManager {
         this.change_target(CHOOSE_TARGET_RIGHT);
     }
 
-    private change_target(step: number, tween_to_pos: boolean = true) {
+    private change_target(step: number, tween_to_pos: boolean = true, prioritize_downed: boolean = false) {
         if (this.target_type === ability_target_types.ENEMY) {
             step *= -1;
         }
@@ -103,25 +105,62 @@ export class BattleCursorManager {
         const group_length = group_info.length;
         const group_half_length = group_length % 2 ? group_length >> 1 : (group_length >> 1) - 1;
 
-        let target_sprite_index: number;
-
-        do {
-            this.range_cursor_position += step;
-            if (step === 0) step = CHOOSE_TARGET_LEFT;
-
-            const center_shift = this.range_cursor_position - (RANGES.length >> 1);
-            target_sprite_index = group_half_length + center_shift;
-
-            if (target_sprite_index >= group_length) {
-                this.range_cursor_position = (RANGES.length >> 1) - group_half_length;
-                target_sprite_index = 0;
-            } else if (target_sprite_index < 0) {
-                this.range_cursor_position = (RANGES.length >> 1) + group_half_length + +!(group_length % 2);
-                target_sprite_index = group_length - 1;
+        var target_sprite_index = 0;
+        let num_targets_checked = 0;
+        if (prioritize_downed) {
+            // move the cursor onto a downed character if one exists
+            do {
+                var [target_sprite_index, step] = this.update_target_sprite_index(
+                    target_sprite_index,
+                    step,
+                    group_length,
+                    group_half_length
+                );
+                num_targets_checked++;
+                var is_target_down = group_info[target_sprite_index].instance.has_permanent_status(
+                    permanent_status.DOWNED
+                );
+            } while (num_targets_checked < group_length && !is_target_down);
+            if (is_target_down) {
+                this.set_battle_cursors_position(tween_to_pos);
+                return;
             }
-        } while (group_info[target_sprite_index].instance.has_permanent_status(permanent_status.DOWNED));
+        }
+        do {
+            var [target_sprite_index, step] = this.update_target_sprite_index(
+                target_sprite_index,
+                step,
+                group_length,
+                group_half_length
+            );
+        } while (
+            !this.include_downed &&
+            group_info[target_sprite_index].instance.has_permanent_status(permanent_status.DOWNED)
+        );
 
         this.set_battle_cursors_position(tween_to_pos);
+    }
+
+    private update_target_sprite_index(
+        target_sprite_index: number,
+        step: number,
+        group_length: number,
+        group_half_length
+    ) {
+        this.range_cursor_position += step;
+        if (step === 0) step = CHOOSE_TARGET_LEFT;
+
+        const center_shift = this.range_cursor_position - (RANGES.length >> 1);
+        target_sprite_index = group_half_length + center_shift;
+
+        if (target_sprite_index >= group_length) {
+            this.range_cursor_position = (RANGES.length >> 1) - group_half_length;
+            target_sprite_index = 0;
+        } else if (target_sprite_index < 0) {
+            this.range_cursor_position = (RANGES.length >> 1) + group_half_length + +!(group_length % 2);
+            target_sprite_index = group_length - 1;
+        }
+        return [target_sprite_index, step];
     }
 
     private set_battle_cursors_position(tween_to_pos: boolean = true) {
@@ -134,7 +173,10 @@ export class BattleCursorManager {
             let target_index = i - ((this.cursors.length >> 1) - group_half_length) + center_shift;
             const target_info = group_info[target_index];
 
-            if (target_info && !target_info.instance.has_permanent_status(permanent_status.DOWNED)) {
+            if (
+                target_info &&
+                (this.include_downed || !target_info.instance.has_permanent_status(permanent_status.DOWNED))
+            ) {
                 const target_sprite = target_info.sprite;
                 let this_scale;
                 if (this.ability_range === ability_ranges.ALL) {
@@ -208,12 +250,20 @@ export class BattleCursorManager {
         });
     }
 
-    choose_targets(range: ability_ranges, target_type: string, ability_caster: Player, callback: Function) {
+    choose_targets(
+        range: ability_ranges,
+        target_type: string,
+        ability_caster: Player,
+        callback: Function,
+        affects_downed: boolean = false
+    ) {
         this.choosing_targets_callback = callback;
         this.range_cursor_position = RANGES.length >> 1;
 
         this.ability_range = range;
         this.ability_caster = ability_caster;
+
+        this.include_downed = affects_downed;
 
         this.target_type = target_type;
         if (this.target_type === ability_target_types.USER) {
@@ -245,7 +295,7 @@ export class BattleCursorManager {
                         this.cursors[i].animations.play("anim", 40, true);
                     }
 
-                    this.change_target(0, false);
+                    this.change_target(0, false, affects_downed);
 
                     // Sound for A key unavailable, using Menu Positive instead
                     const controls = [
