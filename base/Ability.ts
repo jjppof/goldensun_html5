@@ -118,6 +118,7 @@ export class Ability {
     public affects_pp: boolean;
     public has_animation_variation: boolean;
     public can_be_mirrored: boolean;
+    public affects_downed: boolean;
 
     constructor(
         key_name,
@@ -144,7 +145,8 @@ export class Ability {
         msg_type,
         affects_pp,
         has_animation_variation,
-        can_be_mirrored
+        can_be_mirrored,
+        affects_downed
     ) {
         this.key_name = key_name;
         this.name = name;
@@ -171,6 +173,7 @@ export class Ability {
         this.affects_pp = affects_pp ?? false;
         this.has_animation_variation = has_animation_variation ?? false;
         this.can_be_mirrored = can_be_mirrored ?? false;
+        this.affects_downed = affects_downed ?? false;
     }
 
     static get_diminishing_ratios(

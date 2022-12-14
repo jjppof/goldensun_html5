@@ -48,7 +48,8 @@ export function initialize_abilities(
             ability_data.msg_type,
             ability_data.affects_pp,
             ability_data.has_animation_variation,
-            ability_data.can_be_mirrored
+            ability_data.can_be_mirrored,
+            ability_data.affects_downed
         );
     }
     const loader = game.load.atlasJSONHash(
