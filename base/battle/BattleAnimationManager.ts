@@ -127,7 +127,8 @@ export class BattleAnimationManager {
         allies_sprites: PlayerSprite[],
         group_caster: Phaser.Group,
         group_taker: Phaser.Group,
-        battle_stage: BattleStage
+        battle_stage: BattleStage,
+        target_dodged: boolean
     ) {
         const key = `${battle_anim_key}/${caster_battle_key}`;
         if (!(key in this.animations)) return;
@@ -140,7 +141,8 @@ export class BattleAnimationManager {
             group_caster,
             group_taker,
             battle_stage,
-            sprite_key
+            sprite_key,
+            target_dodged
         );
         delete this.animations[key];
     }
@@ -153,7 +155,8 @@ export class BattleAnimationManager {
         group_caster: Phaser.Group,
         group_taker: Phaser.Group,
         battle_stage: BattleStage,
-        sprite_key?: string
+        sprite_key?: string,
+        target_dodged?: boolean
     ) {
         animation.initialize(
             caster_sprite,
@@ -164,7 +167,8 @@ export class BattleAnimationManager {
             battle_stage.battle_group,
             battle_stage,
             [battle_stage.battle_bg, battle_stage.battle_bg2],
-            sprite_key
+            sprite_key,
+            target_dodged
         );
         let play_promise_resolve;
         const play_promise = new Promise(resolve => {

@@ -40,12 +40,14 @@ type DefaultAttr = {
     shift_direction?: ("in_center" | "out_center") | ("in_center" | "out_center")[];
     direction?: string;
     remove?: boolean;
+    ignore_if_dodge?: boolean;
 };
 
 type GeneralFilterAttr = {
     start_delay: number | number[] | CompactValuesSpecifier;
     sprite_index: string | number | number[];
     remove: boolean;
+    ignore_if_dodge?: boolean;
 };
 
 enum sprite_types {
@@ -80,6 +82,7 @@ export class BattleAnimation {
     public game: Phaser.Game;
     public data: GoldenSun;
     public key_name: string;
+    public target_dodged: boolean;
     public sprites_keys: SpriteKey[] | target_types;
     public x_sequence: DefaultAttr[] = [];
     public y_sequence: DefaultAttr[] = [];
@@ -124,12 +127,14 @@ export class BattleAnimation {
         wait: boolean;
         wait_for_index: number;
         hide_on_complete: boolean;
+        ignore_if_dodge?: boolean;
     }[] = [];
     public set_frame_sequence: any[] = [];
     public blend_mode_sequence: {
         start_delay: number | number[];
         sprite_index: string | number | number[];
         mode: string;
+        ignore_if_dodge?: boolean;
     }[] = [];
     public particles_sequence: ParticlesInfo;
     public running: boolean;
@@ -216,6 +221,7 @@ export class BattleAnimation {
         this.game = game;
         this.data = data;
         this.key_name = key_name;
+        this.target_dodged = false;
         this.sprites_keys = sprites_keys ?? [];
         this.x_sequence = x_sequence ?? [];
         this.y_sequence = y_sequence ?? [];
@@ -267,7 +273,8 @@ export class BattleAnimation {
         super_group: Phaser.Group,
         battle_stage: BattleStage,
         background_sprites: Phaser.TileSprite[],
-        sprite_key?: string
+        sprite_key?: string,
+        target_dodged?: boolean
     ) {
         this.sprites = [];
         this.sprites_prev_properties = {};
@@ -288,6 +295,7 @@ export class BattleAnimation {
         this.group_enemy = group_enemy;
         this.super_group = super_group;
         this.battle_stage = battle_stage;
+        this.target_dodged = target_dodged;
         this.trails_objs = [];
         this.trails_bmps = [];
         if (super_group.getChildIndex(group_caster) < super_group.getChildIndex(group_enemy)) {
@@ -644,6 +652,9 @@ export class BattleAnimation {
             dot_index >= 0 ? target_property.slice(dot_index + 1, target_property.length) : target_property;
         for (let i = 0; i < sequence.length; ++i) {
             const seq = sequence[i];
+            if (seq.ignore_if_dodge && this.target_dodged) {
+                continue;
+            }
             const sprites = this.get_sprites(seq, obj_propety);
             if (!Array.isArray(seq.start_delay) && typeof seq.start_delay === "object") {
                 seq.start_delay = this.get_expanded_values(
@@ -658,7 +669,8 @@ export class BattleAnimation {
                 seq.shift = this.get_expanded_values(seq.shift as CompactValuesSpecifier, Object.keys(sprites).length);
             }
             let promises_set = false;
-            _.forEach(sprites, (sprite_info, key) => {
+            for (let key in sprites) {
+                const sprite_info = sprites[key];
                 const this_sprite = sprite_info.obj;
                 if (options?.filter_key) {
                     const filter = this_sprite as Phaser.Filter;
@@ -815,7 +827,7 @@ export class BattleAnimation {
                         chained_tweens[property_uniq_key].push(tween);
                     }
                 }
-            });
+            }
         }
     }
 
@@ -826,9 +838,13 @@ export class BattleAnimation {
         });
         for (let i = 0; i < this.play_sequence.length; ++i) {
             const play_seq = this.play_sequence[i];
+            if (play_seq.ignore_if_dodge && this.target_dodged) {
+                continue;
+            }
             const sprites = this.get_sprites(play_seq);
             const sprites_length = Object.keys(sprites).length;
-            _.forEach(sprites, sprite_info => {
+            for (let key in sprites) {
+                const sprite_info = sprites[key];
                 const sprite = sprite_info.obj as PlayerSprite | Phaser.Sprite;
                 let resolve_function;
                 const this_promise = new Promise(resolve => (resolve_function = resolve));
@@ -888,15 +904,19 @@ export class BattleAnimation {
                 } else {
                     start();
                 }
-            });
+            }
         }
     }
 
     play_blend_modes() {
         for (let i = 0; i < this.blend_mode_sequence.length; ++i) {
             const blend_mode_seq = this.blend_mode_sequence[i];
+            if (blend_mode_seq.ignore_if_dodge && this.target_dodged) {
+                continue;
+            }
             const sprites = this.get_sprites(blend_mode_seq);
-            _.forEach(sprites, sprite_info => {
+            for (let key in sprites) {
+                const sprite_info = sprites[key];
                 const sprite = sprite_info.obj as PlayerSprite | Phaser.Sprite;
                 let resolve_function;
                 let this_promise = new Promise(resolve => {
@@ -917,7 +937,7 @@ export class BattleAnimation {
                     }
                     resolve_function();
                 });
-            });
+            };
         }
     }
 
@@ -928,6 +948,9 @@ export class BattleAnimation {
     ) {
         for (let i = 0; i < sequence.length; ++i) {
             const filter_seq = sequence[i];
+            if (filter_seq.ignore_if_dodge && this.target_dodged) {
+                continue;
+            }
             const sprites = this.get_sprites(filter_seq);
             if (!Array.isArray(filter_seq.start_delay) && typeof filter_seq.start_delay === "object") {
                 filter_seq.start_delay = this.get_expanded_values(
@@ -935,7 +958,8 @@ export class BattleAnimation {
                     Object.keys(sprites).length
                 );
             }
-            _.forEach(sprites, sprite_info => {
+            for (let key in sprites) {
+                const sprite_info = sprites[key];
                 const sprite = sprite_info.obj as PlayerSprite | Phaser.Sprite;
                 let resolve_function;
                 const this_promise = new Promise(resolve => (resolve_function = resolve));
@@ -953,7 +977,7 @@ export class BattleAnimation {
                     }
                     resolve_function();
                 });
-            });
+            }
         }
     }
 

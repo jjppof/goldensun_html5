@@ -1,3 +1,4 @@
 {
-    "flee": "assets/dbs/common_abilities_animations/flee_db.json"
+    "flee": "assets/dbs/common_abilities_animations/flee_db.json",
+    "dodge": "assets/dbs/common_abilities_animations/dodge_db.json"
 }

@@ -507,7 +507,7 @@ export class Battle {
     }
 
     wait_for_key() {
-        return new Promise(resolve => {
+        return new Promise<void>(resolve => {
             this.advance_log_resolve = resolve;
         });
     }
@@ -652,6 +652,46 @@ export class Battle {
             await this.wait_for_key();
         }
 
+        for (let i = 0; i < action.targets.length; ++i) {
+            const target_info = action.targets[i];
+            if (target_info.magnitude === null) continue;
+            const target_instance = target_info.target.instance;
+
+            if (target_instance.has_permanent_status(permanent_status.DOWNED)) continue;
+            if (ability.can_be_evaded) {
+                //check whether the target is going to evade the caster attack
+                if (
+                    Math.random() < EVASION_CHANCE ||
+                    (action.caster.temporary_status.has(temporary_status.DELUSION) &&
+                        Math.random() < DELUSION_MISS_CHANCE)
+                ) {
+                    target_info.dodged = true;
+                    const target_sprites = action.caster.fighter_type === fighter_types.ALLY ? this.enemies_map_sprite : this.allies_map_sprite;
+                    const target_sprite  = target_sprites[target_info.target.battle_key]
+
+                    const animation_recipe = this.data.info.misc_battle_animations_recipes["dodge"];
+                    const dodge_animation = BattleAnimationManager.get_animation_instance(
+                        this.game,
+                        this.data,
+                        animation_recipe,
+                        false
+                    );
+                    const caster_sprite = target_sprite;
+                    //should not wait for this anim
+                    this.animation_manager.play_animation(
+                        dodge_animation,
+                        caster_sprite,
+                        [],
+                        [],
+                        this.battle_stage.group_allies,
+                        this.battle_stage.group_allies,
+                        this.battle_stage,
+                        undefined
+                    );
+                }
+            }
+        }
+
         //executes the animation of the current ability
         await this.play_battle_animation(action, ability);
 
@@ -760,6 +800,7 @@ export class Battle {
                     await cast_promise;
                 }
             }
+            const target_dodged = action.targets.some(target_info => target_info.dodged);
             await this.animation_manager.play(
                 action.battle_animation_key,
                 action.caster_battle_key,
@@ -768,7 +809,8 @@ export class Battle {
                 allies_sprites,
                 group_caster,
                 group_taker,
-                this.battle_stage
+                this.battle_stage,
+                target_dodged
             );
             this.battle_stage.prevent_camera_angle_overflow();
         } else if (anim_availability === animation_availability.NOT_AVAILABLE) {
@@ -797,11 +839,8 @@ export class Battle {
             if (target_instance.has_permanent_status(permanent_status.DOWNED)) continue;
             if (ability.can_be_evaded) {
                 //check whether the target is going to evade the caster attack
-                if (
-                    Math.random() < EVASION_CHANCE ||
-                    (action.caster.temporary_status.has(temporary_status.DELUSION) &&
-                        Math.random() < DELUSION_MISS_CHANCE)
-                ) {
+                if (target_info.dodged) {
+                    target_info.dodged = false; //reset
                     await this.battle_log.add(`${target_instance.name} nimbly dodges the blow!`);
                     return this.wait_for_key();
                 }

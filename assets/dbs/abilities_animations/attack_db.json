@@ -29,12 +29,14 @@
         "sprite_index": "caster",
         "wait": false
     },{
+        "ignore_if_dodge": true,
         "animation_key": "damage",
         "start_delay": 350,
         "sprite_index": "targets",
         "wait": false
     }],
     "x_ellipse_axis_factor_sequence": [{
+        "ignore_if_dodge": true,
         "start_delay": 350,
         "to": 30,
         "is_absolute": false,

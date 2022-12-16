@@ -52,6 +52,7 @@ export type CameraAngle = {
 
 export type Target = {
     magnitude: number;
+    dodged: boolean;
     target: PlayerInfo;
 };
 

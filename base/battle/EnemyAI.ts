@@ -20,6 +20,7 @@ export class EnemyAI {
             targets: enemies.map((enemy, index) => {
                 let available_target = enemy.has_permanent_status(permanent_status.DOWNED) ? false : true;
                 const targets: Target = {
+                    dodged: false,
                     magnitude: available_target && !char_chosen ? 1 : null,
                     target: {
                         instance: available_target && !char_chosen ? enemy : null,

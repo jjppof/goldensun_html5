@@ -68,6 +68,7 @@ export class BattleCursorManager {
             party_info,
             (magnitude, target) => {
                 let t: Target = {
+                    dodged: false,
                     magnitude:
                         magnitude > (this.ability_range === ability_ranges.ALL ? RANGES[0] : this.ability_range)
                             ? null
