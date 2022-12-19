@@ -219,7 +219,8 @@ export class Battle {
                     this.target_window.close();
                 }
                 callback(targets);
-            }
+            },
+            this_ability.affects_downed
         );
     }
 
@@ -576,11 +577,11 @@ export class Battle {
             return;
         }
 
-        //check whether all targets are downed and change ability to "defend" in the case it's true
-        this.check_if_all_targets_are_downed(action);
-
         //gets the ability of this phase
         let ability = await this.get_phase_ability(action);
+
+        //check whether all targets are downed and change ability to "defend" in the case it's true
+        if (!ability.affects_downed) this.check_if_all_targets_are_downed(action);
 
         //gets item's name in the case this ability is related to an item
         let item_name = action.item_slot ? this.data.info.items_list[action.item_slot.key_name].name : "";
