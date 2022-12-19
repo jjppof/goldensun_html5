@@ -88,6 +88,7 @@ export class BattleAnimation {
     public y_sequence: DefaultAttr[] = [];
     public x_ellipse_axis_factor_sequence: DefaultAttr[] = [];
     public y_ellipse_axis_factor_sequence: DefaultAttr[] = [];
+    public center_shift_sequence: DefaultAttr[] = [];
     public x_scale_sequence: DefaultAttr[] = [];
     public y_scale_sequence: DefaultAttr[] = [];
     public x_anchor_sequence: DefaultAttr[] = [];
@@ -194,6 +195,7 @@ export class BattleAnimation {
         y_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, yoyo: bool, duration: value, shift: value}
         x_ellipse_axis_factor_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, yoyo: bool, duration: value
         y_ellipse_axis_factor_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, yoyo: bool, duration: value
+        center_shift_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, yoyo: bool, duration: value, shift: value}
         x_scale_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, yoyo: bool, duration: value, shift: value, shift_direction: value}
         y_scale_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, yoyo: bool, duration: value, shift: value, shift_direction: value}
         x_anchor_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, yoyo: bool, duration: value, shift: value}
@@ -227,6 +229,7 @@ export class BattleAnimation {
         this.y_sequence = y_sequence ?? [];
         this.x_ellipse_axis_factor_sequence = x_ellipse_axis_factor_sequence ?? [];
         this.y_ellipse_axis_factor_sequence = y_ellipse_axis_factor_sequence ?? [];
+        this.center_shift_sequence = center_shift_sequence ?? [];
         this.x_scale_sequence = x_scale_sequence ?? [];
         this.y_scale_sequence = y_scale_sequence ?? [];
         this.x_anchor_sequence = x_anchor_sequence ?? [];
@@ -482,6 +485,7 @@ export class BattleAnimation {
         this.play_number_property_sequence(this.y_sequence, "y");
         this.play_number_property_sequence(this.x_ellipse_axis_factor_sequence, "ellipses_semi_major");
         this.play_number_property_sequence(this.y_ellipse_axis_factor_sequence, "ellipses_semi_minor");
+        this.play_number_property_sequence(this.center_shift_sequence, "center_shift");
         this.play_number_property_sequence(this.alpha_sequence, "alpha");
         this.play_number_property_sequence(this.rotation_sequence, "rotation", {
             rotational_property: true,
@@ -778,7 +782,9 @@ export class BattleAnimation {
                         }
                         this.game.time.events.add(start_delay, () => {
                             this_sprite[property_to_set] = get_to_value();
-                            if (["ellipses_semi_major", "ellipses_semi_minor"].includes(property_to_set)) {
+                            if (
+                                ["ellipses_semi_major", "ellipses_semi_minor", "center_shift"].includes(property_to_set)
+                            ) {
                                 this.battle_stage.update_sprite_properties();
                             }
                             if (seq.is_absolute && options?.rotational_property) {
@@ -799,7 +805,7 @@ export class BattleAnimation {
                             seq.yoyo ?? false,
                             true
                         );
-                        if (["ellipses_semi_major", "ellipses_semi_minor"].includes(property_to_set)) {
+                        if (["ellipses_semi_major", "ellipses_semi_minor", "center_shift"].includes(property_to_set)) {
                             tween.onStart.addOnce(() => {
                                 (this_sprite as PlayerSprite).force_stage_update = true;
                             });
@@ -937,7 +943,7 @@ export class BattleAnimation {
                     }
                     resolve_function();
                 });
-            };
+            }
         }
     }
 

@@ -666,8 +666,11 @@ export class Battle {
                         Math.random() < DELUSION_MISS_CHANCE)
                 ) {
                     target_info.dodged = true;
-                    const target_sprites = action.caster.fighter_type === fighter_types.ALLY ? this.enemies_map_sprite : this.allies_map_sprite;
-                    const target_sprite  = target_sprites[target_info.target.battle_key]
+                    const target_sprites =
+                        action.caster.fighter_type === fighter_types.ALLY
+                            ? this.enemies_map_sprite
+                            : this.allies_map_sprite;
+                    const target_sprite = target_sprites[target_info.target.battle_key];
 
                     const animation_recipe = this.data.info.misc_battle_animations_recipes["dodge"];
                     const dodge_animation = BattleAnimationManager.get_animation_instance(

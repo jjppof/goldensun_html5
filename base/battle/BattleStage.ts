@@ -388,6 +388,16 @@ export class BattleStage {
             }
             player.ellipses_semi_major = SEMI_MAJOR_AXIS;
             player.ellipses_semi_minor = SEMI_MINOR_AXIS;
+            if (player.center_shift !== 0) {
+                this.game.add.tween(player).to(
+                    {
+                        center_shift: 0,
+                    },
+                    300,
+                    Phaser.Easing.Quadratic.Out,
+                    true
+                );
+            }
         }
         let promise_resolve;
         const promise = new Promise(resolve => (promise_resolve = resolve));
@@ -438,17 +448,16 @@ export class BattleStage {
         const relative_angle = player_sprite.is_ally ? target_angle : target_angle + Math.PI;
 
         player_sprite.stage_angle = BattleStage.get_angle(relative_angle);
-        const ellipse_pos_x = BattleStage.ellipse_position(player_sprite, player_sprite.stage_angle, true);
-        const ellipse_pos_y = BattleStage.ellipse_position(player_sprite, player_sprite.stage_angle, false);
+        const ellipse_pos = BattleStage.ellipse_position(player_sprite, player_sprite.stage_angle);
 
         const shift_from_middle = player_sprite.is_ally ? this.shift_from_middle_ally : this.shift_from_middle_enemy;
         const index_shifted = player_sprite.is_ally ? sprite_index : sprite_index - this.allies_count;
 
         const pos_x =
-            ellipse_pos_x +
+            ellipse_pos.x +
             (SPACE_BETWEEN_CHARS * index_shifted - shift_from_middle + (SPACE_BETWEEN_CHARS >> 1)) *
                 Math.sin(relative_angle); //shift party players from base point
-        const pos_y = ellipse_pos_y;
+        const pos_y = ellipse_pos.y;
 
         return {x: pos_x, y: pos_y};
     }
@@ -642,30 +651,27 @@ export class BattleStage {
         }, this);
     }
 
-    static ellipse(angle: number, a: number, b: number) {
-        //ellipse formula
-        a = a ?? SEMI_MAJOR_AXIS;
-        b = b ?? SEMI_MINOR_AXIS;
-        return (a * b) / Math.sqrt(Math.pow(b * Math.cos(angle), 2) + Math.pow(a * Math.sin(angle), 2));
-    }
-
-    static ellipse_position(player_sprite: PlayerSprite, angle: number, is_x: boolean) {
-        if (is_x) {
-            const a = player_sprite.ellipses_semi_major;
-            return CENTER_X + BattleStage.ellipse(angle, a, SEMI_MINOR_AXIS) * Math.cos(angle);
-        } else {
-            const b = player_sprite.ellipses_semi_minor;
-            return CENTER_Y + BattleStage.ellipse(angle, SEMI_MAJOR_AXIS, b) * Math.sin(angle);
-        }
+    static ellipse_position(player_sprite: PlayerSprite, angle: number) {
+        const a = player_sprite.ellipses_semi_major ?? SEMI_MAJOR_AXIS;
+        const b = player_sprite.ellipses_semi_minor ?? SEMI_MINOR_AXIS;
+        const a_sin = a * Math.sin(angle);
+        const b_cos = b * Math.cos(angle);
+        const r = (a * b) / Math.sqrt(b_cos * b_cos + a_sin * a_sin); //polar form
+        const shifted_r = player_sprite.center_shift + r;
+        return {
+            x: CENTER_X + shifted_r * Math.cos(angle),
+            y: CENTER_Y + shifted_r * Math.sin(angle),
+        };
     }
 
     static get_angle(angle: number) {
         //equidistant ellipse angle formula: https://math.stackexchange.com/a/1123448/202435
+        const tan_angle = Math.tan(angle);
         return (
             angle +
             Math.atan(
-                ((SEMI_MINOR_AXIS - SEMI_MAJOR_AXIS) * Math.tan(angle)) /
-                    (SEMI_MAJOR_AXIS + SEMI_MINOR_AXIS * Math.pow(Math.tan(angle), 2))
+                ((SEMI_MINOR_AXIS - SEMI_MAJOR_AXIS) * tan_angle) /
+                    (SEMI_MAJOR_AXIS + SEMI_MINOR_AXIS * tan_angle * tan_angle)
             )
         );
     }

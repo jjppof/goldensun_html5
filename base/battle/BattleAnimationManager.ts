@@ -46,6 +46,7 @@ export class BattleAnimationManager {
             animation_recipe.y_sequence,
             animation_recipe.x_ellipse_axis_factor_sequence,
             animation_recipe.y_ellipse_axis_factor_sequence,
+            animation_recipe.center_shift_sequence,
             animation_recipe.x_scale_sequence,
             animation_recipe.y_scale_sequence,
             animation_recipe.x_anchor_sequence,

@@ -1,11 +1,11 @@
 {
     "key_name": "dodge",
     "sprites": "caster",
-    "x_ellipse_axis_factor_sequence": [{
+    "center_shift_sequence": [{
         "start_delay": 250,
-        "to": 100,
+        "to": 40,
         "is_absolute": false,
-        "tween": "Quadratic.Out",
+        "tween": "Linear.None",
         "sprite_index": "caster",
         "duration": 200
     }],
@@ -18,7 +18,7 @@
         "duration": 100
     },{
         "start_delay": 250,
-        "to": 8,
+        "to": 9,
         "is_absolute": false,
         "tween": "Linear.None",
         "sprite_index": "caster",

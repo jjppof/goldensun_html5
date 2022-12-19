@@ -67,6 +67,7 @@ export class PlayerSprite {
     private group: Phaser.Group;
     public ellipses_semi_major: number;
     public ellipses_semi_minor: number;
+    public center_shift: number;
     public stage_angle: number;
     private status_sprite_base: SpriteBase;
     private status_timer: Phaser.Timer;
@@ -112,6 +113,7 @@ export class PlayerSprite {
         this.force_stage_update = false;
         this.hue_angle = hue_angle;
         this.internal_data = {};
+        this.center_shift = 0;
     }
 
     get x() {
