@@ -16,6 +16,12 @@ enum target_types {
     BACKGROUND = "background",
 }
 
+enum to_misc_values {
+    RESET = "reset",
+    DEFAULT = "default",
+    CAST_POSITION = "cast_position",
+}
+
 export enum battle_positions {
     OVER = "over",
     BETWEEN = "between",
@@ -30,7 +36,7 @@ type CompactValuesSpecifier = {
 
 type DefaultAttr = {
     start_delay: number | number[] | CompactValuesSpecifier;
-    to: string | number | number[] | CompactValuesSpecifier;
+    to: to_misc_values | target_types | number | number[] | CompactValuesSpecifier;
     is_absolute: boolean;
     tween: string;
     duration: number | string;
@@ -737,6 +743,14 @@ export class BattleAnimation {
                         if (this.mirrored && property_to_set === "x") {
                             to_value = numbers.GAME_WIDTH - to_value;
                         }
+                    } else if (seq_to === to_misc_values.RESET) {
+                        const index_on_stage = this.data.battle_instance.battle_stage.sprites.indexOf(
+                            this_sprite as PlayerSprite
+                        );
+                        const pos = this.data.battle_instance.battle_stage.get_player_position_in_stage(index_on_stage);
+                        to_value = pos[property_to_set];
+                        this.sprites_prev_properties[uniq_key][property_to_set] = to_value;
+                        return to_value;
                     }
                     if (options?.rotational_property) {
                         this.sprites_prev_properties[uniq_key][property_to_set] = range_360(

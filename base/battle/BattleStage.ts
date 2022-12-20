@@ -442,7 +442,7 @@ export class BattleStage {
         await promise;
     }
 
-    private get_player_position_in_stage(sprite_index: number, target_angle?: number) {
+    get_player_position_in_stage(sprite_index: number, target_angle?: number) {
         const player_sprite = this.sprites[sprite_index];
         target_angle = target_angle ?? this.camera_angle.rad;
         const relative_angle = player_sprite.is_ally ? target_angle : target_angle + Math.PI;
