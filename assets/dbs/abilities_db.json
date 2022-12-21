@@ -1898,7 +1898,7 @@
                 "operator": "times",
                 "usage": "on_use",
                 "turns_quantity": 1,
-                "effect_msg": "aura"
+                "custom_msg": "A protective aura encircles ${TARGET}!"
             }
         ],
         "ability_category": "djinn",
@@ -2168,7 +2168,7 @@
                 "operator": "times",
                 "usage": "on_use",
                 "on_caster": false,
-                "effect_msg": "double",
+                "custom_msg": "And it got doubled!",
                 "sub_effect": {
                     "type": "current_hp",
                     "operator": "plus",
@@ -3312,7 +3312,7 @@
                 "operator": "times",
                 "usage": "on_use",
                 "turns_quantity": 1,
-                "effect_msg": "aura"
+                "custom_msg": "A protective aura encircles ${TARGET}!"
             }
         ],
         "ability_category": "djinn",

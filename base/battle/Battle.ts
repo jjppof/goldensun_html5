@@ -7,7 +7,7 @@ import {ability_types, Ability, ability_categories} from "../Ability";
 import {ChoosingTargetWindow} from "../windows/battle/ChoosingTargetWindow";
 import {EnemyAI} from "./EnemyAI";
 import {BattleFormulas, EVASION_CHANCE, DELUSION_MISS_CHANCE} from "./BattleFormulas";
-import {effect_types, Effect, effect_usages, effect_names, effect_msg} from "../Effect";
+import {effect_types, Effect, effect_usages, effect_names} from "../Effect";
 import {ordered_elements, element_names, base_actions} from "../utils";
 import {djinn_status, Djinn} from "../Djinn";
 import {ItemSlot, MainChar} from "../MainChar";
@@ -658,48 +658,8 @@ export class Battle {
             await this.wait_for_key();
         }
 
-        for (let i = 0; i < action.targets.length; ++i) {
-            const target_info = action.targets[i];
-            if (target_info.magnitude === null) continue;
-            const target_instance = target_info.target.instance;
-
-            if (target_instance.has_permanent_status(permanent_status.DOWNED)) continue;
-            if (ability.can_be_evaded) {
-                //check whether the target is going to evade the caster attack
-                if (
-                    Math.random() < EVASION_CHANCE ||
-                    (action.caster.temporary_status.has(temporary_status.DELUSION) &&
-                        Math.random() < DELUSION_MISS_CHANCE)
-                ) {
-                    target_info.dodged = true;
-                    const target_sprites =
-                        action.caster.fighter_type === fighter_types.ALLY
-                            ? this.enemies_map_sprite
-                            : this.allies_map_sprite;
-                    const target_sprite = target_sprites[target_info.target.battle_key];
-
-                    const animation_recipe = this.data.info.misc_battle_animations_recipes["dodge"];
-                    const dodge_animation = BattleAnimationManager.get_animation_instance(
-                        this.game,
-                        this.data,
-                        animation_recipe,
-                        false
-                    );
-                    const caster_sprite = target_sprite;
-                    //should not wait for this anim
-                    this.animation_manager.play_animation(
-                        dodge_animation,
-                        caster_sprite,
-                        [],
-                        [],
-                        this.battle_stage.group_allies,
-                        this.battle_stage.group_allies,
-                        this.battle_stage,
-                        undefined
-                    );
-                }
-            }
-        }
+        //checks if target will dodge attack and plays dodge animation
+        this.check_for_attack_dodge(action, ability);
 
         //executes the animation of the current ability
         await this.play_battle_animation(action, ability);
@@ -745,6 +705,51 @@ export class Battle {
         }
 
         this.check_phases();
+    }
+
+    check_for_attack_dodge(action: PlayerAbility, ability: Ability) {
+        for (let i = 0; i < action.targets.length; ++i) {
+            const target_info = action.targets[i];
+            if (target_info.magnitude === null) continue;
+            const target_instance = target_info.target.instance;
+
+            if (target_instance.has_permanent_status(permanent_status.DOWNED)) continue;
+            if (ability.can_be_evaded) {
+                //check whether the target is going to evade the caster attack
+                if (
+                    Math.random() < EVASION_CHANCE ||
+                    (action.caster.temporary_status.has(temporary_status.DELUSION) &&
+                        Math.random() < DELUSION_MISS_CHANCE)
+                ) {
+                    target_info.dodged = true;
+                    const target_sprites =
+                        action.caster.fighter_type === fighter_types.ALLY
+                            ? this.enemies_map_sprite
+                            : this.allies_map_sprite;
+                    const target_sprite = target_sprites[target_info.target.battle_key];
+
+                    const animation_recipe = this.data.info.misc_battle_animations_recipes["dodge"];
+                    const dodge_animation = BattleAnimationManager.get_animation_instance(
+                        this.game,
+                        this.data,
+                        animation_recipe,
+                        false
+                    );
+                    const caster_sprite = target_sprite;
+                    //should not wait for this anim
+                    this.animation_manager.play_animation(
+                        dodge_animation,
+                        caster_sprite,
+                        [],
+                        [],
+                        this.battle_stage.group_allies,
+                        this.battle_stage.group_allies,
+                        this.battle_stage,
+                        undefined
+                    );
+                }
+            }
+        }
     }
 
     async play_battle_animation(action: PlayerAbility, ability: Ability) {
@@ -905,8 +910,13 @@ export class Battle {
                         const effect_damage = effect_result.before - effect_result.after;
 
                         if (effect_damage !== 0) {
-                            if (damage_input_effect.effect_msg) {
-                                await this.battle_log.add(effect_msg[damage_input_effect.effect_msg](target_instance));
+                            if (damage_input_effect.custom_msg) {
+                                const parsed_msg = Effect.parse_effect_custom_msg(
+                                    damage_input_effect.custom_msg,
+                                    target_instance.name,
+                                    action.caster.name
+                                );
+                                await this.battle_log.add(parsed_msg);
                             } else {
                                 await this.battle_log.add_damage(
                                     effect_damage,
@@ -1266,6 +1276,24 @@ So, if a character will die after 5 turns and you land another Curse on them, it
 
                     break;
 
+                case effect_types.CURRENT_PP:
+                    effect_result = target_instance.add_effect(effect_obj, ability, true);
+                    if (effect_result.effect.show_msg) {
+                        const damage = effect_result.changes.before - effect_result.changes.after;
+                        await this.battle_log.add_damage(damage, target_instance, true);
+
+                        this.battle_menu.chars_status_window.update_chars_info();
+                        await this.wait_for_key();
+                    }
+
+                    if (effect_result.effect.turns_quantity !== -1) {
+                        this.on_going_effects.push(effect_result.effect);
+                    } else {
+                        target_instance.remove_effect(effect_result.effect);
+                    }
+
+                    break;
+
                 case effect_types.MAX_HP:
                 case effect_types.MAX_PP:
                 case effect_types.ATTACK:
@@ -1330,7 +1358,14 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                     break;
 
                 case effect_types.DAMAGE_MODIFIER:
-                    await this.battle_log.add(effect_msg[effect_obj.effect_msg](target_instance));
+                    if (effect_obj.custom_msg) {
+                        const parsed_msg = Effect.parse_effect_custom_msg(
+                            effect_obj.custom_msg,
+                            target_instance.name,
+                            action.caster.name
+                        );
+                        await this.battle_log.add(parsed_msg);
+                    }
                     await this.wait_for_key();
 
                     this.on_going_effects.push(target_instance.add_effect(effect_obj, ability, true).effect);

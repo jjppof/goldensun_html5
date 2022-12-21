@@ -85,11 +85,6 @@ export enum effect_usages {
     BATTLE_ROUND_END = "battle_round_end",
 }
 
-export const effect_msg = {
-    aura: target => `A protective aura encircles ${target.name}!`,
-    double: () => `And it got doubled!`,
-};
-
 export class Effect {
     public type: effect_types;
     public quantity: number;
@@ -109,7 +104,7 @@ export class Effect {
     public usage: string;
     public on_caster: boolean;
     public relative_to_property: string;
-    public effect_msg: string;
+    public custom_msg: string;
     public show_msg: boolean;
     public char: Player;
     public sub_effect: {
@@ -144,7 +139,7 @@ export class Effect {
         on_caster, //boolean. default false. If true, the caster will take the effect.
         relative_to_property, //make the calculation based on a player property
         sub_effect,
-        effect_msg,
+        custom_msg,
         show_msg,
         char
     ) {
@@ -166,7 +161,7 @@ export class Effect {
         this.usage = usage ?? effect_usages.NOT_APPLY;
         this.on_caster = on_caster ?? false;
         this.relative_to_property = relative_to_property;
-        this.effect_msg = effect_msg;
+        this.custom_msg = custom_msg;
         this.show_msg = show_msg ?? true;
         this.char = char;
         this.sub_effect = sub_effect;
@@ -537,5 +532,15 @@ export class Effect {
             removed_effects: removed_effects,
             status_removed: status_removed,
         };
+    }
+
+    static parse_effect_custom_msg(msg: string, target_name?: string, caster_name?: string) {
+        if (target_name) {
+            msg = msg.replace(/\${TARGET}/g, target_name);
+        }
+        if (caster_name) {
+            msg = msg.replace(/\${CASTER}/g, caster_name);
+        }
+        return msg;
     }
 }
