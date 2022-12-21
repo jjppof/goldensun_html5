@@ -143,6 +143,13 @@ export class BattleAnimation {
         mode: string;
         ignore_if_dodge?: boolean;
     }[] = [];
+    public sfx_sequence: {
+        start_delay: number;
+        sfx_key: string;
+        position_shift: number;
+        volume: number;
+        ignore_if_dodge?: boolean;
+    }[] = [];
     public particles_sequence: ParticlesInfo;
     public running: boolean;
     public sprites: (Phaser.Sprite | Phaser.Graphics | Phaser.TileSprite | PlayerSprite)[];
@@ -220,6 +227,7 @@ export class BattleAnimation {
         color_blend_filter_sequence,
         flame_filter_sequence,
         particles_sequence,
+        sfx_sequence,
         cast_type,
         wait_for_cast_animation,
         follow_caster,
@@ -254,6 +262,7 @@ export class BattleAnimation {
         this.set_frame_sequence = set_frame_sequence ?? [];
         this.blend_mode_sequence = blend_mode_sequence ?? [];
         this.particles_sequence = particles_sequence ?? [];
+        this.sfx_sequence = sfx_sequence ?? [];
         this.running = false;
         this.cast_type = cast_type;
         this.wait_for_cast_animation = wait_for_cast_animation;
@@ -510,13 +519,14 @@ export class BattleAnimation {
         });
         this.play_sprite_sequence();
         this.play_blend_modes();
-        this.play_colorize_filter(this.colorize_sequence);
-        this.play_tint_filter(this.tint_sequence);
-        this.play_levels_filter(this.levels_filter_sequence);
-        this.play_color_blend_filter(this.color_blend_filter_sequence);
-        this.play_flame_filter(this.flame_filter_sequence);
+        this.play_colorize_filter();
+        this.play_tint_filter();
+        this.play_levels_filter();
+        this.play_color_blend_filter();
+        this.play_flame_filter();
         this.play_stage_angle_sequence();
         this.play_particles();
+        this.play_sfx();
         this.unmount_animation(finish_callback);
     }
 
@@ -961,6 +971,24 @@ export class BattleAnimation {
         }
     }
 
+    play_sfx() {
+        for (let i = 0; i < this.sfx_sequence.length; ++i) {
+            const sfx_seq = this.sfx_sequence[i];
+            if (sfx_seq.ignore_if_dodge && this.target_dodged) {
+                continue;
+            }
+            let resolve_function;
+            let this_promise = new Promise(resolve => {
+                resolve_function = resolve;
+            });
+            this.promises.push(this_promise);
+            this.game.time.events.add(sfx_seq.start_delay, () => {
+                this.data.audio.play_se(sfx_seq.sfx_key, undefined, sfx_seq.position_shift, sfx_seq.volume);
+                resolve_function();
+            });
+        }
+    }
+
     play_general_filter(
         sequence: GeneralFilterAttr[],
         filter_key: engine_filters,
@@ -1001,9 +1029,9 @@ export class BattleAnimation {
         }
     }
 
-    play_levels_filter(sequence: BattleAnimation["levels_filter_sequence"]) {
+    play_levels_filter() {
         this.play_general_filter(
-            sequence,
+            this.levels_filter_sequence,
             engine_filters.LEVELS,
             (filter_seq: BattleAnimation["levels_filter_sequence"][0], filter: Phaser.Filter.Levels) => {
                 filter.min_input = filter_seq.min_input ?? filter.min_input;
@@ -1013,9 +1041,9 @@ export class BattleAnimation {
         );
     }
 
-    play_color_blend_filter(sequence: BattleAnimation["color_blend_filter_sequence"]) {
+    play_color_blend_filter() {
         this.play_general_filter(
-            sequence,
+            this.color_blend_filter_sequence,
             engine_filters.COLOR_BLEND,
             (filter_seq: BattleAnimation["color_blend_filter_sequence"][0], filter: Phaser.Filter.ColorBlend) => {
                 filter.r = filter_seq.r ?? filter.r;
@@ -1025,13 +1053,13 @@ export class BattleAnimation {
         );
     }
 
-    play_flame_filter(sequence: BattleAnimation["flame_filter_sequence"]) {
-        this.play_general_filter(sequence, engine_filters.FLAME);
+    play_flame_filter() {
+        this.play_general_filter(this.flame_filter_sequence, engine_filters.FLAME);
     }
 
-    play_tint_filter(sequence: BattleAnimation["tint_sequence"]) {
+    play_tint_filter() {
         this.play_general_filter(
-            sequence,
+            this.tint_sequence,
             engine_filters.TINT,
             (filter_seq: BattleAnimation["tint_sequence"][0], filter: Phaser.Filter.Tint) => {
                 filter.r = filter_seq.r ?? filter.r;
@@ -1041,9 +1069,9 @@ export class BattleAnimation {
         );
     }
 
-    play_colorize_filter(sequence: BattleAnimation["colorize_sequence"]) {
+    play_colorize_filter() {
         this.play_general_filter(
-            sequence,
+            this.colorize_sequence,
             engine_filters.COLORIZE,
             (filter_seq: BattleAnimation["colorize_sequence"][0], filter: Phaser.Filter.Colorize) => {
                 filter.color = filter_seq.color ?? filter.color;
