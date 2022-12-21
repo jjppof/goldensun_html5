@@ -73,7 +73,9 @@ export class MindReadFieldPsynergy extends FieldAbilities {
             this.target_object = null;
         }
         this.dialog_manager?.destroy();
-        this.reset_map();
+        if (this.reset_map) {
+            this.reset_map();
+        }
         this.arrows?.forEach(arrow => {
             arrow?.destroy();
         });
