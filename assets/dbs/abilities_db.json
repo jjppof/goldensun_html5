@@ -1936,7 +1936,8 @@
         "ability_category": "djinn",
         "battle_animation_key": "quartz",
         "priority_move": false,
-        "msg_type": "unleash"
+        "msg_type": "unleash",
+        "affects_downed": true
     },{
         "key_name": "vine",
         "name": "Vine",
@@ -3344,7 +3345,8 @@
         "ability_category": "djinn",
         "battle_animation_key": "spring",
         "priority_move": false,
-        "msg_type": "unleash"
+        "msg_type": "unleash",
+        "affects_downed": true
     },{
         "key_name": "chill",
         "name": "Chill",

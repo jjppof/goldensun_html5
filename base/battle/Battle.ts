@@ -579,6 +579,11 @@ export class Battle {
 
         //gets the ability of this phase
         let ability = await this.get_phase_ability(action);
+        if (!ability) {
+            await this.wait_for_key();
+            this.check_phases();
+            return;
+        }
 
         //check whether all targets are downed and change ability to "defend" in the case it's true
         if (!ability.affects_downed) this.check_if_all_targets_are_downed(action);
@@ -1157,10 +1162,14 @@ So, if a character will die after 5 turns and you land another Curse on them, it
 
         for (let j = 0; j < action.targets.length; ++j) {
             const target_info = action.targets[j];
-            if (target_info.magnitude === null) continue;
+            if (target_info.magnitude === null) {
+                continue;
+            }
 
             const target_instance = target_info.target.instance;
-            if (target_instance.has_permanent_status(permanent_status.DOWNED)) continue;
+            if (!ability.affects_downed && target_instance.has_permanent_status(permanent_status.DOWNED)) {
+                continue;
+            }
 
             switch (effect_obj.type) {
                 case effect_types.PERMANENT_STATUS:
@@ -1202,9 +1211,9 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                         }
                         await this.wait_for_key();
                     } else {
-                        const removed_effects = Effect.remove_status_from_player(effect_obj, target_instance);
-                        for (let i = 0; i < removed_effects.length; ++i) {
-                            const removed_effect = removed_effects[i];
+                        const removed_items = Effect.remove_status_from_player(effect_obj, target_instance);
+                        for (let i = 0; i < removed_items.removed_effects.length; ++i) {
+                            const removed_effect = removed_items.removed_effects[i];
                             if (
                                 [permanent_status.DOWNED, temporary_status.STUN].includes(
                                     removed_effect.status_key_name
@@ -1221,6 +1230,17 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                                 });
                             }
                             this.battle_log.add_recover_effect(removed_effect);
+                            await this.wait_for_key();
+                        }
+                        for (let i = 0; i < removed_items.status_removed.length; ++i) {
+                            const removed_status = removed_items.status_removed[i];
+                            if ([permanent_status.DOWNED, temporary_status.STUN].includes(removed_status)) {
+                                const player_sprite = _.find(this.battle_stage.sprites, {
+                                    player_instance: target_instance,
+                                });
+                                player_sprite.set_action(battle_actions.IDLE);
+                            }
+                            this.battle_log.add_recover_effect(effect_obj, target_instance);
                             await this.wait_for_key();
                         }
                     }

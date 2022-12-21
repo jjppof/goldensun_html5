@@ -498,9 +498,11 @@ export class ItemPsynergyChooseWindow {
                     case effect_types.EXTRA_LUCK:
                     case effect_types.EXTRA_MAX_HP:
                     case effect_types.EXTRA_MAX_PP:
+                        stats_boosted.push(extra_stat_label_map[effect_obj.type]);
+                    case effect_types.CURRENT_HP:
+                    case effect_types.CURRENT_PP:
                         dest_char.add_effect(effect_obj, ability, true);
                         dest_char.update_attributes();
-                        stats_boosted.push(extra_stat_label_map[effect_obj.type]);
                         break;
                     case effect_types.PERMANENT_STATUS:
                         if (!effect_obj.add_status) {

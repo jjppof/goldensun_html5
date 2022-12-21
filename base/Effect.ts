@@ -225,7 +225,9 @@ export class Effect {
                 value += variation();
             }
             let value_to_use;
-            if (property !== undefined) {
+            if (this.relative_to_property !== undefined) {
+                value_to_use = char[this.relative_to_property];
+            } else if (property !== undefined) {
                 value_to_use = char[property];
             } else {
                 value_to_use = direct_value;
@@ -492,10 +494,16 @@ export class Effect {
     }
 
     static remove_status_from_player(effect_obj: any, target: Player) {
-        if (![effect_types.TEMPORARY_STATUS, effect_types.PERMANENT_STATUS].includes(effect_obj.type)) return [];
+        if (![effect_types.TEMPORARY_STATUS, effect_types.PERMANENT_STATUS].includes(effect_obj.type)) {
+            return {
+                removed_effects: [],
+                status_removed: [],
+            };
+        }
 
         const removed_effects: Effect[] = [];
-        if (Math.random() < effect_obj.chance) {
+        const status_removed: (permanent_status | temporary_status)[] = [];
+        if (effect_obj.chance === undefined || Math.random() < effect_obj.chance) {
             while (true) {
                 const this_effect = _.find(target.effects, {
                     status_key_name: effect_obj.status_key_name,
@@ -508,9 +516,26 @@ export class Effect {
                     }
 
                     removed_effects.push(this_effect);
-                } else break;
+                } else {
+                    if (
+                        effect_obj.type === effect_types.TEMPORARY_STATUS &&
+                        target.has_temporary_status(effect_obj.status_key_name)
+                    ) {
+                        target.remove_temporary_status(effect_obj.status_key_name);
+                    } else if (
+                        effect_obj.type === effect_types.PERMANENT_STATUS &&
+                        target.has_permanent_status(effect_obj.status_key_name)
+                    ) {
+                        target.remove_permanent_status(effect_obj.status_key_name);
+                    }
+                    status_removed.push(effect_obj.status_key_name);
+                    break;
+                }
             }
         }
-        return removed_effects;
+        return {
+            removed_effects: removed_effects,
+            status_removed: status_removed,
+        };
     }
 }

@@ -2,7 +2,7 @@ import * as numbers from "../magic_numbers";
 import {ability_msg_types} from "../Ability";
 import {Effect, effect_names, effect_types} from "../Effect";
 import {element_names, FONT_NAME} from "../utils";
-import {main_stats, on_remove_status_msg} from "../Player";
+import {main_stats, on_remove_status_msg, Player} from "../Player";
 import {BG_Y, BG_HEIGHT} from "./BattleStage";
 
 const LOG_X = 3;
@@ -115,8 +115,8 @@ export class BattleLog {
         }
     }
 
-    async add_recover_effect(effect: Effect) {
-        const player = effect.char;
+    async add_recover_effect(effect: Effect, char?: Player) {
+        const player = char ?? effect.char;
         switch (effect.type) {
             case effect_types.MAX_HP:
             case effect_types.MAX_PP:

@@ -6,6 +6,7 @@ import {PlayerInfo} from "./Battle";
 import {battle_actions, battle_positions, PlayerSprite} from "./PlayerSprite";
 import {BattleAnimation} from "./BattleAnimation";
 import {BattleCursorManager} from "./BattleCursorManager";
+import {permanent_status} from "../Player";
 
 const SCALE_FACTOR = 0.8334;
 const BG_X = 0;
@@ -259,7 +260,9 @@ export class BattleStage {
                 info,
                 sprite_base,
                 true,
-                battle_actions.IDLE,
+                info.instance.has_permanent_status(permanent_status.DOWNED)
+                    ? battle_actions.DOWNED
+                    : battle_actions.IDLE,
                 battle_positions.BACK,
                 undefined
             );
