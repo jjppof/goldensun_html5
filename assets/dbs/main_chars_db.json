@@ -123,11 +123,11 @@
         "battle_scale": 1.05,
         "battle_shadow_key": "00",
         "status_sprite_shift": 15,
-        "weapon_sprite_shift": 4,
+        "weapon_sprite_shift": 0,
         "djinn": ["forge", "fever", "corona", "scorch"],
         "items": [
             {
-                "key_name": "great_sword",
+                "key_name": "great_axe",
                 "quantity": 1,
                 "equipped": true
             },{
@@ -156,7 +156,14 @@
         "battle_animations_variations": {
             "attack": "attack_jumping"
         },
-        "weapons_sprites": {}
+        "weapons_sprites": {
+            "axe": {
+                "spritesheet": {
+                    "json": "assets/images/spritesheets/battle/weapons/garet_axe.json",
+                    "image": "assets/images/spritesheets/battle/weapons/garet_axe.png"
+                }
+            }
+        }
     },{
         "key_name": "sheba",
         "name": "Sheba",

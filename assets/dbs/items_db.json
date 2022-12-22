@@ -391,7 +391,7 @@
         "unleash_ability": "",
         "unleash_rate": 0,
         "use_ability": "",
-        "equipable_chars": ["isaac"],
+        "equipable_chars": ["isaac", "garet", "sheba", "piers"],
         "price": 0,
         "granted_ability": "ice"
     },{
@@ -638,6 +638,31 @@
         "use_ability": "",
         "equipable_chars": ["isaac", "garet", "piers"],
         "price": 15200,
+        "weapon_type": "axe",
+        "granted_ability": ""
+    },
+    {
+        "key_name": "great_axe",
+        "name": "Great Axe",
+        "type": "weapons",
+        "description": "Axe",
+        "use_type": "no_use",
+        "curses_when_equipped": false,
+        "cant_be_removed": false,
+        "rare_item": false,
+        "important_item": false,
+        "carry_up_to_30": false,
+        "effects": [{
+            "type": "attack",
+            "quantity": 80,
+            "operator": "plus"
+        }],
+        "element": "no_element",
+        "unleash_ability": "",
+        "unleash_rate": 0,
+        "use_ability": "",
+        "equipable_chars": ["isaac", "garet", "piers"],
+        "price": 5200,
         "weapon_type": "axe",
         "granted_ability": ""
     },
