@@ -10,7 +10,7 @@ import {
     effect_type_stat,
 } from "../../Player";
 import {TextObj, Window} from "../../Window";
-import {base_actions, elements, ordered_elements} from "../../utils";
+import {elements, ordered_elements} from "../../utils";
 import * as _ from "lodash";
 import {StatusComponent} from "../../support_menus/StatusComponent";
 import {BattleStatusStatistics} from "../../support_menus/BattleStatusStatistics";
@@ -18,6 +18,7 @@ import {effect_types} from "../../Effect";
 import {BattleStatusPsynergy} from "../../support_menus/BattleStatusPsynergy";
 import {BattleStatusDjinn} from "../../support_menus/BattleStatusDjinn";
 import {BattleStatusItems} from "../../support_menus/BattleStatusItems";
+import {PlayerSprite} from "../../battle/PlayerSprite";
 
 export type BattleStatusEffect = {
     key: temporary_status | permanent_status | effect_types;
@@ -124,7 +125,6 @@ export class BattleStatusWindow {
     private data: GoldenSun;
     private close_callback: Function;
 
-    private desc_shifted: boolean;
     private selected_char: MainChar;
 
     private current_state: BattleStatusStates;
@@ -135,7 +135,12 @@ export class BattleStatusWindow {
     private effect_sprites: Phaser.Sprite[];
 
     private window: Window;
-    private battle_sprite: Phaser.Sprite;
+    private battle_sprite: PlayerSprite;
+    private player_stage_info: {
+        index: number;
+        x: number;
+        y: number;
+    };
     private avatar: Phaser.Sprite;
 
     private name: TextObj;
@@ -166,7 +171,6 @@ export class BattleStatusWindow {
         this.data = data;
         this.close_callback = null;
 
-        this.desc_shifted = null;
         this.selected_char = null;
 
         this.battle_effects = [];
@@ -183,6 +187,7 @@ export class BattleStatusWindow {
         ];
 
         this.battle_sprite = null;
+        this.player_stage_info = null;
         this.avatar = null;
 
         this.window.group.bringToTop(this.window.get_internal_group(BattleStatusWindow.GROUP_KEY));
@@ -513,8 +518,12 @@ export class BattleStatusWindow {
     }
 
     private set_sprites() {
-        if (this.battle_sprite) this.battle_sprite.destroy();
-        if (this.avatar) this.avatar.destroy();
+        if (this.battle_sprite) {
+            this.battle_sprite.return_to_stage(this.player_stage_info);
+        }
+        if (this.avatar) {
+            this.avatar.destroy();
+        }
 
         if (this.effect_sprites.length > 0) {
             for (let index in this.effect_sprites) {
@@ -528,24 +537,13 @@ export class BattleStatusWindow {
             internal_group_key: BattleStatusWindow.GROUP_KEY,
         });
 
-        const sprite_key = this.selected_char.sprite_base.getSpriteKey(base_actions.BATTLE);
-        const sprite_base = this.data.info.main_char_list[this.selected_char.key_name].sprite_base;
-
-        this.battle_sprite = this.window.create_at_group(
-            BattleStatusWindow.BATTLESPRITE.CENTER_X,
-            BattleStatusWindow.BATTLESPRITE.END_Y,
-            sprite_key,
-            {
-                internal_group_key: BattleStatusWindow.GROUP_KEY,
-            }
+        this.battle_sprite = this.data.battle_instance.battle_stage.sprites.find(
+            sprite => sprite.player_info.instance.key_name === this.selected_char.key_name
         );
-        this.battle_sprite.anchor.setTo(0.5, 1);
-
-        sprite_base.setAnimation(this.battle_sprite, base_actions.BATTLE);
-        this.battle_sprite.animations.play(sprite_base.getAnimationKey(base_actions.BATTLE, "idle_back"));
-
-        //TO DO: add shadow
-        //TO DO: add weapon
+        this.player_stage_info = this.battle_sprite.remove_from_stage();
+        this.window.add_to_internal_group(BattleStatusWindow.GROUP_KEY, this.battle_sprite.group);
+        this.battle_sprite.group.x = BattleStatusWindow.BATTLESPRITE.CENTER_X;
+        this.battle_sprite.group.y = BattleStatusWindow.BATTLESPRITE.END_Y;
 
         if (this.battle_effects.length > 0) {
             for (let index in this.battle_effects) {
@@ -674,8 +672,6 @@ export class BattleStatusWindow {
         const separator_width = BattleStatusWindow.SEPARATOR.WIDTH;
 
         this.window.draw_separator(separator_x, separator_y, separator_x + separator_width, separator_y, false);
-
-        this.desc_shifted = shift;
     }
 
     public update_description(line1: string, line2?: string) {
@@ -712,6 +708,8 @@ export class BattleStatusWindow {
     }
 
     public close(callback?: () => void) {
+        this.battle_sprite.return_to_stage(this.player_stage_info);
+        this.battle_sprite = null;
         this.data.control_manager.reset();
         this.clear_component();
         this.window.close(callback);

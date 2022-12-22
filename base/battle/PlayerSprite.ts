@@ -58,13 +58,13 @@ export class PlayerSprite {
     private current_status_index: number;
     private current_weapon_type: weapon_types;
     private sprite_base: SpriteBase;
-    private player_info: PlayerInfo;
+    private _player_info: PlayerInfo;
     private char_sprite: Phaser.Sprite;
     private shadow_sprite: Phaser.Sprite;
     private status_sprite: Phaser.Sprite;
     private weapon_sprite: Phaser.Sprite;
     private parent_group: Phaser.Group;
-    private group: Phaser.Group;
+    private _group: Phaser.Group;
     public ellipses_semi_major: number;
     public ellipses_semi_minor: number;
     public center_shift: number;
@@ -93,14 +93,14 @@ export class PlayerSprite {
         this.game = game;
         this._data = data;
         this.parent_group = parent_group;
-        this.group = this.game.add.group();
+        this._group = this.game.add.group();
         this.parent_group.add(this.group);
         this.group.onDestroy.addOnce(() => {
             this.on_status_change_subs.unsubscribe();
             this.status_timer.stop();
             this.status_timer.destroy();
         });
-        this.player_info = player_info;
+        this._player_info = player_info;
         this.player_instance = this.player_info.instance;
         this.sprite_base = sprite_base;
         this.is_ally = is_ally;
@@ -223,6 +223,13 @@ export class PlayerSprite {
 
     get active() {
         return this._active;
+    }
+
+    get player_info() {
+        return this._player_info;
+    }
+    get group() {
+        return this._group;
     }
 
     initialize_player() {
@@ -424,6 +431,24 @@ export class PlayerSprite {
             }
         }
         this.status_sprite.visible = false;
+    }
+
+    remove_from_stage() {
+        const index = this.parent_group.getIndex(this.group);
+        const x = this.group.x;
+        const y = this.group.y;
+        this.parent_group.remove(this.group, false, true);
+        return {index: index, x: x, y: y};
+    }
+
+    return_to_stage(player_stage_info: {index: number; x: number; y: number}) {
+        if (this.parent_group.contains(this.group)) {
+            return;
+        }
+        (this.group.parent as Phaser.Group).remove(this.group, false, true);
+        this.parent_group.addAt(this.group, player_stage_info.index, true);
+        this.group.x = player_stage_info.x;
+        this.group.y = player_stage_info.y;
     }
 
     activate() {
