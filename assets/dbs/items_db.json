@@ -418,6 +418,7 @@
         "use_ability": "",
         "equipable_chars": ["sheba"],
         "price": 40,
+        "weapon_type": "staff",
         "granted_ability": ""
     },{
         "key_name": "staff_of_anubis",
