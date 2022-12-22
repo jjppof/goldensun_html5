@@ -608,12 +608,24 @@
                     "image": "assets/images/spritesheets/battle/garet_battle.png"
                 },
                 "animations": [
+                    "attack_back",
+                    "attack_front",
                     "idle_back",
-                    "idle_front"
+                    "idle_front",
+                    "cast_back",
+                    "cast_front",
+                    "cast_init_back",
+                    "cast_init_front",
+                    "damage_back",
+                    "damage_front",
+                    "downed_back",
+                    "downed_front",
+                    "attack_init_back",
+                    "attack_init_front"
                 ],
-                "frames_count": 4,
-                "frame_rate": 3,
-                "loop": [true,true]
+                "frames_count": [2,2,4,4,2,2,3,3,1,1,1,1,1,1],
+                "frame_rate": [10,10,3,3,10,10,12,6,1,1,1,1,1,1],
+                "loop": [false,false,true,true,true,true,false,false,false,false,false,false,false,false]
             }
         }
     },{
@@ -652,12 +664,24 @@
                     "image": "assets/images/spritesheets/battle/sheba_battle.png"
                 },
                 "animations": [
+                    "attack_back",
+                    "attack_front",
                     "idle_back",
-                    "idle_front"
+                    "idle_front",
+                    "cast_back",
+                    "cast_front",
+                    "cast_init_back",
+                    "cast_init_front",
+                    "damage_back",
+                    "damage_front",
+                    "downed_back",
+                    "downed_front",
+                    "attack_init_back",
+                    "attack_init_front"
                 ],
-                "frames_count": 4,
-                "frame_rate": 3,
-                "loop": [true,true]
+                "frames_count": [2,2,4,4,2,2,3,3,1,1,1,1,1,1],
+                "frame_rate": [10,10,3,3,10,10,12,6,1,1,1,1,1,1],
+                "loop": [false,false,true,true,true,true,false,false,false,false,false,false,false,false]
             }
         }
     },{
@@ -715,12 +739,24 @@
                     "image": "assets/images/spritesheets/battle/piers_battle.png"
                 },
                 "animations": [
+                    "attack_back",
+                    "attack_front",
                     "idle_back",
-                    "idle_front"
+                    "idle_front",
+                    "cast_back",
+                    "cast_front",
+                    "cast_init_back",
+                    "cast_init_front",
+                    "damage_back",
+                    "damage_front",
+                    "downed_back",
+                    "downed_front",
+                    "attack_init_back",
+                    "attack_init_front"
                 ],
-                "frames_count": 4,
-                "frame_rate": 3,
-                "loop": [true,true]
+                "frames_count": [2,2,4,4,2,2,3,3,1,1,1,1,1,1],
+                "frame_rate": [10,10,3,3,10,10,12,6,1,1,1,1,1,1],
+                "loop": [false,false,true,true,true,true,false,false,false,false,false,false,false,false]
             }
         }
     },{

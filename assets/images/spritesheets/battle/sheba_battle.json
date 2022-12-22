@@ -1,8 +1,152 @@
 {"frames": {
 
+"battle/attack_back/00":
+{
+	"frame": {"x":148,"y":56,"w":37,"h":46},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":13,"y":18,"w":37,"h":46},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/attack_back/01":
+{
+	"frame": {"x":316,"y":48,"w":38,"h":44},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":15,"y":20,"w":38,"h":44},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/attack_front/00":
+{
+	"frame": {"x":291,"y":1,"w":36,"h":45},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":16,"y":19,"w":36,"h":45},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/attack_front/01":
+{
+	"frame": {"x":35,"y":63,"w":36,"h":42},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":24,"y":22,"w":36,"h":42},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/cast_back/00":
+{
+	"frame": {"x":231,"y":55,"w":39,"h":50},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":9,"y":13,"w":39,"h":50},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/cast_back/01":
+{
+	"frame": {"x":187,"y":55,"w":42,"h":50},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":9,"y":13,"w":42,"h":50},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/cast_front/00":
+{
+	"frame": {"x":246,"y":1,"w":43,"h":51},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":10,"y":13,"w":43,"h":51},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/cast_front/01":
+{
+	"frame": {"x":272,"y":54,"w":42,"h":51},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":10,"y":13,"w":42,"h":51},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/cast_init_back/00":
+{
+	"frame": {"x":1,"y":1,"w":26,"h":61},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":19,"y":3,"w":26,"h":61},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/cast_init_back/01":
+{
+	"frame": {"x":231,"y":55,"w":39,"h":50},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":9,"y":13,"w":39,"h":50},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/cast_init_back/02":
+{
+	"frame": {"x":187,"y":55,"w":42,"h":50},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":9,"y":13,"w":42,"h":50},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/cast_init_front/00":
+{
+	"frame": {"x":29,"y":1,"w":30,"h":60},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":20,"y":2,"w":30,"h":60},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/cast_init_front/01":
+{
+	"frame": {"x":246,"y":1,"w":43,"h":51},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":10,"y":13,"w":43,"h":51},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/cast_init_front/02":
+{
+	"frame": {"x":272,"y":54,"w":42,"h":51},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":10,"y":13,"w":42,"h":51},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/damage_back/00":
+{
+	"frame": {"x":111,"y":56,"w":35,"h":49},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":18,"y":15,"w":35,"h":49},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/damage_front/00":
+{
+	"frame": {"x":73,"y":57,"w":36,"h":48},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":14,"y":16,"w":36,"h":48},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/downed_back/00":
+{
+	"frame": {"x":1,"y":64,"w":32,"h":38},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":16,"y":26,"w":32,"h":38},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/downed_front/00":
+{
+	"frame": {"x":329,"y":1,"w":35,"h":36},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":16,"y":25,"w":35,"h":36},
+	"sourceSize": {"w":64,"h":64}
+},
 "battle/idle_back/00":
 {
-	"frame": {"x":1,"y":56,"w":29,"h":53},
+	"frame": {"x":123,"y":1,"w":29,"h":53},
 	"rotated": false,
 	"trimmed": true,
 	"spriteSourceSize": {"x":16,"y":11,"w":29,"h":53},
@@ -10,7 +154,7 @@
 },
 "battle/idle_back/01":
 {
-	"frame": {"x":1,"y":1,"w":30,"h":53},
+	"frame": {"x":91,"y":1,"w":30,"h":53},
 	"rotated": false,
 	"trimmed": true,
 	"spriteSourceSize": {"x":16,"y":11,"w":30,"h":53},
@@ -18,7 +162,7 @@
 },
 "battle/idle_back/02":
 {
-	"frame": {"x":32,"y":57,"w":30,"h":52},
+	"frame": {"x":185,"y":1,"w":30,"h":52},
 	"rotated": false,
 	"trimmed": true,
 	"spriteSourceSize": {"x":16,"y":12,"w":30,"h":52},
@@ -26,7 +170,7 @@
 },
 "battle/idle_back/03":
 {
-	"frame": {"x":1,"y":1,"w":30,"h":53},
+	"frame": {"x":91,"y":1,"w":30,"h":53},
 	"rotated": false,
 	"trimmed": true,
 	"spriteSourceSize": {"x":16,"y":11,"w":30,"h":53},
@@ -34,7 +178,7 @@
 },
 "battle/idle_front/00":
 {
-	"frame": {"x":33,"y":1,"w":28,"h":54},
+	"frame": {"x":61,"y":1,"w":28,"h":54},
 	"rotated": false,
 	"trimmed": true,
 	"spriteSourceSize": {"x":18,"y":10,"w":28,"h":54},
@@ -42,7 +186,7 @@
 },
 "battle/idle_front/01":
 {
-	"frame": {"x":63,"y":1,"w":29,"h":53},
+	"frame": {"x":154,"y":1,"w":29,"h":53},
 	"rotated": false,
 	"trimmed": true,
 	"spriteSourceSize": {"x":17,"y":11,"w":29,"h":53},
@@ -50,7 +194,7 @@
 },
 "battle/idle_front/02":
 {
-	"frame": {"x":64,"y":56,"w":27,"h":52},
+	"frame": {"x":217,"y":1,"w":27,"h":52},
 	"rotated": false,
 	"trimmed": true,
 	"spriteSourceSize": {"x":18,"y":12,"w":27,"h":52},
@@ -58,7 +202,7 @@
 },
 "battle/idle_front/03":
 {
-	"frame": {"x":63,"y":1,"w":29,"h":53},
+	"frame": {"x":154,"y":1,"w":29,"h":53},
 	"rotated": false,
 	"trimmed": true,
 	"spriteSourceSize": {"x":17,"y":11,"w":29,"h":53},
@@ -69,8 +213,8 @@
 	"version": "1.0",
 	"image": "sheba_battle.png",
 	"format": "RGBA8888",
-	"size": {"w":93,"h":110},
+	"size": {"w":365,"h":106},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:ca61397f6c561fbb25024a812ffe766b:b628ed5b376473c57d525281ba88aca8:74111571efa0b842d5eeb6d740493757$"
+	"smartupdate": "$TexturePacker:SmartUpdate:b555eb5efd0db5e03b8441e49e13b1f1:fcb8656f7e7ffc0abd9097896f0e26b2:74111571efa0b842d5eeb6d740493757$"
 }
 }
