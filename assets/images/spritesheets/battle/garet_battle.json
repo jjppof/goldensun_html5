@@ -21,7 +21,7 @@
 	"frame": {"x":121,"y":66,"w":33,"h":61},
 	"rotated": false,
 	"trimmed": true,
-	"spriteSourceSize": {"x":23,"y":3,"w":33,"h":61},
+	"spriteSourceSize": {"x":8,"y":3,"w":33,"h":61},
 	"sourceSize": {"w":64,"h":64}
 },
 "battle/attack_front/01":
@@ -29,7 +29,7 @@
 	"frame": {"x":333,"y":53,"w":43,"h":50},
 	"rotated": false,
 	"trimmed": true,
-	"spriteSourceSize": {"x":8,"y":10,"w":43,"h":50},
+	"spriteSourceSize": {"x":13,"y":10,"w":43,"h":50},
 	"sourceSize": {"w":64,"h":64}
 },
 "battle/cast_back/00":
@@ -53,7 +53,7 @@
 	"frame": {"x":1,"y":1,"w":39,"h":64},
 	"rotated": false,
 	"trimmed": true,
-	"spriteSourceSize": {"x":15,"y":0,"w":39,"h":64},
+	"spriteSourceSize": {"x":10,"y":0,"w":39,"h":64},
 	"sourceSize": {"w":64,"h":64}
 },
 "battle/cast_front/01":
@@ -61,7 +61,7 @@
 	"frame": {"x":42,"y":1,"w":39,"h":64},
 	"rotated": false,
 	"trimmed": true,
-	"spriteSourceSize": {"x":15,"y":0,"w":39,"h":64},
+	"spriteSourceSize": {"x":10,"y":0,"w":39,"h":64},
 	"sourceSize": {"w":64,"h":64}
 },
 "battle/cast_init_back/00":
@@ -93,7 +93,7 @@
 	"frame": {"x":242,"y":61,"w":37,"h":55},
 	"rotated": false,
 	"trimmed": true,
-	"spriteSourceSize": {"x":3,"y":9,"w":37,"h":55},
+	"spriteSourceSize": {"x":24,"y":9,"w":37,"h":55},
 	"sourceSize": {"w":64,"h":64}
 },
 "battle/cast_init_front/01":
@@ -101,7 +101,7 @@
 	"frame": {"x":1,"y":1,"w":39,"h":64},
 	"rotated": false,
 	"trimmed": true,
-	"spriteSourceSize": {"x":15,"y":0,"w":39,"h":64},
+	"spriteSourceSize": {"x":10,"y":0,"w":39,"h":64},
 	"sourceSize": {"w":64,"h":64}
 },
 "battle/cast_init_front/02":
@@ -109,7 +109,7 @@
 	"frame": {"x":42,"y":1,"w":39,"h":64},
 	"rotated": false,
 	"trimmed": true,
-	"spriteSourceSize": {"x":15,"y":0,"w":39,"h":64},
+	"spriteSourceSize": {"x":10,"y":0,"w":39,"h":64},
 	"sourceSize": {"w":64,"h":64}
 },
 "battle/damage_back/00":
@@ -125,7 +125,7 @@
 	"frame": {"x":281,"y":58,"w":50,"h":54},
 	"rotated": false,
 	"trimmed": true,
-	"spriteSourceSize": {"x":9,"y":10,"w":50,"h":54},
+	"spriteSourceSize": {"x":5,"y":10,"w":50,"h":54},
 	"sourceSize": {"w":64,"h":64}
 },
 "battle/downed_back/00":
@@ -141,7 +141,7 @@
 	"frame": {"x":336,"y":1,"w":45,"h":49},
 	"rotated": false,
 	"trimmed": true,
-	"spriteSourceSize": {"x":13,"y":15,"w":45,"h":49},
+	"spriteSourceSize": {"x":6,"y":15,"w":45,"h":49},
 	"sourceSize": {"w":64,"h":64}
 },
 "battle/idle_back/00":
@@ -215,6 +215,6 @@
 	"format": "RGBA8888",
 	"size": {"w":429,"h":128},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:54401684d3fd25d609880e17e0435180:7bbe9400af0bf16a8e5759e0c92fad56:c76fc1249796f2c7d3c5b721e2c834db$"
+	"smartupdate": "$TexturePacker:SmartUpdate:b727f60d3ea4cd7ad859ef96a2153b00:767d3d005ed9dc27d3383a9942d22d48:c76fc1249796f2c7d3c5b721e2c834db$"
 }
 }

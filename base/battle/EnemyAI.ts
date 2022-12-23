@@ -41,7 +41,10 @@ export class EnemyAI {
         });
 
         //mounts list of abilities that can be casted from items
-        const item_abilities = caster.instance.items.flatMap(item => {
+        const item_abilities = caster.instance.items.flatMap((item: Enemy["items"][0]) => {
+            if (item.quantity === 0) {
+                return [];
+            }
             return data.info.items_list[item.key_name].use_ability
                 ? [
                       {
@@ -124,7 +127,6 @@ export class EnemyAI {
         const ability_range: number = ability.range === ability_ranges.ALL ? ability_ranges.ELEVEN : ability.range;
         const range_start = range_center - (ability_range >> 1);
         const start_target_index = main_target_index - (ability_range >> 1);
-        const ratio_map = Ability.get_diminishing_ratios(ability.type, ability.range, ability.use_diminishing_ratio);
         let range_counter = 0;
         return players.flatMap((player, index) => {
             if (index < start_target_index || index >= start_target_index + ability_range) {
@@ -142,7 +144,7 @@ export class EnemyAI {
             ++range_counter;
             return [
                 {
-                    magnitude: ratio_map[BattleCursorManager.RANGES[this_range_index]],
+                    magnitude: BattleCursorManager.RANGES[this_range_index],
                     target: {
                         instance: player.instance,
                         battle_key: player.battle_key,
@@ -214,8 +216,11 @@ export class EnemyAI {
             ability_obj.battle_target === ability_target_types.ENEMY
         ) {
             const players = ability_obj.battle_target === ability_target_types.ALLY ? allies : enemies;
+            const available_indexes = players.flatMap((player, index) =>
+                player.instance.has_permanent_status(permanent_status.DOWNED) ? [] : [index]
+            );
             let main_target_index: number;
-            main_target_index = _.random(0, players.length - 1, false);
+            main_target_index = _.sample(available_indexes);
             if (
                 [
                     ability_types.ADDED_DAMAGE,
@@ -228,7 +233,10 @@ export class EnemyAI {
                 if (Math.random() < (caster.instance as Enemy).change_target_weaker) {
                     const biggest_hp = Math.max(...enemies.map(enemy => enemy.instance.max_hp));
                     const weights = enemies.map(enemy => (biggest_hp - enemy.instance.current_hp) / biggest_hp);
-                    main_target_index = weighted_random_pick(_.range(0, players.length, 1), weights);
+                    main_target_index = weighted_random_pick(
+                        available_indexes,
+                        available_indexes.map(index => weights[index])
+                    );
                 }
             }
             targets = EnemyAI.get_targets(ability_obj, main_target_index, players);
@@ -268,7 +276,13 @@ export class EnemyAI {
 
         const biggest_hp = Math.max(...allies.map(ally => ally.instance.max_hp));
         const allies_weights = allies.map(ally => (biggest_hp - ally.instance.current_hp) / biggest_hp);
-        const main_target_index = weighted_random_pick(_.range(0, allies.length, 1), allies_weights);
+        const available_indexes = allies.flatMap((ally, index) =>
+            ally.instance.has_permanent_status(permanent_status.DOWNED) ? [] : [index]
+        );
+        const main_target_index = weighted_random_pick(
+            available_indexes,
+            available_indexes.map(index => allies_weights[index])
+        );
 
         const targets = EnemyAI.get_targets(ability_obj, main_target_index, allies);
 
@@ -295,6 +309,9 @@ export class EnemyAI {
         ailments_that_can_be_healed: (permanent_status | temporary_status)[]
     ) {
         const main_target_index = allies.findIndex(ally => {
+            if (ally.instance.has_permanent_status(permanent_status.DOWNED)) {
+                return false;
+            }
             for (let status of ailments_that_can_be_healed) {
                 return (
                     ally.instance.has_permanent_status(status as permanent_status) ||
