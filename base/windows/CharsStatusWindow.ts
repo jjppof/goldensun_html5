@@ -320,7 +320,10 @@ export class CharsStatusWindow {
             info_sprite.hp_bar_graphics.x = base_x_pos;
             info_sprite.pp_bar_graphics.x = base_x_pos;
 
-            const hp_damage_bar_width = (STATUS_BAR_WIDTH * (1 - char.current_hp / char.max_hp)) | 0;
+            let hp_damage_bar_width = (STATUS_BAR_WIDTH * (1 - char.current_hp / char.max_hp)) | 0;
+            if (hp_damage_bar_width === 0 && char.current_hp < char.max_hp) {
+                ++hp_damage_bar_width;
+            }
             const hp_damage_bar_x = base_x_pos + STATUS_BAR_WIDTH - hp_damage_bar_width;
 
             info_sprite.hp_bar_damage_graphics.clear();
@@ -333,7 +336,10 @@ export class CharsStatusWindow {
             );
             info_sprite.hp_bar_damage_graphics.endFill();
 
-            const pp_damage_bar_width = (STATUS_BAR_WIDTH * (1 - char.current_pp / char.max_pp)) | 0;
+            let pp_damage_bar_width = (STATUS_BAR_WIDTH * (1 - char.current_pp / char.max_pp)) | 0;
+            if (pp_damage_bar_width === 0 && char.current_pp < char.max_pp) {
+                ++pp_damage_bar_width;
+            }
             const pp_damage_bar_x = base_x_pos + STATUS_BAR_WIDTH - pp_damage_bar_width;
 
             info_sprite.pp_bar_damage_graphics.clear();

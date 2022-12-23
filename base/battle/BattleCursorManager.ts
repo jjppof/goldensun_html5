@@ -6,15 +6,15 @@ import {Button} from "../XGamepad";
 import {Target, CHOOSE_TARGET_ALLY_SHIFT, CHOOSE_TARGET_ENEMY_SHIFT, BattleStage} from "./BattleStage";
 import * as _ from "lodash";
 
-const CHOOSE_TARGET_RIGHT = 1;
-const CHOOSE_TARGET_LEFT = -1;
-
-const RANGES = [11, 9, 7, 5, 3, 1, 3, 5, 7, 9, 11];
-const BATTLE_CURSOR_SCALES = [0.1, 0.2, 0.3, 0.4, 0.6, 1, 0.6, 0.4, 0.3, 0.2, 0.1];
-
-const CHOOSING_TARGET_SCREEN_SHIFT_TIME = 150;
-
 export class BattleCursorManager {
+    public static readonly CHOOSE_TARGET_RIGHT = 1;
+    public static readonly CHOOSE_TARGET_LEFT = -1;
+
+    public static readonly RANGES = [11, 9, 7, 5, 3, 1, 3, 5, 7, 9, 11];
+    public static readonly BATTLE_CURSOR_SCALES = [0.1, 0.2, 0.3, 0.4, 0.6, 1, 0.6, 0.4, 0.3, 0.2, 0.1];
+
+    public static readonly CHOOSING_TARGET_SCREEN_SHIFT_TIME = 150;
+
     private game: Phaser.Game;
     private data: GoldenSun;
     private stage: BattleStage;
@@ -56,14 +56,14 @@ export class BattleCursorManager {
                         ? this.stage.allies_count
                         : this.stage.enemies_count;
                 party_info =
-                    this.ability_caster.fighter_type === fighter_types.ENEMY
+                    this.ability_caster.fighter_type === fighter_types.ALLY
                         ? this.stage.allies_info
                         : this.stage.enemies_info;
                 break;
         }
 
         const targets = _.zipWith(
-            RANGES.slice(
+            BattleCursorManager.RANGES.slice(
                 this.range_cursor_position - (party_count >> 1),
                 this.range_cursor_position + (party_count >> 1) + (party_count & 1)
             ).reverse(),
@@ -72,7 +72,8 @@ export class BattleCursorManager {
                 let t: Target = {
                     dodged: false,
                     magnitude:
-                        magnitude > (this.ability_range === ability_ranges.ALL ? RANGES[0] : this.ability_range)
+                        magnitude >
+                        (this.ability_range === ability_ranges.ALL ? BattleCursorManager.RANGES[0] : this.ability_range)
                             ? null
                             : magnitude,
                     target: target,
@@ -89,11 +90,11 @@ export class BattleCursorManager {
     }
 
     private next_target() {
-        this.change_target(CHOOSE_TARGET_LEFT);
+        this.change_target(BattleCursorManager.CHOOSE_TARGET_LEFT);
     }
 
     private previous_target() {
-        this.change_target(CHOOSE_TARGET_RIGHT);
+        this.change_target(BattleCursorManager.CHOOSE_TARGET_RIGHT);
     }
 
     private change_target(step: number, tween_to_pos: boolean = true, prioritize_downed: boolean = false) {
@@ -149,16 +150,17 @@ export class BattleCursorManager {
         group_half_length
     ) {
         this.range_cursor_position += step;
-        if (step === 0) step = CHOOSE_TARGET_LEFT;
+        if (step === 0) step = BattleCursorManager.CHOOSE_TARGET_LEFT;
 
-        const center_shift = this.range_cursor_position - (RANGES.length >> 1);
+        const center_shift = this.range_cursor_position - (BattleCursorManager.RANGES.length >> 1);
         target_sprite_index = group_half_length + center_shift;
 
         if (target_sprite_index >= group_length) {
-            this.range_cursor_position = (RANGES.length >> 1) - group_half_length;
+            this.range_cursor_position = (BattleCursorManager.RANGES.length >> 1) - group_half_length;
             target_sprite_index = 0;
         } else if (target_sprite_index < 0) {
-            this.range_cursor_position = (RANGES.length >> 1) + group_half_length + +!(group_length % 2);
+            this.range_cursor_position =
+                (BattleCursorManager.RANGES.length >> 1) + group_half_length + +!(group_length % 2);
             target_sprite_index = group_length - 1;
         }
         return [target_sprite_index, step];
@@ -168,7 +170,7 @@ export class BattleCursorManager {
         const group_info =
             this.target_type === ability_target_types.ALLY ? this.stage.allies_info : this.stage.enemies_info;
         const group_half_length = group_info.length % 2 ? group_info.length >> 1 : (group_info.length >> 1) - 1;
-        const center_shift = this.range_cursor_position - (RANGES.length >> 1);
+        const center_shift = this.range_cursor_position - (BattleCursorManager.RANGES.length >> 1);
 
         this.cursors.forEach((cursor_sprite, i) => {
             let target_index = i - ((this.cursors.length >> 1) - group_half_length) + center_shift;
@@ -184,7 +186,7 @@ export class BattleCursorManager {
                     this_scale = 1.0;
                 } else {
                     this_scale =
-                        BATTLE_CURSOR_SCALES[
+                        BattleCursorManager.BATTLE_CURSOR_SCALES[
                             this.range_cursor_position - center_shift - (this.cursors.length >> 1) + i
                         ];
                 }
@@ -259,7 +261,7 @@ export class BattleCursorManager {
         affects_downed: boolean = false
     ) {
         this.choosing_targets_callback = callback;
-        this.range_cursor_position = RANGES.length >> 1;
+        this.range_cursor_position = BattleCursorManager.RANGES.length >> 1;
 
         this.ability_range = range;
         this.ability_caster = ability_caster;
@@ -280,12 +282,13 @@ export class BattleCursorManager {
                                 ? CHOOSE_TARGET_ALLY_SHIFT
                                 : CHOOSE_TARGET_ENEMY_SHIFT),
                     },
-                    CHOOSING_TARGET_SCREEN_SHIFT_TIME,
+                    BattleCursorManager.CHOOSING_TARGET_SCREEN_SHIFT_TIME,
                     Phaser.Easing.Linear.None,
                     true
                 )
                 .onComplete.addOnce(() => {
-                    const cursor_count = this.ability_range === ability_ranges.ALL ? RANGES[0] : this.ability_range;
+                    const cursor_count =
+                        this.ability_range === ability_ranges.ALL ? BattleCursorManager.RANGES[0] : this.ability_range;
 
                     this.cursors = new Array<Phaser.Sprite>(cursor_count as number);
                     this.cursors_tweens = new Array<Phaser.Tween>(cursor_count as number).fill(null);
@@ -325,7 +328,7 @@ export class BattleCursorManager {
                         ? CHOOSE_TARGET_ALLY_SHIFT
                         : CHOOSE_TARGET_ENEMY_SHIFT),
             },
-            CHOOSING_TARGET_SCREEN_SHIFT_TIME,
+            BattleCursorManager.CHOOSING_TARGET_SCREEN_SHIFT_TIME,
             Phaser.Easing.Linear.None,
             true
         );

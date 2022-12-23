@@ -338,6 +338,25 @@
         "price": 10,
         "granted_ability": ""
     },{
+        "key_name": "nut",
+        "name": "Nut",
+        "type": "general_item",
+        "description": "Replenishes 200 HP",
+        "use_type": "single_use",
+        "curses_when_equipped": false,
+        "cant_be_removed": false,
+        "rare_item": false,
+        "important_item": false,
+        "carry_up_to_30": true,
+        "effects": [],
+        "element": "no_element",
+        "unleash_ability": "",
+        "unleash_rate": 0,
+        "use_ability": "nut",
+        "equipable_chars": [],
+        "price": 200,
+        "granted_ability": ""
+    },{
         "key_name": "frost_jewel",
         "name": "Frost Jewel",
         "type": "ability_grantor",
@@ -706,6 +725,44 @@
         "equipable_chars": ["isaac", "garet", "sheba", "piers"],
         "price": 0,
         "granted_ability": "pound"
+    },{
+        "key_name": "oil_drop",
+        "name": "Oil Drop",
+        "type": "general_item",
+        "description": "Causes damage with flames",
+        "use_type": "single_use",
+        "curses_when_equipped": false,
+        "cant_be_removed": false,
+        "rare_item": false,
+        "important_item": false,
+        "carry_up_to_30": true,
+        "effects": [],
+        "element": "no_element",
+        "unleash_ability": "",
+        "unleash_rate": 0,
+        "use_ability": "oil_drop",
+        "equipable_chars": [],
+        "price": 30,
+        "granted_ability": ""
+    },{
+        "key_name": "smoke_bomb",
+        "name": "Smoke Bomb",
+        "type": "general_item",
+        "description": "Obstructs enemies' sight",
+        "use_type": "single_use",
+        "curses_when_equipped": false,
+        "cant_be_removed": false,
+        "rare_item": false,
+        "important_item": false,
+        "carry_up_to_30": true,
+        "effects": [],
+        "element": "no_element",
+        "unleash_ability": "",
+        "unleash_rate": 0,
+        "use_ability": "smoke_bomb",
+        "equipable_chars": [],
+        "price": 30,
+        "granted_ability": ""
     }
 
 ]

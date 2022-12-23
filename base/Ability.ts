@@ -37,6 +37,7 @@ export enum ability_categories {
     ITEM = "item",
     WEAPON_UNLEASH = "weapon_unleash",
     NORMAL = "normal",
+    SKILL = "skill",
 }
 
 export enum ability_ranges {

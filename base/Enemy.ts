@@ -22,6 +22,10 @@ export class Enemy extends Player {
     public class: Classes;
     public current_hp_recovery: number;
     public current_pp_recovery: number;
+    public weight_pick_random_ability: number;
+    public weight_recover_ailment: number;
+    public weight_recover_hp: number;
+    public change_target_weaker: number;
 
     constructor(enemy_data, name) {
         super(enemy_data.key_name, name ? name : enemy_data.name);
@@ -49,6 +53,10 @@ export class Enemy extends Player {
         this.status_sprite_shift = enemy_data.status_sprite_shift ?? 0;
         this.battle_animations_variations = Object.assign({}, enemy_data.battle_animations_variations);
         this.fighter_type = fighter_types.ENEMY;
+        this.weight_pick_random_ability = enemy_data.weight_pick_random_ability ?? 1.0;
+        this.weight_recover_ailment = enemy_data.weight_recover_ailment ?? 1.0;
+        this.weight_recover_hp = enemy_data.weight_recover_hp ?? 1.0;
+        this.change_target_weaker = enemy_data.change_target_weaker ?? 0.5;
         this.class = new Classes(
             "no_class",
             "No Class",

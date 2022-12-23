@@ -536,7 +536,7 @@ export async function promised_wait(game: Phaser.Game, time: number, callback?: 
  * @param weights weights for each element of items array.
  * @returns returns one element of items.
  */
-export function weighted_random_pick<T>(items: T[], weights: number[]) {
+export function weighted_random_pick<T>(items: T[], weights: number[]): T {
     for (let i = 0; i < weights.length; ++i) {
         weights[i] += weights[i - 1] || 0;
     }

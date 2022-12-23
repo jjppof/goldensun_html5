@@ -418,16 +418,27 @@ export class Battle {
     For the other turns, an action is re-roll in the turn start to be used on it.
     */
     async battle_phase_round_start() {
-        const enemy_members = this.enemies_info.map(info => info.instance);
+        const enemy_members = this.enemies_info.map(info => {
+            return {
+                instance: info.instance as Enemy,
+                battle_key: info.battle_key,
+            };
+        });
         this.enemies_abilities = Object.fromEntries(
             enemy_members.map((enemy, index) => {
-                let abilities = new Array(enemy.turns);
-                for (let i = 0; i < enemy.turns; ++i) {
+                let abilities = new Array(enemy.instance.turns);
+                for (let i = 0; i < enemy.instance.turns; ++i) {
                     abilities[i] = EnemyAI.roll_action(
                         this.data,
-                        enemy as Enemy,
-                        enemy_members as Enemy[],
-                        this.data.info.party_data.members
+                        {
+                            instance: enemy.instance as Enemy,
+                            battle_key: enemy.battle_key,
+                        },
+                        enemy_members,
+                        this.data.info.party_data.members.map(member => ({
+                            instance: member,
+                            battle_key: member.key_name,
+                        }))
                     );
                 }
                 return [this.enemies_info[index].battle_key, abilities];
@@ -987,9 +998,20 @@ export class Battle {
                 action,
                 EnemyAI.roll_action(
                     this.data,
-                    action.caster as Enemy,
-                    this.enemies_info.map(info => info.instance) as Enemy[],
-                    this.data.info.party_data.members
+                    {
+                        instance: action.caster as Enemy,
+                        battle_key: action.caster_battle_key,
+                    },
+                    this.enemies_info.map(info => {
+                        return {
+                            instance: info.instance as Enemy,
+                            battle_key: info.battle_key,
+                        };
+                    }),
+                    this.data.info.party_data.members.map(member => ({
+                        instance: member,
+                        battle_key: member.key_name,
+                    }))
                 )
             );
             ability = this.data.info.abilities_list[action.key_name];
