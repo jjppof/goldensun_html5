@@ -1,10 +1,12 @@
 import {ability_ranges, ability_target_types} from "../Ability";
 import {GoldenSun} from "../GoldenSun";
-import {fighter_types, permanent_status, Player} from "../Player";
+import {fighter_types, permanent_status, Player, temporary_status} from "../Player";
 import {PlayerInfo} from "./Battle";
 import {Button} from "../XGamepad";
 import {Target, CHOOSE_TARGET_ALLY_SHIFT, CHOOSE_TARGET_ENEMY_SHIFT, BattleStage} from "./BattleStage";
 import * as _ from "lodash";
+import {Window} from "../Window";
+import {GAME_WIDTH, RED_FONT_COLOR} from "../magic_numbers";
 
 export class BattleCursorManager {
     public static readonly CHOOSE_TARGET_RIGHT = 1;
@@ -25,6 +27,8 @@ export class BattleCursorManager {
     private ability_range: ability_ranges;
     private bindings_key: number;
     private include_downed: boolean;
+    private status_to_be_healed: (permanent_status | temporary_status)[];
+    private status_to_be_healed_window: Window;
 
     private cursors_tweens: Phaser.Tween[];
     private cursors: Phaser.Sprite[];
@@ -34,6 +38,8 @@ export class BattleCursorManager {
         this.data = data;
         this.stage = stage;
         this.include_downed = false;
+        this.status_to_be_healed = [];
+        this.status_to_be_healed_window = null;
     }
 
     private set_targets() {
@@ -166,11 +172,106 @@ export class BattleCursorManager {
         return [target_sprite_index, step];
     }
 
+    private reset_status_info_window() {
+        if (
+            this.target_type === ability_target_types.ENEMY ||
+            this.ability_range !== ability_ranges.ONE ||
+            this.status_to_be_healed.length === 0 ||
+            this.status_to_be_healed_window === null
+        ) {
+            return;
+        }
+        this.status_to_be_healed_window.destroy(false);
+        this.status_to_be_healed_window = null;
+    }
+
+    private set_status_info_window(player_info: PlayerInfo) {
+        if (
+            this.target_type === ability_target_types.ENEMY ||
+            this.ability_range !== ability_ranges.ONE ||
+            this.status_to_be_healed.length === 0
+        ) {
+            return;
+        }
+        const player = player_info.instance;
+        let color_in_red = false;
+        const texts: string[] = [];
+        if (
+            player.has_permanent_status(permanent_status.DOWNED) &&
+            this.status_to_be_healed.includes(permanent_status.DOWNED)
+        ) {
+            texts.push("Revive downed");
+        }
+        if (
+            player.has_permanent_status(permanent_status.POISON) &&
+            this.status_to_be_healed.includes(permanent_status.POISON)
+        ) {
+            texts.push("Cure poison");
+        }
+        if (
+            player.has_permanent_status(permanent_status.VENOM) &&
+            this.status_to_be_healed.includes(permanent_status.VENOM)
+        ) {
+            texts.push("Cure venon");
+        }
+        if (
+            player.has_temporary_status(temporary_status.DELUSION) &&
+            this.status_to_be_healed.includes(temporary_status.DELUSION)
+        ) {
+            texts.push("Remove delusion");
+        }
+        if (
+            player.has_temporary_status(temporary_status.STUN) &&
+            this.status_to_be_healed.includes(temporary_status.STUN)
+        ) {
+            texts.push("Remove stun");
+        }
+        if (
+            player.has_temporary_status(temporary_status.SLEEP) &&
+            this.status_to_be_healed.includes(temporary_status.SLEEP)
+        ) {
+            texts.push("Wake from sleep");
+        }
+        if (
+            player.has_temporary_status(temporary_status.SEAL) &&
+            this.status_to_be_healed.includes(temporary_status.SEAL)
+        ) {
+            texts.push("Break Psynergy seal");
+        }
+        if (
+            player.has_temporary_status(temporary_status.DEATH_CURSE) &&
+            this.status_to_be_healed.includes(temporary_status.DEATH_CURSE)
+        ) {
+            texts.push("Dispel Grim Reaper");
+        }
+        if (texts.length === 0) {
+            texts.push("No effect");
+            color_in_red = true;
+        }
+        this.status_to_be_healed_window = new Window(this.game, 0, 0, 0, 0);
+        this.status_to_be_healed_window.set_lines_of_text(texts, {
+            update_size: true,
+            space_between_lines: 1,
+            color: color_in_red ? RED_FONT_COLOR : undefined,
+        });
+        let x = (player_info.sprite.x | 0) - (this.status_to_be_healed_window.width >> 1);
+        if (this.game.camera.x + x + this.status_to_be_healed_window.width > this.game.camera.x + GAME_WIDTH) {
+            const shift = +x + this.status_to_be_healed_window.width - GAME_WIDTH + 4;
+            x -= shift;
+        }
+        const y =
+            (player_info.sprite.y | 0) - (player_info.sprite.height | 0) - this.status_to_be_healed_window.height - 4;
+        this.status_to_be_healed_window.update_position({x: x, y: y});
+        this.status_to_be_healed_window.show(undefined, false);
+    }
+
     private set_battle_cursors_position(tween_to_pos: boolean = true) {
         const group_info =
             this.target_type === ability_target_types.ALLY ? this.stage.allies_info : this.stage.enemies_info;
         const group_half_length = group_info.length % 2 ? group_info.length >> 1 : (group_info.length >> 1) - 1;
         const center_shift = this.range_cursor_position - (BattleCursorManager.RANGES.length >> 1);
+
+        this.reset_status_info_window();
 
         this.cursors.forEach((cursor_sprite, i) => {
             let target_index = i - ((this.cursors.length >> 1) - group_half_length) + center_shift;
@@ -214,6 +315,7 @@ export class BattleCursorManager {
                             true
                         )
                         .onComplete.addOnce(() => {
+                            this.set_status_info_window(target_info);
                             this.cursors_tweens[i] = this.game.add.tween(cursor_sprite).to(
                                 {
                                     y: cursor_sprite.y - 4,
@@ -229,6 +331,8 @@ export class BattleCursorManager {
                 } else {
                     cursor_sprite.centerX = dest_x;
                     cursor_sprite.y = dest_y;
+
+                    this.set_status_info_window(target_info);
 
                     this.cursors_tweens[i] = this.game.add.tween(cursor_sprite).to(
                         {
@@ -258,7 +362,8 @@ export class BattleCursorManager {
         target_type: string,
         ability_caster: Player,
         callback: Function,
-        affects_downed: boolean = false
+        affects_downed: boolean = false,
+        status_to_be_healed?: BattleCursorManager["status_to_be_healed"]
     ) {
         this.choosing_targets_callback = callback;
         this.range_cursor_position = BattleCursorManager.RANGES.length >> 1;
@@ -267,6 +372,8 @@ export class BattleCursorManager {
         this.ability_caster = ability_caster;
 
         this.include_downed = affects_downed;
+
+        this.status_to_be_healed = status_to_be_healed ?? [];
 
         this.target_type = target_type;
         if (this.target_type === ability_target_types.USER) {
@@ -338,6 +445,7 @@ export class BattleCursorManager {
     }
 
     private unset_battle_cursors() {
+        this.reset_status_info_window();
         this.cursors.forEach((sprite, i) => {
             sprite.destroy();
             if (this.cursors_tweens[i]) {

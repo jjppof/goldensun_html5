@@ -210,6 +210,15 @@ export class Battle {
             this.target_window.open(action, this_ability.name, this_ability.element, ability_key, quantities, item_obj);
         }
 
+        const status_to_be_healed: (permanent_status | temporary_status)[] = [];
+        this_ability.effects.forEach(effect => {
+            if (effect.type === effect_types.TEMPORARY_STATUS || effect.type === effect_types.PERMANENT_STATUS) {
+                if (!effect.add_status) {
+                    status_to_be_healed.push(effect.status_key_name);
+                }
+            }
+        });
+
         this.battle_stage.cursor_manager.choose_targets(
             this_ability.range,
             this_ability.battle_target,
@@ -220,7 +229,8 @@ export class Battle {
                 }
                 callback(targets);
             },
-            this_ability.affects_downed
+            this_ability.affects_downed,
+            status_to_be_healed
         );
     }
 
@@ -577,6 +587,10 @@ export class Battle {
         //check whether this char is paralyzed
         if (await this.check_if_char_is_paralyzed(action)) {
             await this.wait_for_key();
+
+            //check for poison damage
+            await this.check_poison_damage(action);
+
             this.check_phases();
             return;
         }
@@ -584,6 +598,10 @@ export class Battle {
         //check whether the char will skip this turn due to cursed item
         if (await this.check_if_curse_will_take_effect(action)) {
             await this.wait_for_key();
+
+            //check for poison damage
+            await this.check_poison_damage(action);
+
             this.check_phases();
             return;
         }
@@ -592,6 +610,10 @@ export class Battle {
         let ability = await this.get_phase_ability(action);
         if (!ability) {
             await this.wait_for_key();
+
+            //check for poison damage
+            await this.check_poison_damage(action);
+
             this.check_phases();
             return;
         }
@@ -611,6 +633,10 @@ export class Battle {
         if (ability === undefined) {
             await this.battle_log.add(`${action.key_name} ability key not registered.`);
             await this.wait_for_key();
+
+            //check for poison damage
+            await this.check_poison_damage(action);
+
             this.check_phases();
             return;
         }
@@ -632,6 +658,10 @@ export class Battle {
         ) {
             await this.battle_log.add(`But the Psynergy was blocked!`);
             await this.wait_for_key();
+
+            //check for poison damage
+            await this.check_poison_damage(action);
+
             this.check_phases();
             return;
         }
@@ -640,6 +670,10 @@ export class Battle {
         if (ability.pp_cost > action.caster.current_pp) {
             await this.battle_log.add(`... But doesn't have enough PP!`);
             await this.wait_for_key();
+
+            //check for poison damage
+            await this.check_poison_damage(action);
+
             this.check_phases();
             return;
         } else {
@@ -649,6 +683,10 @@ export class Battle {
         //deals with abilities related to djinn and summons
         if (await this.manage_djinn_or_summon_ability(action, ability)) {
             await this.wait_for_key();
+
+            //check for poison damage
+            await this.check_poison_damage(action);
+
             this.check_phases();
             return;
         }
@@ -658,6 +696,10 @@ export class Battle {
             if (action.item_slot.broken) {
                 await this.battle_log.add(`But ${item_name} is broken...`);
                 await this.wait_for_key();
+
+                //check for poison damage
+                await this.check_poison_damage(action);
+
                 this.check_phases();
                 return;
             }
@@ -1145,10 +1187,19 @@ export class Battle {
             action.caster.current_hp = _.clamp(action.caster.current_hp - damage, 0, action.caster.max_hp);
             const poison_name = poison_status === permanent_status.POISON ? "poison" : "venom";
 
+            let player_sprite: PlayerSprite;
+            if (action.caster.fighter_type === fighter_types.ALLY) {
+                player_sprite = this.allies_info.find(ally => ally.instance.key_name === action.caster.key_name).sprite;
+            } else {
+                player_sprite = this.enemies_info.find(enemy => enemy.battle_key === action.caster_battle_key).sprite;
+            }
+            const previous_action = player_sprite.action;
+            player_sprite.set_action(battle_actions.DAMAGE);
             await this.battle_log.add(`The ${poison_name} does ${damage.toString()} damage to ${action.caster.name}!`);
             this.battle_menu.chars_status_window.update_chars_info();
 
             await this.wait_for_key();
+            player_sprite.set_action(previous_action);
             await this.check_downed(action.caster);
         }
     }

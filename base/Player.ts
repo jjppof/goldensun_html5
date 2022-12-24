@@ -98,6 +98,7 @@ export const on_remove_status_msg = {
     [temporary_status.STUN]: target => `${target.name} is no longer stunned!`,
     [temporary_status.SLEEP]: target => `${target.name} wakes from slumber!`,
     [temporary_status.SEAL]: target => `${target.name}'s Psynergy seal is gone!`,
+    [temporary_status.DEATH_CURSE]: target => `${target.name} shakes off the Grim Reaper!`,
     [permanent_status.DOWNED]: target => `${target.name}'s has been revived!`,
     [permanent_status.POISON]: target => `The poison is purged from ${target.name}!`,
     [permanent_status.VENOM]: target => `The venom is purged from ${target.name}!`,

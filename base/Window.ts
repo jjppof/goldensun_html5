@@ -987,6 +987,8 @@ export class Window {
     set_lines_of_text(
         lines: string[],
         options?: {
+            /** If true, will update the window size to fit the text. */
+            update_size?: boolean;
             /** The x internal padding text position. */
             padding_x?: number;
             /** The y internal padding text position. */
@@ -998,13 +1000,22 @@ export class Window {
         const top_shift = options?.italic ? -2 : 0;
         const x_pos = options?.padding_x ?? numbers.WINDOW_PADDING_H + 4;
         let y_pos = options?.padding_y ?? numbers.WINDOW_PADDING_TOP + top_shift;
+        const space_between_lines = options?.space_between_lines ?? numbers.SPACE_BETWEEN_LINES;
+
+        if (options?.update_size) {
+            const max_text_width = Math.max(...lines.map(line => utils.get_text_width(this.game, line, false)));
+            const width = (x_pos << 1) + max_text_width - 4;
+            const height =
+                (y_pos << 1) + lines.length * numbers.FONT_SIZE + space_between_lines * (lines.length - 1) - 4;
+            this.update_size({width: width | 0, height: height | 0});
+        }
 
         const lines_objs: TextObj[] = [];
         for (let i = 0; i < lines.length; ++i) {
             const line = lines[i];
             const text_obj = this.set_text_in_position(line, x_pos, y_pos, options);
             lines_objs.push(text_obj);
-            y_pos += numbers.FONT_SIZE + (options?.space_between_lines ?? numbers.SPACE_BETWEEN_LINES);
+            y_pos += numbers.FONT_SIZE + space_between_lines;
         }
         return lines_objs;
     }

@@ -417,6 +417,12 @@
             "add_status": false,
             "status_key_name": "death_curse",
             "usage": "on_use"
+        },{
+            "type": "temporary_status",
+            "chance": 1.0,
+            "add_status": false,
+            "status_key_name": "seal",
+            "usage": "on_use"
         }],
         "ability_category": "item",
         "battle_animation_key": "",
