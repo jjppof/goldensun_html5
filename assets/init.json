@@ -29,6 +29,10 @@
         { "ability": "growth", "adept": "isaac" },
         { "ability": "reveal", "adept": "sheba" }
     ],
+    "battle_bgms": {
+        "default": "battle_isaac",
+        "piers": "battle_jenna"
+    },
     "default_inputs": {
         "LEFT": "LEFT",
         "RIGHT": "RIGHT",

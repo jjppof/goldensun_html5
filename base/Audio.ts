@@ -113,7 +113,9 @@ export class Audio {
         if (bgm_key && (!this.current_bgm || this.current_bgm.key !== bgm_key)) {
             if (this.current_bgm) this.current_bgm.destroy();
             this._current_bgm = this.game.add.audio(bgm_key);
-            if (play) this.play_bgm();
+            if (play) {
+                this.play_bgm();
+            }
         } else if (!bgm_key && this.current_bgm) {
             this.current_bgm.stop();
             this.current_bgm.destroy();
@@ -135,6 +137,27 @@ export class Audio {
         if (on_complete) {
             this.current_bgm.onMarkerComplete.addOnce(on_complete);
         }
+    }
+
+    /**
+     * Plays the current active battle bgm.
+     */
+    play_battle_bgm() {
+        this.current_bgm.addMarker(`battle/init/${this.current_bgm.key}`, 0.0, 1.0, undefined, false);
+        this.current_bgm.play(`battle/init/${this.current_bgm.key}`);
+        this.current_bgm.onMarkerComplete.addOnce(() => {
+            this.current_bgm.addMarker(
+                `battle/main/${this.current_bgm.key}`,
+                1.0,
+                this.current_bgm.totalDuration - 1.0,
+                undefined,
+                true
+            );
+            this.current_bgm.play(`battle/main/${this.current_bgm.key}`);
+            this.current_bgm.onLoop.addOnce(() => {
+                this.current_bgm.currentMarker = `battle/main/${this.current_bgm.key}`;
+            });
+        });
     }
 
     /**

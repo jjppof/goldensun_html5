@@ -22,6 +22,7 @@ export function load_databases(game: Phaser.Game, dbs: GoldenSun["dbs"]) {
     dbs.storage_db = game.cache.getJSON("storage_db");
     dbs.abilities_cast_db = game.cache.getJSON("abilities_cast_db");
     dbs.misc_battle_animations_db = game.cache.getJSON("misc_battle_animations_db");
+    dbs.bgm_db = game.cache.getJSON("bgm_db");
 
     //format some db structures
     dbs.shopkeep_dialog_db = _.mapKeys(dbs.shopkeep_dialog_db, shopkeep_dialog => shopkeep_dialog.key_name);

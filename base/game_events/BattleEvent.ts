@@ -8,6 +8,8 @@ export class BattleEvent extends GameEvent {
     private enemy_party_key: string;
     private battle: Battle;
     private return_to_sanctum: boolean;
+    private bgm: string;
+    private reset_previous_bgm: boolean;
     private finish_events: GameEvent[];
     private finish_callback: (victory: boolean) => void;
     private before_fade_finish_callback: (victory: boolean) => void;
@@ -21,12 +23,16 @@ export class BattleEvent extends GameEvent {
         background_key,
         enemy_party_key,
         return_to_sanctum,
+        bgm,
+        reset_previous_bgm,
         finish_events
     ) {
         super(game, data, event_types.BATTLE, active, key_name, keep_reveal);
         this.background_key = background_key;
         this.enemy_party_key = enemy_party_key;
         this.return_to_sanctum = return_to_sanctum ?? true;
+        this.bgm = bgm;
+        this.reset_previous_bgm = reset_previous_bgm ?? true;
         this.finish_events = [];
         if (finish_events !== undefined) {
             finish_events.forEach(event_info => {
@@ -43,6 +49,8 @@ export class BattleEvent extends GameEvent {
             this.data,
             this.background_key,
             this.enemy_party_key,
+            this.bgm,
+            this.reset_previous_bgm,
             (victory, party_fled) => {
                 if (this.before_fade_finish_callback) {
                     this.before_fade_finish_callback(victory);

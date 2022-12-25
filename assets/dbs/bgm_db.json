@@ -1,0 +1,14 @@
+{
+    "battle_isaac": {
+        "key": "battle_isaac",
+        "path": "assets/sounds/bgm/battle_isaac.ogg"
+    },
+    "battle_jenna": {
+        "key": "battle_jenna",
+        "path": "assets/sounds/bgm/battle_jenna.ogg"
+    },
+    "battle_non_adept": {
+        "key": "battle_non_adept",
+        "path": "assets/sounds/bgm/battle_non_adept.ogg"
+    }
+}

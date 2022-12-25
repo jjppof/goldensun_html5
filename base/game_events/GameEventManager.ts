@@ -312,6 +312,8 @@ export class GameEventManager {
                     info.background_key,
                     info.enemy_party_key,
                     info.return_to_sanctum,
+                    info.bgm,
+                    info.reset_previous_bgm,
                     info.finish_events
                 );
             case event_types.BRANCH:

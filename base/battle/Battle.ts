@@ -106,12 +106,17 @@ export class Battle {
     public before_fade_finish_callback: (victory: boolean, party_fled: boolean) => Promise<void>;
     public finish_callback: (victory: boolean, party_fled?: boolean) => void;
     public background_key: string;
+    public bgm: string;
+    public reset_previous_bgm: boolean;
+    public previous_bgm: string;
 
     constructor(
         game: Phaser.Game,
         data: GoldenSun,
         background_key: string,
         enemy_party_key: string,
+        bgm: string,
+        reset_previous_bgm: boolean,
         before_fade_finish_callback?: Battle["before_fade_finish_callback"],
         finish_callback?: Battle["finish_callback"]
     ) {
@@ -120,6 +125,9 @@ export class Battle {
         this.before_fade_finish_callback = before_fade_finish_callback;
         this.finish_callback = finish_callback;
         this.background_key = background_key;
+        this.bgm = bgm ?? null;
+        this.reset_previous_bgm = reset_previous_bgm ?? true;
+        this.previous_bgm = null;
 
         this.allies_info = this.data.info.party_data.members.slice(0, Battle.MAX_CHARS_IN_BATTLE).map(char => {
             char.init_effect_turns_count();
@@ -375,10 +383,21 @@ export class Battle {
         this.check_phases();
     }
 
+    async setup_battle_sound() {
+        this.data.audio.stop_bgm();
+        if (!this.bgm) {
+            return;
+        }
+        this.previous_bgm = this.data.audio.current_bgm.key;
+        this.data.audio.set_bgm(this.bgm, false);
+        this.data.audio.play_battle_bgm();
+    }
+
     async battle_phase_none() {
         this.data.hero.stop_char(true);
         this.game.physics.p2.pause();
-        this.data.audio.stop_bgm();
+
+        await this.setup_battle_sound();
 
         await this.battle_fadein();
 
@@ -1729,7 +1748,10 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                 this.data.in_battle = false;
                 this.data.battle_instance = undefined;
                 this.game.physics.p2.resume();
-                this.data.audio.play_bgm();
+                this.data.audio.stop_bgm();
+                if (this.reset_previous_bgm) {
+                    this.data.audio.set_bgm(this.previous_bgm, true);
+                }
                 if (this.finish_callback) {
                     this.finish_callback(!this.allies_defeated, this.party_fled);
                 }

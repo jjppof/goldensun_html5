@@ -30,6 +30,7 @@ function load_db_files(game) {
         "misc_battle_animations_db",
         "assets/dbs/common_abilities_animations/misc_battle_animations_db.json"
     );
+    game.load.json("bgm_db", "assets/dbs/bgm_db.json");
 }
 
 function load_misc(game) {

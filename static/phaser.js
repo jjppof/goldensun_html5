@@ -80959,7 +80959,8 @@ Phaser.Sound.prototype = {
                         else
                         {
                             this.onMarkerComplete.dispatch(this.currentMarker, this);
-                            this.play(this.currentMarker, 0, this.volume, true, true, false);
+                            const position = this.position ? this.position : 0;
+                            this.play(this.currentMarker, position, this.volume, true, true, false);
                         }
                     }
                     else

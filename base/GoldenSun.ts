@@ -278,6 +278,7 @@ export class GoldenSun {
         const snapshot = this.snapshot_manager.snapshot;
 
         this.game.sound.mute = snapshot?.mute ?? this.game.sound.mute;
+        this.info.battle_bgms = this.dbs.init_db.battle_bgms;
 
         //init storage
         this.storage = new Storage(this);

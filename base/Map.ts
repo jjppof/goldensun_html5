@@ -1415,12 +1415,18 @@ export class Map {
             const background_key = zone_bg_key ?? tile_bg_key ?? this.background_key;
 
             if (parties.length) {
+                const bgm =
+                    this.data.info.party_data.members[0].key_name in this.data.info.battle_bgms
+                        ? this.data.info.battle_bgms[this.data.info.party_data.members[0].key_name]
+                        : this.data.info.battle_bgms.default;
                 const weights = parties.map(party => this.data.dbs.enemies_parties_db[party].weight ?? 1);
                 const party = weighted_random_pick(parties, weights);
                 const event = this.data.game_event_manager.get_event_instance({
                     type: event_types.BATTLE,
                     background_key: background_key,
                     enemy_party_key: party,
+                    bgm: bgm,
+                    reset_previous_bgm: true,
                 }) as BattleEvent;
                 let get_djinn_fire_event;
                 event.assign_before_fade_finish_callback(victory => {
