@@ -763,6 +763,28 @@
         "equipable_chars": [],
         "price": 30,
         "granted_ability": ""
+    },{
+        "key_name": "aura_gloves",
+        "name": "Aura Gloves",
+        "type": "chest_protector",
+        "description": "Gloves: Use to resist elements",
+        "use_type": "breaks_when_use",
+        "curses_when_equipped": false,
+        "cant_be_removed": false,
+        "rare_item": true,
+        "important_item": false,
+        "carry_up_to_30": false,
+        "effects": [{
+            "type": "defense",
+            "quantity": 35,
+            "operator": "plus"
+        }],
+        "element": "no_element",
+        "unleash_ability": "aura_gloves",
+        "unleash_rate": 0,
+        "use_ability": "",
+        "equipable_chars": ["isaac", "garet", "sheba", "piers"],
+        "price": 6500,
+        "granted_ability": ""
     }
-
 ]

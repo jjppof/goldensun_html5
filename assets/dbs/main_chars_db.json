@@ -210,7 +210,7 @@
                 "quantity": 1,
                 "equipped": true
             },{
-                "key_name": "frost_jewel",
+                "key_name": "leather_cap",
                 "quantity": 1,
                 "equipped": true
             },{
@@ -276,10 +276,6 @@
                 "key_name": "thunder_crown",
                 "quantity": 1,
                 "equipped": false
-            },{
-                "key_name": "lifting_gem",
-                "quantity": 1,
-                "equipped": true
             },{
                 "key_name": "antidote",
                 "quantity": 3,

@@ -265,10 +265,10 @@
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1243, 1244, 0, 0,
             0, 0, 0, 0, 1243, 1244, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1275, 1276, 0, 0,
             0, 0, 0, 0, 1275, 1276, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 2147483818, 2147483817, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1241, 1242, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1273, 1274, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 1241, 1242, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 137, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 1273, 1274, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 2147483818, 2147483817, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 1241, 1242, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 137, 0, 0, 0, 1241, 1242, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 1273, 1274, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1273, 1274, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -352,7 +352,7 @@
                  "visible":true,
                  "width":16,
                  "x":240,
-                 "y":208
+                 "y":224
                 }, 
                 {
                  "class":"",
@@ -533,7 +533,7 @@
                 }],
          "opacity":1,
          "type":"objectgroup",
-         "visible":false,
+         "visible":true,
          "x":0,
          "y":0
         }, 
@@ -598,6 +598,7 @@
  "orientation":"orthogonal",
  "properties":
     {
+     "npc\/01":"{\n    \"key_name\": \"chest\",\n    \"storage_keys\":{\n        \"animation\": \"frost_jewel_chest\"\n    },\n    \"x\": 15,\n    \"y\": 11,\n    \"npc_type\": \"normal\",\n    \"movement_type\": \"idle\",\n    \"base_collision_layer\": 0,\n    \"events\": [\n        {\n            \"type\": \"branch\",\n            \"condition\": \"=\",\n            \"left_comparator_value\": {\n                \"type\": \"storage\",\n                \"value\": {\n                    \"key_name\": \"frost_jewel_chest\"\n                }\n            },\n            \"right_comparator_value\": {\n                \"type\": \"value\",\n                \"value\": \"closed\"\n            },\n            \"events\": [{\n                \"type\": \"chest\",\n                \"item\": \"frost_jewel\",\n                \"finish_events\": [{\n                    \"type\": \"set_value\",\n                    \"event_value\": {\n                        \"type\": \"storage\",\n                        \"value\": {\n                            \"key_name\": \"frost_jewel_chest\",\n                            \"value\": \"empty\"\n                        }\n                    }\n                }]\n            }],\n            \"else_events\": [{\n                \"type\": \"dialog\",\n                \"dialog_info\": {\n                    \"text\": \"${HERO} checked the chest...${BREAK}but the chest was empty.\"\n                }\n            }]\n        }\n    ]\n}",
      "real_tile_height":16,
      "real_tile_width":16,
      "tile_event\/01":"{\n\"type\": \"teleport\",\n\"x_target\": 33,\n\"y_target\": 11,\n\"target\": \"madra\",\n\"activation_directions\": \"up\",\n\"x\": 9,\n\"y\": 0,\n\"stop_climbing\": true,\n\"dest_collision_layer\": 0,\n\"activation_collision_layers\": 1\n}",
@@ -611,6 +612,7 @@
     },
  "propertytypes":
     {
+     "npc\/01":"string",
      "real_tile_height":"int",
      "real_tile_width":"int",
      "tile_event\/01":"string",
