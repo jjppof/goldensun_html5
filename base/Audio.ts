@@ -96,12 +96,15 @@ export class Audio {
     play_se(key: string, on_stop?: Function, position_shift: number = 0, volume: number = 1) {
         const key_parts = key.split("/");
 
-        const audio = this.se_data[key_parts[0]].play(key_parts[1], volume, position_shift);
-        if (on_stop) {
-            audio.onMarkerComplete.addOnce(on_stop);
+        if (key_parts[0] in this.se_data) {
+            const audio = this.se_data[key_parts[0]].play(key_parts[1], volume, position_shift);
+            if (on_stop) {
+                audio.onMarkerComplete.addOnce(on_stop);
+            }
+            return audio;
         }
 
-        return audio;
+        return null;
     }
 
     /**

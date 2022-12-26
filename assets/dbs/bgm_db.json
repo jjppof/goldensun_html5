@@ -10,5 +10,13 @@
     "battle_non_adept": {
         "key": "battle_non_adept",
         "path": "assets/sounds/bgm/battle_non_adept.ogg"
+    },
+    "victory": {
+        "key": "victory",
+        "path": "assets/sounds/bgm/victory.ogg"
+    },
+    "fallen_heroes": {
+        "key": "fallen_heroes",
+        "path": "assets/sounds/bgm/fallen_heroes.ogg"
     }
 }

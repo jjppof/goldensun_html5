@@ -1622,8 +1622,12 @@ So, if a character will die after 5 turns and you land another Curse on them, it
         }
 
         if (this.allies_defeated) {
+            this.data.audio.stop_bgm();
+            this.data.audio.set_bgm("fallen_heroes", true);
             this.battle_log.add(this.allies_info[0].instance.name + "' party has been defeated!");
         } else {
+            this.data.audio.stop_bgm();
+            this.data.audio.set_bgm("victory", true);
             this.battle_log.add(this.enemies_party_name + " has been defeated!");
             await this.wait_for_key();
 
@@ -1646,6 +1650,10 @@ So, if a character will die after 5 turns and you land another Curse on them, it
 
                     //check whether this char evolved
                     if (change.before.level !== change.after.level) {
+                        this.data.audio.pause_bgm();
+                        this.data.audio.play_se("misc/level_up", () => {
+                            this.data.audio.resume_bgm();
+                        });
                         this.battle_log.add(`${char.name} is now a level ${char.level} ${char.class.name}!`);
                         await this.wait_for_key();
 

@@ -10,6 +10,6 @@ export function initialize_bgm_data(game: Phaser.Game, data: GoldenSun, bgm_db: 
         loader.onLoadComplete.addOnce(promise_resolve);
     }
     game.load.start();
-    data.set_whats_loading("battle bgm");
+    data.set_whats_loading("bgms");
     game.load.onLoadComplete.addOnce(load_promise_resolve);
 }
