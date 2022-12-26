@@ -231,6 +231,12 @@ export class LiftFieldPsynergy extends FieldAbilities {
         const target_y = get_centered_pos_in_px(this.destination_y_pos, this.data.map.tile_height);
         const delta_y = this.left_hand_sprite.centerY - target_y;
 
+        const col_layer_chance_timer = this.game.time.create(true);
+        col_layer_chance_timer.add((lift_time / 3) | 0, () => {
+            this.target_object.change_collision_layer(this.destination_collision_layer, true);
+        });
+        col_layer_chance_timer.start();
+
         let target_resolve;
         const target_promise = new Promise(resolve => (target_resolve = resolve));
         this.game.add
@@ -347,7 +353,6 @@ export class LiftFieldPsynergy extends FieldAbilities {
                 },
                 true
             );
-            this.target_object.change_collision_layer(this.destination_collision_layer, true);
             this.target_object.allow_jumping_through_it = false;
         }
         this.return_to_idle_anim();
