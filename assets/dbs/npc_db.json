@@ -104,6 +104,7 @@
         "collision_body_bevel": 3,
         "interaction_pattern": "cross",
         "body_radius": 7.0,
+        "voice_key": "adult_male_1",
         "actions": {
             "idle": {
                 "frame_rate": [[0.2,5,0.3,1,1,1]],
