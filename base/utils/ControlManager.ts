@@ -81,7 +81,7 @@ export type SimpleControlParams = {
 /**
  * This class allows to bind callbacks to gamepad buttons.
  * For permanent bindings, set "persist" to true when adding controls.
- * Permanent bindings are kepts even if you call ControlManager.reset.
+ * Permanent bindings are kept even if you call ControlManager.reset.
  * Otherwise, set "persist" to false, then these controls will be disabled
  * after ControlManager.reset is called.
  */

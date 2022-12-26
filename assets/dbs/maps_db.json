@@ -14,60 +14,16 @@
         "collision_embedded": true
     },{
         "name":"Madra",
-        "key_name":"madra_inn",
-        "collision_key_names":["madra_inn_down"],
+        "key_name":"madra_houses",
         "bgm": {
             "key": "madra_bgm",
             "path": "assets/sounds/bgm/little_madra.ogg"
         },
         "tileset_files": {
             "image":"assets/images/maps/madra/Inside_town_00.png",
-            "json":"assets/images/maps/madra/inn_down.json"
+            "json":"assets/images/maps/madra/madra_houses.json"
         },
-        "collision_files":["assets/images/maps/madra/madra_physics_inn.json"],
-        "collision_embedded": false
-    },{
-        "name":"Madra",
-        "key_name":"madra_inn_up_stair",
-        "collision_key_names":["madra_inn_up_stair"],
-        "bgm": {
-            "key": "madra_bgm",
-            "path": "assets/sounds/bgm/little_madra.ogg"
-        },
-        "tileset_files": {
-            "image":"assets/images/maps/madra/Inside_town_00.png",
-            "json":"assets/images/maps/madra/inn_up_stair.json"
-        },
-        "collision_files":["assets/images/maps/madra/madra_physics_inn_up_stair.json"],
-        "collision_embedded": false
-    },{
-        "name":"Madra",
-        "key_name":"madra_inn_up",
-        "collision_key_names":["madra_inn_up"],
-        "bgm": {
-            "key": "madra_bgm",
-            "path": "assets/sounds/bgm/little_madra.ogg"
-        },
-        "tileset_files": {
-            "image":"assets/images/maps/madra/Inside_town_00.png",
-            "json":"assets/images/maps/madra/inn_up.json"
-        },
-        "collision_files":["assets/images/maps/madra/madra_physics_inn_up.json"],
-        "collision_embedded": false
-    },{
-        "name":"Madra",
-        "key_name":"madra_house_1",
-        "collision_key_names":["madra_house_1"],
-        "bgm": {
-            "key": "madra_bgm",
-            "path": "assets/sounds/bgm/little_madra.ogg"
-        },
-        "tileset_files": {
-            "image":"assets/images/maps/madra/Inside_town_00.png",
-            "json":"assets/images/maps/madra/house_1.json"
-        },
-        "collision_files":["assets/images/maps/madra/madra_physics_house_1.json"],
-        "collision_embedded": false
+        "collision_embedded": true
     },{
         "name":"Madra",
         "key_name":"madra_church",
