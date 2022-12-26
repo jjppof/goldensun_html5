@@ -629,7 +629,7 @@
         {
          "columns":32,
          "firstgid":1,
-         "image":"..\/cave\/cave.png",
+         "image":"..\/..\/images\/tilesets\/cave.png",
          "imageheight":384,
          "imagewidth":256,
          "margin":0,

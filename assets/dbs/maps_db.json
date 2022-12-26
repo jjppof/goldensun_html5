@@ -7,8 +7,8 @@
             "path": "assets/sounds/bgm/little_madra.ogg"
         },
         "tileset_files": {
-            "image":"assets/images/maps/madra/madra.png",
-            "json":"assets/images/maps/madra/madra.json"
+            "image":"assets/images/tilesets/madra.png",
+            "json":"assets/maps/madra/madra.json"
         },
         "lazy_load": true,
         "collision_embedded": true
@@ -20,8 +20,8 @@
             "path": "assets/sounds/bgm/little_madra.ogg"
         },
         "tileset_files": {
-            "image":"assets/images/maps/madra/Inside_town_00.png",
-            "json":"assets/images/maps/madra/madra_houses.json"
+            "image":"assets/images/tilesets/madra_interior.png",
+            "json":"assets/maps/madra/madra_houses.json"
         },
         "collision_embedded": true
     },{
@@ -32,8 +32,8 @@
             "path": "assets/sounds/bgm/little_madra.ogg"
         },
         "tileset_files": {
-            "image":"assets/images/maps/madra/Inside_town_00.png",
-            "json":"assets/images/maps/madra/church.json"
+            "image":"assets/images/tilesets/madra_interior.png",
+            "json":"assets/maps/madra/church.json"
         },
         "lazy_load": true,
         "collision_embedded": true
@@ -45,8 +45,8 @@
             "path": "assets/sounds/bgm/little_madra.ogg"
         },
         "tileset_files": {
-            "image":"assets/images/maps/madra/madra.png",
-            "json":"assets/images/maps/madra/madra_side.json"
+            "image":"assets/images/tilesets/madra.png",
+            "json":"assets/maps/madra/madra_side.json"
         },
         "lazy_load": true,
         "collision_embedded": true
@@ -58,8 +58,8 @@
             "path": "assets/sounds/bgm/little_madra.ogg"
         },
         "tileset_files": {
-            "image":"assets/images/maps/madra/madra.png",
-            "json":"assets/images/maps/madra/madra_corner.json"
+            "image":"assets/images/tilesets/madra.png",
+            "json":"assets/maps/madra/madra_corner.json"
         },
         "lazy_load": true,
         "collision_embedded": true
@@ -71,8 +71,8 @@
             "path": "assets/sounds/bgm/cave.ogg"
         },
         "tileset_files": {
-            "image":"assets/images/maps/cave/cave.png",
-            "json":"assets/images/maps/madra/madra_cave.json"
+            "image":"assets/images/tilesets/cave.png",
+            "json":"assets/maps/madra/madra_cave.json"
         },
         "lazy_load": true,
         "collision_embedded": true,
@@ -85,8 +85,8 @@
             "path": "assets/sounds/bgm/snowland.ogg"
         },
         "tileset_files": {
-            "image":"assets/images/maps/snowland/snowland.png",
-            "json":"assets/images/maps/snowland/snowland.json"
+            "image":"assets/images/tilesets/snowland.png",
+            "json":"assets/maps/snowland/snowland.json"
         },
         "collision_embedded": true,
         "lazy_load": true
@@ -98,8 +98,8 @@
             "path": "assets/sounds/bgm/world_map.ogg"
         },
         "tileset_files": {
-            "image":"assets/images/maps/world_map/world_map.png",
-            "json":"assets/images/maps/world_map/world_map.json"
+            "image":"assets/images/tilesets/world_map.png",
+            "json":"assets/maps/world_map/world_map.json"
         },
         "lazy_load": true,
         "collision_embedded": true,
@@ -114,8 +114,8 @@
             "path": "assets/sounds/bgm/cave.ogg"
         },
         "tileset_files": {
-            "image":"assets/images/maps/cave/cave.png",
-            "json":"assets/images/maps/cave/cave.json"
+            "image":"assets/images/tilesets/cave.png",
+            "json":"assets/maps/cave/cave.json"
         },
         "lazy_load": true,
         "collision_embedded": true,
@@ -129,8 +129,8 @@
             "path": "assets/sounds/bgm/happy_town.ogg"
         },
         "tileset_files": {
-            "image":"assets/images/maps/forest/forest.png",
-            "json":"assets/images/maps/forest/forest.json"
+            "image":"assets/images/tilesets/forest.png",
+            "json":"assets/maps/forest/forest.json"
         },
         "lazy_load": true,
         "collision_embedded": true,

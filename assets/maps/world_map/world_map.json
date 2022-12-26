@@ -667,7 +667,7 @@
         {
          "columns":32,
          "firstgid":1,
-         "image":"world_map.png",
+         "image":"..\/..\/images\/tilesets\/world_map.png",
          "imageheight":448,
          "imagewidth":256,
          "margin":0,

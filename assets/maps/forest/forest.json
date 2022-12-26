@@ -1843,7 +1843,7 @@
         {
          "columns":32,
          "firstgid":1,
-         "image":"forest.png",
+         "image":"..\/..\/images\/tilesets\/forest.png",
          "imageheight":400,
          "imagewidth":256,
          "margin":0,

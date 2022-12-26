@@ -800,7 +800,7 @@
         {
          "columns":11,
          "firstgid":1,
-         "image":"madra.png",
+         "image":"..\/..\/images\/tilesets\/madra.png",
          "imageheight":544,
          "imagewidth":176,
          "margin":0,

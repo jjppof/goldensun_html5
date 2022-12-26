@@ -998,7 +998,7 @@
         {
          "columns":16,
          "firstgid":1,
-         "image":"snowland.png",
+         "image":"..\/..\/images\/tilesets\/snowland.png",
          "imageheight":464,
          "imagewidth":256,
          "margin":0,
