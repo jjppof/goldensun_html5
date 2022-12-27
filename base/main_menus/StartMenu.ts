@@ -6,11 +6,8 @@ import {FONT_NAME, get_text_width} from "../utils";
 import {Button} from "../XGamepad";
 
 export class StartMenu {
+    private static readonly START_BGM = "page_one";
     private static readonly BUTTONS = ["new_quest", "continue"];
-    private static readonly INIT_BMG = {
-        key: "game_start_menu",
-        path: "assets/sounds/bgm/page_one.ogg",
-    };
 
     private game: Phaser.Game;
     private data: GoldenSun;
@@ -141,20 +138,9 @@ export class StartMenu {
         };
     }
 
-    async init_bgm() {
-        let load_bgm_promise_resolve;
-        const promise = new Promise(resolve => (load_bgm_promise_resolve = resolve));
-        this.game.load
-            .audio(StartMenu.INIT_BMG.key, [StartMenu.INIT_BMG.path])
-            .onLoadComplete.addOnce(load_bgm_promise_resolve);
-        this.game.load.start();
-        await promise;
-        this.data.audio.set_bgm(StartMenu.INIT_BMG.key, true);
-    }
-
     async open(choose_callback: StartMenu["choose_callback"]) {
         this.choose_callback = choose_callback;
-        await this.init_bgm();
+        this.data.audio.set_bgm(StartMenu.START_BGM, true);
         this.game.add
             .tween(this.start_screen)
             .to(

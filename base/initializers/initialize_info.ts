@@ -25,7 +25,6 @@ import {initialize_misc_battle_anim_recipes} from "./misc_battle_anim_recipes";
 import {ShopItem, Shop} from "../main_menus/ShopMenu";
 import {Button} from "../XGamepad";
 import {Inn} from "main_menus/InnMenu";
-import {initialize_bgm_data} from "./bgm";
 
 export type PartyData = {
     members: MainChar[];
@@ -216,10 +215,4 @@ export async function initialize_game_data(game: Phaser.Game, data: GoldenSun) {
     // Initializes ARTIFACTS GLOBAL LIST
     data.info.artifacts_global_list = snapshot?.artifacts_global_list ?? data.dbs.init_db.artifacts_global_list;
     data.info.artifacts_global_list.forEach(item_data => (item_data.global_artifact = true));
-
-    // Initializes BATTLE BGM DATA
-    let load_bgm_promise_resolve;
-    const load_bgm_promise = new Promise(resolve => (load_bgm_promise_resolve = resolve));
-    initialize_bgm_data(game, data, data.dbs.bgm_db, load_bgm_promise_resolve);
-    await load_bgm_promise;
 }

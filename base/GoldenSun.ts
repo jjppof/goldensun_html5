@@ -25,6 +25,7 @@ import {base_actions} from "./utils";
 import {StartMenu} from "./main_menus/StartMenu";
 import {initialize_save_menu, SaveMenu} from "./main_menus/SaveMenu";
 import {ParticlesWrapper} from "./ParticlesWrapper";
+import {initialize_bgm_data} from "./initializers/bgm";
 
 /**
  * The project has basically two important folders: assets and base. All the source code is located inside base folder.
@@ -219,6 +220,7 @@ export class GoldenSun {
         //init audio engine
         this.audio = new Audio(this.game, this);
         await this.audio.init_se();
+        await initialize_bgm_data(this.game, this, this.dbs.bgm_db);
 
         //init camera custom features
         this.camera = new Camera(this.game);

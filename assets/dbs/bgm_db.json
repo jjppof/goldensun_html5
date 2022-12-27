@@ -18,5 +18,9 @@
     {
         "key": "fallen_heroes",
         "path": "assets/sounds/bgm/fallen_heroes.ogg"
+    },
+    {
+        "key": "page_one",
+        "path": "assets/sounds/bgm/page_one.ogg"
     }
 ]
