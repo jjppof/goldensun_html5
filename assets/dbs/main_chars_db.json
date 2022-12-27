@@ -193,7 +193,7 @@
             "mars": 88,
             "jupiter": 114
         },
-        "innate_abilities": ["whirlwind", "reveal", "lash", "mind_read"],
+        "innate_abilities": ["whirlwind", "reveal", "mind_read"],
         "in_party": true,
         "battle_scale": 0.85,
         "battle_shadow_key": "00",
@@ -283,6 +283,10 @@
             },{
                 "key_name": "elixir",
                 "quantity": 3,
+                "equipped": false
+            },{
+                "key_name": "lash_pebble",
+                "quantity": 1,
                 "equipped": false
             }
         ],

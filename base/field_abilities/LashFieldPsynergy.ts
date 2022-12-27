@@ -221,8 +221,8 @@ export class LashFieldPsynergy extends FieldAbilities {
                 .tween(this.game.camera)
                 .to(
                     {
-                        x: (this.target_object.x - this.game.camera.width) >> 1,
-                        y: (this.target_object.y - this.game.camera.height) >> 1,
+                        x: this.target_object.x - (this.game.camera.width >> 1),
+                        y: this.target_object.y - (this.game.camera.height >> 1),
                     },
                     total_repeats * duration_unit,
                     Phaser.Easing.Linear.None,

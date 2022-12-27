@@ -786,5 +786,24 @@
         "equipable_chars": ["isaac", "garet", "sheba", "piers"],
         "price": 6500,
         "granted_ability": ""
+    },{
+        "key_name": "lash_pebble",
+        "name": "Lash Pebble",
+        "type": "ability_grantor",
+        "description": "Bestows Lash when equipped",
+        "use_type": "no_use",
+        "curses_when_equipped": false,
+        "cant_be_removed": false,
+        "rare_item": false,
+        "important_item": true,
+        "carry_up_to_30": false,
+        "effects": [],
+        "attribute": "no_element",
+        "unleash_ability": "",
+        "unleash_rate": 0,
+        "use_ability": "",
+        "equipable_chars": ["isaac", "garet", "sheba", "piers"],
+        "price": 0,
+        "granted_ability": "lash"
     }
 ]

@@ -126,7 +126,7 @@ export class RopeDock extends InteractableObjects {
 
     /** Groups that holds the rope fragments. */
     get rope_fragments_group(): Phaser.Group {
-        return this._is_starting_dock ? this._rope_fragments_group : this._dest_rope_dock.rope_fragments_group;
+        return this._is_starting_dock ? this._rope_fragments_group : this._dest_rope_dock?.rope_fragments_group;
     }
 
     /** The rope width. Only x axis. */
@@ -210,8 +210,12 @@ export class RopeDock extends InteractableObjects {
         this.sprite.sort_function_end = () => {
             const back = this._tied ? this.sprite : this.rope_fragments_group;
             const front = this._tied ? this.rope_fragments_group : this.sprite;
-            if (this.data.middlelayer_group.getChildIndex(back) > this.data.middlelayer_group.getChildIndex(front)) {
-                this.data.middlelayer_group.setChildIndex(front, this.data.middlelayer_group.getChildIndex(back));
+            if (back && front) {
+                if (
+                    this.data.middlelayer_group.getChildIndex(back) > this.data.middlelayer_group.getChildIndex(front)
+                ) {
+                    this.data.middlelayer_group.setChildIndex(front, this.data.middlelayer_group.getChildIndex(back));
+                }
             }
         };
     }
@@ -270,7 +274,6 @@ export class RopeDock extends InteractableObjects {
             this._frag_overlap_group.y = this._rope_fragments_group.y;
             this._frag_overlap_group.base_collision_layer = this._rope_fragments_group.base_collision_layer;
             this._frag_overlap_group.useHeightWhenSorting = this._rope_fragments_group.useHeightWhenSorting;
-            this._frag_overlap_group.send_to_front = true;
             this._extra_sprites.push(this._frag_overlap_group);
         }
 
