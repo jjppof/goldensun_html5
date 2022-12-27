@@ -96,6 +96,7 @@ export enum event_types {
     CHAR_BLEND_MODE = "char_blend_mode",
     EVENT_CALLER = "event_caller",
     EVENT_ACTIVATION = "event_activation",
+    SET_CHAR_VISIBILITY = "set_char_visibility",
 }
 
 /**

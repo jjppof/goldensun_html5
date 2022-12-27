@@ -62,6 +62,7 @@ import {FlameCharEvent} from "./FlameCharEvent";
 import {CharBlendModeEvent} from "./CharBlendModeEvent";
 import {EventCallerEvent} from "./EventCallerEvent";
 import {EventActivationEvent} from "./EventActivationEvent";
+import {SetCharVisibilityEvent} from "./SetCharVisibilityEvent";
 
 export enum interaction_patterns {
     NO_INTERACTION = "no_interaction",
@@ -993,6 +994,17 @@ export class GameEventManager {
                     info.event_label,
                     info.activate
                 );
+            case event_types.SET_CHAR_VISIBILITY:
+                return new SetCharVisibilityEvent(
+                    this.game,
+                    this.data,
+                    info.active,
+                    info.key_name,
+                    info.keep_reveal,
+                    info.is_npc,
+                    info.npc_label,
+                    info.visible
+                );
             default:
                 console.warn(`Game event type ${info.type} not found.`);
                 return null;
@@ -1078,9 +1090,11 @@ export class GameEventManager {
                             : TileEvent.get_event(detailed_value.index);
                         return _.get(event, detailed_value.property);
                     default:
+                        console.warn(`Invalid value type passed to game_info: ${detailed_value.type}`);
                         return null;
                 }
             default:
+                console.warn(`Invalid value type passed to event: ${event_value.type}`);
                 return null;
         }
     }

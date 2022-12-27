@@ -291,6 +291,7 @@ export class Hero extends ControllableChar {
         }
         this.data.camera.follow(this);
         this.play();
+        this.update_shadow();
     }
 
     /**

@@ -26,5 +26,6 @@
         "y": 9
     },
     "forest_pillar_collision_layer": 0,
-    "forest_pillar_animation": "pillar"
+    "forest_pillar_animation": "pillar",
+    "play_introduction": true
 }

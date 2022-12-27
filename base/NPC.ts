@@ -66,7 +66,7 @@ export class NPC extends ControllableChar {
         move_freely_in_event?: string;
     };
     private sprite_misc_db_key: string;
-    private ignore_physics: boolean;
+    private _ignore_physics: boolean;
     private _initial_x: number;
     private _initial_y: number;
     private _angle_direction: number;
@@ -189,7 +189,7 @@ export class NPC extends ControllableChar {
             visible = this.data.storage.get(this.storage_keys.visible);
         }
         this.initially_visible = visible ?? true;
-        this.ignore_physics = ignore_physics ?? false;
+        this._ignore_physics = ignore_physics ?? false;
         this._events = [];
         this.set_events(events_info ?? []);
         this.sprite_misc_db_key = sprite_misc_db_key;
@@ -285,6 +285,10 @@ export class NPC extends ControllableChar {
     get allow_interaction_when_inactive() {
         return this._allow_interaction_when_inactive;
     }
+    /** If true, this NPC won't have collision body. */
+    get ignore_physics() {
+        return this._ignore_physics;
+    }
 
     /**
      * Updates this NPC properties according to current storage values.
@@ -306,6 +310,9 @@ export class NPC extends ControllableChar {
             const storage_value = this.data.storage.get(this.storage_keys.visible);
             if (this.sprite?.visible !== storage_value) {
                 this.sprite.visible = storage_value as boolean;
+                if (this.shadow) {
+                    this.shadow.visible = storage_value as boolean;
+                }
             }
         }
         if (this.storage_keys.movement_type !== undefined) {
@@ -561,7 +568,7 @@ export class NPC extends ControllableChar {
                 }
             }
             if (this.shadow) {
-                this.shadow.visible = true;
+                this.shadow.visible = this.sprite.visible;
             }
             this._active = true;
         } else {
@@ -622,6 +629,9 @@ export class NPC extends ControllableChar {
         }
         if (!this.initially_visible) {
             this.sprite.visible = false;
+            if (this.shadow) {
+                this.shadow.visible = false;
+            }
         }
         this.sprite.is_npc = true;
         if (this.snapshot_info && this.snapshot_info.send_to_back !== null) {

@@ -128,6 +128,13 @@ export class MoveEvent extends GameEvent {
             previous_move_freely_in_event = (char as NPC).move_freely_in_event;
             (char as NPC).move_freely_in_event = false;
         }
+
+        if (this.is_npc && (char as NPC).ignore_physics) {
+            console.warn(
+                `NPC ${char.key_name} needs to have a collision body to move. Please set "ignore_physics" to true`
+            );
+        }
+
         this.previous_dash_value = char.dashing;
         char.dashing = this.dash;
         let dest_value: {x: number; y: number};

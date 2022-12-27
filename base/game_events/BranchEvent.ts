@@ -83,6 +83,9 @@ export class BranchEvent extends GameEvent {
                     this.data.game_event_manager.get_value(this.right_comparator_value) !==
                     this.data.game_event_manager.get_value(this.left_comparator_value);
                 break;
+            default:
+                console.warn(`Invalid condition passed to branch event: ${this.condition}`);
+                break;
         }
 
         if (result) {

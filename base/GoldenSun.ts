@@ -340,6 +340,7 @@ export class GoldenSun {
             this.dbs.npc_db[hero_key_name].climb_speed
         );
         this.hero.initialize();
+        this.map.sort_sprites();
 
         //initializes collision system
         this.collision = new Collision(this.game, this);
