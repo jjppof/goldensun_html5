@@ -38,6 +38,8 @@ export class Enemy extends Player {
         this.base_turns = this.turns;
         this.max_hp = enemy_data.max_hp;
         this.max_pp = enemy_data.max_pp;
+        this.current_hp = this.max_hp;
+        this.current_pp = this.max_pp;
         this.hp_recovery = enemy_data.hp_recovery;
         this.pp_recovery = enemy_data.pp_recovery;
         this.base_atk = enemy_data.atk;
