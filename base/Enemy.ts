@@ -6,6 +6,10 @@ import {effect_types} from "./Effect";
 import {Classes} from "./Classes";
 
 export class Enemy extends Player {
+    public base_atk: number;
+    public base_def: number;
+    public base_agi: number;
+    public base_luk: number;
     public items: {
         key_name: string;
         quantity: number;
@@ -36,6 +40,10 @@ export class Enemy extends Player {
         this.max_pp = enemy_data.max_pp;
         this.hp_recovery = enemy_data.hp_recovery;
         this.pp_recovery = enemy_data.pp_recovery;
+        this.base_atk = enemy_data.atk;
+        this.base_def = enemy_data.def;
+        this.base_agi = enemy_data.agi;
+        this.base_luk = enemy_data.luk;
         this.atk = enemy_data.atk;
         this.def = enemy_data.def;
         this.agi = enemy_data.agi;
@@ -78,8 +86,10 @@ export class Enemy extends Player {
     }
 
     set_base_attributes() {
-        this.current_hp = this.max_hp;
-        this.current_pp = this.max_pp;
+        this.atk = this.base_atk;
+        this.def = this.base_def;
+        this.agi = this.base_agi;
+        this.luk = this.base_luk;
         this.current_hp_recovery = this.hp_recovery;
         this.current_pp_recovery = this.pp_recovery;
         this.extra_turns = 0;
@@ -96,8 +106,7 @@ export class Enemy extends Player {
             switch (effect.type) {
                 case effect_types.POWER:
                 case effect_types.RESIST:
-                case effect_types.MAX_HP:
-                case effect_types.MAX_PP:
+                case effect_types.ELEMENTAL_LEVEL:
                 case effect_types.ATTACK:
                 case effect_types.DEFENSE:
                 case effect_types.AGILITY:
