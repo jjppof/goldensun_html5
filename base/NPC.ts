@@ -59,6 +59,7 @@ export class NPC extends ControllableChar {
         position?: string;
         action?: string;
         animation?: string;
+        active?: string;
         base_collision_layer?: string;
         affected_by_reveal?: string;
         visible?: string;
@@ -294,6 +295,12 @@ export class NPC extends ControllableChar {
      * Updates this NPC properties according to current storage values.
      */
     check_storage_keys() {
+        if (this.storage_keys.active !== undefined) {
+            const storage_value = this.data.storage.get(this.storage_keys.active);
+            if (this.active !== storage_value) {
+                this.toggle_active(storage_value as boolean);
+            }
+        }
         if (this.storage_keys.base_collision_layer !== undefined) {
             const storage_value = this.data.storage.get(this.storage_keys.base_collision_layer);
             if (this.base_collision_layer !== storage_value) {

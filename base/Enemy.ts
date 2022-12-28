@@ -31,6 +31,7 @@ export class Enemy extends Player {
         super(enemy_data.key_name, name ? name : enemy_data.name);
         this.level = enemy_data.level;
         this.turns = enemy_data.turns;
+        this.base_turns = this.turns;
         this.max_hp = enemy_data.max_hp;
         this.max_pp = enemy_data.max_pp;
         this.hp_recovery = enemy_data.hp_recovery;
@@ -81,6 +82,7 @@ export class Enemy extends Player {
         this.current_pp = this.max_pp;
         this.current_hp_recovery = this.hp_recovery;
         this.current_pp_recovery = this.pp_recovery;
+        this.extra_turns = 0;
         for (let element of ordered_elements) {
             this.current_power[element] = this.base_power[element];
             this.current_resist[element] = this.base_resist[element];
@@ -100,6 +102,7 @@ export class Enemy extends Player {
                 case effect_types.DEFENSE:
                 case effect_types.AGILITY:
                 case effect_types.LUCK:
+                case effect_types.TURNS:
                     effect.apply_effect();
                     break;
             }
@@ -117,6 +120,7 @@ export class Enemy extends Player {
                 numbers.ELEM_ATTR_MAX
             );
         }
+        this.apply_turns_count_value();
     }
 }
 

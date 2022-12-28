@@ -267,6 +267,17 @@ export abstract class TileEvent {
     }
 
     /**
+     * Checks whether this event is disabled due to a storage value.
+     * @returns whether its disabled by storage value.
+     */
+    check_if_disabled_by_storage() {
+        if (this.active_storage_key && !this.data.storage.get(this.active_storage_key)) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Gets an activation direction of this event.
      * @returns returns an direction.
      */

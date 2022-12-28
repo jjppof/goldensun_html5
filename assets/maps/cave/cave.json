@@ -2622,6 +2622,7 @@
  "orientation":"orthogonal",
  "properties":
     {
+     "game_events":"[\n  {\n    \"type\": \"events_holder\",\n    \"active\": false,\n    \"key_name\": \"avimander_battle\",\n    \"events\": [\n      {\n        \"type\": \"control_bgm\",\n        \"control_type\": \"stop\"\n      },\n      {\n        \"type\": \"dialog\",\n        \"dialog_info\": [\n          {\n            \"avatar\": \"garet\",\n            \"voice_key\": \"adult_male_1\",\n            \"text\": \"!!!\"\n          }\n        ],\n        \"finish_events\": [\n          {\n            \"type\": \"move\",\n            \"is_npc\": false,\n            \"dash\": true,\n            \"camera_follow\": false,\n            \"minimal_distance\": 1,\n            \"dest\": {\n              \"x\": {\n                \"type\": \"value\",\n                \"value\": 33\n              },\n              \"y\": {\n                \"type\": \"value\",\n                \"value\": 41\n              }\n            },\n            \"finish_events\": [\n              {\n                \"type\": \"face_direction\",\n                \"is_npc\": false,\n                \"direction\": \"up_right\",\n                \"finish_events\": [\n                  {\n                    \"type\": \"set_char_collision\",\n                    \"is_npc\": true,\n                    \"npc_label\": \"avimander\",\n                    \"control_type\": \"disable\"\n                  },\n                  {\n                    \"type\": \"move\",\n                    \"is_npc\": true,\n                    \"npc_label\": \"avimander\",\n                    \"camera_follow\": false,\n                    \"dest\": {\n                      \"x\": {\n                        \"type\": \"value\",\n                        \"value\": 34\n                      },\n                      \"y\": {\n                        \"type\": \"value\",\n                        \"value\": 40\n                      }\n                    },\n                    \"finish_events\": [\n                      {\n                        \"type\": \"battle\",\n                        \"background_key\": \"bg_cave\",\n                        \"bgm\": \"battle_boss\",\n                        \"enemy_party_key\": \"avimander_party\",\n                        \"before_fade_victory_events\": [\n                          {\n                            \"type\": \"set_value\",\n                            \"check_npc_storage_values\": true,\n                            \"npc_label\": \"avimander\",\n                            \"event_value\": {\n                              \"type\": \"storage\",\n                              \"value\": {\n                                \"key_name\": \"avimander_battle\",\n                                \"value\": false\n                              }\n                            }\n                          }\n                        ]\n                      }\n                    ]\n                  }\n                ]\n              }\n            ]\n          }\n        ]\n      }\n    ]\n  }\n]\n",
      "interactable_object\/01":"{\n\"key_name\": \"push_pillar\",\n\"animation\": \"pillar\",\n\"x\": 47,\n\"y\": 18,\n\"base_collision_layer\": 1,\n\"events_info\": {\n  \"0\": {\n    \"collision_layer_shift\": 1\n    }\n},\n\"allowed_tiles\": [\n{\"x\":46, \"y\":18, \"collision_layer\": 1},\n{\"x\":47, \"y\":18, \"collision_layer\": 1},\n{\"x\":46, \"y\":20, \"collision_layer\": 0}\n],\n\"object_drop_tiles\": [{\n  \"x\":46,\n  \"y\":18,\n  \"destination_collision_layer\": 0,\n  \"animation_duration\": 250,\n  \"dest_y\": 20,\n  \"dust_animation\": true\n}]\n}",
      "interactable_object\/02":"{\n\"key_name\": \"growth\",\n\"x\": 53,\n\"y\": 20,\n\"base_collision_layer\": 0,\n\"events_info\": {\n  \"0\": {\n    \"collision_layer_shift\": 1,\n    \"intermediate_collision_layer_shift\": 0\n    }\n}\n}",
      "interactable_object\/03":"{\n\"key_name\": \"pound_pillar\",\n\"action\": \"wood_pound_pillar\",\n\"x\": 58,\n\"y\": 18,\n\"base_collision_layer\": 0,\n\"events_info\": {\n  \"0\": {\n    \"collision_layer_shift\": 1\n    }\n}\n}",
@@ -2629,6 +2630,7 @@
      "interactable_object\/05":"{\n\"key_name\": \"rope_dock\",\n\"x\": 9,\n\"y\": 43,\n\"base_collision_layer\": 0,\n\"dest_x\": 24,\n\"dest_y\": 43,\n\"starting_dock\": true,\n\"tied\": false,\n\"events_info\": {\n  \"0\": {\n    \"activation_directions\": [\"down\",\"right\",\"up\"],\n    \"walk_over_rope\": true,\n    \"rope_collision_layer\": 1,\n    \"dock_exit_collision_layer\": 0\n  }\n}\n}",
      "interactable_object\/06":"{\n\"key_name\": \"rope_dock\",\n\"x\": 24,\n\"y\": 43,\n\"base_collision_layer\": 0,\n\"dest_x\": 9,\n\"dest_y\": 43,\n\"starting_dock\": false,\n\"tied\": false,\n\"events_info\": {\n  \"0\": {\n    \"activation_directions\": [\"down\",\"left\",\"up\"],\n    \"walk_over_rope\": true,\n    \"rope_collision_layer\": 1,\n    \"dock_exit_collision_layer\": 0\n  }\n}\n}",
      "npc\/01":"{\n    \"key_name\": \"summon\",\n    \"storage_keys\":{\n        \"active\": \"summon_megaera_stone\"\n    },\n    \"x\": 101.5,\n    \"y\": 6,\n    \"npc_type\": \"normal\",\n    \"movement_type\": \"idle\",\n    \"base_collision_layer\": 0,\n    \"events\": [{\n        \"type\": \"summon\",\n        \"summon_key\": \"megaera\",\n        \"finish_events\": [{\n            \"type\": \"set_value\",\n            \"event_value\": {\n                \"type\": \"storage\",\n                \"value\": {\n                    \"key_name\": \"summon_megaera_stone\",\n                    \"value\": false\n                }\n            }\n        }]\n    }]\n}",
+     "npc\/02":"{\n\"key_name\": \"avimander\",\n\"label\": \"avimander\",\n\"storage_keys\":{\n  \"active\": \"avimander_battle\"\n},\n\"x\": 35,\n\"y\": 36,\n\"npc_type\": \"normal\",\n\"movement_type\": \"idle\",\n\"base_collision_layer\": 0\n}",
      "real_tile_height":16,
      "real_tile_width":16,
      "tile_event\/01":"{\n\"type\": \"teleport\",\n\"x_target\": 38.5,\n\"y_target\": 25,\n\"target\": \"cave\",\n\"activation_directions\": \"up\",\n\"x\": 26,\n\"y\": 4,\n\"open_door\": false,\n\"dest_collision_layer\": 1,\n\"activation_collision_layers\": [0]\n}",
@@ -2650,10 +2652,14 @@
      "tile_event\/17":"{\n\"type\": \"teleport\",\n\"x_target\": 101,\n\"y_target\": 21,\n\"target\": \"cave\",\n\"activation_directions\": \"up\",\n\"x\": 13,\n\"y\": 15,\n\"spiral_stair\": \"up\",\n\"dest_collision_layer\": 0,\n\"activation_collision_layers\": 0\n}",
      "tile_event\/18":"{\n\"type\": \"teleport\",\n\"x_target\": 13,\n\"y_target\": 16,\n\"target\": \"cave\",\n\"activation_directions\": \"up\",\n\"x\": 101,\n\"y\": 20,\n\"spiral_stair\": \"down\",\n\"dest_collision_layer\": 0,\n\"activation_collision_layers\": 0\n}",
      "tile_event\/19":"{\n\"type\": \"teleport\",\n\"x_target\": 7,\n\"y_target\": 38,\n\"target\": \"cave\",\n\"activation_directions\": \"down\",\n\"x\": 101,\n\"y\": 26,\n\"dest_collision_layer\": 0,\n\"activation_collision_layers\": 0\n}",
-     "tile_event\/20":"{\n\"type\": \"teleport\",\n\"x_target\": 101,\n\"y_target\": 25,\n\"target\": \"cave\",\n\"activation_directions\": \"up\",\n\"x\": 7,\n\"y\": 37,\n\"dest_collision_layer\": 0,\n\"activation_collision_layers\": 0\n}"
+     "tile_event\/20":"{\n\"type\": \"teleport\",\n\"x_target\": 101,\n\"y_target\": 25,\n\"target\": \"cave\",\n\"activation_directions\": \"up\",\n\"x\": 7,\n\"y\": 37,\n\"dest_collision_layer\": 0,\n\"activation_collision_layers\": 0\n}",
+     "tile_event\/21":"{\n  \"type\": \"event_trigger\",\n  \"activation_directions\": \"all\",\n  \"active_storage_key\": \"avimander_battle\",\n  \"x\": 32,\n  \"y\": 42,\n  \"activation_collision_layers\": 0,\n  \"remove_from_field\": true,\n  \"events\": [\n    {\n      \"type\": \"event_caller\",\n      \"event_label\": \"avimander_battle\"\n    }\n  ]\n}",
+     "tile_event\/22":"{\n  \"type\": \"event_trigger\",\n  \"activation_directions\": \"all\",\n  \"active_storage_key\": \"avimander_battle\",\n  \"x\": 33,\n  \"y\": 42,\n  \"activation_collision_layers\": 0,\n  \"remove_from_field\": true,\n  \"events\": [\n    {\n      \"type\": \"event_caller\",\n      \"event_label\": \"avimander_battle\"\n    }\n  ]\n}",
+     "tile_event\/23":"{\n  \"type\": \"event_trigger\",\n  \"activation_directions\": \"all\",\n  \"active_storage_key\": \"avimander_battle\",\n  \"x\": 34,\n  \"y\": 42,\n  \"activation_collision_layers\": 0,\n  \"remove_from_field\": true,\n  \"events\": [\n    {\n      \"type\": \"event_caller\",\n      \"event_label\": \"avimander_battle\"\n    }\n  ]\n}"
     },
  "propertytypes":
     {
+     "game_events":"string",
      "interactable_object\/01":"string",
      "interactable_object\/02":"string",
      "interactable_object\/03":"string",
@@ -2661,6 +2667,7 @@
      "interactable_object\/05":"string",
      "interactable_object\/06":"string",
      "npc\/01":"string",
+     "npc\/02":"string",
      "real_tile_height":"int",
      "real_tile_width":"int",
      "tile_event\/01":"string",
@@ -2682,7 +2689,10 @@
      "tile_event\/17":"string",
      "tile_event\/18":"string",
      "tile_event\/19":"string",
-     "tile_event\/20":"string"
+     "tile_event\/20":"string",
+     "tile_event\/21":"string",
+     "tile_event\/22":"string",
+     "tile_event\/23":"string"
     },
  "renderorder":"right-down",
  "tiledversion":"1.9.1",

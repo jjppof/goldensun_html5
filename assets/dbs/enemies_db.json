@@ -406,5 +406,90 @@
             "frame_rate": [[4,4,2,4],[4,4,2,4],1,1,1,1,1,1],
             "loop": [true,true,false,false,false,false,false,false]
         }
+    },{
+        "key_name": "avimander",
+        "name": "Avimander",
+        "level": 30,
+        "turns": 2,
+        "max_hp": 2800,
+        "max_pp": 150,
+        "hp_recovery": 30,
+        "pp_recovery": 3,
+        "atk": 250,
+        "def": 89,
+        "agi": 90,
+        "luk": 31,
+        "battle_scale": 1.0,
+        "battle_shadow_key": "00",
+        "status_sprite_shift": 15,
+        "change_target_weaker": 0.75,
+        "items": [],
+        "abilities": [
+            {
+                "key_name": "attack",
+                "use_weight": 2.0
+            },
+            {
+                "key_name": "fire_breath",
+                "use_weight": 1.0
+            },
+            {
+                "key_name": "guard",
+                "use_weight": 0.5
+            },
+            {
+                "key_name": "heat_stun",
+                "use_weight": 1.5
+            }
+        ],
+        "vulnerabilities": [],
+        "coins_reward": 1200,
+        "item_reward": "",
+        "item_reward_chance": 0,
+        "exp_reward": 1850,
+        "base_level": {
+            "venus": 2,
+            "mercury": 0,
+            "mars": 4,
+            "jupiter": 2
+        },
+        "base_power": {
+            "venus": 95,
+            "mercury": 85,
+            "mars": 115,
+            "jupiter": 95
+        },
+        "base_resist": {
+            "venus": 100,
+            "mercury": 25,
+            "mars": 75,
+            "jupiter": 100
+        },
+        "battle_animations_variations": {
+            "attack": "attack"
+        },
+        "battle_spritesheet": {
+            "spritesheet": {
+                "json": "assets/images/spritesheets/battle/avimander_battle.json",
+                "image": "assets/images/spritesheets/battle/avimander_battle.png"
+            },
+            "animations": [
+                "idle_back", 
+                "idle_front",
+                "attack_back",
+                "attack_front",
+                "damage_back",
+                "damage_front",
+                "attack_init_back",
+                "attack_init_front",
+                "cast_back",
+                "cast_front",
+                "cast_init_back",
+                "cast_init_front"
+            ],
+            "frames_count": [4,4,2,2,1,1,1,1,1,1,2,2],
+            "frame_rate": [3,3,10,10,1,1,1,1,1,1,10,10],
+            "loop": [true,true,false,false,false,false,false,false,false,false,false,false]
+        }
     }
 ]

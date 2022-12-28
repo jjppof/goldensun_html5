@@ -802,5 +802,41 @@
                 "loop": [true, false]
             }
         }
+    },{
+        "key_name": "avimander",
+        "anchor_y": 0.8,
+        "initial_action": "idle",
+        "collision_body_bevel": 3,
+        "interaction_pattern": "tik_tak_toe",
+        "body_radius": 7.0,
+        "walk_speed": 250,
+        "dash_speed": 85,
+        "climb_speed": 50,
+        "actions": {
+            "idle": {
+                "spritesheet": {
+                    "json": "assets/images/spritesheets/npc/avimander_idle.json",
+                    "image": "assets/images/spritesheets/npc/avimander_idle.png"
+                },
+                "initial_animation": "down",
+                "animations": [
+                    "down"
+                ],
+                "frames_count": 1,
+                "frame_rate": 1
+            },
+            "walk": {
+                "spritesheet": {
+                    "json": "assets/images/spritesheets/npc/avimander_walk.json",
+                    "image": "assets/images/spritesheets/npc/avimander_idle.png"
+                },
+                "initial_animation": "down",
+                "animations": [
+                    "down"
+                ],
+                "frames_count": 1,
+                "frame_rate": 1
+            }
+        }
     }
 ]

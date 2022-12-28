@@ -128,6 +128,9 @@ export class TileEventManager {
     }
 
     private fire_event(current_event: TileEvent, this_activation_direction: directions) {
+        if (current_event.check_if_disabled_by_storage()) {
+            return;
+        }
         if (current_event.type === event_types.ICE_SLIDE && this.data.hero.ice_sliding_active) {
             current_event.fire();
             return;

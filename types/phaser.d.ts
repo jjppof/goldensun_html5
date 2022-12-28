@@ -171,9 +171,9 @@ declare module Phaser {
     }
 
     class AnimationManager {
-
         constructor(sprite: Phaser.Sprite);
 
+        anims: {[animation_key: string]: Phaser.Animation};
         currentAnim: Phaser.Animation;
         currentFrame: Phaser.Frame;
         frame: number;

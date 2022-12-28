@@ -170,6 +170,10 @@ export abstract class Player {
     public base_resist: {[element in elements]?: number};
     /** The current amount of turns that this player has. */
     public turns: number;
+    /** The base amount of turns that this player has. */
+    public base_turns: number;
+    /** The extra amount of turns that this player has. */
+    public extra_turns: number;
     /** This maps a given ability key to a non-default ability animation key. */
     public battle_animations_variations: {[ability_key: string]: string};
     /** The player max HP. */
@@ -226,6 +230,7 @@ export abstract class Player {
         }, {});
         this.current_resist = _.cloneDeep(this.current_power);
         this.current_level = _.cloneDeep(this.current_power);
+        this.extra_turns = 0;
         this.paralyzed_by_effect = false;
         this.init_effect_turns_count();
     }
@@ -247,6 +252,7 @@ export abstract class Player {
             [effect_types.DEFENSE]: 0,
             [effect_types.AGILITY]: 0,
             [effect_types.LUCK]: 0,
+            [effect_types.TURNS]: 0,
             [effect_types.POWER]: {},
             [effect_types.RESIST]: {},
         };
@@ -259,6 +265,10 @@ export abstract class Player {
 
     /** Updates all stats, class info and abilities of this player. */
     abstract update_all();
+
+    apply_turns_count_value() {
+        this.turns = this.base_turns + this.extra_turns;
+    }
 
     get_effect_turns_key(effect: Effect) {
         switch (effect.type) {
@@ -288,6 +298,7 @@ export abstract class Player {
             case effect_types.DEFENSE:
             case effect_types.AGILITY:
             case effect_types.LUCK:
+            case effect_types.TURNS:
                 return this.effect_turns_count[effect.type];
             case effect_types.POWER:
             case effect_types.RESIST:
@@ -299,15 +310,16 @@ export abstract class Player {
     set_effect_turns_count(effect, value = -1, relative = true) {
         switch (effect.type) {
             case effect_types.TEMPORARY_STATUS:
-                this.effect_turns_count[effect.status_key_name] = relative
+                return (this.effect_turns_count[effect.status_key_name] = relative
                     ? (this.effect_turns_count[effect.status_key_name] as number) + value
-                    : value;
+                    : value);
             case effect_types.MAX_HP:
             case effect_types.MAX_PP:
             case effect_types.ATTACK:
             case effect_types.DEFENSE:
             case effect_types.AGILITY:
             case effect_types.LUCK:
+            case effect_types.TURNS:
                 return (this.effect_turns_count[effect.type] = relative
                     ? (this.effect_turns_count[effect.type] as number) + value
                     : value);

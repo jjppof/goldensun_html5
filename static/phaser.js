@@ -71768,6 +71768,10 @@ Phaser.AnimationManager = function (sprite)
 
 Phaser.AnimationManager.prototype = {
 
+    get anims() {
+        return this._anims;
+    },
+
     /**
      * Loads FrameData into the internal temporary vars and resets the frame index to zero.
      * This is called automatically when a new Sprite is created.

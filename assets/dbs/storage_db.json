@@ -27,5 +27,6 @@
     },
     "forest_pillar_collision_layer": 0,
     "forest_pillar_animation": "pillar",
-    "play_introduction": true
+    "play_introduction": true,
+    "avimander_battle": true
 }

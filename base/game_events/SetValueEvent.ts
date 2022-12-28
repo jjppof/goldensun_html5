@@ -1,15 +1,30 @@
 import {GameEvent, event_types, game_info_types, EventValue, event_value_types, DetailedValues} from "./GameEvent";
 import * as _ from "lodash";
 import {TileEvent} from "../tile_events/TileEvent";
+import {NPC} from "NPC";
 
 export class SetValueEvent extends GameEvent {
     private event_value: EventValue;
     private check_npc_storage_values: boolean;
+    private npc_label: string;
+    private npc_index: number;
 
-    constructor(game, data, active, key_name, keep_reveal, event_value, check_npc_storage_values) {
+    constructor(
+        game,
+        data,
+        active,
+        key_name,
+        keep_reveal,
+        event_value,
+        check_npc_storage_values,
+        npc_label,
+        npc_index
+    ) {
         super(game, data, event_types.SET_VALUE, active, key_name, keep_reveal);
         this.event_value = event_value;
         this.check_npc_storage_values = check_npc_storage_values ?? false;
+        this.npc_label = npc_label;
+        this.npc_index = npc_index;
     }
 
     _fire() {
@@ -49,7 +64,13 @@ export class SetValueEvent extends GameEvent {
                 break;
         }
         if (this.check_npc_storage_values) {
-            this.origin_npc.check_storage_keys();
+            const char =
+                GameEvent.get_char(this.data, {
+                    is_npc: true,
+                    npc_index: this.npc_index,
+                    npc_label: this.npc_label,
+                }) ?? this.origin_npc;
+            (char as NPC).check_storage_keys();
         }
     }
 

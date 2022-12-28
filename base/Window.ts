@@ -752,7 +752,7 @@ export class Window {
             /** The font color. Can be an array of colors the indicates for each letter. */
             colors?: number | number[][];
             /** A callback the is called whenever a word is displayed in the window when animate is true. */
-            word_callback?: (word?: string, current_text?: string) => void;
+            word_callback?: (word?: string, current_text?: string, word_index?: number) => void;
             /** Specific points to pause/delay the dialog. Each array item represents a line.
              * An item is an object containing the follow key:value -> line_letter_index:duration_ms.
              * The duration is in ms. */
@@ -848,7 +848,7 @@ export class Window {
                         }
                         ++words_index;
                         if (options?.word_callback) {
-                            options.word_callback(words[words_index], text_sprite.text);
+                            options.word_callback(words[words_index], text_sprite.text, words_index);
                         }
                         if (words_index === words.length) {
                             line_promise_resolve();

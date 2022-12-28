@@ -63,6 +63,7 @@ import {CharBlendModeEvent} from "./CharBlendModeEvent";
 import {EventCallerEvent} from "./EventCallerEvent";
 import {EventActivationEvent} from "./EventActivationEvent";
 import {SetCharVisibilityEvent} from "./SetCharVisibilityEvent";
+import {EventsHolderEvent} from "./EventsHolderEvent";
 
 export enum interaction_patterns {
     NO_INTERACTION = "no_interaction",
@@ -315,7 +316,10 @@ export class GameEventManager {
                     info.return_to_sanctum,
                     info.bgm,
                     info.reset_previous_bgm,
-                    info.finish_events
+                    info.victory_events,
+                    info.defeat_events,
+                    info.before_fade_victory_events,
+                    info.before_fade_defeat_events
                 );
             case event_types.BRANCH:
                 return new BranchEvent(
@@ -338,7 +342,9 @@ export class GameEventManager {
                     info.key_name,
                     info.keep_reveal,
                     info.event_value,
-                    info.check_npc_storage_values
+                    info.check_npc_storage_values,
+                    info.npc_label,
+                    info.npc_index
                 );
             case event_types.MOVE:
                 return new MoveEvent(
@@ -1004,6 +1010,15 @@ export class GameEventManager {
                     info.is_npc,
                     info.npc_label,
                     info.visible
+                );
+            case event_types.EVENTS_HOLDER:
+                return new EventsHolderEvent(
+                    this.game,
+                    this.data,
+                    info.active,
+                    info.key_name,
+                    info.keep_reveal,
+                    info.events
                 );
             default:
                 console.warn(`Game event type ${info.type} not found.`);

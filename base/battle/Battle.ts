@@ -1443,10 +1443,11 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                     break;
 
                 case effect_types.TURNS:
-                    await this.battle_log.add(`${action.caster.name} readies for action!`);
+                    await this.battle_log.add(`${target_instance.name} readies for action!`);
                     await this.wait_for_key();
 
                     this.on_going_effects.push(target_instance.add_effect(effect_obj, ability, true).effect);
+                    target_instance.set_effect_turns_count(effect_obj, effect_obj.turns_quantity, false);
                     break;
 
                 case effect_types.DAMAGE_MODIFIER:
@@ -1756,8 +1757,7 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                 this.data.in_battle = false;
                 this.data.battle_instance = undefined;
                 this.game.physics.p2.resume();
-                this.data.audio.stop_bgm();
-                if (this.reset_previous_bgm) {
+                if (this.reset_previous_bgm && !this.allies_defeated) {
                     this.data.audio.set_bgm(this.previous_bgm, true);
                 }
                 if (this.finish_callback) {

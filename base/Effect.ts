@@ -386,7 +386,9 @@ export class Effect {
                 }
 
             case effect_types.TURNS:
-                return this.apply_general_value("turns");
+                const turns_result = this.apply_general_value("extra_turns");
+                this.char.apply_turns_count_value();
+                return turns_result;
 
             case effect_types.PERMANENT_STATUS:
                 if (this.add_status) {
@@ -465,7 +467,7 @@ export class Effect {
                 vulnerability_chance
             )
         ) {
-            added_effect = target.add_effect(this, ability, true).effect;
+            added_effect = target.add_effect(effect_obj, ability, true).effect;
             if (added_effect.type === effect_types.TEMPORARY_STATUS) {
                 if (
                     added_effect.status_key_name === temporary_status.DEATH_CURSE &&

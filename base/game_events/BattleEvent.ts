@@ -10,7 +10,10 @@ export class BattleEvent extends GameEvent {
     private return_to_sanctum: boolean;
     private bgm: string;
     private reset_previous_bgm: boolean;
-    private finish_events: GameEvent[];
+    private victory_events: GameEvent[];
+    private defeat_events: GameEvent[];
+    private before_fade_victory_events: GameEvent[];
+    private before_fade_defeat_events: GameEvent[];
     private finish_callback: (victory: boolean) => void;
     private before_fade_finish_callback: (victory: boolean) => void;
 
@@ -25,7 +28,10 @@ export class BattleEvent extends GameEvent {
         return_to_sanctum,
         bgm,
         reset_previous_bgm,
-        finish_events
+        victory_events,
+        defeat_events,
+        before_fade_victory_events,
+        before_fade_defeat_events
     ) {
         super(game, data, event_types.BATTLE, active, key_name, keep_reveal);
         this.background_key = background_key;
@@ -33,11 +39,32 @@ export class BattleEvent extends GameEvent {
         this.return_to_sanctum = return_to_sanctum ?? true;
         this.bgm = bgm;
         this.reset_previous_bgm = reset_previous_bgm ?? true;
-        this.finish_events = [];
-        if (finish_events !== undefined) {
-            finish_events.forEach(event_info => {
+        this.victory_events = [];
+        if (victory_events !== undefined) {
+            victory_events.forEach(event_info => {
                 const event = this.data.game_event_manager.get_event_instance(event_info);
-                this.finish_events.push(event);
+                this.victory_events.push(event);
+            });
+        }
+        this.defeat_events = [];
+        if (defeat_events !== undefined) {
+            defeat_events.forEach(event_info => {
+                const event = this.data.game_event_manager.get_event_instance(event_info);
+                this.defeat_events.push(event);
+            });
+        }
+        this.before_fade_victory_events = [];
+        if (before_fade_victory_events !== undefined) {
+            before_fade_victory_events.forEach(event_info => {
+                const event = this.data.game_event_manager.get_event_instance(event_info);
+                this.before_fade_victory_events.push(event);
+            });
+        }
+        this.before_fade_defeat_events = [];
+        if (before_fade_defeat_events !== undefined) {
+            before_fade_defeat_events.forEach(event_info => {
+                const event = this.data.game_event_manager.get_event_instance(event_info);
+                this.before_fade_defeat_events.push(event);
             });
         }
     }
@@ -54,6 +81,14 @@ export class BattleEvent extends GameEvent {
             (victory, party_fled) => {
                 if (this.before_fade_finish_callback) {
                     this.before_fade_finish_callback(victory);
+                }
+                if (victory) {
+                    this.before_fade_victory_events.forEach(event => event.fire(this.origin_npc));
+                } else {
+                    this.before_fade_defeat_events.forEach(event => event.fire(this.origin_npc));
+                }
+                if (!victory && (this.defeat_events.length || this.before_fade_defeat_events.length)) {
+                    return null;
                 }
                 if (this.return_to_sanctum && !victory && !party_fled) {
                     const sanctum_data = this.data.info.last_visited_town_with_sanctum;
@@ -101,7 +136,11 @@ export class BattleEvent extends GameEvent {
                 if (this.finish_callback) {
                     this.finish_callback(victory);
                 }
-                this.finish_events.forEach(event => event.fire(this.origin_npc));
+                if (victory) {
+                    this.victory_events.forEach(event => event.fire(this.origin_npc));
+                } else {
+                    this.defeat_events.forEach(event => event.fire(this.origin_npc));
+                }
             }
         );
         this.battle.start_battle();
@@ -117,6 +156,9 @@ export class BattleEvent extends GameEvent {
 
     _destroy() {
         this.battle = null;
-        this.finish_events.forEach(event => event.destroy());
+        this.victory_events.forEach(event => event.destroy());
+        this.defeat_events.forEach(event => event.destroy());
+        this.before_fade_defeat_events.forEach(event => event.destroy());
+        this.before_fade_victory_events.forEach(event => event.destroy());
     }
 }

@@ -12,6 +12,10 @@
         "path": "assets/sounds/bgm/battle_non_adept.ogg"
     },
     {
+        "key": "battle_boss",
+        "path": "assets/sounds/bgm/battle_boss.ogg"
+    },
+    {
         "key": "victory",
         "path": "assets/sounds/bgm/victory.ogg"
     },

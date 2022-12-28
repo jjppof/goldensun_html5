@@ -270,8 +270,11 @@ export class DialogManager {
                 }
                 const padding_x = this.avatar_inside_window ? numbers.AVATAR_SIZE + 10 : undefined;
                 let now = this.game.time.now;
-                const play_voice = () => {
-                    if (this.voice_key && this.game.time.now - now > DialogManager.VOICE_MIN_INTERVAL) {
+                const play_voice = (word: string, current_text: string, word_index: number) => {
+                    if (
+                        word_index === 1 ||
+                        (this.voice_key && this.game.time.now - now > DialogManager.VOICE_MIN_INTERVAL)
+                    ) {
                         now = this.game.time.now;
                         this.data.audio.play_se(`voices/${this.voice_key}`);
                     }

@@ -150,6 +150,7 @@ export class MainChar extends Player {
         this._abilities = [];
         this.update_abilities();
         this.turns = 1;
+        this.base_turns = this.turns;
         this.fighter_type = fighter_types.ALLY;
         this.battle_animations_variations = Object.assign({}, battle_animations_variations);
         this.battle_shadow_key = battle_shadow_key;
@@ -881,6 +882,18 @@ export class MainChar extends Player {
         this.update_class();
         this.update_attributes();
         this.update_abilities();
+        this.update_turns_count();
+    }
+
+    /** Updates the amount of turns that this char has in battle. */
+    update_turns_count() {
+        this.extra_turns = 0;
+        this.effects.forEach(effect => {
+            if (effect.type === effect_types.TURNS) {
+                effect.apply_effect();
+            }
+        });
+        this.apply_turns_count_value();
     }
 
     /**
