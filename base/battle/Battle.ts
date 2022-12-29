@@ -1295,7 +1295,13 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                         );
                         if (added_effect) {
                             if (
-                                !target_instance.has_temporary_status(added_effect.status_key_name as temporary_status)
+                                !this.on_going_effects.find(effect => {
+                                    return (
+                                        effect.char.key_name === target_instance.key_name &&
+                                        effect.status_key_name === added_effect.status_key_name &&
+                                        effect.type === effect_types.TEMPORARY_STATUS
+                                    );
+                                })
                             ) {
                                 this.on_going_effects.push(added_effect);
                             }
@@ -1520,6 +1526,22 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                 if (effect.turn_count === 0) {
                     effect.char.remove_effect(effect);
                     effect.char.update_all();
+                    if (
+                        effect.type === effect_types.TEMPORARY_STATUS &&
+                        effect.status_key_name === temporary_status.STUN
+                    ) {
+                        let player_sprite: PlayerSprite;
+                        if (effect.char.fighter_type === fighter_types.ALLY) {
+                            player_sprite = this.allies_info.find(
+                                info => effect.char.key_name === info.instance.key_name
+                            ).sprite;
+                        } else {
+                            player_sprite = this.enemies_info.find(
+                                info => effect.char.key_name === info.instance.key_name
+                            ).sprite;
+                        }
+                        player_sprite.set_action(battle_actions.IDLE);
+                    }
                     effects_to_remove.push(i);
                     if (!avoid_msg) {
                         this.battle_log.add_recover_effect(effect);

@@ -377,6 +377,13 @@ export abstract class Player {
         this.effects = this.effects.filter(effect => {
             return effect !== effect_to_remove;
         });
+        if (effect_to_remove.add_status) {
+            if (effect_to_remove.type === effect_types.TEMPORARY_STATUS) {
+                this.remove_temporary_status(effect_to_remove.status_key_name as temporary_status);
+            } else if (effect_to_remove.type === effect_types.PERMANENT_STATUS) {
+                this.remove_permanent_status(effect_to_remove.status_key_name as permanent_status);
+            }
+        }
         if (apply) {
             effect_to_remove.apply_effect();
         }
