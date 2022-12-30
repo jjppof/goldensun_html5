@@ -120,8 +120,8 @@ export class MainBattleMenu {
                         this.abilities[char.key_name] = [];
                     });
                     this.djinni_already_used = ordered_elements.reduce((a, b) => ((a[b] = 0), a), {});
-                    this.inner_horizontal_menu.open();
                     let this_char = this.data.info.party_data.members[this.current_char_index];
+                    let open_inner_menu = true;
                     while (this_char.is_paralyzed(true)) {
                         this.abilities[this.data.info.party_data.members[this.current_char_index].key_name].push({
                             key_name: "",
@@ -133,12 +133,16 @@ export class MainBattleMenu {
                             this.current_char_index >= Battle.MAX_CHARS_IN_BATTLE ||
                             this.current_char_index >= this.data.info.party_data.members.length
                         ) {
+                            open_inner_menu = false;
                             this.current_char_index = 0;
                             this.battle_instance.on_abilities_choose(this.abilities);
                             break;
                         }
                     }
-                    this.set_avatar();
+                    if (open_inner_menu) {
+                        this.inner_horizontal_menu.open();
+                        this.set_avatar();
+                    }
                 });
                 break;
             case "flee":
@@ -330,6 +334,8 @@ export class MainBattleMenu {
             if (pop_ability) {
                 const ability_info = this.abilities[next_char.key_name].pop();
                 if (
+                    ability_info.key_name &&
+                    ability_info.key_name in this.data.info.abilities_list &&
                     this.data.info.abilities_list[ability_info.key_name].ability_category === ability_categories.SUMMON
                 ) {
                     const requirements = this.data.info.summons_list[ability_info.key_name].requirements;
@@ -339,6 +345,10 @@ export class MainBattleMenu {
                 }
             }
             if (next_char.is_paralyzed(true)) {
+                this.abilities[this.data.info.party_data.members[this.current_char_index].key_name].push({
+                    key_name: "",
+                    targets: [],
+                });
                 this.change_char(step, pop_ability);
             } else {
                 this.set_avatar();
@@ -362,7 +372,10 @@ export class MainBattleMenu {
 
     inner_menu_cancel() {
         const char_key_name = this.data.info.party_data.members[this.current_char_index].key_name;
-        if (this.current_char_index > 0 || this.abilities[char_key_name].length === 1) {
+        if (
+            this.current_char_index > 0 ||
+            (this.abilities[char_key_name].length === 1 && this.abilities[char_key_name][0].key_name)
+        ) {
             this.change_char(BACKWARD, true);
         } else {
             this.inner_horizontal_menu.close();
