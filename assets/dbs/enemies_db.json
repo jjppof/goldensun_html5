@@ -422,7 +422,9 @@
         "battle_scale": 1.0,
         "battle_shadow_key": "00",
         "status_sprite_shift": 15,
-        "change_target_weaker": 0.75,
+        "target_weaker_chance": 0.75,
+        "weight_recover_hp": 0.0,
+        "weight_recover_ailment": 0.0,
         "items": [],
         "abilities": [
             {
@@ -435,7 +437,7 @@
             },
             {
                 "key_name": "guard",
-                "use_weight": 0.5
+                "use_weight": 0.25
             },
             {
                 "key_name": "heat_stun",

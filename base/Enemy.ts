@@ -29,7 +29,7 @@ export class Enemy extends Player {
     public weight_pick_random_ability: number;
     public weight_recover_ailment: number;
     public weight_recover_hp: number;
-    public change_target_weaker: number;
+    public target_weaker_chance: number;
 
     constructor(enemy_data, name) {
         super(enemy_data.key_name, name ? name : enemy_data.name);
@@ -67,7 +67,7 @@ export class Enemy extends Player {
         this.weight_pick_random_ability = enemy_data.weight_pick_random_ability ?? 1.0;
         this.weight_recover_ailment = enemy_data.weight_recover_ailment ?? 1.0;
         this.weight_recover_hp = enemy_data.weight_recover_hp ?? 1.0;
-        this.change_target_weaker = enemy_data.change_target_weaker ?? 0.5;
+        this.target_weaker_chance = enemy_data.target_weaker_chance ?? 0.5;
         this.class = new Classes(
             "no_class",
             "No Class",

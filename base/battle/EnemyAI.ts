@@ -230,7 +230,7 @@ export class EnemyAI {
                     ability_types.DIRECT_DAMAGE,
                 ].includes(ability_obj.type)
             ) {
-                if (Math.random() < (caster.instance as Enemy).change_target_weaker) {
+                if (Math.random() < (caster.instance as Enemy).target_weaker_chance) {
                     const biggest_hp = Math.max(...enemies.map(enemy => enemy.instance.max_hp));
                     const weights = enemies.map(enemy => (biggest_hp - enemy.instance.current_hp) / biggest_hp);
                     main_target_index = weighted_random_pick(
