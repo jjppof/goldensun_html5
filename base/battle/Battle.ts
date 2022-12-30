@@ -965,6 +965,33 @@ export class Battle {
 
             this.battle_menu.chars_status_window.update_chars_info();
 
+            if (
+                !ability.affects_pp &&
+                damage > 0 &&
+                target_instance.current_hp > 0 &&
+                target_instance.has_temporary_status(temporary_status.SLEEP)
+            ) {
+                //random wake-up in case of damage
+                if (Math.random() < 0.25) {
+                    const effects_to_remove: Effect[] = [];
+                    for (let i = 0; target_instance.effects; ++i) {
+                        const effect = target_instance.effects[i];
+                        if (effect.add_status && effect.status_key_name === temporary_status.SLEEP) {
+                            target_instance.remove_effect(effect);
+                            target_instance.update_all();
+                            effects_to_remove.push(effect);
+                            this.battle_log.add_recover_effect(effect);
+                            await this.wait_for_key();
+                        }
+                    }
+                    if (effects_to_remove.length) {
+                        this.on_going_effects = this.on_going_effects.filter(
+                            effect => !effects_to_remove.includes(effect)
+                        );
+                    }
+                }
+            }
+
             await this.wait_for_key();
             await this.check_downed(target_instance);
 
@@ -1237,6 +1264,14 @@ export class Battle {
             }
         }
     }
+
+    /*
+7 is the cap, which is how long buffs will last.
+Debuffs and ailments can last anywhere from 2-7.
+Exceptions include seal induced via Luff/Rime, which is always 2 (the stored value is 16, decreasing by 8 at the end of every round), Regenerate (always 5), and Reflux/counterattack, which is hardcoded to reset to 0 at the end of the round regardless of its actual duration.
+Sleep can also end prematurely, at a rate of 1/4 when a sleeping unit is targeted so long as rhe remaining duration is less than 7 (i.e. kicks in the round after inflicting it). 
+Then there are the obvious ones that work differently: Curse is 7 regardless, unless cured, while Poison and Haunt are permanent until cured.
+*/
 
     /*
 If a sleep is cast over a target that is already sleeping,

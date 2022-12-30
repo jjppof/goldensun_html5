@@ -771,7 +771,7 @@
                 "quantity": 1.25,
                 "operator": "times",
                 "usage": "on_use",
-                "turns_quantity": 3
+                "turns_quantity": 5
             }
         ],
         "ability_category": "psynergy",
@@ -797,7 +797,7 @@
                 "quantity": 1.125,
                 "operator": "times",
                 "usage": "on_use",
-                "turns_quantity": 3
+                "turns_quantity": 5
             }
         ],
         "ability_category": "psynergy",
@@ -823,7 +823,7 @@
                 "quantity": 0.75,
                 "operator": "times",
                 "usage": "on_use",
-                "turns_quantity": 3
+                "turns_quantity": 5
             }
         ],
         "ability_category": "psynergy",
@@ -940,7 +940,7 @@
                 "quantity": 1.25,
                 "operator": "times",
                 "usage": "on_use",
-                "turns_quantity": 3
+                "turns_quantity": 5
             }
         ],
         "ability_category": "psynergy",
@@ -966,7 +966,7 @@
                 "quantity": 1.125,
                 "operator": "times",
                 "usage": "on_use",
-                "turns_quantity": 3
+                "turns_quantity": 5
             }
         ],
         "ability_category": "psynergy",
@@ -993,7 +993,7 @@
                 "add_status": true,
                 "status_key_name": "sleep",
                 "usage": "on_use",
-                "turns_quantity": 7
+                "turns_quantity": 5
             }
         ],
         "ability_category": "psynergy",
@@ -1038,28 +1038,28 @@
                 "operator": "minus",
                 "usage": "on_use",
                 "element": "venus",
-                "turns_quantity": 3
+                "turns_quantity": 5
             },{
                 "type": "resist",
                 "quantity": 40,
                 "operator": "minus",
                 "usage": "on_use",
                 "element": "mercury",
-                "turns_quantity": 3
+                "turns_quantity": 5
             },{
                 "type": "resist",
                 "quantity": 40,
                 "operator": "minus",
                 "usage": "on_use",
                 "element": "mars",
-                "turns_quantity": 3
+                "turns_quantity": 5
             },{
                 "type": "resist",
                 "quantity": 40,
                 "operator": "minus",
                 "usage": "on_use",
                 "element": "jupiter",
-                "turns_quantity": 3
+                "turns_quantity": 5
             }
         ],
         "ability_category": "psynergy",
@@ -1086,28 +1086,28 @@
                 "operator": "minus",
                 "usage": "on_use",
                 "element": "venus",
-                "turns_quantity": 3
+                "turns_quantity": 5
             },{
                 "type": "resist",
                 "quantity": 20,
                 "operator": "minus",
                 "usage": "on_use",
                 "element": "mercury",
-                "turns_quantity": 3
+                "turns_quantity": 5
             },{
                 "type": "resist",
                 "quantity": 20,
                 "operator": "minus",
                 "usage": "on_use",
                 "element": "mars",
-                "turns_quantity": 3
+                "turns_quantity": 5
             },{
                 "type": "resist",
                 "quantity": 20,
                 "operator": "minus",
                 "usage": "on_use",
                 "element": "jupiter",
-                "turns_quantity": 3
+                "turns_quantity": 5
             }
         ],
         "ability_category": "psynergy",
@@ -1134,7 +1134,7 @@
                 "add_status": true,
                 "status_key_name": "delusion",
                 "usage": "on_use",
-                "turns_quantity": 7
+                "turns_quantity": 5
             }
         ],
         "ability_category": "psynergy",
@@ -1222,28 +1222,28 @@
                 "operator": "plus",
                 "usage": "on_use",
                 "element": "venus",
-                "turns_quantity": 3
+                "turns_quantity": 5
             },{
                 "type": "resist",
                 "quantity": 40,
                 "operator": "plus",
                 "usage": "on_use",
                 "element": "mercury",
-                "turns_quantity": 3
+                "turns_quantity": 5
             },{
                 "type": "resist",
                 "quantity": 40,
                 "operator": "plus",
                 "usage": "on_use",
                 "element": "mars",
-                "turns_quantity": 3
+                "turns_quantity": 5
             },{
                 "type": "resist",
                 "quantity": 40,
                 "operator": "plus",
                 "usage": "on_use",
                 "element": "jupiter",
-                "turns_quantity": 3
+                "turns_quantity": 5
             }
         ],
         "ability_category": "psynergy",
@@ -1270,28 +1270,28 @@
                 "operator": "plus",
                 "usage": "on_use",
                 "element": "venus",
-                "turns_quantity": 3
+                "turns_quantity": 5
             },{
                 "type": "resist",
                 "quantity": 40,
                 "operator": "plus",
                 "usage": "on_use",
                 "element": "mercury",
-                "turns_quantity": 3
+                "turns_quantity": 5
             },{
                 "type": "resist",
                 "quantity": 40,
                 "operator": "plus",
                 "usage": "on_use",
                 "element": "mars",
-                "turns_quantity": 3
+                "turns_quantity": 5
             },{
                 "type": "resist",
                 "quantity": 40,
                 "operator": "plus",
                 "usage": "on_use",
                 "element": "jupiter",
-                "turns_quantity": 3
+                "turns_quantity": 5
             }
         ],
         "ability_category": "item",
@@ -1318,7 +1318,7 @@
                 "operator": "plus",
                 "usage": "on_use",
                 "element": "all_elements",
-                "turns_quantity": 3
+                "turns_quantity": 5
             }
         ],
         "ability_category": "psynergy",
@@ -1488,7 +1488,7 @@
                 "quantity": 0.875,
                 "operator": "times",
                 "usage": "on_use",
-                "turns_quantity": 3
+                "turns_quantity": 5
             }
         ],
         "ability_category": "psynergy",
@@ -2029,7 +2029,7 @@
                 "quantity": 0.5,
                 "operator": "times",
                 "usage": "on_use",
-                "turns_quantity": 1
+                "turns_quantity": 5
             }
         ],
         "ability_category": "djinn",
@@ -2108,7 +2108,7 @@
                 "quantity": 1.25,
                 "operator": "times",
                 "usage": "on_use",
-                "turns_quantity": 3
+                "turns_quantity": 5
             }
         ],
         "ability_category": "djinn",
@@ -2135,7 +2135,7 @@
                 "add_status": true,
                 "status_key_name": "delusion",
                 "usage": "on_use",
-                "turns_quantity": 7
+                "turns_quantity": 5
             }
         ],
         "ability_category": "djinn",
@@ -2161,7 +2161,7 @@
                 "quantity": 1.25,
                 "operator": "times",
                 "usage": "on_use",
-                "turns_quantity": 3
+                "turns_quantity": 5
             }
         ],
         "ability_category": "djinn",
@@ -2188,7 +2188,7 @@
                 "add_status": true,
                 "status_key_name": "stun",
                 "usage": "on_use",
-                "turns_quantity": 3
+                "turns_quantity": 5
             }
         ],
         "ability_category": "djinn",
@@ -2272,28 +2272,28 @@
                 "operator": "plus",
                 "usage": "on_use",
                 "element": "venus",
-                "turns_quantity": 3
+                "turns_quantity": 5
             },{
                 "type": "resist",
                 "quantity": 40,
                 "operator": "plus",
                 "usage": "on_use",
                 "element": "mercury",
-                "turns_quantity": 3
+                "turns_quantity": 5
             },{
                 "type": "resist",
                 "quantity": 40,
                 "operator": "plus",
                 "usage": "on_use",
                 "element": "mars",
-                "turns_quantity": 3
+                "turns_quantity": 5
             },{
                 "type": "resist",
                 "quantity": 40,
                 "operator": "plus",
                 "usage": "on_use",
                 "element": "jupiter",
-                "turns_quantity": 3
+                "turns_quantity": 5
             }
         ],
         "ability_category": "djinn",
@@ -2319,7 +2319,7 @@
                 "quantity": 1.5,
                 "operator": "times",
                 "usage": "on_use",
-                "turns_quantity": 3
+                "turns_quantity": 5
             }
         ],
         "ability_category": "djinn",
@@ -2346,7 +2346,7 @@
                 "add_status": true,
                 "status_key_name": "delusion",
                 "usage": "on_use",
-                "turns_quantity": 7
+                "turns_quantity": 5
             }
         ],
         "ability_category": "djinn",
@@ -2418,7 +2418,7 @@
                 "add_status": true,
                 "status_key_name": "delusion",
                 "usage": "on_use",
-                "turns_quantity": 7
+                "turns_quantity": 5
             }
         ],
         "ability_category": "psynergy",
@@ -2498,7 +2498,7 @@
                 "quantity": [0.25, 0.5],
                 "operator": "times",
                 "usage": "on_use",
-                "turns_quantity": 3
+                "turns_quantity": 5
             }
         ],
         "ability_category": "psynergy",
@@ -2561,7 +2561,7 @@
                 "add_status": true,
                 "status_key_name": "sleep",
                 "usage": "on_use",
-                "turns_quantity": 7
+                "turns_quantity": 5
             }
         ],
         "ability_category": "psynergy",
@@ -3330,7 +3330,7 @@
                 "add_status": true,
                 "status_key_name": "delusion",
                 "usage": "on_use",
-                "turns_quantity": 3
+                "turns_quantity": 5
             }
         ],
         "ability_category": "djinn",
@@ -3357,7 +3357,7 @@
                 "operator": "minus",
                 "usage": "on_use",
                 "element": "all_elements",
-                "turns_quantity": 3
+                "turns_quantity": 5
             }
         ],
         "ability_category": "djinn",
@@ -3438,7 +3438,7 @@
                 "quantity": 0.75,
                 "operator": "times",
                 "usage": "on_use",
-                "turns_quantity": 3
+                "turns_quantity": 5
             }
         ],
         "ability_category": "djinn",
@@ -3519,7 +3519,7 @@
                 "add_status": true,
                 "status_key_name": "delusion",
                 "usage": "on_use",
-                "turns_quantity": 7
+                "turns_quantity": 5
             }
         ],
         "ability_category": "item",
@@ -3569,7 +3569,7 @@
                 "add_status": true,
                 "status_key_name": "stun",
                 "usage": "on_use",
-                "turns_quantity": 3
+                "turns_quantity": 5
             }
         ],
         "ability_category": "skill",
