@@ -6,7 +6,7 @@ import {Enemy, get_enemy_instance} from "../Enemy";
 import {ability_types, Ability, ability_categories} from "../Ability";
 import {ChoosingTargetWindow} from "../windows/battle/ChoosingTargetWindow";
 import {EnemyAI} from "./EnemyAI";
-import {BattleFormulas, EVASION_CHANCE, DELUSION_MISS_CHANCE} from "./BattleFormulas";
+import {BattleFormulas, EVASION_CHANCE, DELUSION_MISS_CHANCE, ailment_recovery_base_chances} from "./BattleFormulas";
 import {effect_types, Effect, effect_usages, effect_names} from "../Effect";
 import {ordered_elements, element_names, base_actions} from "../utils";
 import {djinn_status, Djinn} from "../Djinn";
@@ -1558,7 +1558,25 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                     --effect.turn_count;
                 }
 
-                if (effect.turn_count === 0) {
+                let early_ailment_recover = false;
+                if (
+                    effect.type === effect_types.TEMPORARY_STATUS &&
+                    [
+                        temporary_status.DELUSION,
+                        temporary_status.SEAL,
+                        temporary_status.SLEEP,
+                        temporary_status.STUN,
+                    ].includes(effect.status_key_name as temporary_status)
+                ) {
+                    early_ailment_recover = BattleFormulas.ailment_recovery(
+                        effect.char,
+                        effect.turn_count,
+                        ailment_recovery_base_chances[effect.status_key_name]
+                    );
+                    //TODO also do it for debuffs
+                }
+
+                if (effect.turn_count === 0 || early_ailment_recover) {
                     effect.char.remove_effect(effect);
                     effect.char.update_all();
                     if (

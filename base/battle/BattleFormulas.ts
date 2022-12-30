@@ -22,16 +22,29 @@
 */
 
 import {elements, variation} from "../utils";
-import {permanent_status, Player} from "../Player";
+import {permanent_status, Player, temporary_status} from "../Player";
 import {ELEM_ATTR_MAX, ELEM_ATTR_MIN} from "../magic_numbers";
 import * as _ from "lodash";
 import {Ability, ability_types} from "../Ability";
+import {effect_types} from "../Effect";
 
 export const CRITICAL_CHANCE = 1 / 32;
 
 // 1/32 chance to miss with a standard attack, or a roughly 66% chance to miss with Delusion.
 export const EVASION_CHANCE = 1 / 32;
 export const DELUSION_MISS_CHANCE = 66 / 100;
+
+export const ailment_recovery_base_chances = {
+    [temporary_status.DELUSION]: 0.3,
+    [temporary_status.STUN]: 0.2,
+    [temporary_status.SLEEP]: 0.5,
+    [temporary_status.SEAL]: 0.3,
+};
+export const debuff_recovery_base_chances = {
+    [effect_types.ATTACK]: 0.3,
+    [effect_types.DEFENSE]: 0.2,
+    [effect_types.RESIST]: 0.2,
+};
 
 export class BattleFormulas {
     static player_turn_speed(agility, priority_move = false, multi_turn = false) {
@@ -131,7 +144,7 @@ export class BattleFormulas {
         return chance >= Math.random();
     }
 
-    static ailment_recovery(player, turn_number, base_chance) {
+    static ailment_recovery(player: Player, turn_number: number, base_chance: number) {
         return (player.luk * 3 - turn_number * 5 + base_chance * 100) * 655 >= _.random(0, 0xffff);
     }
 
