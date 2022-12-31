@@ -1,4 +1,12 @@
-import {permanent_status, temporary_status, on_catch_status_msg, fighter_types, Player, main_stats} from "../Player";
+import {
+    permanent_status,
+    temporary_status,
+    on_catch_status_msg,
+    fighter_types,
+    Player,
+    main_stats,
+    ailment_recovery_base_chances,
+} from "../Player";
 import {BattleStage} from "./BattleStage";
 import {BattleLog} from "./BattleLog";
 import {MainBattleMenu, PlayerAbilities, PlayerAbility} from "../main_menus/MainBattleMenu";
@@ -1571,7 +1579,7 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                     early_ailment_recover = BattleFormulas.ailment_recovery(
                         effect.char,
                         effect.turn_count,
-                        BattleFormulas.ailment_recovery_base_chances[effect.status_key_name]
+                        ailment_recovery_base_chances[effect.status_key_name]
                     );
                     //TODO also do it for debuffs
                 }

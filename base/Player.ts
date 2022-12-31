@@ -134,6 +134,18 @@ export const ordered_main_stats = [
     main_stats.LUCK,
 ];
 
+export const ailment_recovery_base_chances = {
+    [temporary_status.DELUSION]: 0.3,
+    [temporary_status.STUN]: 0.2,
+    [temporary_status.SLEEP]: 0.5,
+    [temporary_status.SEAL]: 0.3,
+};
+export const debuff_recovery_base_chances = {
+    [effect_types.ATTACK]: 0.3,
+    [effect_types.DEFENSE]: 0.2,
+    [effect_types.RESIST]: 0.2,
+};
+
 /** The base class of MainChar and Enemy. */
 export abstract class Player {
     /** The player key name. */
