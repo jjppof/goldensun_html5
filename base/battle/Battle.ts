@@ -6,7 +6,7 @@ import {Enemy, get_enemy_instance} from "../Enemy";
 import {ability_types, Ability, ability_categories} from "../Ability";
 import {ChoosingTargetWindow} from "../windows/battle/ChoosingTargetWindow";
 import {EnemyAI} from "./EnemyAI";
-import {BattleFormulas, EVASION_CHANCE, DELUSION_MISS_CHANCE, ailment_recovery_base_chances} from "./BattleFormulas";
+import {BattleFormulas, EVASION_CHANCE, DELUSION_MISS_CHANCE} from "./BattleFormulas";
 import {effect_types, Effect, effect_usages, effect_names} from "../Effect";
 import {ordered_elements, element_names, base_actions} from "../utils";
 import {djinn_status, Djinn} from "../Djinn";
@@ -1571,7 +1571,7 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                     early_ailment_recover = BattleFormulas.ailment_recovery(
                         effect.char,
                         effect.turn_count,
-                        ailment_recovery_base_chances[effect.status_key_name]
+                        BattleFormulas.ailment_recovery_base_chances[effect.status_key_name]
                     );
                     //TODO also do it for debuffs
                 }
