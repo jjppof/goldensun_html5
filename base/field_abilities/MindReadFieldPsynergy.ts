@@ -113,7 +113,6 @@ export class MindReadFieldPsynergy extends FieldAbilities {
         this.dialog_manager = new DialogManager(this.game, this.data, undefined, true);
         this.dialog_manager.set_dialog(this.target_object.thought_message, {
             avatar: this.target_object.avatar,
-            voice_key: this.target_object.voice_key,
             hero_direction: this.controllable_char.current_direction,
         });
         this.fire_next_step = this.dialog_manager.next.bind(this.dialog_manager, async (finished: boolean) => {
