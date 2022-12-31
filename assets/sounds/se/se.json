@@ -23,7 +23,11 @@
                     "start": 2.407,
                     "end": 3.199
                 },
-                "positive_4": {
+                "positive_4": { 
+                    "start": 3.199,
+                    "end": 3.9
+                },
+                "item_equip": { 
                     "start": 3.199,
                     "end": 3.9
                 }
@@ -131,6 +135,10 @@
                 "psynergy_stone_shatter": {
                     "start": 14.454,
                     "end": 16.316
+                },
+                "level_up": {
+                    "start": 16.316,
+                    "end": 19.971
                 }
             }
         }
