@@ -67,6 +67,7 @@ export class DjinnListWindow {
     public selected_djinn_index: number;
     public action_text_selected: boolean;
     public page_index: number;
+    public djinn_chosen: boolean;
 
     public chars_sprites: {
         [char_key_name: string]: Phaser.Sprite;
@@ -117,6 +118,7 @@ export class DjinnListWindow {
         this.selected_djinn_index = 0;
         this.action_text_selected = false;
         this.page_index = 0;
+        this.djinn_chosen = false;
 
         this.chars_sprites = {};
         this.djinns_sprites = [];
@@ -170,6 +172,7 @@ export class DjinnListWindow {
         } else {
             if (this.action_text_selected) this.selected_djinn_index = 0;
             this.select_djinn(this.selected_char_index + 1, this.selected_djinn_index);
+            if (!this.setting_djinn_status) this.grant_full_user_control();
         }
     }
 
@@ -188,6 +191,7 @@ export class DjinnListWindow {
         } else {
             if (this.action_text_selected) this.selected_djinn_index = 0;
             this.select_djinn(this.selected_char_index - 1, this.selected_djinn_index);
+            if (!this.setting_djinn_status) this.grant_full_user_control();
         }
     }
 
@@ -205,7 +209,10 @@ export class DjinnListWindow {
         else {
             if (this.action_text_selected || this.selected_djinn_index === this.sizes[this.selected_char_index] - 1) {
                 this.select_djinn(this.selected_char_index, 0, true);
-            } else this.select_djinn(this.selected_char_index, this.selected_djinn_index + 1);
+            } else {
+                this.select_djinn(this.selected_char_index, this.selected_djinn_index + 1);
+                if (!this.setting_djinn_status) this.grant_full_user_control();
+            }
         }
     }
 
@@ -223,7 +230,10 @@ export class DjinnListWindow {
         else {
             if (this.action_text_selected || this.selected_djinn_index === 0) {
                 this.select_djinn(this.selected_char_index, this.sizes[this.selected_char_index] - 1, true);
-            } else this.select_djinn(this.selected_char_index, this.selected_djinn_index - 1);
+            } else {
+                this.select_djinn(this.selected_char_index, this.selected_djinn_index - 1);
+                if (!this.setting_djinn_status) this.grant_full_user_control();
+            }
         }
     }
 
@@ -505,7 +515,11 @@ export class DjinnListWindow {
         view_char_status?: Function,
         on_change_all_djinn_status?: Function
     ) {
-        //Missing check for different states on R Button. Using "Set" sound for all
+        const this_char = this.data.info.party_data.members[this.selected_char_index];
+        const this_djinn = this.data.info.djinni_list[this_char.djinni[this.selected_djinn_index]];
+        const djinn_change_status_sfx =
+            this_djinn.status === djinn_status.STANDBY ? "menu/djinn_set" : "menu/djinn_unset";
+
         const controls: Control[] = [
             {buttons: Button.LEFT, on_down: this.previous_character.bind(this), sfx: {down: "menu/move"}},
             {buttons: Button.RIGHT, on_down: this.next_character.bind(this), sfx: {down: "menu/move"}},
@@ -514,12 +528,13 @@ export class DjinnListWindow {
             {buttons: Button.A, on_down: on_select, sfx: {down: "menu/positive"}},
             {buttons: Button.B, on_down: on_cancel, sfx: {down: "menu/negative"}},
             {
+                // todo: change sfx based on different states when setting or unsetting all djinn
                 buttons: [Button.R, Button.SELECT],
                 halt: true,
                 on_down: on_change_all_djinn_status,
                 sfx: {down: "menu/positive"},
             },
-            {buttons: Button.R, on_down: on_change_djinn_status, sfx: {down: "menu/positive_3"}},
+            {buttons: Button.R, on_down: on_change_djinn_status, sfx: {down: djinn_change_status_sfx}},
             {buttons: Button.L, on_down: view_char_status, sfx: {down: "menu/positive"}},
         ];
         this.data.control_manager.add_controls(controls, {
@@ -742,6 +757,7 @@ export class DjinnListWindow {
             this.chars_quick_info_window.update_text();
             this.set_action_text();
             this.set_djinn_sprite(false);
+            this.grant_full_user_control();
         }
     }
 
@@ -782,13 +798,8 @@ export class DjinnListWindow {
         this.set_djinn_sprite();
 
         this.select_djinn(this.selected_char_index, this.selected_djinn_index);
-        this.grant_control(
-            this.close.bind(this),
-            this.on_choose.bind(this),
-            this.change_djinn_status.bind(this),
-            this.view_char_status.bind(this),
-            this.change_all_djinn_status.bind(this)
-        );
+        this.djinn_chosen = false;
+        this.grant_full_user_control();
     }
 
     view_char_status() {
@@ -833,6 +844,7 @@ export class DjinnListWindow {
     on_choose() {
         const this_char = this.data.info.party_data.members[this.selected_char_index];
         const this_djinn = this.data.info.djinni_list[this_char.djinni[this.selected_djinn_index]];
+        this.djinn_chosen = true;
 
         //make selected djinni's sprite stay on screen
 
@@ -913,13 +925,7 @@ export class DjinnListWindow {
         this.changing_djinn_status = false;
         this.close_callback = close_callback;
 
-        this.grant_control(
-            this.close.bind(this),
-            this.on_choose.bind(this),
-            this.change_djinn_status.bind(this),
-            this.view_char_status.bind(this),
-            this.change_all_djinn_status.bind(this)
-        );
+        this.grant_full_user_control();
 
         this.base_window.show(undefined, false);
         if (open_callback) {
@@ -949,5 +955,15 @@ export class DjinnListWindow {
     deactivate() {
         this.window_active = false;
         this.data.cursor_manager.hide();
+    }
+
+    grant_full_user_control() {
+        this.grant_control(
+            this.djinn_chosen ? this.cancel_djinn_status_set.bind(this) : this.close.bind(this),
+            this.djinn_chosen ? this.set_djinn_operation.bind(this) : this.on_choose.bind(this),
+            this.change_djinn_status.bind(this),
+            this.view_char_status.bind(this),
+            this.change_all_djinn_status.bind(this)
+        );
     }
 }
