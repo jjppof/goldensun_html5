@@ -1,0 +1,172 @@
+{"frames": {
+
+"battle/attack_back/00":
+{
+	"frame": {"x":68,"y":1,"w":32,"h":30},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":2,"w":32,"h":30},
+	"sourceSize": {"w":32,"h":32}
+},
+"battle/attack_back/01":
+{
+	"frame": {"x":1,"y":1,"w":31,"h":32},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":1,"y":0,"w":31,"h":32},
+	"sourceSize": {"w":32,"h":32}
+},
+"battle/attack_front/00":
+{
+	"frame": {"x":34,"y":1,"w":32,"h":31},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":31},
+	"sourceSize": {"w":32,"h":32}
+},
+"battle/attack_front/01":
+{
+	"frame": {"x":133,"y":1,"w":27,"h":31},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":5,"y":0,"w":27,"h":31},
+	"sourceSize": {"w":32,"h":32}
+},
+"battle/attack_init_back/00":
+{
+	"frame": {"x":68,"y":1,"w":32,"h":30},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":2,"w":32,"h":30},
+	"sourceSize": {"w":32,"h":32}
+},
+"battle/attack_init_front/00":
+{
+	"frame": {"x":34,"y":1,"w":32,"h":31},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":31},
+	"sourceSize": {"w":32,"h":32}
+},
+"battle/cast_back/00":
+{
+	"frame": {"x":162,"y":1,"w":30,"h":27},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":5,"w":30,"h":27},
+	"sourceSize": {"w":32,"h":32}
+},
+"battle/cast_front/00":
+{
+	"frame": {"x":134,"y":34,"w":29,"h":25},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":2,"y":7,"w":29,"h":25},
+	"sourceSize": {"w":32,"h":32}
+},
+"battle/cast_init_back/00":
+{
+	"frame": {"x":162,"y":1,"w":30,"h":27},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":5,"w":30,"h":27},
+	"sourceSize": {"w":32,"h":32}
+},
+"battle/cast_init_front/00":
+{
+	"frame": {"x":134,"y":34,"w":29,"h":25},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":2,"y":7,"w":29,"h":25},
+	"sourceSize": {"w":32,"h":32}
+},
+"battle/damage_back/00":
+{
+	"frame": {"x":165,"y":30,"w":27,"h":31},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":3,"y":1,"w":27,"h":31},
+	"sourceSize": {"w":32,"h":32}
+},
+"battle/damage_front/00":
+{
+	"frame": {"x":102,"y":1,"w":29,"h":31},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":2,"y":1,"w":29,"h":31},
+	"sourceSize": {"w":32,"h":32}
+},
+"battle/idle_back/00":
+{
+	"frame": {"x":162,"y":1,"w":30,"h":27},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":5,"w":30,"h":27},
+	"sourceSize": {"w":32,"h":32}
+},
+"battle/idle_back/01":
+{
+	"frame": {"x":35,"y":34,"w":31,"h":28},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":4,"w":31,"h":28},
+	"sourceSize": {"w":32,"h":32}
+},
+"battle/idle_back/02":
+{
+	"frame": {"x":1,"y":35,"w":32,"h":27},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":5,"w":32,"h":27},
+	"sourceSize": {"w":32,"h":32}
+},
+"battle/idle_back/03":
+{
+	"frame": {"x":35,"y":34,"w":31,"h":28},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":4,"w":31,"h":28},
+	"sourceSize": {"w":32,"h":32}
+},
+"battle/idle_front/00":
+{
+	"frame": {"x":134,"y":34,"w":29,"h":25},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":2,"y":7,"w":29,"h":25},
+	"sourceSize": {"w":32,"h":32}
+},
+"battle/idle_front/01":
+{
+	"frame": {"x":101,"y":34,"w":31,"h":25},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":1,"y":7,"w":31,"h":25},
+	"sourceSize": {"w":32,"h":32}
+},
+"battle/idle_front/02":
+{
+	"frame": {"x":68,"y":34,"w":31,"h":28},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":1,"y":4,"w":31,"h":28},
+	"sourceSize": {"w":32,"h":32}
+},
+"battle/idle_front/03":
+{
+	"frame": {"x":101,"y":34,"w":31,"h":25},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":1,"y":7,"w":31,"h":25},
+	"sourceSize": {"w":32,"h":32}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "momonga_battle.png",
+	"format": "RGBA8888",
+	"size": {"w":193,"h":63},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:dfd996d13e03c6126464769dd733ebfc:adcebc4ffb9328951a068e030823cc39:f41882e76a104ad2be3305f8d0270fee$"
+}
+}

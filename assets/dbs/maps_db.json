@@ -135,6 +135,6 @@
         "lazy_load": true,
         "collision_embedded": true,
         "expected_party_level": 18,
-        "background_key": "forest"
+        "background_key": "bg_forest"
     }
 ]

@@ -595,6 +595,123 @@
          "y":0
         }, 
         {
+         "color":"#aa5500",
+         "draworder":"topdown",
+         "id":20,
+         "name":"encounter_zones",
+         "objects":[
+                {
+                 "class":"",
+                 "height":224,
+                 "id":45,
+                 "name":"",
+                 "properties":
+                    {
+                     "parties":"[\"mini_goblin_party\", \"mini_goblin_party_2\", \"wild_wolf_party\"]"
+                    },
+                 "propertytypes":
+                    {
+                     "parties":"string"
+                    },
+                 "rotation":0,
+                 "visible":true,
+                 "width":104,
+                 "x":112,
+                 "y":136
+                }, 
+                {
+                 "class":"",
+                 "height":120,
+                 "id":47,
+                 "name":"",
+                 "properties":
+                    {
+                     "parties":"[\"mini_goblin_party\", \"mini_goblin_party_2\", \"wild_wolf_party\"]"
+                    },
+                 "propertytypes":
+                    {
+                     "parties":"string"
+                    },
+                 "rotation":0,
+                 "visible":true,
+                 "width":240,
+                 "x":24,
+                 "y":8
+                }, 
+                {
+                 "class":"",
+                 "height":40,
+                 "id":48,
+                 "name":"",
+                 "properties":
+                    {
+                     "parties":"[\"mini_goblin_party\", \"mini_goblin_party_2\", \"wild_wolf_party\"]"
+                    },
+                 "propertytypes":
+                    {
+                     "parties":"string"
+                    },
+                 "rotation":0,
+                 "visible":true,
+                 "width":120,
+                 "x":960,
+                 "y":64
+                }, 
+                {
+                 "class":"",
+                 "height":72,
+                 "id":49,
+                 "name":"",
+                 "properties":
+                    {
+                     "parties":"[\"mini_goblin_party\", \"mini_goblin_party_2\", \"wild_wolf_party\"]"
+                    },
+                 "propertytypes":
+                    {
+                     "parties":"string"
+                    },
+                 "rotation":0,
+                 "visible":true,
+                 "width":128,
+                 "x":720,
+                 "y":136
+                }, 
+                {
+                 "class":"",
+                 "height":40,
+                 "id":50,
+                 "name":"",
+                 "properties":
+                    {
+                     "parties":"[\"mini_goblin_party\", \"mini_goblin_party_2\", \"wild_wolf_party\"]"
+                    },
+                 "propertytypes":
+                    {
+                     "parties":"string"
+                    },
+                 "rotation":0,
+                 "visible":true,
+                 "width":136,
+                 "x":376,
+                 "y":160
+                }],
+         "opacity":1,
+         "properties":
+            {
+             "base_rate":65,
+             "encounter_zone":true
+            },
+         "propertytypes":
+            {
+             "base_rate":"int",
+             "encounter_zone":"bool"
+            },
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
+        }, 
+        {
          "color":"#ff0000",
          "draworder":"topdown",
          "id":10,
@@ -2157,8 +2274,8 @@
          "x":0,
          "y":0
         }],
- "nextlayerid":20,
- "nextobjectid":45,
+ "nextlayerid":21,
+ "nextobjectid":51,
  "orientation":"orthogonal",
  "properties":
     {

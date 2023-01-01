@@ -195,7 +195,7 @@
     },{
         "key_name": "mini_goblin",
         "name": "Mini Goblin",
-        "level": 19,
+        "level": 17,
         "turns": 1,
         "max_hp": 220,
         "max_pp": 0,
@@ -260,11 +260,159 @@
                 "damage_back",
                 "damage_front",
                 "attack_init_back",
-                "attack_init_front"
+                "attack_init_front",
+                "cast_back",
+                "cast_front",
+                "cast_init_back",
+                "cast_init_front"
             ],
-            "frames_count": [4,4,2,2,1,1,1,1],
-            "frame_rate": [3,3,10,10,1,1,1,1],
-            "loop": [true,true,false,false,false,false,false,false]
+            "frames_count": [4,4,2,2,1,1,1,1,1,1,1,1],
+            "frame_rate": [3,3,10,10,1,1,1,1,1,1,1,1],
+            "loop": [true,true,false,false,false,false,false,false,false,false,false,false]
+        }
+    },{
+        "key_name": "wild_wolf",
+        "name": "Wild Wolf",
+        "level": 16,
+        "turns": 1,
+        "max_hp": 180,
+        "max_pp": 0,
+        "hp_recovery": 0,
+        "pp_recovery": 0,
+        "atk": 230,
+        "def": 15,
+        "agi": 75,
+        "luk": 20,
+        "battle_scale": 1.0,
+        "battle_shadow_key": "00",
+        "status_sprite_shift": 15,
+        "items": [],
+        "abilities": [
+            {
+                "key_name": "attack",
+                "use_weight": 1.0
+            }
+        ],
+        "vulnerabilities": [],
+        "coins_reward": 110,
+        "item_reward": "",
+        "item_reward_chance": 0,
+        "exp_reward": 80,
+        "base_level": {
+            "venus": 1,
+            "mercury": 1,
+            "mars": 1,
+            "jupiter": 1
+        },
+        "base_power": {
+            "venus": 100,
+            "mercury": 100,
+            "mars": 100,
+            "jupiter": 100
+        },
+        "base_resist": {
+            "venus": 100,
+            "mercury": 100,
+            "mars": 100,
+            "jupiter": 100
+        },
+        "battle_animations_variations": {
+            "attack": "attack"
+        },
+        "battle_spritesheet": {
+            "spritesheet": {
+                "json": "assets/images/spritesheets/battle/wild_wolf_battle.json",
+                "image": "assets/images/spritesheets/battle/wild_wolf_battle.png"
+            },
+            "animations": [
+                "idle_back", 
+                "idle_front",
+                "attack_back",
+                "attack_front",
+                "damage_back",
+                "damage_front",
+                "attack_init_back",
+                "attack_init_front",
+                "cast_back",
+                "cast_front",
+                "cast_init_back",
+                "cast_init_front"
+            ],
+            "frames_count": [4,4,2,2,1,1,1,1,1,1,1,1],
+            "frame_rate": [3,3,10,10,1,1,1,1,1,1,1,1],
+            "loop": [true,true,false,false,false,false,false,false,false,false,false,false]
+        }
+    },{
+        "key_name": "momonga",
+        "name": "Momonga",
+        "level": 15,
+        "turns": 1,
+        "max_hp": 150,
+        "max_pp": 0,
+        "hp_recovery": 0,
+        "pp_recovery": 0,
+        "atk": 195,
+        "def": 13,
+        "agi": 85,
+        "luk": 25,
+        "battle_scale": 1.0,
+        "battle_shadow_key": "00",
+        "status_sprite_shift": 15,
+        "items": [],
+        "abilities": [
+            {
+                "key_name": "attack",
+                "use_weight": 1.0
+            }
+        ],
+        "vulnerabilities": [],
+        "coins_reward": 100,
+        "item_reward": "",
+        "item_reward_chance": 0,
+        "exp_reward": 75,
+        "base_level": {
+            "venus": 1,
+            "mercury": 1,
+            "mars": 1,
+            "jupiter": 1
+        },
+        "base_power": {
+            "venus": 100,
+            "mercury": 100,
+            "mars": 100,
+            "jupiter": 100
+        },
+        "base_resist": {
+            "venus": 100,
+            "mercury": 100,
+            "mars": 100,
+            "jupiter": 100
+        },
+        "battle_animations_variations": {
+            "attack": "attack"
+        },
+        "battle_spritesheet": {
+            "spritesheet": {
+                "json": "assets/images/spritesheets/battle/momonga_battle.json",
+                "image": "assets/images/spritesheets/battle/momonga_battle.png"
+            },
+            "animations": [
+                "idle_back", 
+                "idle_front",
+                "attack_back",
+                "attack_front",
+                "damage_back",
+                "damage_front",
+                "attack_init_back",
+                "attack_init_front",
+                "cast_back",
+                "cast_front",
+                "cast_init_back",
+                "cast_init_front"
+            ],
+            "frames_count": [4,4,2,2,1,1,1,1,1,1,1,1],
+            "frame_rate": [3,3,10,10,1,1,1,1,1,1,1,1],
+            "loop": [true,true,false,false,false,false,false,false,false,false,false,false]
         }
     },{
         "key_name": "jupiter_djinn_kite",
