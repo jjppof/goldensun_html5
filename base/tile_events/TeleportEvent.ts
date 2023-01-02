@@ -86,7 +86,7 @@ export class TeleportEvent extends TileEvent {
         this._stop_climbing = stop_climbing ?? false;
         this.dest_collision_layer = dest_collision_layer ?? 0;
         this.destination_direction = destination_direction;
-        this.keep_encounter_cumulator = keep_encounter_cumulator;
+        this.keep_encounter_cumulator = keep_encounter_cumulator ?? true;
         this.fade_camera = fade_camera ?? true;
         this.skip_checks = skip_checks ?? false;
         this.finish_before_fadeout = finish_before_fadeout ?? false;
@@ -262,7 +262,10 @@ export class TeleportEvent extends TileEvent {
         const target_collision_layer = this.dest_collision_layer;
         this.data.hero.set_collision_layer(target_collision_layer);
         this.data.map.unset_map();
-        const encounter_cumulator = this.keep_encounter_cumulator ? this.data.map.encounter_cumulator : undefined;
+        const encounter_cumulator =
+            this.keep_encounter_cumulator && previous_map_name === next_map_key_name
+                ? this.data.map.encounter_cumulator
+                : undefined;
         this.data.map = await this.data.info.maps_list[next_map_key_name].mount_map(
             target_collision_layer,
             encounter_cumulator,
