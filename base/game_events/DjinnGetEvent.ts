@@ -822,10 +822,16 @@ export class DjinnGetEvent extends GameEvent {
 
         this.aux_promise = new Promise(resolve => (this.aux_resolve = resolve));
         const party = this.enemy_party_key;
+        const bgm =
+            this.data.info.party_data.members[0].key_name in this.data.info.battle_bgms
+                ? this.data.info.battle_bgms[this.data.info.party_data.members[0].key_name]
+                : this.data.info.battle_bgms.default;
         const event = this.data.game_event_manager.get_event_instance({
             type: event_types.BATTLE,
             background_key: this.custom_battle_bg ?? this.data.map.background_key,
             enemy_party_key: party,
+            bgm: bgm,
+            reset_previous_bgm: true,
         }) as BattleEvent;
         event.assign_before_fade_finish_callback(() => {
             this.origin_npc.set_position({
