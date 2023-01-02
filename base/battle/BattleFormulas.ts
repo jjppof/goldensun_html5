@@ -33,6 +33,8 @@ export const CRITICAL_CHANCE = 1 / 32;
 export const EVASION_CHANCE = 1 / 32;
 export const DELUSION_MISS_CHANCE = 66 / 100;
 
+export const DEATH_CURSE_TURNS_COUNT = 7;
+
 export class BattleFormulas {
     static player_turn_speed(agility, priority_move = false, multi_turn = false) {
         return (agility + ((agility * _.random(0, 65535)) >> 20)) * (multi_turn ? 0.5 : 1) + (priority_move ? 1e4 : 0);

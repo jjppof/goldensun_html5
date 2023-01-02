@@ -1037,28 +1037,7 @@
                 "quantity": 40,
                 "operator": "minus",
                 "usage": "on_use",
-                "element": "venus",
-                "turns_quantity": 5
-            },{
-                "type": "resist",
-                "quantity": 40,
-                "operator": "minus",
-                "usage": "on_use",
-                "element": "mercury",
-                "turns_quantity": 5
-            },{
-                "type": "resist",
-                "quantity": 40,
-                "operator": "minus",
-                "usage": "on_use",
-                "element": "mars",
-                "turns_quantity": 5
-            },{
-                "type": "resist",
-                "quantity": 40,
-                "operator": "minus",
-                "usage": "on_use",
-                "element": "jupiter",
+                "element": "all_elements",
                 "turns_quantity": 5
             }
         ],
@@ -1085,28 +1064,7 @@
                 "quantity": 20,
                 "operator": "minus",
                 "usage": "on_use",
-                "element": "venus",
-                "turns_quantity": 5
-            },{
-                "type": "resist",
-                "quantity": 20,
-                "operator": "minus",
-                "usage": "on_use",
-                "element": "mercury",
-                "turns_quantity": 5
-            },{
-                "type": "resist",
-                "quantity": 20,
-                "operator": "minus",
-                "usage": "on_use",
-                "element": "mars",
-                "turns_quantity": 5
-            },{
-                "type": "resist",
-                "quantity": 20,
-                "operator": "minus",
-                "usage": "on_use",
-                "element": "jupiter",
+                "element": "all_elements",
                 "turns_quantity": 5
             }
         ],
@@ -1221,28 +1179,7 @@
                 "quantity": 40,
                 "operator": "plus",
                 "usage": "on_use",
-                "element": "venus",
-                "turns_quantity": 5
-            },{
-                "type": "resist",
-                "quantity": 40,
-                "operator": "plus",
-                "usage": "on_use",
-                "element": "mercury",
-                "turns_quantity": 5
-            },{
-                "type": "resist",
-                "quantity": 40,
-                "operator": "plus",
-                "usage": "on_use",
-                "element": "mars",
-                "turns_quantity": 5
-            },{
-                "type": "resist",
-                "quantity": 40,
-                "operator": "plus",
-                "usage": "on_use",
-                "element": "jupiter",
+                "element": "all_elements",
                 "turns_quantity": 5
             }
         ],
@@ -1269,28 +1206,7 @@
                 "quantity": 40,
                 "operator": "plus",
                 "usage": "on_use",
-                "element": "venus",
-                "turns_quantity": 5
-            },{
-                "type": "resist",
-                "quantity": 40,
-                "operator": "plus",
-                "usage": "on_use",
-                "element": "mercury",
-                "turns_quantity": 5
-            },{
-                "type": "resist",
-                "quantity": 40,
-                "operator": "plus",
-                "usage": "on_use",
-                "element": "mars",
-                "turns_quantity": 5
-            },{
-                "type": "resist",
-                "quantity": 40,
-                "operator": "plus",
-                "usage": "on_use",
-                "element": "jupiter",
+                "element": "all_elements",
                 "turns_quantity": 5
             }
         ],
@@ -2271,28 +2187,7 @@
                 "quantity": 40,
                 "operator": "plus",
                 "usage": "on_use",
-                "element": "venus",
-                "turns_quantity": 5
-            },{
-                "type": "resist",
-                "quantity": 40,
-                "operator": "plus",
-                "usage": "on_use",
-                "element": "mercury",
-                "turns_quantity": 5
-            },{
-                "type": "resist",
-                "quantity": 40,
-                "operator": "plus",
-                "usage": "on_use",
-                "element": "mars",
-                "turns_quantity": 5
-            },{
-                "type": "resist",
-                "quantity": 40,
-                "operator": "plus",
-                "usage": "on_use",
-                "element": "jupiter",
+                "element": "all_elements",
                 "turns_quantity": 5
             }
         ],

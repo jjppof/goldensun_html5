@@ -12,7 +12,7 @@ import {
 } from "./Player";
 import {variation, elements, ordered_elements} from "./utils";
 import * as _ from "lodash";
-import {BattleFormulas} from "./battle/BattleFormulas";
+import {BattleFormulas, DEATH_CURSE_TURNS_COUNT} from "./battle/BattleFormulas";
 import {MainChar} from "./MainChar";
 import {Enemy} from "./Enemy";
 import * as mathjs from "mathjs";
@@ -467,24 +467,57 @@ export class Effect {
                 vulnerability_chance
             )
         ) {
-            added_effect = target.add_effect(effect_obj, ability, true).effect;
-            if (added_effect.type === effect_types.TEMPORARY_STATUS) {
-                if (
-                    added_effect.status_key_name === temporary_status.DEATH_CURSE &&
-                    target.has_temporary_status(temporary_status.DEATH_CURSE)
-                ) {
-                    target.set_effect_turns_count(added_effect);
-                } else {
+            switch (effect_obj.status_key_name) {
+                case temporary_status.DEATH_CURSE:
+                    if (target.has_temporary_status(temporary_status.DEATH_CURSE)) {
+                        const existing_effect = target.effects.find(
+                            effect => effect.add_status && effect.status_key_name === temporary_status.DEATH_CURSE
+                        );
+                        existing_effect.turn_count -= 1;
+                        added_effect = existing_effect;
+                    } else {
+                        added_effect = target.add_effect(effect_obj, ability, true).effect;
+                        target.set_effect_turns_count(added_effect, DEATH_CURSE_TURNS_COUNT, false);
+                    }
+                    break;
+                case temporary_status.SLEEP:
+                    if (target.has_temporary_status(temporary_status.SLEEP)) {
+                        const existing_effect = target.effects.find(
+                            effect => effect.add_status && effect.status_key_name === temporary_status.SLEEP
+                        );
+                        existing_effect.turn_count = effect_obj.turns_quantity;
+                        added_effect = existing_effect;
+                        break;
+                    }
+                case temporary_status.DELUSION:
+                case temporary_status.STUN:
+                case temporary_status.SEAL:
+                    if (target.has_temporary_status(effect_obj.status_key_name as temporary_status)) {
+                        break;
+                    }
+                case permanent_status.POISON:
+                    if (
+                        target.has_permanent_status(permanent_status.POISON) ||
+                        target.has_permanent_status(permanent_status.VENOM)
+                    ) {
+                        break;
+                    }
+                case permanent_status.HAUNT:
+                    if (target.has_permanent_status(effect_obj.status_key_name as permanent_status)) {
+                        break;
+                    }
+                    added_effect = target.add_effect(effect_obj, ability, true).effect;
                     target.set_effect_turns_count(added_effect, added_effect.turn_count, false);
-                }
-            } else if (
-                added_effect.status_key_name === permanent_status.VENOM &&
-                target.has_permanent_status(permanent_status.POISON)
-            ) {
-                const poison_effect = _.find(target.effects, {
-                    status_key_name: permanent_status.POISON,
-                });
-                target.remove_effect(poison_effect, true);
+                    break;
+                case permanent_status.VENOM:
+                    if (target.has_permanent_status(permanent_status.POISON)) {
+                        const poison_effect = _.find(target.effects, {
+                            status_key_name: permanent_status.POISON,
+                        });
+                        target.remove_effect(poison_effect, true);
+                    }
+                    added_effect = target.add_effect(effect_obj, ability, true).effect;
+                    target.set_effect_turns_count(added_effect, added_effect.turn_count, false);
             }
         }
         return added_effect;

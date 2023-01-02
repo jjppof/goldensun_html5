@@ -1318,15 +1318,6 @@ So, if a character will die after 5 turns and you land another Curse on them, it
 
             switch (effect_obj.type) {
                 case effect_types.PERMANENT_STATUS:
-                    if (effect_obj.add_status) {
-                        if (target_instance.has_permanent_status(effect_obj.status_key_name as permanent_status)) break;
-                        if (
-                            effect_obj.status_key_name === permanent_status.POISON &&
-                            target_instance.has_permanent_status(permanent_status.VENOM)
-                        )
-                            break;
-                    }
-
                 case effect_types.TEMPORARY_STATUS:
                     if (effect_obj.add_status) {
                         const added_effect = Effect.add_status_to_player(
@@ -1337,15 +1328,7 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                             target_info.magnitude
                         );
                         if (added_effect) {
-                            if (
-                                !this.on_going_effects.find(effect => {
-                                    return (
-                                        effect.char.key_name === target_instance.key_name &&
-                                        effect.status_key_name === added_effect.status_key_name &&
-                                        effect.type === effect_types.TEMPORARY_STATUS
-                                    );
-                                })
-                            ) {
+                            if (added_effect.type === effect_types.TEMPORARY_STATUS) {
                                 this.on_going_effects.push(added_effect);
                             }
                             if (
@@ -1383,6 +1366,7 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                             this.battle_log.add_recover_effect(removed_effect);
                             await this.wait_for_key();
                         }
+                        //this for is for the statuses that don't have an associated effect
                         for (let i = 0; i < removed_items.status_removed.length; ++i) {
                             const removed_status = removed_items.status_removed[i];
                             if ([permanent_status.DOWNED, temporary_status.STUN].includes(removed_status)) {
