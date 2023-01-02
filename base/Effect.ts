@@ -473,7 +473,7 @@ export class Effect {
                         const existing_effect = target.effects.find(
                             effect => effect.add_status && effect.status_key_name === temporary_status.DEATH_CURSE
                         );
-                        existing_effect.turn_count -= 1;
+                        existing_effect.char.set_effect_turns_count(existing_effect);
                         added_effect = existing_effect;
                     } else {
                         added_effect = target.add_effect(effect_obj, ability, true).effect;
@@ -485,7 +485,7 @@ export class Effect {
                         const existing_effect = target.effects.find(
                             effect => effect.add_status && effect.status_key_name === temporary_status.SLEEP
                         );
-                        existing_effect.turn_count = effect_obj.turns_quantity;
+                        existing_effect.char.set_effect_turns_count(existing_effect, effect_obj.turns_quantity, false);
                         added_effect = existing_effect;
                         break;
                     }
