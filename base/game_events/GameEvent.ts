@@ -98,6 +98,7 @@ export enum event_types {
     EVENT_ACTIVATION = "event_activation",
     SET_CHAR_VISIBILITY = "set_char_visibility",
     EVENTS_HOLDER = "events_holder",
+    EVENTS_LOOP = "events_loop",
 }
 
 /**

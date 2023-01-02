@@ -64,6 +64,7 @@ import {EventCallerEvent} from "./EventCallerEvent";
 import {EventActivationEvent} from "./EventActivationEvent";
 import {SetCharVisibilityEvent} from "./SetCharVisibilityEvent";
 import {EventsHolderEvent} from "./EventsHolderEvent";
+import {EventsLoopEvent} from "./EventsLoopEvent";
 
 export enum interaction_patterns {
     NO_INTERACTION = "no_interaction",
@@ -1018,6 +1019,16 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.events
+                );
+            case event_types.EVENTS_LOOP:
+                return new EventsLoopEvent(
+                    this.game,
+                    this.data,
+                    info.active,
+                    info.key_name,
+                    info.keep_reveal,
+                    info.interval,
                     info.events
                 );
             default:
