@@ -257,7 +257,7 @@ export class TeleportEvent extends TileEvent {
     }
 
     private async change_map() {
-        const curr_map_name = this.data.map.name;
+        const previous_map_name = this.data.map.key_name;
         const next_map_key_name = this.target;
         const target_collision_layer = this.dest_collision_layer;
         this.data.hero.set_collision_layer(target_collision_layer);
@@ -265,7 +265,12 @@ export class TeleportEvent extends TileEvent {
         const encounter_cumulator = this.keep_encounter_cumulator ? this.data.map.encounter_cumulator : undefined;
         this.data.map = await this.data.info.maps_list[next_map_key_name].mount_map(
             target_collision_layer,
-            encounter_cumulator
+            encounter_cumulator,
+            {
+                x: this.x_target,
+                y: this.y_target,
+            },
+            previous_map_name === next_map_key_name ? this.data.map.retreat_data : null
         );
         this.data.map.set_map_bounds(this.x_target, this.y_target);
         this.data.collision.config_collision_groups(this.data.map);
@@ -282,7 +287,7 @@ export class TeleportEvent extends TileEvent {
             this.data.hero.sprite.body.y = get_centered_pos_in_px(this.y_target, this.data.map.tile_height);
         }
         this.game.physics.p2.resume();
-        this.camera_fade_out(curr_map_name);
+        this.camera_fade_out(previous_map_name);
     }
 
     private camera_fade_out(previous_map_name?: string) {
@@ -293,7 +298,7 @@ export class TeleportEvent extends TileEvent {
         this.data.map.npcs.forEach(npc => npc.update());
 
         const on_camera_fade_out = () => {
-            if (this.data.map.show_map_name && this.data.map.name !== previous_map_name) {
+            if (this.data.map.show_map_name && this.data.map.key_name !== previous_map_name) {
                 this.data.map.map_name_window.show();
                 this.game.time.events.add(2000, () => {
                     if (this.data.map.map_name_window.open) {

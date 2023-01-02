@@ -14,6 +14,7 @@ import {
     parse_blend_mode,
     weighted_random_pick,
     engine_filters,
+    get_sqr_distance,
 } from "./utils";
 import {BattleEvent} from "./game_events/BattleEvent";
 import {Djinn} from "./Djinn";
@@ -296,11 +297,8 @@ export class Map {
         return this._internal_map_objs_storage_keys;
     }
 
-    /**
-     * Gets Retreat psynergy info.
-     * @returns returns the x and y tile posoition to retreat and the destination collision index and direction.
-     */
-    get_retreat_data() {
+    /** Gets Retreat psynergy info. Returns the x and y tile posoition to retreat and the destination collision index and direction. */
+    get retreat_data() {
         return this._retreat_data;
     }
 
@@ -1680,9 +1678,16 @@ export class Map {
      * This is the main function of this class. It mounts the map.
      * @param collision_layer the initial collision layer.
      * @param encounter_cumulator the initial encounter cumulator. If not passed, it's reset.
+     * @param hero_dest an object that holds the x and y tile positions that the hero will be.
+     * @param retreat_data retreat data that can be propagated from previous map if it has the same key name.
      * @returns returns the mounted map.
      */
-    async mount_map(collision_layer: number = 0, encounter_cumulator?: number) {
+    async mount_map(
+        collision_layer: number = 0,
+        encounter_cumulator?: number,
+        hero_dest?: {x: number; y: number},
+        retreat_data?: Map["retreat_data"]
+    ) {
         if (!this.assets_loaded) {
             //lazy load assets
             let load_promise_resolve;
@@ -1748,11 +1753,20 @@ export class Map {
             this.expected_party_level = this.sprite.properties.expected_party_level;
         }
 
-        if (this.sprite.properties?.retreat_data) {
+        if (retreat_data) {
+            this._retreat_data = retreat_data;
+        } else if (this.data.snapshot_manager.snapshot?.map_data.retreat_data) {
+            this._retreat_data = this.data.snapshot_manager.snapshot?.map_data.retreat_data;
+        } else if (this.sprite.properties?.retreat_data) {
             try {
                 const parsed_data = JSON.parse(this.sprite.properties.retreat_data);
-                this._retreat_data = parsed_data;
-                this._retreat_data.direction = directions[parsed_data.direction as string];
+                const closest_retreat_point = parsed_data.reduce((acc, cur) => {
+                    const prev_dist = acc ? get_sqr_distance(hero_dest.x, acc.x, hero_dest.y, acc.y) : Infinity;
+                    const cur_dist = get_sqr_distance(hero_dest.x, cur.x, hero_dest.y, cur.y);
+                    return cur_dist < prev_dist ? cur : acc;
+                }, null);
+                this._retreat_data = closest_retreat_point;
+                this._retreat_data.direction = directions[closest_retreat_point.direction as string];
             } catch {
                 console.warn("The Retreat data is not a valid JSON.");
             }

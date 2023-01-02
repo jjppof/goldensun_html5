@@ -2702,7 +2702,7 @@
          "y":0
         }],
  "nextlayerid":13,
- "nextobjectid":66,
+ "nextobjectid":67,
  "orientation":"orthogonal",
  "properties":
     {
@@ -2717,6 +2717,7 @@
      "npc\/02":"{\n\"key_name\": \"avimander\",\n\"label\": \"avimander\",\n\"storage_keys\":{\n  \"active\": \"avimander_battle\"\n},\n\"x\": 35,\n\"y\": 36,\n\"npc_type\": \"normal\",\n\"movement_type\": \"idle\",\n\"base_collision_layer\": 0\n}",
      "real_tile_height":16,
      "real_tile_width":16,
+     "retreat_data":"[\n  {\"x\": 10.5, \"y\": 26, \"collision_layer\": 0, \"direction\": \"up\"},\n  {\"x\": 88, \"y\": 13, \"collision_layer\": 0, \"direction\": \"up\"}\n]",
      "tile_event\/01":"{\n\"type\": \"teleport\",\n\"x_target\": 38.5,\n\"y_target\": 25,\n\"target\": \"cave\",\n\"activation_directions\": \"up\",\n\"x\": 26,\n\"y\": 4,\n\"open_door\": false,\n\"dest_collision_layer\": 1,\n\"activation_collision_layers\": [0]\n}",
      "tile_event\/02":"{\n\"type\": \"jump\",\n\"x\": 45,\n\"y\": 18,\n\"activation_directions\": [\"right\"],\n\"activation_collision_layers\": [1],\n\"active\": false\n}",
      "tile_event\/03":"{\n\"type\": \"jump\",\n\"x\": 47,\n\"y\": 18,\n\"activation_directions\": [\"left\"],\n\"activation_collision_layers\": [1],\n\"active\": false\n}",
@@ -2754,6 +2755,7 @@
      "npc\/02":"string",
      "real_tile_height":"int",
      "real_tile_width":"int",
+     "retreat_data":"string",
      "tile_event\/01":"string",
      "tile_event\/02":"string",
      "tile_event\/03":"string",

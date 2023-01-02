@@ -320,9 +320,12 @@ export class GoldenSun {
         const map_key_name = snapshot?.map_data.key_name ?? this.dbs.init_db.map_key_name;
         const map = this.info.maps_list[map_key_name];
         const initial_collision_layer = snapshot?.map_data.collision_layer ?? this.dbs.init_db.collision_layer;
-        this.map = await map.mount_map(initial_collision_layer, snapshot?.map_data.encounter_cumulator);
         const hero_initial_x = snapshot?.map_data.pc.position.x ?? this.dbs.init_db.x_tile_position;
         const hero_initial_y = snapshot?.map_data.pc.position.y ?? this.dbs.init_db.y_tile_position;
+        this.map = await map.mount_map(initial_collision_layer, snapshot?.map_data.encounter_cumulator, {
+            x: hero_initial_x,
+            y: hero_initial_y,
+        });
         this.map.set_map_bounds(hero_initial_x, hero_initial_y);
 
         //initializes the controllable hero

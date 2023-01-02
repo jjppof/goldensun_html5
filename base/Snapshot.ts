@@ -86,6 +86,7 @@ export type SnapshotData = {
         key_name: string;
         collision_layer: number;
         encounter_cumulator: number;
+        retreat_data: Map["_retreat_data"];
         pc: {
             direction: string;
             position: {
@@ -275,6 +276,7 @@ export class Snapshot {
                 key_name: this.data.map.key_name,
                 collision_layer: this.data.map.collision_layer,
                 encounter_cumulator: this.data.map.encounter_cumulator,
+                retreat_data: this.data.map.retreat_data,
                 pc: {
                     position: {
                         x: this.data.hero.tile_x_pos,

@@ -39,7 +39,7 @@ export class RetreatFieldPsynergy extends FieldAbilities {
     }
 
     check_if_can_retreat() {
-        if (this.data.map.get_retreat_data()) {
+        if (this.data.map.retreat_data) {
             return true;
         }
         this.controllable_char.misc_busy = true;
@@ -180,7 +180,7 @@ export class RetreatFieldPsynergy extends FieldAbilities {
     async move_char() {
         this.enable_update = false;
         this.controllable_char.set_rotation(false);
-        const retreat_info = this.data.map.get_retreat_data();
+        const retreat_info = this.data.map.retreat_data;
         this.data.map.set_map_bounds(retreat_info.x, retreat_info.y);
         this.data.collision.change_map_body(retreat_info.collision_layer);
         this.controllable_char.body.x = get_centered_pos_in_px(retreat_info.x, this.data.map.tile_width);
