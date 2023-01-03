@@ -1443,8 +1443,12 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                         this.on_going_effects.push(effect_result.effect);
                         target_instance.set_effect_turns_count(
                             effect_result.effect,
-                            effect_result.effect.turn_count,
+                            effect_result.effect.turns_quantity,
                             false
+                        );
+                        target_instance.update_all_buff_turn_count(
+                            effect_result.effect.type,
+                            effect_result.effect.turn_count
                         );
 
                         if (effect_result.effect.show_msg) {
@@ -1567,7 +1571,7 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                         effect.turn_count,
                         ailment_recovery_base_chances[effect.status_key_name]
                     );
-                    //TODO also do it for debuffs
+                    //TODO: also do it for debuffs
                 }
 
                 if (effect.turn_count === 0 || early_ailment_recover) {

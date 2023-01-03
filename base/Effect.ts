@@ -158,8 +158,8 @@ export class Effect {
         this.rate = rate ?? 1.0;
         this.chance = chance ?? 1.0;
         this.element = element ?? elements.NO_ELEMENT;
-        this.add_status = add_status;
-        this.remove_buff = remove_buff;
+        this.add_status = add_status ?? false;
+        this.remove_buff = remove_buff ?? false;
         this.status_key_name = status_key_name;
         this.turns_quantity = turns_quantity ?? -1;
         this.turn_count = turns_quantity;
@@ -333,13 +333,13 @@ export class Effect {
     private remove_char_buffs(type: effect_types, element?: elements) {
         const removed_effects: Effect[] = [];
         this.char.effects.forEach(effect => {
-            if (effect.type !== type || effect.turns_quantity === -1) return;
+            if (effect.type !== type || !effect.remove_buff) return;
             if (element !== undefined && effect.element === element) return;
-            if (Math.random() <= this.chance) return;
+            if (Math.random() > this.chance) return;
             effect.char.remove_effect(effect);
-            effect.char.update_all();
             removed_effects.push(effect);
         });
+        this.char.update_all();
         return {removed_effects: removed_effects};
     }
 
@@ -477,14 +477,6 @@ export class Effect {
             default:
                 return null;
         }
-    }
-
-    static add_buff_to_player(effect_obj: any, target: MainChar | Enemy) {
-        // const all_buffs = target.effects.filter(effect => {
-        //     return effect.type === effect_obj.type && !effect.remove_buff;
-        // });
-        // const total_buff_value = all_buffs.reduce((acc, cur) => {
-        // }, 0);
     }
 
     static add_status_to_player(

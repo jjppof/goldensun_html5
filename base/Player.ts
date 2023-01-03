@@ -234,26 +234,20 @@ export abstract class Player {
         this.on_status_change = new Subject();
         this.effects = [];
         this.extra_stats = {};
-        this.extra_stats[main_stats.MAX_HP] = 0;
-        this.extra_stats[main_stats.MAX_PP] = 0;
-        this.extra_stats[main_stats.ATTACK] = 0;
-        this.extra_stats[main_stats.DEFENSE] = 0;
-        this.extra_stats[main_stats.AGILITY] = 0;
-        this.extra_stats[main_stats.LUCK] = 0;
         this.buff_stats = {};
-        this.buff_stats[main_stats.MAX_HP] = 0;
-        this.buff_stats[main_stats.MAX_PP] = 0;
-        this.buff_stats[main_stats.ATTACK] = 0;
-        this.buff_stats[main_stats.DEFENSE] = 0;
-        this.buff_stats[main_stats.AGILITY] = 0;
-        this.buff_stats[main_stats.LUCK] = 0;
         this.before_buff_stats = {};
-        this.before_buff_stats[main_stats.MAX_HP] = 0;
-        this.before_buff_stats[main_stats.MAX_PP] = 0;
-        this.before_buff_stats[main_stats.ATTACK] = 0;
-        this.before_buff_stats[main_stats.DEFENSE] = 0;
-        this.before_buff_stats[main_stats.AGILITY] = 0;
-        this.before_buff_stats[main_stats.LUCK] = 0;
+        [
+            main_stats.MAX_HP,
+            main_stats.MAX_PP,
+            main_stats.ATTACK,
+            main_stats.DEFENSE,
+            main_stats.AGILITY,
+            main_stats.LUCK,
+        ].forEach(stat => {
+            this.extra_stats[stat] = 0;
+            this.buff_stats[stat] = 0;
+            this.before_buff_stats[stat] = 0;
+        });
         this.current_power = ordered_elements.reduce((obj, elem) => {
             obj[elem] = 0;
             return obj;
@@ -359,6 +353,14 @@ export abstract class Player {
                     ? this.effect_turns_count[effect.type][effect.element] + value
                     : value);
         }
+    }
+
+    update_all_buff_turn_count(effect_type: effect_types, value: number) {
+        this.effects.forEach(effect => {
+            if (effect.type === effect_type && !effect.remove_buff) {
+                effect.turn_count = value;
+            }
+        });
     }
 
     add_effect(

@@ -1,4 +1,4 @@
-import {Player, fighter_types} from "./Player";
+import {Player, fighter_types, main_stats} from "./Player";
 import {ordered_elements} from "./utils";
 import * as _ from "lodash";
 import * as numbers from "./magic_numbers";
@@ -6,10 +6,6 @@ import {effect_types} from "./Effect";
 import {Classes} from "./Classes";
 
 export class Enemy extends Player {
-    public base_atk: number;
-    public base_def: number;
-    public base_agi: number;
-    public base_luk: number;
     public items: {
         key_name: string;
         quantity: number;
@@ -30,26 +26,29 @@ export class Enemy extends Player {
     public weight_recover_ailment: number;
     public weight_recover_hp: number;
     public target_weaker_chance: number;
+    public base_stats: {[main_stat in main_stats]?: number};
 
     constructor(enemy_data, name) {
         super(enemy_data.key_name, name ? name : enemy_data.name);
         this.level = enemy_data.level;
         this.turns = enemy_data.turns;
         this.base_turns = this.turns;
-        this.max_hp = enemy_data.max_hp;
-        this.max_pp = enemy_data.max_pp;
-        this.current_hp = this.max_hp;
-        this.current_pp = this.max_pp;
+        this.current_hp = enemy_data.max_hp;
+        this.current_pp = enemy_data.max_pp;
         this.hp_recovery = enemy_data.hp_recovery;
         this.pp_recovery = enemy_data.pp_recovery;
-        this.base_atk = enemy_data.atk;
-        this.base_def = enemy_data.def;
-        this.base_agi = enemy_data.agi;
-        this.base_luk = enemy_data.luk;
-        this.atk = enemy_data.atk;
-        this.def = enemy_data.def;
-        this.agi = enemy_data.agi;
-        this.luk = enemy_data.luk;
+        this.base_stats = {};
+        [
+            main_stats.MAX_HP,
+            main_stats.MAX_PP,
+            main_stats.ATTACK,
+            main_stats.DEFENSE,
+            main_stats.AGILITY,
+            main_stats.LUCK,
+        ].forEach(stat => {
+            this.base_stats[stat] = enemy_data[stat];
+            this[stat] = enemy_data[stat];
+        });
         this.items = enemy_data.items;
         this.abilities = enemy_data.abilities;
         this.coins_reward = enemy_data.coins_reward;
@@ -88,10 +87,17 @@ export class Enemy extends Player {
     }
 
     set_base_attributes() {
-        this.atk = this.base_atk;
-        this.def = this.base_def;
-        this.agi = this.base_agi;
-        this.luk = this.base_luk;
+        [
+            main_stats.MAX_HP,
+            main_stats.MAX_PP,
+            main_stats.ATTACK,
+            main_stats.DEFENSE,
+            main_stats.AGILITY,
+            main_stats.LUCK,
+        ].forEach(stat => {
+            this[stat] = this.before_buff_stats[stat] = this.base_stats[stat];
+            this.buff_stats[stat] = 0;
+        });
         this.current_hp_recovery = this.hp_recovery;
         this.current_pp_recovery = this.pp_recovery;
         this.extra_turns = 0;

@@ -8,7 +8,7 @@
     "y_tile_position": 4,
     "collision_layer": 0,
     "coins": 10000,
-    "skip_start_menu": false,
+    "skip_start_menu": true,
     "artifacts_global_list": [
         {
             "key_name":"apollos_axe",

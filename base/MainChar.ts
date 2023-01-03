@@ -694,7 +694,7 @@ export class MainChar extends Player {
         }
 
         const effects_group = _.groupBy(this.effects, effect => effect.effect_owner_instance.constructor.name);
-        const apply_effect = effect => {
+        const apply_effect = (effect: Effect) => {
             if (
                 preview &&
                 effect.effect_owner_instance &&
