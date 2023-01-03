@@ -118,6 +118,12 @@ export class Enemy extends Player {
                     break;
             }
         });
+        this.atk += this.buff_stats.atk;
+        this.def += this.buff_stats.def;
+        this.agi += this.buff_stats.agi;
+        this.luk += this.buff_stats.luk;
+        this.max_hp += this.buff_stats.max_hp;
+        this.max_pp += this.buff_stats.max_pp;
         for (let i = 0; i < ordered_elements.length; ++i) {
             const element = ordered_elements[i];
             this.current_power[element] = _.clamp(

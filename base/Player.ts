@@ -221,6 +221,10 @@ export abstract class Player {
     }>;
     /** Any extra stats points added to the main stats of this player. */
     public extra_stats: {[main_stat in main_stats]?: number};
+    /** This player stats before applying buffers. */
+    public before_buff_stats: {[main_stat in main_stats]?: number};
+    /** Stats points added/decreased by ability (buffers debuffers) on this player. */
+    public buff_stats: {[main_stat in main_stats]?: number};
 
     constructor(key_name, name) {
         this.key_name = key_name;
@@ -236,6 +240,20 @@ export abstract class Player {
         this.extra_stats[main_stats.DEFENSE] = 0;
         this.extra_stats[main_stats.AGILITY] = 0;
         this.extra_stats[main_stats.LUCK] = 0;
+        this.buff_stats = {};
+        this.buff_stats[main_stats.MAX_HP] = 0;
+        this.buff_stats[main_stats.MAX_PP] = 0;
+        this.buff_stats[main_stats.ATTACK] = 0;
+        this.buff_stats[main_stats.DEFENSE] = 0;
+        this.buff_stats[main_stats.AGILITY] = 0;
+        this.buff_stats[main_stats.LUCK] = 0;
+        this.before_buff_stats = {};
+        this.before_buff_stats[main_stats.MAX_HP] = 0;
+        this.before_buff_stats[main_stats.MAX_PP] = 0;
+        this.before_buff_stats[main_stats.ATTACK] = 0;
+        this.before_buff_stats[main_stats.DEFENSE] = 0;
+        this.before_buff_stats[main_stats.AGILITY] = 0;
+        this.before_buff_stats[main_stats.LUCK] = 0;
         this.current_power = ordered_elements.reduce((obj, elem) => {
             obj[elem] = 0;
             return obj;

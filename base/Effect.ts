@@ -98,7 +98,9 @@ export class Effect {
     public add_status: boolean;
     public remove_buff: boolean;
     public status_key_name: permanent_status | temporary_status;
+    /** The total number of turns this effect last. */
     public turns_quantity: number;
+    /** The current turn number of this effect. */
     public turn_count: number;
     public variation_on_final_result: boolean;
     public usage: string;
@@ -118,6 +120,10 @@ export class Effect {
         on_caster: boolean;
         operator: effect_operators;
         expression: string;
+    };
+    public change: {
+        before: number;
+        after: number;
     };
 
     constructor(
@@ -168,6 +174,10 @@ export class Effect {
         if (this.sub_effect !== undefined) {
             this.init_sub_effect();
         }
+        this.change = {
+            before: 0,
+            after: 0,
+        };
     }
 
     static apply_operator(a: number, b: number, operator: effect_operators) {
@@ -193,13 +203,20 @@ export class Effect {
         this.sub_effect.on_caster = this.sub_effect.on_caster ?? false;
     }
 
-    private apply_general_value(property: keyof Player, direct_value?: number, sub_property?: elements | main_stats) {
-        let char = this.char;
+    private apply_general_value(
+        property: keyof Player,
+        direct_value?: number,
+        sub_property?: elements | main_stats,
+        relative_to_property?: string,
+        store_diff: boolean = false,
+        append_value: boolean = false
+    ) {
+        let char: any = this.char;
         if (sub_property !== undefined) {
-            char = this.char[this.relative_to_property ?? property];
+            char = this.char[property];
             property = sub_property as any;
         }
-        const before_value: number = property !== undefined ? (char[property] as number) : direct_value;
+        let before_value: number = property !== undefined ? (char[property] as number) : direct_value;
         if (Math.random() >= this.chance) {
             return {
                 before: before_value,
@@ -210,7 +227,8 @@ export class Effect {
         const quantity = Array.isArray(this.quantity) ? _.random(this.quantity[0], this.quantity[1]) : this.quantity;
         if (this.quantity_is_absolute) {
             if (property !== undefined) {
-                char[property as any] = quantity;
+                char[property] =
+                    (append_value ? char[property] : 0) + (store_diff ? quantity - before_value : quantity);
             }
             after_value = quantity;
         } else {
@@ -220,12 +238,16 @@ export class Effect {
                 value += variation();
             }
             let value_to_use;
-            if (this.relative_to_property !== undefined) {
-                value_to_use = char[this.relative_to_property];
+            relative_to_property = relative_to_property ?? this.relative_to_property;
+            if (relative_to_property !== undefined) {
+                value_to_use = _.get(this.char, relative_to_property);
             } else if (property !== undefined) {
                 value_to_use = char[property];
             } else {
                 value_to_use = direct_value;
+            }
+            if (store_diff) {
+                before_value = value_to_use;
             }
             let result: number;
             if (this.expression) {
@@ -238,7 +260,7 @@ export class Effect {
                 result = Effect.apply_operator(value_to_use, value, this.operator) | 0;
             }
             if (property !== undefined) {
-                char[property as any] = result;
+                char[property] = (append_value ? char[property] : 0) + (store_diff ? result - value_to_use : result);
             }
             after_value = result;
         }
@@ -338,7 +360,21 @@ export class Effect {
 
             case effect_types.MAX_HP:
             case effect_types.MAX_PP:
-                return this.apply_general_value(effect_type_stat[this.type]);
+                const main_stat = effect_type_stat[this.type];
+                if (this.effect_owner_instance instanceof Item) {
+                    return this.apply_general_value(main_stat);
+                } else {
+                    const buff_change = this.apply_general_value(
+                        "buff_stats",
+                        undefined,
+                        main_stat,
+                        `before_buff_stats.${main_stat}`,
+                        true,
+                        true
+                    );
+                    this.change = buff_change;
+                    return buff_change;
+                }
 
             case effect_types.HP_RECOVERY:
                 return this.apply_general_value(recovery_stats.HP_RECOVERY);
@@ -443,6 +479,14 @@ export class Effect {
         }
     }
 
+    static add_buff_to_player(effect_obj: any, target: MainChar | Enemy) {
+        // const all_buffs = target.effects.filter(effect => {
+        //     return effect.type === effect_obj.type && !effect.remove_buff;
+        // });
+        // const total_buff_value = all_buffs.reduce((acc, cur) => {
+        // }, 0);
+    }
+
     static add_status_to_player(
         effect_obj: any,
         caster: MainChar | Enemy,
@@ -507,7 +551,7 @@ export class Effect {
                         break;
                     }
                     added_effect = target.add_effect(effect_obj, ability, true).effect;
-                    target.set_effect_turns_count(added_effect, added_effect.turn_count, false);
+                    target.set_effect_turns_count(added_effect, added_effect.turns_quantity, false);
                     break;
                 case permanent_status.VENOM:
                     if (target.has_permanent_status(permanent_status.POISON)) {
@@ -517,7 +561,7 @@ export class Effect {
                         target.remove_effect(poison_effect, true);
                     }
                     added_effect = target.add_effect(effect_obj, ability, true).effect;
-                    target.set_effect_turns_count(added_effect, added_effect.turn_count, false);
+                    target.set_effect_turns_count(added_effect, added_effect.turns_quantity, false);
             }
         }
         return added_effect;

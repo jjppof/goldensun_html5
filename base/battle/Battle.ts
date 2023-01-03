@@ -1427,7 +1427,9 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                 case effect_types.LUCK:
                 case effect_types.POWER:
                 case effect_types.RESIST:
-                    effect_result = target_instance.add_effect(effect_obj, ability, true);
+                    effect_result = target_instance.add_effect(effect_obj, ability, false);
+                    target_instance.update_all();
+                    const buff_changes = effect_result.effect.change;
                     if (effect_obj.remove_buff) {
                         this.on_going_effects = this.on_going_effects.filter(
                             effect => !effect_result.changes.removed_effects.includes(effect)
@@ -1446,7 +1448,7 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                         );
 
                         if (effect_result.effect.show_msg) {
-                            const diff = effect_result.changes.after - effect_result.changes.before;
+                            const diff = buff_changes.after - buff_changes.before;
                             const text = diff >= 0 ? "rises" : "drops";
                             let element_info = "";
 

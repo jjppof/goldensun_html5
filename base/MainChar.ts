@@ -692,7 +692,9 @@ export class MainChar extends Player {
             if (status !== djinn_status.SET) continue;
             this[stat] += djinn.boost_stats[stat];
         }
-        this.effects.forEach(effect => {
+
+        const effects_group = _.groupBy(this.effects, effect => effect.effect_owner_instance.constructor.name);
+        const apply_effect = effect => {
             if (
                 preview &&
                 effect.effect_owner_instance &&
@@ -707,7 +709,16 @@ export class MainChar extends Player {
             if (effect.type === effect_type) {
                 effect.apply_effect();
             }
-        });
+        };
+        if ("Item" in effects_group) {
+            effects_group["Item"].forEach(apply_effect);
+        }
+        this.before_buff_stats[stat] = this[stat];
+        this.buff_stats[stat] = 0;
+        if ("Ability" in effects_group) {
+            effects_group["Ability"].forEach(apply_effect);
+        }
+        this[stat] += this.buff_stats[stat];
         if (preview) {
             const preview_value = preview_obj.effect_obj
                 ? Effect.preview_value_applied(preview_obj.effect_obj, this[stat])
