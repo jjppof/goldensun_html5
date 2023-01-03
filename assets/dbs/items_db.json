@@ -627,7 +627,8 @@
         },
         {   "type": "luck",
             "quantity": 10,
-            "operator": "plus"}],
+            "operator": "plus"
+        }],
         "element": "no_element",
         "unleash_ability": "",
         "unleash_rate": 0,

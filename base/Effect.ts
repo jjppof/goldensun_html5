@@ -65,6 +65,20 @@ export const effect_names: {[effect_type in effect_types]?: string} = {
     [effect_types.PP_RECOVERY]: "PP recovery",
 };
 
+const buffer_limits: {
+    [effect_type in effect_types]?: {
+        min: number;
+        max: number;
+    };
+} = {
+    [effect_types.MAX_HP]: {min: 0.5, max: 1.5},
+    [effect_types.MAX_PP]: {min: 0.5, max: 1.5},
+    [effect_types.ATTACK]: {min: 0.5, max: 1.5},
+    [effect_types.DEFENSE]: {min: 0.5, max: 1.5},
+    [effect_types.AGILITY]: {min: 0.5, max: 2.0},
+    [effect_types.LUCK]: {min: 0.5, max: 1.5},
+};
+
 export enum effect_operators {
     PLUS = "plus",
     MINUS = "minus",
@@ -372,6 +386,14 @@ export class Effect {
                         true,
                         true
                     );
+                    const min = (this.char.before_buff_stats[main_stat] * buffer_limits[this.type].min) | 0;
+                    const max = (this.char.before_buff_stats[main_stat] * buffer_limits[this.type].max) | 0;
+                    const resulting_stat = this.char.before_buff_stats[main_stat] + this.char.buff_stats[main_stat];
+                    if (resulting_stat < min || resulting_stat > max) {
+                        const surplus = _.clamp(resulting_stat, min, max) - resulting_stat;
+                        this.char.buff_stats[main_stat] += surplus;
+                        buff_change.after += surplus;
+                    }
                     this.change = buff_change;
                     return buff_change;
                 }
