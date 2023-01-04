@@ -4,6 +4,7 @@ import {GoldenSun} from "../../GoldenSun";
 import {ItemSlot, MainChar} from "../../MainChar";
 import * as _ from "lodash";
 import {Classes} from "../../Classes";
+import {elemental_stats} from "../../Player";
 
 const BASE_WIN_WIDTH = 100;
 const BASE_WIN_HEIGHT = 92;
@@ -97,7 +98,7 @@ export class ClassChangeWithItemWindow {
             this.data.info.classes_list,
             this.data.dbs.classes_db.class_table,
             this.char.element_afinity,
-            this.char.current_level,
+            this.char.elemental_current[elemental_stats.LEVEL],
             this.item_obj.equipped ? -1 : this.item.granted_class_type,
             this.char.special_class_type
         );

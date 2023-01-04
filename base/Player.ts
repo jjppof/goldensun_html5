@@ -46,9 +46,9 @@ export const current_main_stat_map = {
 };
 
 export enum elemental_stats {
-    CURRENT_POWER = "current_power",
-    CURRENT_RESIST = "current_resist",
-    CURRENT_LEVEL = "current_level",
+    POWER = "power",
+    RESIST = "resist",
+    LEVEL = "level",
 }
 
 export const effect_type_stat: {[effect_type in effect_types]?: main_stats} = {
@@ -72,9 +72,9 @@ export const effect_type_extra_stat: {[effect_type in effect_types]?: main_stats
 };
 
 export const effect_type_elemental_stat: {[effect_type in effect_types]?: elemental_stats} = {
-    [effect_types.POWER]: elemental_stats.CURRENT_POWER,
-    [effect_types.RESIST]: elemental_stats.CURRENT_RESIST,
-    [effect_types.ELEMENTAL_LEVEL]: elemental_stats.CURRENT_LEVEL,
+    [effect_types.POWER]: elemental_stats.POWER,
+    [effect_types.RESIST]: elemental_stats.RESIST,
+    [effect_types.ELEMENTAL_LEVEL]: elemental_stats.LEVEL,
 };
 
 export const on_catch_status_msg = {
@@ -168,18 +168,39 @@ export abstract class Player {
     public status_sprite_shift: number;
     /** Whether it's an ally or enemy in the main party point of view.*/
     public fighter_type: fighter_types;
-    /** The elemental level stats object. */
-    public current_level: {[element in elements]?: number};
-    /** The elemental power stats object. */
-    public current_power: {[element in elements]?: number};
-    /** The elemental resist stats object. */
-    public current_resist: {[element in elements]?: number};
-    /** The elemental level base value stats object. */
-    public base_level: {[element in elements]?: number};
-    /** The elemental power base value stats object. */
-    public base_power: {[element in elements]?: number};
-    /** The elemental resist base value stats object. */
-    public base_resist: {[element in elements]?: number};
+
+    public elemental_current: {
+        /** The elemental level stats object. */
+        [elemental_stats.LEVEL]?: {[element in elements]?: number};
+        /** The elemental power stats object. */
+        [elemental_stats.POWER]?: {[element in elements]?: number};
+        /** The elemental resist stats object. */
+        [elemental_stats.RESIST]?: {[element in elements]?: number};
+    };
+
+    public elemental_base: {
+        /** The elemental level base value stats object. */
+        [elemental_stats.LEVEL]?: {[element in elements]?: number};
+        /** The elemental power base value stats object. */
+        [elemental_stats.POWER]?: {[element in elements]?: number};
+        /** The elemental resist base value stats object. */
+        [elemental_stats.RESIST]?: {[element in elements]?: number};
+    };
+
+    public elemental_before_buff: {
+        /** The elemental power before buffs stats object. */
+        [elemental_stats.POWER]?: {[element in elements]?: number};
+        /** The elemental resist before buffs stats object. */
+        [elemental_stats.RESIST]?: {[element in elements]?: number};
+    };
+
+    public elemental_buff: {
+        /** The elemental power added by buffs stats object. */
+        [elemental_stats.POWER]?: {[element in elements]?: number};
+        /** The elemental resist added by buffs stats object. */
+        [elemental_stats.RESIST]?: {[element in elements]?: number};
+    };
+
     /** The current amount of turns that this player has. */
     public turns: number;
     /** The base amount of turns that this player has. */
@@ -248,12 +269,26 @@ export abstract class Player {
             this.buff_stats[stat] = 0;
             this.before_buff_stats[stat] = 0;
         });
-        this.current_power = ordered_elements.reduce((obj, elem) => {
+        this.elemental_before_buff = {};
+        this.elemental_buff = {};
+        Object.values(elemental_stats).forEach(stat => {
+            if (stat === elemental_stats.LEVEL) return;
+            this.elemental_before_buff[stat] = {};
+            this.elemental_buff[stat] = {};
+            ordered_elements.forEach(element => {
+                this.elemental_before_buff[stat][element] = 0;
+                this.elemental_buff[stat][element] = 0;
+            });
+        });
+
+        this.elemental_base = {};
+        this.elemental_current = {};
+        this.elemental_current[elemental_stats.POWER] = ordered_elements.reduce((obj, elem) => {
             obj[elem] = 0;
             return obj;
         }, {});
-        this.current_resist = _.cloneDeep(this.current_power);
-        this.current_level = _.cloneDeep(this.current_power);
+        this.elemental_current[elemental_stats.RESIST] = _.cloneDeep(this.elemental_current[elemental_stats.POWER]);
+        this.elemental_current[elemental_stats.LEVEL] = _.cloneDeep(this.elemental_current[elemental_stats.POWER]);
         this.extra_turns = 0;
         this.paralyzed_by_effect = false;
         this.init_effect_turns_count();
@@ -280,8 +315,7 @@ export abstract class Player {
             [effect_types.POWER]: {},
             [effect_types.RESIST]: {},
         };
-        for (let i = 0; i < ordered_elements.length; ++i) {
-            const element = ordered_elements[i];
+        for (let element of [...ordered_elements, elements.ALL_ELEMENTS]) {
             this.effect_turns_count[effect_types.POWER][element] = 0;
             this.effect_turns_count[effect_types.RESIST][element] = 0;
         }

@@ -1,9 +1,28 @@
+/*
+Attack/Defence work in multiples of 12.5%, x4 either as a buff or debuff.
+Resistance in multiples of 20, x4 up or down.
+Agility is either x2 (200%), or else x0.5 (50%). Internally, Agility is set up to work in 12.5% multiples as well but it has a higher cap (x8 buff) that gets applied only as a +100% buff, and a debuff (x4 debuff) that gets applied only as a -50% debuff.
+An Agility buff/debuff getting used when the other is already in effect will replace it; a +100% buff after a -50% debuff just becomes 200%, not 150%.
+
+Oh, and in all cases a buff/debuff getting applied will renew the timer.
+So using, for example, Impact (x2/+25%) on an ally with a x4/-50% Atack debuff.
+If that debuff is set to end in three rounds and you use Impact, it will renew its max duration to seven rounds while still keeping half of the debuff in effect (-25%).
+This is because each counterpart of a buff/debuff pair works off the same value.
+
+And just to clarify on something the others already said, you can mix and match different tiers of a buff/debuff (minus Agility) and still hit the cap without wasting actions. 
+Two Impacts is the same as one Impact and two High Impacts.
+Since Impact is a x2 buff and High Impact is a x1 buff (and 2+1+1 = 4).
+
+By Sala
+*/
+
 import {Ability, diminishing_ratios} from "./Ability";
 import {Item} from "./Item";
 import {
     effect_type_elemental_stat,
     effect_type_extra_stat,
     effect_type_stat,
+    elemental_stats,
     main_stats,
     permanent_status,
     Player,
@@ -77,6 +96,16 @@ const buffer_limits: {
     [effect_types.DEFENSE]: {min: 0.5, max: 1.5},
     [effect_types.AGILITY]: {min: 0.5, max: 2.0},
     [effect_types.LUCK]: {min: 0.5, max: 1.5},
+};
+
+const elemental_buffer_limits: {
+    [effect_type in effect_types]?: {
+        min: number;
+        max: number;
+    };
+} = {
+    [effect_types.POWER]: {min: -80, max: 80},
+    [effect_types.RESIST]: {min: -80, max: 80},
 };
 
 export enum effect_operators {
@@ -218,7 +247,7 @@ export class Effect {
     }
 
     private apply_general_value(
-        property: keyof Player,
+        property: string,
         direct_value?: number,
         sub_property?: elements | main_stats,
         relative_to_property?: string,
@@ -227,7 +256,7 @@ export class Effect {
     ) {
         let char: any = this.char;
         if (sub_property !== undefined) {
-            char = this.char[property];
+            char = _.get(this.char, property);
             property = sub_property as any;
         }
         let before_value: number = property !== undefined ? (char[property] as number) : direct_value;
@@ -357,6 +386,63 @@ export class Effect {
         return {removed_effects: removed_effects};
     }
 
+    private main_stat_effect() {
+        if (this.remove_buff) {
+            return this.remove_char_buffs(this.type);
+        }
+        const main_stat = effect_type_stat[this.type];
+        if (this.effect_owner_instance instanceof Item) {
+            return this.apply_general_value(main_stat);
+        } else {
+            const buff_change = this.apply_general_value(
+                "buff_stats",
+                undefined,
+                main_stat,
+                `before_buff_stats.${main_stat}`,
+                true,
+                true
+            );
+            const min = (this.char.before_buff_stats[main_stat] * buffer_limits[this.type].min) | 0;
+            const max = (this.char.before_buff_stats[main_stat] * buffer_limits[this.type].max) | 0;
+            const resulting_stat = this.char.before_buff_stats[main_stat] + this.char.buff_stats[main_stat];
+            if (resulting_stat < min || resulting_stat > max) {
+                const surplus = _.clamp(resulting_stat, min, max) - resulting_stat;
+                this.char.buff_stats[main_stat] += surplus;
+                buff_change.after += surplus;
+            }
+            this.change = buff_change;
+            return buff_change;
+        }
+    }
+
+    private elemental_stat_effect(property: elemental_stats, element: elements) {
+        if (this.effect_owner_instance instanceof Item) {
+            return this.apply_general_value(`elemental_current.${property}`, undefined, element);
+        } else {
+            const buff_change = this.apply_general_value(
+                `elemental_buff.${property}`,
+                undefined,
+                element,
+                `elemental_before_buff.${property}.${element}`,
+                true,
+                true
+            );
+            const min =
+                (this.char.elemental_before_buff[property][element] + elemental_buffer_limits[this.type].min) | 0;
+            const max =
+                (this.char.elemental_before_buff[property][element] + elemental_buffer_limits[this.type].max) | 0;
+            const resulting_stat =
+                this.char.elemental_before_buff[property][element] + this.char.elemental_buff[property][element];
+            if (resulting_stat < min || resulting_stat > max) {
+                const surplus = _.clamp(resulting_stat, min, max) - resulting_stat;
+                this.char.elemental_buff[property][element] += surplus;
+                buff_change.after += surplus;
+            }
+            this.change = buff_change;
+            return buff_change;
+        }
+    }
+
     apply_effect(direct_value?): {
         before?: number;
         after?: number;
@@ -368,35 +454,9 @@ export class Effect {
             case effect_types.DEFENSE:
             case effect_types.AGILITY:
             case effect_types.LUCK:
-                if (this.remove_buff) {
-                    return this.remove_char_buffs(this.type);
-                }
-
             case effect_types.MAX_HP:
             case effect_types.MAX_PP:
-                const main_stat = effect_type_stat[this.type];
-                if (this.effect_owner_instance instanceof Item) {
-                    return this.apply_general_value(main_stat);
-                } else {
-                    const buff_change = this.apply_general_value(
-                        "buff_stats",
-                        undefined,
-                        main_stat,
-                        `before_buff_stats.${main_stat}`,
-                        true,
-                        true
-                    );
-                    const min = (this.char.before_buff_stats[main_stat] * buffer_limits[this.type].min) | 0;
-                    const max = (this.char.before_buff_stats[main_stat] * buffer_limits[this.type].max) | 0;
-                    const resulting_stat = this.char.before_buff_stats[main_stat] + this.char.buff_stats[main_stat];
-                    if (resulting_stat < min || resulting_stat > max) {
-                        const surplus = _.clamp(resulting_stat, min, max) - resulting_stat;
-                        this.char.buff_stats[main_stat] += surplus;
-                        buff_change.after += surplus;
-                    }
-                    this.change = buff_change;
-                    return buff_change;
-                }
+                return this.main_stat_effect();
 
             case effect_types.HP_RECOVERY:
                 return this.apply_general_value(recovery_stats.HP_RECOVERY);
@@ -430,11 +490,11 @@ export class Effect {
                     };
                 } else {
                     if (this.element !== elements.ALL_ELEMENTS) {
-                        return this.apply_general_value(property, undefined, this.element);
+                        return this.elemental_stat_effect(property, this.element);
                     }
                     const results: ReturnType<Effect["apply_general_value"]>[] = new Array(ordered_elements.length);
                     ordered_elements.forEach((element, i) => {
-                        results[i] = this.apply_general_value(property, undefined, element);
+                        results[i] = this.elemental_stat_effect(property, element);
                     });
                     return {
                         before: _.mean(results.map(r => r.before)) | 0,

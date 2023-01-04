@@ -22,7 +22,7 @@
 */
 
 import {elements, variation} from "../utils";
-import {permanent_status, Player} from "../Player";
+import {elemental_stats, permanent_status, Player} from "../Player";
 import {ELEM_ATTR_MAX, ELEM_ATTR_MIN} from "../magic_numbers";
 import * as _ from "lodash";
 import {Ability, ability_types} from "../Ability";
@@ -82,9 +82,9 @@ export class BattleFormulas {
         let caster_power = 100.0,
             target_resist = 100.0;
         if (element !== elements.NO_ELEMENT && element !== elements.ALL_ELEMENTS) {
-            target_resist = target.current_resist[element];
+            target_resist = target.elemental_current[elemental_stats.RESIST][element];
             if (caster !== undefined) {
-                caster_power = caster.current_power[element];
+                caster_power = caster.elemental_current[elemental_stats.POWER][element];
             }
         }
         const relative_power = _.clamp(caster_power - target_resist, ELEM_ATTR_MIN, ELEM_ATTR_MAX);
@@ -109,7 +109,7 @@ export class BattleFormulas {
     static heal_ability(caster: Player, power: number, element: elements) {
         let caster_power = 100.0;
         if (element !== elements.NO_ELEMENT && element !== elements.ALL_ELEMENTS) {
-            caster_power = caster.current_power[element];
+            caster_power = caster.elemental_current[elemental_stats.POWER][element];
         }
         return (power * caster_power) / 100.0;
     }
@@ -126,7 +126,9 @@ export class BattleFormulas {
         element: elements,
         vulnerabity: number
     ) {
-        const relative_level = caster.current_level[element] - target.current_level[element];
+        const relative_level =
+            caster.elemental_current[elemental_stats.LEVEL][element] -
+            target.elemental_current[elemental_stats.LEVEL][element];
         const luck_factor = target.luk >> 1;
         vulnerabity = vulnerabity === undefined ? 0 : vulnerabity;
         const chance = ((relative_level - luck_factor) * 3) / 100 + base_chance + vulnerabity * magnitude;

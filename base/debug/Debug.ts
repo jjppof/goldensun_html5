@@ -1,9 +1,10 @@
 import {GoldenSun} from "../GoldenSun";
 import {MainChar} from "../MainChar";
 import {Button} from "../XGamepad";
-import {reverse_directions, ordered_elements} from "../utils";
+import {reverse_directions, ordered_elements, elements} from "../utils";
 import * as _ from "lodash";
 import {IntegerPairKey} from "../tile_events/TileEvent";
+import {elemental_stats} from "../Player";
 
 export class Debug {
     public game: Phaser.Game;
@@ -409,11 +410,11 @@ export class Debug {
         document.querySelector("#stats_debug table .luk").innerHTML = char.luk.toString();
         ordered_elements.forEach(element => {
             document.querySelector(`#stats_debug table .${element}_power`).innerHTML =
-                char.current_power[element].toString();
+                char.elemental_current[elemental_stats.POWER][element].toString();
             document.querySelector(`#stats_debug table .${element}_resist`).innerHTML =
-                char.current_resist[element].toString();
+                char.elemental_current[elemental_stats.RESIST][element].toString();
             document.querySelector(`#stats_debug table .${element}_level`).innerHTML =
-                char.current_level[element].toString();
+                char.elemental_current[elemental_stats.LEVEL][element].toString();
         });
         document.querySelector("#stats_debug table .turns").innerHTML = char.turns.toString();
         document.querySelector("#stats_debug table .temp_statuses").innerHTML = [...char.temporary_status].join(" ");
@@ -423,7 +424,7 @@ export class Debug {
             .sort()
             .forEach(effect => {
                 if (effect === "power" || effect === "resist") {
-                    ordered_elements.forEach(element => {
+                    [...ordered_elements, elements.ALL_ELEMENTS].forEach(element => {
                         buff_html += `${effect}[${element}]/${char.effect_turns_count[effect][element]} <br>`;
                     });
                 } else {

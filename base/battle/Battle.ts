@@ -1441,15 +1441,17 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                         break;
                     } else {
                         this.on_going_effects.push(effect_result.effect);
-                        target_instance.set_effect_turns_count(
-                            effect_result.effect,
-                            effect_result.effect.turns_quantity,
-                            false
-                        );
-                        target_instance.update_all_buff_turn_count(
-                            effect_result.effect.type,
-                            effect_result.effect.turn_count
-                        );
+                        if (buff_changes.after !== buff_changes.before) {
+                            target_instance.set_effect_turns_count(
+                                effect_result.effect,
+                                effect_result.effect.turns_quantity,
+                                false
+                            );
+                            target_instance.update_all_buff_turn_count(
+                                effect_result.effect.type,
+                                effect_result.effect.turn_count
+                            );
+                        }
 
                         if (effect_result.effect.show_msg) {
                             const diff = buff_changes.after - buff_changes.before;
@@ -1504,6 +1506,7 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                     break;
 
                 case effect_types.COUNTER_STRIKE:
+                    console.warn('"counter_strike" effect is not available yet.');
                     break;
 
                 default:

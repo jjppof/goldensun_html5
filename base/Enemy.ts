@@ -1,4 +1,4 @@
-import {Player, fighter_types, main_stats} from "./Player";
+import {Player, fighter_types, main_stats, elemental_stats} from "./Player";
 import {ordered_elements} from "./utils";
 import * as _ from "lodash";
 import * as numbers from "./magic_numbers";
@@ -55,9 +55,9 @@ export class Enemy extends Player {
         this.item_reward = enemy_data.item_reward;
         this.item_reward_chance = enemy_data.item_reward_chance;
         this.exp_reward = enemy_data.exp_reward;
-        this.base_level = Object.assign({}, enemy_data.base_level);
-        this.base_power = Object.assign({}, enemy_data.base_power);
-        this.base_resist = Object.assign({}, enemy_data.base_resist);
+        this.elemental_base[elemental_stats.LEVEL] = Object.assign({}, enemy_data.base_level);
+        this.elemental_base[elemental_stats.POWER] = Object.assign({}, enemy_data.base_power);
+        this.elemental_base[elemental_stats.RESIST] = Object.assign({}, enemy_data.base_resist);
         this.battle_scale = enemy_data.battle_scale;
         this.battle_shadow_key = enemy_data.battle_shadow_key;
         this.status_sprite_shift = enemy_data.status_sprite_shift ?? 0;
@@ -102,9 +102,16 @@ export class Enemy extends Player {
         this.current_pp_recovery = this.pp_recovery;
         this.extra_turns = 0;
         for (let element of ordered_elements) {
-            this.current_power[element] = this.base_power[element];
-            this.current_resist[element] = this.base_resist[element];
-            this.current_level[element] = this.base_level[element];
+            this.elemental_current[elemental_stats.POWER][element] = this.elemental_before_buff[elemental_stats.POWER][
+                element
+            ] = this.elemental_base[elemental_stats.POWER][element];
+            this.elemental_current[elemental_stats.RESIST][element] = this.elemental_before_buff[
+                elemental_stats.RESIST
+            ][element] = this.elemental_base[elemental_stats.RESIST][element];
+            this.elemental_current[elemental_stats.LEVEL][element] =
+                this.elemental_base[elemental_stats.LEVEL][element];
+            this.elemental_buff[elemental_stats.POWER][element] = 0;
+            this.elemental_buff[elemental_stats.RESIST][element] = 0;
         }
     }
 
@@ -132,13 +139,17 @@ export class Enemy extends Player {
         this.max_pp += this.buff_stats.max_pp;
         for (let i = 0; i < ordered_elements.length; ++i) {
             const element = ordered_elements[i];
-            this.current_power[element] = _.clamp(
-                this.current_power[element],
+            this.elemental_current[elemental_stats.POWER][element] +=
+                this.elemental_buff[elemental_stats.POWER][element];
+            this.elemental_current[elemental_stats.RESIST][element] +=
+                this.elemental_buff[elemental_stats.RESIST][element];
+            this.elemental_current[elemental_stats.POWER][element] = _.clamp(
+                this.elemental_current[elemental_stats.POWER][element],
                 numbers.ELEM_ATTR_MIN,
                 numbers.ELEM_ATTR_MAX
             );
-            this.base_resist[element] = _.clamp(
-                this.base_resist[element],
+            this.elemental_base[elemental_stats.RESIST][element] = _.clamp(
+                this.elemental_base[elemental_stats.RESIST][element],
                 numbers.ELEM_ATTR_MIN,
                 numbers.ELEM_ATTR_MAX
             );

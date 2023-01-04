@@ -1,4 +1,5 @@
 import {BitmapText} from "phaser-ce";
+import {elemental_stats} from "../Player";
 import {Djinn, djinn_status} from "../Djinn";
 import {GoldenSun} from "../GoldenSun";
 import {MainChar} from "../MainChar";
@@ -143,9 +144,9 @@ export abstract class StatusComponent {
     }
 
     protected get_elemental_stats(element: elements) {
-        const elemental_level = this.selected_char.current_level[element];
-        const elemental_power = this.selected_char.current_power[element];
-        const elemental_resistance = this.selected_char.current_resist[element];
+        const elemental_level = this.selected_char.elemental_current[elemental_stats.LEVEL][element];
+        const elemental_power = this.selected_char.elemental_current[elemental_stats.POWER][element];
+        const elemental_resistance = this.selected_char.elemental_current[elemental_stats.RESIST][element];
 
         return {level: elemental_level, power: elemental_power, resistance: elemental_resistance};
     }

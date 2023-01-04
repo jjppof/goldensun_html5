@@ -3,7 +3,7 @@ import {Classes} from "./Classes";
 import {Djinn, djinn_status} from "./Djinn";
 import {Effect, effect_types} from "./Effect";
 import {Item, item_types, item_types_sort_priority} from "./Item";
-import {Player, fighter_types, permanent_status, main_stats, effect_type_stat} from "./Player";
+import {Player, fighter_types, permanent_status, main_stats, effect_type_stat, elemental_stats} from "./Player";
 import {elements, ordered_elements} from "./utils";
 import {ELEM_ATTR_MIN, ELEM_ATTR_MAX} from "./magic_numbers";
 import * as _ from "lodash";
@@ -117,10 +117,13 @@ export class MainChar extends Player {
         this.battle_scale = battle_scale;
         this._exp_curve = exp_curve;
         this.current_exp = this.exp_curve[this.level - 1];
-        this.base_level = _.cloneDeep(base_level);
-        this.base_power = _.cloneDeep(base_power);
-        this.base_resist = _.cloneDeep(base_resist);
-        this._element_afinity = _.maxBy(_.toPairs(this.base_level), pair => pair[1])[0] as elements;
+        this.elemental_base[elemental_stats.LEVEL] = _.cloneDeep(base_level);
+        this.elemental_base[elemental_stats.POWER] = _.cloneDeep(base_power);
+        this.elemental_base[elemental_stats.RESIST] = _.cloneDeep(base_resist);
+        this._element_afinity = _.maxBy(
+            _.toPairs(this.elemental_base[elemental_stats.LEVEL]),
+            pair => pair[1]
+        )[0] as elements;
         this._djinn_by_element = {};
         ordered_elements.forEach(element => {
             this.djinn_by_element[element] = [];
@@ -279,7 +282,7 @@ export class MainChar extends Player {
             this.info.classes_list,
             this.class_table,
             this.element_afinity,
-            this.current_level,
+            this.elemental_current[elemental_stats.LEVEL],
             this.granted_class_type,
             this.special_class_type
         );
@@ -567,7 +570,9 @@ export class MainChar extends Player {
         action?: djinn_actions
     ) {
         const previous_class = this.class;
-        const lvls: Player["current_level"] = _.cloneDeep(this.current_level);
+        const lvls: Player["elemental_current"][elemental_stats.LEVEL] = _.cloneDeep(
+            this.elemental_current[elemental_stats.LEVEL]
+        );
         for (let i = 0; i < djinni_key_names.length; ++i) {
             const djinn = this.info.djinni_list[djinni_key_names[i]];
             let lv_shift;
@@ -790,35 +795,67 @@ export class MainChar extends Player {
         ordered_elements.forEach(element => {
             if (preview) {
                 previous_stats[element] = {
-                    power: this.current_power[element],
-                    resist: this.current_resist[element],
-                    level: this.current_level[element],
+                    [elemental_stats.POWER]: this.elemental_current[elemental_stats.POWER][element],
+                    [elemental_stats.RESIST]: this.elemental_current[elemental_stats.RESIST][element],
+                    [elemental_stats.LEVEL]: this.elemental_current[elemental_stats.LEVEL][element],
                 };
             }
-            this.current_power[element] = this.base_power[element];
-            this.current_resist[element] = this.base_resist[element];
-            this.current_level[element] = this.base_level[element];
+            this.elemental_current[elemental_stats.POWER][element] =
+                this.elemental_base[elemental_stats.POWER][element];
+            this.elemental_current[elemental_stats.RESIST][element] =
+                this.elemental_base[elemental_stats.RESIST][element];
+            this.elemental_current[elemental_stats.LEVEL][element] =
+                this.elemental_base[elemental_stats.LEVEL][element];
         });
 
         for (let i = 0; i < this.djinni.length; ++i) {
             const djinn = this.info.djinni_list[this.djinni[i]];
             if (djinn.status !== djinn_status.SET) continue;
-            this.current_power[djinn.element] += MainChar.ELEM_POWER_DELTA;
-            this.current_resist[djinn.element] += MainChar.ELEM_RESIST_DELTA;
-            this.current_level[djinn.element] += MainChar.ELEM_LV_DELTA;
+            this.elemental_current[elemental_stats.POWER][djinn.element] += MainChar.ELEM_POWER_DELTA;
+            this.elemental_current[elemental_stats.RESIST][djinn.element] += MainChar.ELEM_RESIST_DELTA;
+            this.elemental_current[elemental_stats.LEVEL][djinn.element] += MainChar.ELEM_LV_DELTA;
         }
 
-        this.effects.forEach(effect => {
+        const effects_group = _.groupBy(this.effects, effect => effect.effect_owner_instance.constructor.name);
+        const apply_effect = (effect: Effect) => {
             if (effect.type === effect_types.POWER || effect.type === effect_types.RESIST) {
                 if (ignore_ability_effects && effect.effect_owner_instance instanceof Ability) return;
                 effect.apply_effect();
             }
+        };
+        if ("Item" in effects_group) {
+            effects_group["Item"].forEach(apply_effect);
+        }
+        ordered_elements.forEach(element => {
+            this.elemental_before_buff[elemental_stats.POWER][element] =
+                this.elemental_current[elemental_stats.POWER][element];
+            this.elemental_before_buff[elemental_stats.RESIST][element] =
+                this.elemental_current[elemental_stats.RESIST][element];
+            this.elemental_buff[elemental_stats.POWER][element] = 0;
+            this.elemental_buff[elemental_stats.RESIST][element] = 0;
+        });
+        if ("Ability" in effects_group) {
+            effects_group["Ability"].forEach(apply_effect);
+        }
+        ordered_elements.forEach(element => {
+            this.elemental_current[elemental_stats.POWER][element] +=
+                this.elemental_buff[elemental_stats.POWER][element];
+            this.elemental_current[elemental_stats.RESIST][element] +=
+                this.elemental_buff[elemental_stats.RESIST][element];
         });
 
         for (let i = 0; i < ordered_elements.length; ++i) {
             const element = ordered_elements[i];
-            this.current_power[element] = _.clamp(this.current_power[element], ELEM_ATTR_MIN, ELEM_ATTR_MAX);
-            this.current_resist[element] = _.clamp(this.current_resist[element], ELEM_ATTR_MIN, ELEM_ATTR_MAX);
+            this.elemental_current[elemental_stats.POWER][element] = _.clamp(
+                this.elemental_current[elemental_stats.POWER][element],
+                ELEM_ATTR_MIN,
+                ELEM_ATTR_MAX
+            );
+            this.elemental_current[elemental_stats.RESIST][element] = _.clamp(
+                this.elemental_current[elemental_stats.RESIST][element],
+                ELEM_ATTR_MIN,
+                ELEM_ATTR_MAX
+            );
         }
 
         if (preview) {
@@ -827,14 +864,14 @@ export class MainChar extends Player {
                     const return_data = [
                         element,
                         {
-                            power: this.current_power[element],
-                            resist: this.current_resist[element],
-                            level: this.current_level[element],
+                            power: this.elemental_current[elemental_stats.POWER][element],
+                            resist: this.elemental_current[elemental_stats.RESIST][element],
+                            level: this.elemental_current[elemental_stats.LEVEL][element],
                         },
                     ];
-                    this.current_power[element] = previous_stats[element].power;
-                    this.current_resist[element] = previous_stats[element].resist;
-                    this.current_level[element] = previous_stats[element].level;
+                    this.elemental_current[elemental_stats.POWER][element] = previous_stats[element].power;
+                    this.elemental_current[elemental_stats.RESIST][element] = previous_stats[element].resist;
+                    this.elemental_current[elemental_stats.LEVEL][element] = previous_stats[element].level;
                     return return_data;
                 })
             );

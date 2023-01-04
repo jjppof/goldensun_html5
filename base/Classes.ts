@@ -3,7 +3,7 @@
 import {elements, ordered_elements} from "./utils";
 import * as _ from "lodash";
 import {GameInfo} from "./initializers/initialize_info";
-import {main_stats, permanent_status, Player, temporary_status} from "./Player";
+import {elemental_stats, main_stats, permanent_status, Player, temporary_status} from "./Player";
 
 export class Classes {
     public key_name: string;
@@ -53,7 +53,7 @@ export class Classes {
         classes_list: GameInfo["classes_list"],
         class_table,
         element_afinity: elements,
-        current_level: Player["current_level"],
+        current_level: Player["elemental_current"][elemental_stats.LEVEL],
         granted_class_type: number,
         special_class_type: number
     ): Classes {
@@ -69,7 +69,7 @@ export class Classes {
 
     private static choose_class_by_type(
         classes_list: GameInfo["classes_list"],
-        current_level: Player["current_level"],
+        current_level: Player["elemental_current"][elemental_stats.LEVEL],
         class_type: number
     ): Classes {
         let classes = Object.values(classes_list).filter(this_class => this_class.class_type === class_type);
@@ -84,7 +84,7 @@ export class Classes {
     private static choose_class_type(
         class_table,
         element_afinity: elements,
-        current_level: Player["current_level"],
+        current_level: Player["elemental_current"][elemental_stats.LEVEL],
         granted_class_type: number,
         special_class_type: number
     ): number {
@@ -101,7 +101,7 @@ export class Classes {
     static choose_class_type_by_element_afinity(
         class_table,
         element_afinity: elements,
-        current_level: Player["current_level"],
+        current_level: Player["elemental_current"][elemental_stats.LEVEL],
         special_class_type: number
     ): number {
         const secondary_elements = [

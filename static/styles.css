@@ -61,7 +61,7 @@ canvas {
     transform: rotate(90deg);
 }
 #key_debug table, #stats_debug table {
-    width: 270px;
+    width: 320px;
     table-layout: fixed;
     font-family: monospace;
     border-collapse: collapse;

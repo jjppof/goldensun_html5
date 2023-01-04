@@ -8,6 +8,7 @@ import {
     ordered_status_menu,
     permanent_status,
     effect_type_stat,
+    elemental_stats,
 } from "../../Player";
 import {TextObj, Window} from "../../Window";
 import {elements, ordered_elements} from "../../utils";
@@ -481,11 +482,12 @@ export class BattleStatusWindow {
         const elemental_base = this.selected_char.preview_elemental_stats_without_abilities_effect();
 
         const power_value: BattleStatusEffect["properties"]["value"] = ordered_elements.reduce((obj, elem) => {
-            obj[elem] = this.selected_char.current_power[elem] - elemental_base[elem].power;
+            obj[elem] = this.selected_char.elemental_current[elemental_stats.POWER][elem] - elemental_base[elem].power;
             return obj;
         }, {});
         const resist_value: BattleStatusEffect["properties"]["value"] = ordered_elements.reduce((obj, elem) => {
-            obj[elem] = this.selected_char.current_resist[elem] - elemental_base[elem].resist;
+            obj[elem] =
+                this.selected_char.elemental_current[elemental_stats.RESIST][elem] - elemental_base[elem].resist;
             return obj;
         }, {});
 
