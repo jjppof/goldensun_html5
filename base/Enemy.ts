@@ -26,6 +26,7 @@ export class Enemy extends Player {
     public weight_recover_ailment: number;
     public weight_recover_hp: number;
     public target_weaker_chance: number;
+    public defeat_voice: string;
     public base_stats: {[main_stat in main_stats]?: number};
 
     constructor(enemy_data, name) {
@@ -67,6 +68,7 @@ export class Enemy extends Player {
         this.weight_recover_ailment = enemy_data.weight_recover_ailment ?? 1.0;
         this.weight_recover_hp = enemy_data.weight_recover_hp ?? 1.0;
         this.target_weaker_chance = enemy_data.target_weaker_chance ?? 0.5;
+        this.defeat_voice = enemy_data.defeat_voice ?? null;
         this.class = new Classes(
             "no_class",
             "No Class",

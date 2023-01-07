@@ -584,6 +584,9 @@ export class Battle {
         const player_sprite = _.find(this.battle_stage.sprites, {player_instance: target});
         player_sprite.set_action(battle_actions.DOWNED);
         if (target.fighter_type === fighter_types.ENEMY) {
+            if ((target as Enemy).defeat_voice) {
+                this.data.audio.play_se((target as Enemy).defeat_voice);
+            }
             await player_sprite.unmount_by_dissolving();
         }
     }
