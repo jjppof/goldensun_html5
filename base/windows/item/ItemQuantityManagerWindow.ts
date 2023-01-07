@@ -231,7 +231,10 @@ export class ItemQuantityManagerWindow {
 
                 this.update_position();
                 this.set_header();
-                this.item_counter.config(custom_quantity ?? this.item_obj.quantity, this.choosen_quantity);
+                this.item_counter.config(
+                    custom_quantity ? custom_quantity : this.item_obj.quantity,
+                    this.choosen_quantity
+                );
 
                 this.group.visible = true;
                 this.on_change(this.choosen_quantity);

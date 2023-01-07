@@ -327,6 +327,7 @@ export class Hero extends ControllableChar {
 
                 const djinni_to_recover = Djinn.djinn_in_recover.length ? Djinn.djinn_in_recover[0] : null;
                 if (djinni_to_recover) {
+                    this.data.audio.play_se("menu/djinn_set");
                     this.data.info.djinni_list[djinni_to_recover].set_status(djinn_status.SET);
                 }
 

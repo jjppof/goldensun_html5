@@ -754,6 +754,13 @@ export class Battle {
             await this.apply_damage(action, ability);
         }
 
+        //check whether a party is defeated
+        this.check_parties();
+        if (this.battle_phase === battle_phases.END) {
+            this.check_phases();
+            return;
+        }
+
         //apply ability effects
         let end_turn_effect = false;
         for (let i = 0; i < ability.effects.length; ++i) {
@@ -769,6 +776,14 @@ export class Battle {
             }
         }
 
+        //check whether a party is defeated
+        this.check_parties();
+        if (this.battle_phase === battle_phases.END) {
+            this.check_phases();
+            return;
+        }
+
+        //resets stage and chars position to default
         this.battle_stage.pause_players_update = false;
         this.battle_stage.set_update_factor(1);
         await Promise.all([this.battle_stage.reset_chars_position(), this.battle_stage.set_stage_default_position()]);
@@ -966,8 +981,6 @@ export class Battle {
                 });
             }
 
-            await this.battle_log.add_damage(damage, target_instance, ability.affects_pp);
-
             const current_property = ability.affects_pp ? main_stats.CURRENT_PP : main_stats.CURRENT_HP;
             const max_property = ability.affects_pp ? main_stats.MAX_PP : main_stats.MAX_HP;
             target_instance[current_property] = _.clamp(
@@ -977,6 +990,8 @@ export class Battle {
             );
 
             this.battle_menu.chars_status_window.update_chars_info();
+
+            await this.battle_log.add_damage(damage, target_instance, ability.affects_pp);
 
             if (
                 !ability.affects_pp &&
@@ -1694,6 +1709,10 @@ So, if a character will die after 5 turns and you land another Curse on them, it
     // - Characters who do not participate get half;
     // - Downed characters get none.
     async battle_phase_end() {
+        this.battle_stage.pause_players_update = false;
+        this.battle_stage.set_update_factor(1);
+        await Promise.all([this.battle_stage.reset_chars_position(), this.battle_stage.set_stage_default_position()]);
+
         for (let i = 0; i < this.on_going_effects.length; ++i) {
             //remove all effects acquired in battle
             const effect = this.on_going_effects[i];
