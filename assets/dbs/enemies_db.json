@@ -389,7 +389,7 @@
             "jupiter": 100
         },
         "battle_animations_variations": {
-            "attack": "attack"
+            "attack": "attack_jumping"
         },
         "battle_spritesheet": {
             "spritesheet": {

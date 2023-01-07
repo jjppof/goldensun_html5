@@ -9,6 +9,9 @@ import {BattleCursorManager} from "./BattleCursorManager";
 import {permanent_status} from "../Player";
 
 const SCALE_FACTOR = 0.8334;
+const SCALE_MIN = -1 / 7 + SCALE_FACTOR;
+const SCALE_MAX = 1 / 7 + SCALE_FACTOR;
+const SCALE_DIFF = SCALE_MAX - SCALE_MIN;
 const BG_X = 0;
 export const BG_Y = 17;
 const BG_WIDTH = 256;
@@ -587,7 +590,12 @@ export class BattleStage {
                 this.pos_update_factor.factor * player_sprite.y + (1 - this.pos_update_factor.factor) * pos.y;
 
             const relative_angle = player_sprite.is_ally ? this.camera_angle.rad : this.camera_angle.rad + Math.PI;
-            const scale = BattleStage.get_scale(relative_angle);
+            const scale = BattleStage.get_scale(
+                relative_angle,
+                player_sprite.center_shift,
+                player_sprite.ellipses_semi_major,
+                player_sprite.ellipses_semi_minor
+            );
             player_sprite.scale.setTo(scale, scale);
 
             if (Math.sin(relative_angle) > 0 && player_sprite.position !== battle_positions.BACK) {
@@ -679,7 +687,33 @@ export class BattleStage {
         );
     }
 
-    static get_scale(angle: number, default_scale: number = 1.0) {
-        return (Math.sin(angle) / 7 + SCALE_FACTOR) * default_scale;
+    /*
+
+            scale
+             |
+angle=270    | /
+       \     |/
+        \    / MAX_SCALE
+         \  /|
+  ________\/_|_________ center_shift
+          /\ |
+         /  \|
+        /    \ MIN_SCALE
+       /     |\
+angle=90     | \
+
+*/
+
+    static get_scale(angle: number, center_shift: number, elipse_major_axis: number, elipse_minor_axis: number) {
+        const angle_sin = Math.sin(angle);
+        const angle_only_factor = angle_sin / 7 + SCALE_FACTOR;
+        let center_shift_factor = 0;
+        if (center_shift !== 0) {
+            const cos_2_angle = 1 - 2 * (angle_sin * angle_sin);
+            const elipse_factor =
+                (elipse_major_axis - elipse_minor_axis) * cos_2_angle + elipse_major_axis + elipse_minor_axis;
+            center_shift_factor = (center_shift * SCALE_DIFF * angle_sin) / elipse_factor;
+        }
+        return angle_only_factor + center_shift_factor;
     }
 }

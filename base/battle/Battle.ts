@@ -16,7 +16,7 @@ import {ChoosingTargetWindow} from "../windows/battle/ChoosingTargetWindow";
 import {EnemyAI} from "./EnemyAI";
 import {BattleFormulas, EVASION_CHANCE, DELUSION_MISS_CHANCE} from "./BattleFormulas";
 import {effect_types, Effect, effect_usages, effect_names} from "../Effect";
-import {ordered_elements, element_names, base_actions} from "../utils";
+import {ordered_elements, element_names, base_actions, promised_wait} from "../utils";
 import {djinn_status, Djinn} from "../Djinn";
 import {ItemSlot, MainChar} from "../MainChar";
 import {animation_availability, BattleAnimationManager} from "./BattleAnimationManager";
@@ -529,6 +529,8 @@ export class Battle {
 
             await this.set_action_animation_settings(action, ability);
         }
+
+        await promised_wait(this.game, 500);
         this.battle_phase = battle_phases.COMBAT;
         this.check_phases();
     }
