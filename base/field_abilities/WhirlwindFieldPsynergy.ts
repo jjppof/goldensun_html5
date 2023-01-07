@@ -30,6 +30,7 @@ export class WhirlwindFieldPsynergy extends FieldAbilities {
     private _blowing: boolean;
     private _previous_angles: Array<number>;
     private _blow_gradient: {gradient: number};
+    private _init_sfx: Phaser.Sound;
 
     protected target_object: InteractableObjects;
 
@@ -50,6 +51,7 @@ export class WhirlwindFieldPsynergy extends FieldAbilities {
         this.set_bootstrap_method(this.init.bind(this));
         this._whirlwind_sprite_base = this.data.info.misc_sprite_base_list[WhirlwindFieldPsynergy.ABILITY_KEY_NAME];
         this._blowing = false;
+        this._init_sfx = null;
     }
 
     init() {
@@ -63,6 +65,7 @@ export class WhirlwindFieldPsynergy extends FieldAbilities {
         this._whirlwind_sprite_base.setAnimation(this._whirlwind_sprite, WhirlwindFieldPsynergy.ABILITY_KEY_NAME);
         const blow_key = this._whirlwind_sprite_base.getAnimationKey(WhirlwindFieldPsynergy.ABILITY_KEY_NAME, "blow");
         this._whirlwind_sprite.play(blow_key);
+        this._init_sfx = this.data.audio.play_se("psynergy/14");
         this._whirlwind_sprite.anchor.setTo(0.5, 0.5);
         this._whirlwind_sprite.scale.setTo(0, 0);
         this.game.add.tween(this._whirlwind_sprite.scale).to(
@@ -201,6 +204,11 @@ export class WhirlwindFieldPsynergy extends FieldAbilities {
 
     finish_whirlwind() {
         const end_key = this._whirlwind_sprite_base.getAnimationKey(WhirlwindFieldPsynergy.ABILITY_KEY_NAME, "end");
+        this.data.audio.play_se("psynergy/13");
+        if (this._init_sfx) {
+            this._init_sfx.stop();
+            this._init_sfx = null;
+        }
         this._whirlwind_sprite.play(end_key).onComplete.addOnce(() => {
             if (this._leaves) {
                 this._leaves.destroy(true);
