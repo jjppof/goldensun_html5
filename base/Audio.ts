@@ -1,3 +1,10 @@
+/*
+If you go to 080DD8B8 in VBA's memory viewer and edit the byte that says "x83" in the memory viewer part of VBA,
+you can play any sound effect from 0-255 just by using Reveal (keeping in mind that some of them will be songs and
+others may be empty). You can double that up by going to 080DD976 and changing the "xA7" there as well, which
+is the sound effect that plays when you exit the Reveal zone.
+*/
+
 import * as _ from "lodash";
 import {GoldenSun} from "./GoldenSun";
 import {initialize_se} from "./initializers/sound_effects";
