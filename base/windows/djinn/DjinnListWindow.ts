@@ -517,21 +517,16 @@ export class DjinnListWindow {
             {buttons: Button.A, on_down: on_select, sfx: {down: "menu/positive"}},
             {buttons: Button.B, on_down: on_cancel, sfx: {down: "menu/negative"}},
             {
-                // todo: change sfx based on different states when setting or unsetting all djinn
                 buttons: [Button.R, Button.SELECT],
                 halt: true,
                 on_down: on_change_all_djinn_status,
-                sfx: {down: "menu/positive"},
+                sfx: {down: this.get_djinn_status_change_sfx.bind(this)},
             },
             {
                 buttons: Button.R,
                 on_down: on_change_djinn_status,
                 sfx: {
-                    down: () => {
-                        const this_char = this.data.info.party_data.members[this.selected_char_index];
-                        const this_djinn = this.data.info.djinni_list[this_char.djinni[this.selected_djinn_index]];
-                        return this_djinn.status === djinn_status.STANDBY ? "menu/djinn_set" : "menu/djinn_unset";
-                    },
+                    down: this.get_djinn_status_change_sfx.bind(this),
                 },
             },
             {buttons: Button.L, on_down: view_char_status, sfx: {down: "menu/positive"}},
@@ -963,5 +958,11 @@ export class DjinnListWindow {
     deactivate() {
         this.window_active = false;
         this.data.cursor_manager.hide();
+    }
+
+    get_djinn_status_change_sfx() {
+        const this_char = this.data.info.party_data.members[this.selected_char_index];
+        const this_djinn = this.data.info.djinni_list[this_char.djinni[this.selected_djinn_index]];
+        return this_djinn.status === djinn_status.STANDBY ? "menu/djinn_set" : "menu/djinn_unset";
     }
 }
