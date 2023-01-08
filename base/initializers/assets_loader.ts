@@ -31,6 +31,7 @@ function load_db_files(game) {
         "assets/dbs/common_abilities_animations/misc_battle_animations_db.json"
     );
     game.load.json("bgm_db", "assets/dbs/bgm_db.json");
+    game.load.json("se_db", "assets/dbs/se_db.json");
 }
 
 function load_misc(game) {
@@ -106,10 +107,6 @@ function load_plugins(game) {
     game.load.script("particlestorm", "assets/plugins/particle-storm.js");
 }
 
-function load_se(game) {
-    game.load.json("se_data", "assets/sounds/se/se.json");
-}
-
 export function load_all(game) {
     load_db_files(game);
     load_misc(game);
@@ -118,5 +115,4 @@ export function load_all(game) {
     load_fonts(game);
     load_filters(game);
     load_plugins(game);
-    load_se(game);
 }

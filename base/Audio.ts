@@ -46,7 +46,7 @@ export class Audio {
     async init_se() {
         let load_se_promise_resolve;
         const load_se_promise = new Promise(resolve => (load_se_promise_resolve = resolve));
-        const se_data = this.game.cache.getJSON("se_data");
+        const se_data = this.game.cache.getJSON("se_db");
         initialize_se(this.game, this.data, se_data, load_se_promise_resolve);
         await load_se_promise;
     }
