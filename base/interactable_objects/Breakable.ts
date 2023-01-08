@@ -112,6 +112,7 @@ export class Breakable extends InteractableObjects {
 
         char.play(base_actions.IDLE);
         this.play("to_break", Breakable.ACTION_KEY);
+        this.data.audio.play_se("actions/first_break");
 
         this.manage_filter(this.tint_filter, true);
         let blink_counter = 4;
@@ -142,6 +143,8 @@ export class Breakable extends InteractableObjects {
         char.misc_busy = true;
         char.play(base_actions.IDLE);
         char.toggle_collision(false);
+
+        this.data.audio.play_se("actions/full_break");
 
         this.data.camera.enable_shake();
         await this.down_dust_animation(char);

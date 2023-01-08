@@ -131,7 +131,15 @@
                 },
                 "slide": {
                     "start": 2.415,
-                    "end": 3.315
+                    "end": 3.231
+                },
+                "first_break": {
+                    "start": 3.231,
+                    "end": 3.691
+                },
+                "full_break": {
+                    "start": 3.691,
+                    "end": 5.544
                 }
             }
         }
