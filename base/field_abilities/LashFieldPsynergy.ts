@@ -92,6 +92,7 @@ export class LashFieldPsynergy extends FieldAbilities {
         to_up_tween.onComplete.addOnce(() => {
             const open_hand_key = this._hand_sprite_base.getAnimationKey(LashFieldPsynergy.LASH_HAND_KEY_NAME, "open");
             this._hand_sprite.play(open_hand_key);
+            this.data.audio.play_se("psynergy/1");
 
             let timer_event = this.game.time.events.add(180, () => {
                 const down_hand_key = this._hand_sprite_base.getAnimationKey(
@@ -122,6 +123,7 @@ export class LashFieldPsynergy extends FieldAbilities {
                 );
 
                 to_down_tween.onComplete.addOnce(() => {
+                    this.data.audio.play_se("psynergy/16");
                     if (this.target_object && this._rope_dock.is_starting_dock && !this._rope_dock.tied) {
                         this.tie();
                     } else {
@@ -234,6 +236,8 @@ export class LashFieldPsynergy extends FieldAbilities {
         }
 
         await Promise.all([shake_promise, to_dock_promise]);
+
+        this.data.audio.play_se("psynergy/15");
 
         this._hand_sprite.x = base_pos.x;
         this._hand_sprite.y = base_pos.y;
