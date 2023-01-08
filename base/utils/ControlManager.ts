@@ -21,7 +21,12 @@ export type Control = {
         /** Time between each trigger on button held */
         loop_time?: number;
     };
-    sfx?: {up?: string; down?: string};
+    sfx?: {
+        /** The sfx to be played on key up. You can also pass a function the returns the sfx key. */
+        up?: string | (() => string);
+        /** The sfx to be played on key down. You can also pass a function the returns the sfx key. */
+        down?: string | (() => string);
+    };
 };
 
 export type ControlParams = {
@@ -217,7 +222,7 @@ export class ControlManager {
                 ? gamepad_button[gamepad_button.length - 1]
                 : gamepad_button;
 
-            const binding_callback = (is_down: boolean, sfx: string) => {
+            const binding_callback = (is_down: boolean, sfx: string | (() => string)) => {
                 if (this.disabled) return;
                 if (Array.isArray(control.buttons)) {
                     if (!this.check_bt_sequence_is_down(control.buttons as Button[])) return;
@@ -228,7 +233,9 @@ export class ControlManager {
                 } else if (trigger_reset) {
                     this.reset();
                 }
-                if (sfx) this.audio.play_se(sfx);
+                if (sfx) {
+                    this.audio.play_se(typeof sfx === "string" ? sfx : sfx());
+                }
                 if (control.halt) {
                     if (Array.isArray(gamepad_button)) {
                         gamepad_button.forEach(bt => (is_down ? bt.on_down : bt.on_up).halt());
@@ -317,13 +324,17 @@ export class ControlManager {
      * @param {number} loop_time - Ticks length
      * @param {string} sfx - Sfx to play at each tick
      */
-    private start_loop_timers(callback: Function, loop_time: number, sfx: string) {
-        if (sfx) this.audio.play_se(sfx);
+    private start_loop_timers(callback: Function, loop_time: number, sfx: string | (() => string)) {
+        if (sfx) {
+            this.audio.play_se(typeof sfx === "string" ? sfx : sfx());
+        }
         callback();
 
         this.loop_start_timer.add(Phaser.Timer.QUARTER, () => {
             this.loop_repeat_timer.loop(loop_time, () => {
-                if (sfx) this.audio.play_se(sfx);
+                if (sfx) {
+                    this.audio.play_se(typeof sfx === "string" ? sfx : sfx());
+                }
                 callback();
             });
             this.loop_repeat_timer.start();

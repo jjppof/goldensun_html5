@@ -95,11 +95,21 @@ export class DjinnPsynergyWindow {
             this.execute_operation = execute_operation;
             this.close(this.close_callback);
         };
+
+        let a_button_sfx: string;
+        if (!this.action && this.next_djinni_status !== undefined) {
+            a_button_sfx = this.next_djinni_status[0] == djinn_status.SET ? "menu/djinn_set" : "menu/djinn_unset";
+        } else if (this.action !== undefined) {
+            a_button_sfx = "battle/heal_1";
+        } else {
+            a_button_sfx = "menu/positive";
+        }
+
         const controls = [
             {buttons: Button.LEFT, on_down: this.previous_page.bind(this), sfx: {down: "menu/move"}},
             {buttons: Button.RIGHT, on_down: this.next_page.bind(this), sfx: {down: "menu/move"}},
             {buttons: Button.R, on_down: this.next_state_callback, sfx: {down: "menu/move"}},
-            {buttons: Button.A, on_down: () => close(true), sfx: {down: "menu/positive_3"}},
+            {buttons: Button.A, on_down: () => close(true), sfx: {down: a_button_sfx}},
             {buttons: Button.B, on_down: () => close(false), sfx: {down: "menu/negative"}},
         ];
         this.data.control_manager.add_controls(controls, {loop_config: {horizontal: true}});

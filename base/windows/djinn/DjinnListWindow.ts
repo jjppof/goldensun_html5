@@ -205,7 +205,9 @@ export class DjinnListWindow {
         else {
             if (this.action_text_selected || this.selected_djinn_index === this.sizes[this.selected_char_index] - 1) {
                 this.select_djinn(this.selected_char_index, 0, true);
-            } else this.select_djinn(this.selected_char_index, this.selected_djinn_index + 1);
+            } else {
+                this.select_djinn(this.selected_char_index, this.selected_djinn_index + 1);
+            }
         }
     }
 
@@ -223,7 +225,9 @@ export class DjinnListWindow {
         else {
             if (this.action_text_selected || this.selected_djinn_index === 0) {
                 this.select_djinn(this.selected_char_index, this.sizes[this.selected_char_index] - 1, true);
-            } else this.select_djinn(this.selected_char_index, this.selected_djinn_index - 1);
+            } else {
+                this.select_djinn(this.selected_char_index, this.selected_djinn_index - 1);
+            }
         }
     }
 
@@ -505,7 +509,6 @@ export class DjinnListWindow {
         view_char_status?: Function,
         on_change_all_djinn_status?: Function
     ) {
-        //Missing check for different states on R Button. Using "Set" sound for all
         const controls: Control[] = [
             {buttons: Button.LEFT, on_down: this.previous_character.bind(this), sfx: {down: "menu/move"}},
             {buttons: Button.RIGHT, on_down: this.next_character.bind(this), sfx: {down: "menu/move"}},
@@ -514,12 +517,23 @@ export class DjinnListWindow {
             {buttons: Button.A, on_down: on_select, sfx: {down: "menu/positive"}},
             {buttons: Button.B, on_down: on_cancel, sfx: {down: "menu/negative"}},
             {
+                // todo: change sfx based on different states when setting or unsetting all djinn
                 buttons: [Button.R, Button.SELECT],
                 halt: true,
                 on_down: on_change_all_djinn_status,
                 sfx: {down: "menu/positive"},
             },
-            {buttons: Button.R, on_down: on_change_djinn_status, sfx: {down: "menu/positive_3"}},
+            {
+                buttons: Button.R,
+                on_down: on_change_djinn_status,
+                sfx: {
+                    down: () => {
+                        const this_char = this.data.info.party_data.members[this.selected_char_index];
+                        const this_djinn = this.data.info.djinni_list[this_char.djinni[this.selected_djinn_index]];
+                        return this_djinn.status === djinn_status.STANDBY ? "menu/djinn_set" : "menu/djinn_unset";
+                    },
+                },
+            },
             {buttons: Button.L, on_down: view_char_status, sfx: {down: "menu/positive"}},
         ];
         this.data.control_manager.add_controls(controls, {
