@@ -60,9 +60,12 @@ export class LiftFieldPsynergy extends FieldAbilities {
             }
 
             this.init_hand_sprites();
+            this.data.audio.play_se("psynergy/1");
             await this.scale_hand_sprite_init(this.left_hand_sprite);
+            this.data.audio.play_se("psynergy/1");
             await this.scale_hand_sprite_init(this.right_hand_sprite);
             await this.hold_target_obj();
+            this.data.audio.play_se("psynergy/5");
 
             if (this.target_object.has_shadow) {
                 this.target_object.shadow.sort_function = null;
@@ -70,13 +73,20 @@ export class LiftFieldPsynergy extends FieldAbilities {
             }
 
             await this.lift_target_obj();
+            this.data.audio.play_se("psynergy/4");
             await this.scale_hand_sprite_end(this.left_hand_sprite);
+            this.data.audio.play_se("psynergy/10");
+            this.data.audio.play_se("psynergy/4");
             await this.scale_hand_sprite_end(this.right_hand_sprite);
+            this.data.audio.play_se("psynergy/10");
         } else {
             this.init_hand_sprites();
+            this.data.audio.play_se("psynergy/1");
             await this.scale_hand_sprite_init(this.left_hand_sprite);
+            this.data.audio.play_se("psynergy/1");
             await this.scale_hand_sprite_init(this.right_hand_sprite);
             await this.hold_target_obj();
+            this.data.audio.play_se("psynergy/17");
         }
 
         this.finish();
