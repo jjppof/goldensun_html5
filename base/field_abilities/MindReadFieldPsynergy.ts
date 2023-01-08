@@ -1,5 +1,5 @@
 import {FieldAbilities} from "./FieldAbilities";
-import {base_actions} from "../utils";
+import {base_actions, promised_wait} from "../utils";
 import {NPC, npc_movement_types} from "../NPC";
 import {Button} from "../XGamepad";
 import {interaction_patterns} from "../game_events/GameEventManager";
@@ -18,6 +18,7 @@ export class MindReadFieldPsynergy extends FieldAbilities {
     private cast_char_anim_promise: Promise<void>;
     private cast_finish_promise: Promise<void>;
     private arrows: Phaser.Sprite[];
+    private finished: boolean;
 
     protected target_object: NPC;
 
@@ -45,6 +46,7 @@ export class MindReadFieldPsynergy extends FieldAbilities {
         this.control_enable = false;
         this.cast_char_anim_promise = null;
         this.cast_finish_promise = null;
+        this.finished = true;
     }
 
     set_controls() {
@@ -104,6 +106,8 @@ export class MindReadFieldPsynergy extends FieldAbilities {
             return;
         }
 
+        this.finished = false;
+
         this.target_object.stop_char();
         const previous_movement_type = this.target_object.movement_type;
         this.target_object.movement_type = npc_movement_types.IDLE;
@@ -148,6 +152,8 @@ export class MindReadFieldPsynergy extends FieldAbilities {
 
         const base_start_delay = 200;
         const start_arrows = async () => {
+            if (this.finished) return;
+            this.data.audio.play_se("psynergy/5");
             const promises: Promise<void>[] = new Array(arrows_number);
             for (let i = 0; i < arrows_number; ++i) {
                 const arrow = this.arrows[i];
@@ -168,8 +174,9 @@ export class MindReadFieldPsynergy extends FieldAbilities {
                 tween.onStart.addOnce(() => {
                     arrow.visible = true;
                 });
-                tween.onComplete.addOnce(() => {
+                tween.onComplete.addOnce(async () => {
                     arrow.visible = false;
+                    await promised_wait(this.game, 500);
                     resolve_func();
                 });
             }

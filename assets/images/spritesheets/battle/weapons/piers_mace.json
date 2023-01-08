@@ -32,6 +32,22 @@
 	"spriteSourceSize": {"x":27,"y":7,"w":36,"h":40},
 	"sourceSize": {"w":64,"h":64}
 },
+"mace/attack_init_back/00":
+{
+	"frame": {"x":301,"y":1,"w":36,"h":31},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":27,"y":0,"w":36,"h":31},
+	"sourceSize": {"w":64,"h":64}
+},
+"mace/attack_init_front/00":
+{
+	"frame": {"x":227,"y":36,"w":44,"h":27},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":18,"y":1,"w":44,"h":27},
+	"sourceSize": {"w":64,"h":64}
+},
 "mace/cast_back/00":
 {
 	"frame": {"x":339,"y":1,"w":19,"h":14},
@@ -215,6 +231,6 @@
 	"format": "RGBA8888",
 	"size": {"w":359,"h":64},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:bcd7826e1b4593b86a6ffd74d81c2be4:92e619d26fd5073fa8bc6936e776059e:c763577cd2f0ab0555de52d2dbed8715$"
+	"smartupdate": "$TexturePacker:SmartUpdate:23dd8ce87bb2312bc84f90961dd657b5:d10d4113484bdc8c07ffb038a57aa789:c763577cd2f0ab0555de52d2dbed8715$"
 }
 }

@@ -105,9 +105,9 @@
         "wait": true,
         "hide_on_complete": true
     }],
-    "x_ellipse_axis_factor_sequence": [{
+    "center_shift_sequence": [{
         "start_delay": 1500,
-        "to": 20,
+        "to": 15,
         "is_absolute": false,
         "tween": "Quadratic.Out",
         "sprite_index": "targets",

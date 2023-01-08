@@ -8,7 +8,7 @@
         "is_absolute": true,
         "tween": "Linear.None",
         "sprite_index": "caster",
-        "duration": 350
+        "duration": 250
     }],
     "y_sequence": [{
         "start_delay": 0,
@@ -16,7 +16,15 @@
         "is_absolute": true,
         "tween": "Linear.None",
         "sprite_index": "caster",
-        "duration": 350
+        "to_expression": "v - 13",
+        "duration": 125
+    },{
+        "start_delay": 0,
+        "to": "targets",
+        "is_absolute": true,
+        "tween": "Linear.None",
+        "sprite_index": "caster",
+        "duration": 125
     }],
     "play_sequence": [{
         "animation_key": "attack_init",
@@ -25,19 +33,19 @@
         "wait": false
     },{
         "animation_key": "attack",
-        "start_delay": 350,
+        "start_delay": 200,
         "sprite_index": "caster",
         "wait": false
     },{
         "ignore_if_dodge": true,
         "animation_key": "damage",
-        "start_delay": 350,
+        "start_delay": 250,
         "sprite_index": "targets",
         "wait": false
     }],
     "center_shift_sequence": [{
         "ignore_if_dodge": true,
-        "start_delay": 350,
+        "start_delay": 250,
         "to": 15,
         "is_absolute": false,
         "tween": "Quadratic.Out",

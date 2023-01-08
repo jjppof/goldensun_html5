@@ -2117,7 +2117,7 @@
         "description": "Restore party PP with passion's flames.",
         "type": "effect_only",
         "element": "mars",
-        "battle_target": "enemy",
+        "battle_target": "ally",
         "range": 1,
         "pp_cost": 0,
         "ability_power": 0,

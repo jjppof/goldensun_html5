@@ -96,12 +96,14 @@ export class Audio {
     play_se(key: string, on_stop?: Function, position_shift: number = 0, volume: number = 1) {
         const key_parts = key.split("/");
 
-        if (key_parts[0] in this.se_data) {
+        if (key_parts[0] in this.se_data && key_parts[1] in this.se_data[key_parts[0]].sounds) {
             const audio = this.se_data[key_parts[0]].play(key_parts[1], volume, position_shift);
             if (on_stop) {
                 audio.onMarkerComplete.addOnce(on_stop);
             }
             return audio;
+        } else {
+            console.warn(`SFX key not registered: ${key}.`);
         }
 
         return null;

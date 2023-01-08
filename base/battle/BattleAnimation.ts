@@ -5,6 +5,7 @@ import {BattleStage, DEFAULT_POS_ANGLE} from "./BattleStage";
 import * as _ from "lodash";
 import {battle_actions, PlayerSprite} from "./PlayerSprite";
 import {ParticlesInfo} from "../ParticlesWrapper";
+import * as mathjs from "mathjs";
 
 export const CAST_STAGE_POSITION = 0.5242024;
 export const MIRRORED_CAST_STAGE_POSITION = -0.7151327;
@@ -37,6 +38,7 @@ type CompactValuesSpecifier = {
 type DefaultAttr = {
     start_delay: number | number[] | CompactValuesSpecifier;
     to: to_misc_values | target_types | number | number[] | CompactValuesSpecifier;
+    to_expression: string;
     is_absolute: boolean;
     tween: string;
     duration: number | string;
@@ -760,6 +762,9 @@ export class BattleAnimation {
                         const pos = this.data.battle_instance.battle_stage.get_player_position_in_stage(index_on_stage);
                         to_value = pos[property_to_set];
                         this.sprites_prev_properties[uniq_key][property_to_set] = to_value;
+                        if (seq.to_expression) {
+                            to_value = mathjs.evaluate(seq.to_expression, {v: to_value});
+                        }
                         return to_value;
                     }
                     if (options?.rotational_property) {
@@ -784,6 +789,9 @@ export class BattleAnimation {
                         ? to_value
                         : this.sprites_prev_properties[uniq_key][property_to_set] + seq_to;
                     this.sprites_prev_properties[uniq_key][property_to_set] = to_value;
+                    if (seq.to_expression) {
+                        to_value = mathjs.evaluate(seq.to_expression, {v: to_value});
+                    }
                     return to_value;
                 };
                 if (seq.tween === "initial") {

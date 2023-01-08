@@ -87,10 +87,12 @@ export class RetreatFieldPsynergy extends FieldAbilities {
 
         await this.controllable_char.face_direction(directions.down);
         this.controllable_char.play(base_actions.GRANT);
+        this.data.audio.play_se("psynergy/6");
 
         await promised_wait(this.game, Phaser.Timer.HALF);
 
         this.return_to_idle_anim();
+        this.data.audio.play_se("psynergy/7");
         this.controllable_char.set_rotation(true);
         this.enable_update = true;
         await this.stop_casting(false);
@@ -102,6 +104,8 @@ export class RetreatFieldPsynergy extends FieldAbilities {
         }
         this.data.camera.unfollow();
         this.controllable_char.toggle_collision(false);
+
+        this.data.audio.play_se("psynergy/12");
 
         const emitter = this.start_particles_emitter();
 

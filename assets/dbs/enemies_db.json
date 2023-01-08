@@ -15,6 +15,7 @@
         "battle_scale": 1.35,
         "battle_shadow_key": "00",
         "status_sprite_shift": 15,
+        "defeat_voice": "monster_defeat/monster_2",
         "items": [
             {
                 "key_name": "oil_drop",
@@ -115,6 +116,7 @@
         "battle_scale": 1.2,
         "battle_shadow_key": "00",
         "status_sprite_shift": 15,
+        "defeat_voice": "monster_defeat/monster_2",
         "items": [
             {
                 "key_name": "oil_drop",
@@ -208,6 +210,7 @@
         "battle_scale": 1.0,
         "battle_shadow_key": "00",
         "status_sprite_shift": 15,
+        "defeat_voice": "monster_defeat/monster_2",
         "items": [
             {
                 "key_name": "herb",
@@ -286,6 +289,7 @@
         "battle_scale": 1.0,
         "battle_shadow_key": "00",
         "status_sprite_shift": 15,
+        "defeat_voice": "monster_defeat/monster_2",
         "items": [],
         "abilities": [
             {
@@ -358,6 +362,7 @@
         "battle_scale": 1.0,
         "battle_shadow_key": "00",
         "status_sprite_shift": 15,
+        "defeat_voice": "monster_defeat/monster_1",
         "items": [],
         "abilities": [
             {
@@ -389,7 +394,7 @@
             "jupiter": 100
         },
         "battle_animations_variations": {
-            "attack": "attack"
+            "attack": "attack_jumping"
         },
         "battle_spritesheet": {
             "spritesheet": {
@@ -430,6 +435,7 @@
         "battle_scale": 1.0,
         "battle_shadow_key": "00",
         "status_sprite_shift": 15,
+        "defeat_voice": "monster_defeat/monster_1",
         "items": [],
         "abilities": [
             {
@@ -502,6 +508,7 @@
         "battle_scale": 1.0,
         "battle_shadow_key": "00",
         "status_sprite_shift": 15,
+        "defeat_voice": "monster_defeat/monster_1",
         "items": [],
         "abilities": [
             {
@@ -573,6 +580,7 @@
         "target_weaker_chance": 0.75,
         "weight_recover_hp": 0.0,
         "weight_recover_ailment": 0.0,
+        "defeat_voice": "monster_defeat/monster_4",
         "items": [],
         "abilities": [
             {
