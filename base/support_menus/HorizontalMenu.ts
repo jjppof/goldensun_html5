@@ -116,11 +116,15 @@ export class HorizontalMenu {
         this.mount_buttons();
     }
 
-    set_controls() {
+    set_controls(confirm_sfx?: string) {
         const controls = [
             {buttons: Button.LEFT, on_down: this.previous_button.bind(this), sfx: {down: "menu/move"}},
             {buttons: Button.RIGHT, on_down: this.next_button.bind(this), sfx: {down: "menu/move"}},
-            {buttons: Button.A, on_down: this.on_press.bind(this), sfx: {down: "menu/positive"}},
+            {
+                buttons: Button.A,
+                on_down: this.on_press.bind(this),
+                sfx: {down: confirm_sfx ? confirm_sfx : "menu/positive"},
+            },
             {buttons: Button.B, on_down: this.on_cancel.bind(this), sfx: {down: "menu/negative"}},
         ];
 
@@ -220,7 +224,8 @@ export class HorizontalMenu {
         callback?: Function,
         select_index: number = 0,
         start_active: boolean = true,
-        custom_scale?: {active_default: number; max_scale: number}
+        custom_scale?: {active_default: number; max_scale: number},
+        confirm_sfx?: string
     ) {
         this.reset_button();
 
@@ -260,7 +265,7 @@ export class HorizontalMenu {
             if (callback) {
                 callback();
             }
-            this.set_controls();
+            this.set_controls(confirm_sfx);
             this.game.world.bringToTop(this.group);
         });
     }

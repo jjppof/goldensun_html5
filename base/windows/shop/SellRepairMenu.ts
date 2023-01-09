@@ -260,7 +260,9 @@ export class SellRepairMenu {
                             );
                         },
                     },
-                    {x: YESNO_X, y: YESNO_Y}
+                    {x: YESNO_X, y: YESNO_Y},
+                    undefined,
+                    "menu/shop_sell"
                 );
             } else {
                 this.npc_dialog.update_dialog("sell_quantity_select");
@@ -299,7 +301,9 @@ export class SellRepairMenu {
                                         );
                                     },
                                 },
-                                {x: YESNO_X, y: YESNO_Y}
+                                {x: YESNO_X, y: YESNO_Y},
+                                undefined,
+                                "menu/shop_sell"
                             );
                         }
                     );

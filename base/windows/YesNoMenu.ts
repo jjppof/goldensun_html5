@@ -69,7 +69,12 @@ export class YesNoMenu {
         return this.menu.menu_active;
     }
 
-    open(callbacks: {yes?: Function; no?: Function}, custom_pos?: {x?: number; y?: number}, open_callback?: Function) {
+    open(
+        callbacks: {yes?: Function; no?: Function},
+        custom_pos?: {x?: number; y?: number},
+        open_callback?: Function,
+        confirm_sfx?: string
+    ) {
         this.yes_callback = callbacks.yes ?? (() => {});
         this.no_callback = callbacks.no ?? (() => {});
 
@@ -79,7 +84,7 @@ export class YesNoMenu {
         }
 
         this.is_open = true;
-        this.menu.open(open_callback, 0, true);
+        this.menu.open(open_callback, 0, true, undefined, confirm_sfx);
 
         if (custom_pos) {
             this.update_position(custom_pos.x, custom_pos.y);
