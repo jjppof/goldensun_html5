@@ -152,7 +152,6 @@ export class MindReadFieldPsynergy extends FieldAbilities {
 
         const base_start_delay = 200;
         const start_arrows = async () => {
-            if (this.finished) return;
             this.data.audio.play_se("psynergy/5");
             const promises: Promise<void>[] = new Array(arrows_number);
             for (let i = 0; i < arrows_number; ++i) {
@@ -181,6 +180,7 @@ export class MindReadFieldPsynergy extends FieldAbilities {
                 });
             }
             await Promise.all(promises);
+            if (this.finished) return;
             start_arrows();
         };
         start_arrows();
