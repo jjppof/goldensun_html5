@@ -42,6 +42,14 @@
                 "djinn_set": {
                     "start": 4.783,
                     "end": 5.806
+                },
+                "shop_buy": {
+                    "start": 6.647,
+                    "end": 7.167
+                },
+                "shop_sell": {
+                    "start": 7.167,
+                    "end": 7.637
                 }
             }
         }

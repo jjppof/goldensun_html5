@@ -19,6 +19,8 @@ export class YesNoMenu {
     public is_open: boolean;
     public menu: HorizontalMenu;
 
+    public confirm_sfx: string;
+
     constructor(game: Phaser.Game, data: GoldenSun) {
         this.game = game;
         this.data = data;
@@ -29,13 +31,17 @@ export class YesNoMenu {
         this.buttons_keys = [actions.YES_ACTION, actions.NO_ACTION];
 
         this.is_open = false;
+        this.confirm_sfx = "menu/positive";
 
         this.menu = new HorizontalMenu(
             this.game,
             this.data,
             this.buttons_keys,
             this.buttons_keys.map(b => _.capitalize(b)),
-            {on_press: this.button_press.bind(this), on_cancel: this.close.bind(this)}
+            {on_press: this.button_press.bind(this), on_cancel: this.close.bind(this)},
+            undefined,
+            undefined,
+            this.get_confirm_sfx.bind(this)
         );
         this.menu.title_window.update_size({width: TITLE_WINDOW_WIDTH});
     }
@@ -69,7 +75,12 @@ export class YesNoMenu {
         return this.menu.menu_active;
     }
 
-    open(callbacks: {yes?: Function; no?: Function}, custom_pos?: {x?: number; y?: number}, open_callback?: Function) {
+    open(
+        callbacks: {yes?: Function; no?: Function},
+        custom_pos?: {x?: number; y?: number},
+        open_callback?: Function,
+        confirm_sfx?: string
+    ) {
         this.yes_callback = callbacks.yes ?? (() => {});
         this.no_callback = callbacks.no ?? (() => {});
 
@@ -84,6 +95,10 @@ export class YesNoMenu {
         if (custom_pos) {
             this.update_position(custom_pos.x, custom_pos.y);
         }
+
+        if (confirm_sfx) {
+            this.confirm_sfx = confirm_sfx;
+        }
     }
 
     close(callback?: Function) {
@@ -96,5 +111,9 @@ export class YesNoMenu {
 
     destroy() {
         this.menu.destroy();
+    }
+
+    get_confirm_sfx() {
+        return this.confirm_sfx;
     }
 }

@@ -37,6 +37,7 @@ export class HorizontalMenu {
     public menu_open: boolean;
     public menu_active: boolean;
     public selected_button_tween: Phaser.Tween;
+    public confirm_sfx: string | (() => string);
 
     public x: number;
     public y: number;
@@ -59,7 +60,8 @@ export class HorizontalMenu {
             on_press: Function;
         },
         title_window_width?: number,
-        dock_right: boolean = false
+        dock_right: boolean = false,
+        confirm_sfx?: string | (() => string)
     ) {
         this.game = game;
         this.data = data;
@@ -94,6 +96,7 @@ export class HorizontalMenu {
         this.menu_open = false;
         this.menu_active = false;
         this.selected_button_tween = null;
+        this.confirm_sfx = confirm_sfx;
 
         this.x = numbers.GAME_WIDTH - total_width;
         if (!this.dock_right) this.x = this.x >> 1;
@@ -120,7 +123,11 @@ export class HorizontalMenu {
         const controls = [
             {buttons: Button.LEFT, on_down: this.previous_button.bind(this), sfx: {down: "menu/move"}},
             {buttons: Button.RIGHT, on_down: this.next_button.bind(this), sfx: {down: "menu/move"}},
-            {buttons: Button.A, on_down: this.on_press.bind(this), sfx: {down: "menu/positive"}},
+            {
+                buttons: Button.A,
+                on_down: this.on_press.bind(this),
+                sfx: {down: this.confirm_sfx ? this.confirm_sfx : "menu/positive"},
+            },
             {buttons: Button.B, on_down: this.on_cancel.bind(this), sfx: {down: "menu/negative"}},
         ];
 
