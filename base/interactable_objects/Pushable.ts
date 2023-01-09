@@ -326,13 +326,14 @@ export class Pushable extends InteractableObjects {
                                         this.change_collision_layer(drop_tile.destination_collision_layer);
                                         this.shift_events_and_check_collision(0, drop_tile.dest_y - this.tile_y_pos);
                                         this.set_tile_position({y: drop_tile.dest_y});
-                                        this.data.audio.play_se("misc/rock_drop");
                                         if (drop_tile.dust_animation || drop_tile.water_animation) {
                                             char.change_action(base_actions.IDLE);
                                             char.play(char.current_action, reverse_directions[char.current_direction]);
                                             if (drop_tile.dust_animation) {
+                                                this.data.audio.play_se("misc/rock_drop");
                                                 this.dust_animation(promise_resolve);
                                             } else {
+                                                this.data.audio.play_se("misc/fall_into_water");
                                                 const anim = this.play("pillar_fall_into_water");
                                                 anim.onComplete.addOnce(() => {
                                                     if (this.storage_keys?.animation) {

@@ -192,6 +192,9 @@ export class RollablePillar extends InteractableObjects {
     ) {
         this.play("rolling");
 
+        const rolling_sound = this.data.audio.play_se("misc/rolling");
+        rolling_sound.loop = true;
+
         char.change_action(base_actions.PUSH, true);
 
         let promise_resolve;
@@ -241,6 +244,8 @@ export class RollablePillar extends InteractableObjects {
         });
         stop_timer.start();
         await promise;
+
+        rolling_sound.stop();
 
         if (rolling_pillar_will_fall) {
             await this.fall_pillar(next_contact);
@@ -302,10 +307,12 @@ export class RollablePillar extends InteractableObjects {
         const fall_anim_timer = this.game.time.create(true);
         const anim_start_delay = RollablePillar.ROLLING_SPEED_PER_TILE * fall_speed_multiplier;
         fall_anim_timer.add(anim_start_delay, () => {
+            this.data.audio.play_se("misc/fall_into_water");
             const anim = this.play("falling");
             anim.onComplete.addOnce(promise_resolve_anim);
         });
         fall_anim_timer.start();
+        this.data.audio.play_se("misc/on_rolling_fall");
 
         let promise_resolve_tween;
         const promise_tween = new Promise(resolve => (promise_resolve_tween = resolve));

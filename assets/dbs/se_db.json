@@ -183,6 +183,18 @@
                 "level_up": {
                     "start": 16.316,
                     "end": 19.971
+                },
+                "fall_into_water": {
+                    "start": 19.971,
+                    "end": 21.327
+                },
+                "rolling": {
+                    "start": 21.327,
+                    "end": 21.464
+                },
+                "on_rolling_fall": {
+                    "start": 21.464,
+                    "end": 21.964
                 }
             }
         }
