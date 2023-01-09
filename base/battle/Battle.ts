@@ -307,6 +307,7 @@ export class Battle {
     }
 
     async battle_fadein() {
+        this.data.audio.play_se("monster_defeat/monster_2");
         const graphic = this.game.add.graphics(this.data.hero.sprite.x, this.data.hero.sprite.y);
         graphic.clear();
         graphic.beginFill(0xfffffff);
