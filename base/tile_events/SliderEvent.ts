@@ -236,6 +236,7 @@ export class SliderEvent extends TileEvent {
                         this.data.hero.update_shadow();
                         this.data.hero.shadow.visible = true;
                         this.data.hero.play(base_actions.GROUND);
+                        this.data.audio.play_se("actions/ground_hit");
                         this.data.camera.enable_shake();
                         this.game.time.events.add(300, () => {
                             this.data.hero.play(base_actions.IDLE);

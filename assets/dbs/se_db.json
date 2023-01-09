@@ -140,6 +140,10 @@
                 "full_break": {
                     "start": 3.691,
                     "end": 5.544
+                },
+                "ground_hit": {
+                    "start": 5.544,
+                    "end": 6.690
                 }
             }
         }
