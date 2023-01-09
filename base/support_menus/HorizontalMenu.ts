@@ -59,7 +59,7 @@ export class HorizontalMenu {
             on_press: Function;
         },
         title_window_width?: number,
-        dock_right: boolean = false,
+        dock_right: boolean = false
     ) {
         this.game = game;
         this.data = data;
