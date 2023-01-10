@@ -224,7 +224,9 @@ export class BuyArtifactsMenu {
                             this.data.control_manager.add_simple_controls(this.check_game_ticket.bind(this));
                         },
                     },
-                    {x: YESNO_X, y: YESNO_Y}
+                    {x: YESNO_X, y: YESNO_Y},
+                    undefined,
+                    "menu/shop_sell"
                 );
             };
 
@@ -232,7 +234,7 @@ export class BuyArtifactsMenu {
         }
     }
 
-    on_purchase_success(equip_ask: boolean = false, game_ticket: boolean = false) {
+    on_purchase_success(equip_ask: boolean = false, game_ticket: boolean = false, play_sfx: boolean = false) {
         let quantity = 1;
         let key_name = game_ticket ? "game_ticket" : this.selected_item.key_name;
         let item_to_add = this.data.info.items_list[key_name];
@@ -255,6 +257,7 @@ export class BuyArtifactsMenu {
         } else {
             this.npc_dialog.update_dialog("after_buy", true);
             this.data.cursor_manager.hide();
+            if (play_sfx) this.data.audio.play_se("menu/shop_buy");
 
             let process_purchase = () => {
                 const item = this.data.info.items_list[this.selected_item.key_name];
@@ -382,10 +385,12 @@ export class BuyArtifactsMenu {
 
                 this.yesno_action.open(
                     {yes: this.on_purchase_success.bind(this, false, false), no: this.open_equip_compare.bind(this)},
-                    {x: YESNO_X, y: YESNO_Y}
+                    {x: YESNO_X, y: YESNO_Y},
+                    undefined,
+                    "menu/shop_buy"
                 );
             } else {
-                this.on_purchase_success(true);
+                this.on_purchase_success(true, undefined, true);
             }
         }
     }
@@ -424,7 +429,7 @@ export class BuyArtifactsMenu {
                 this.on_buy_item_select.bind(this, game_ticket)
             );
         } else {
-            if (game_ticket) this.on_purchase_success(false, game_ticket);
+            if (game_ticket) this.on_purchase_success(false, game_ticket, true);
             else {
                 if (
                     this.data.info.party_data.coins - this.data.info.items_list[this.selected_item.key_name].price <
@@ -459,7 +464,8 @@ export class BuyArtifactsMenu {
                     if (!this.quant_win.is_open) this.quant_win.open(shop_item, char_item, true);
                     this.quant_win.grant_control(
                         this.open_inventory_view.bind(this),
-                        this.on_purchase_success.bind(this)
+                        this.on_purchase_success.bind(this),
+                        "menu/shop_buy"
                     );
                 }
             }
