@@ -39,8 +39,10 @@ export class AvoidFieldPsynergy extends FieldAbilities {
         this.controllable_char.blink(8, 125);
 
         const aura_duration = 2000;
+        this.data.audio.play_se("psynergy/18");
         await this.aura(aura_duration);
         await promised_wait(this.game, aura_duration);
+        this.data.audio.play_se("menu/positive_3");
 
         this.enable_update = false;
         this.controllable_char.set_rotation(false);

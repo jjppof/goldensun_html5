@@ -57,6 +57,7 @@ export class DouseFieldPsynergy extends FieldAbilities {
     }
 
     async move_cloud_out() {
+        this.data.audio.play_se("psynergy/1");
         let dest_x: number, dest_y: number;
         if (this.target_object) {
             dest_x = this.target_object.x;
@@ -134,6 +135,10 @@ export class DouseFieldPsynergy extends FieldAbilities {
             random: true,
             zone: zone_source,
         });
+        into_emitter.onEmit = new Phaser.Signal();
+        into_emitter.onEmit.add(() => {
+            this.data.audio.play_se("psynergy/19");
+        });
 
         const duration = repeat * Math.max(ellapse_between_repeats, lifespan);
         await promised_wait(this.game, duration);
@@ -147,6 +152,7 @@ export class DouseFieldPsynergy extends FieldAbilities {
 
         this.data.particle_manager.removeEmitter(into_emitter);
         into_emitter.destroy();
+        into_emitter.onEmit.removeAll();
         this.data.particle_manager.clearData("drops");
     }
 
