@@ -215,6 +215,10 @@
                 "on_rolling_fall": {
                     "start": 21.464,
                     "end": 21.964
+                },
+                "item_repair": {
+                    "start": 21.964,
+                    "end": 26.740
                 }
             }
         }
