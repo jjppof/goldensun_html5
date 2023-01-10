@@ -77,12 +77,11 @@ export class ShopItemQuantityWindow {
         this.window.update_text(String(this.base_price * this.chosen_quantity), this.coins_val_text);
     }
 
-    grant_control(on_cancel: Function, on_select: Function) {
-        //A Key sound is missing, using Menu/Positive4 instead
+    grant_control(on_cancel: Function, on_select: Function, confirm_sfx?: string) {
         const controls = [
             {buttons: Button.LEFT, on_down: this.decrease_amount.bind(this), sfx: {down: "menu/move"}},
             {buttons: Button.RIGHT, on_down: this.increase_amount.bind(this), sfx: {down: "menu/move"}},
-            {buttons: Button.A, on_down: on_select, sfx: {down: "menu/positive_4"}},
+            {buttons: Button.A, on_down: on_select, sfx: {down: confirm_sfx ? confirm_sfx : "menu/positive"}},
             {buttons: Button.B, on_down: on_cancel, sfx: {down: "menu/negative"}},
         ];
         this.data.control_manager.add_controls(controls, {
