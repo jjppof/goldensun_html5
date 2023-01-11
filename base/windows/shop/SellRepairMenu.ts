@@ -91,6 +91,7 @@ export class SellRepairMenu {
             this.inv_win.kill_item_at(this.inv_win_pos.line, this.inv_win_pos.col);
             this.data.control_manager.reset();
 
+            this.data.audio.play_se("misc/item_repair");
             this.game.time.events.add(
                 REPAIR_WAIT_TIME,
                 () => {
