@@ -133,6 +133,14 @@
                 "19": {
                     "start": 27.585,
                     "end": 27.919
+                },
+                "20": {
+                    "start": 27.919,
+                    "end": 30.329
+                },
+                "21": {
+                    "start": 30.329,
+                    "end": 30.865
                 }
             }
         }
@@ -230,6 +238,29 @@
                 "hit_1": {
                     "start": 1.226,
                     "end": 2.154
+                }
+            }
+        }
+    },
+    "summon_tablet": {
+        "audio": "assets/sounds/se/summon_tablet.ogg",
+        "json": {
+            "spritemap": {
+                "disassemble": {
+                    "start": 0.00,
+                    "end": 1.075
+                },
+                "piece": {
+                    "start": 1.075,
+                    "end": 1.338
+                },
+                "finish": {
+                    "start": 1.338,
+                    "end": 1.913
+                },
+                "absorb": {
+                    "start": 1.913,
+                    "end": 2.927
                 }
             }
         }

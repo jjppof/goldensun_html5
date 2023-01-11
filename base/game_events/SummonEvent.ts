@@ -4,7 +4,15 @@ import {Summon} from "../Summon";
 import {FieldAbilities} from "../field_abilities/FieldAbilities";
 import {Button} from "../XGamepad";
 import * as _ from "lodash";
-import {base_actions, directions, element_colors, element_names, ordered_elements, range_360} from "../utils";
+import {
+    base_actions,
+    directions,
+    element_colors,
+    element_names,
+    ordered_elements,
+    promised_wait,
+    range_360,
+} from "../utils";
 import {degree90} from "../magic_numbers";
 import * as numbers from "../magic_numbers";
 
@@ -136,10 +144,14 @@ export class SummonEvent extends GameEvent {
         );
 
         await aux_promise;
+
+        this.data.audio.play_se("psynergy/4");
         const reset_map = FieldAbilities.colorize_map_layers(this.game, this.data.map);
         this.origin_npc.play(SummonEvent.ACTION, "stone_continuos");
         aux_promise = new Promise(resolve => (aux_resolve = resolve));
         this.game.time.events.add(1000, () => {
+            this.data.audio.play_se("summon_tablet/disassemble");
+            this.data.audio.play_se("psynergy/20");
             this.origin_npc.play(SummonEvent.ACTION, "stone_shining");
             aux_resolve();
         });
@@ -152,6 +164,13 @@ export class SummonEvent extends GameEvent {
         });
 
         await aux_promise;
+
+        const piece_timer = this.game.time.create(false);
+        piece_timer.loop(150, () => {
+            this.data.audio.play_se("summon_tablet/piece");
+        });
+        piece_timer.start();
+
         const min_time = 300;
         const max_time = 500;
         for (let i = 0; i < 3; ++i) {
@@ -177,7 +196,14 @@ export class SummonEvent extends GameEvent {
             await aux_promise;
         }
 
+        piece_timer.stop();
+        piece_timer.destroy();
+        this.data.audio.play_se("summon_tablet/finish");
+        this.data.audio.play_se("psynergy/17");
+
         this.origin_npc.toggle_active(false);
+
+        await promised_wait(this.game, 700);
 
         let counter = 0;
         aux_promise = new Promise(resolve => (aux_resolve = resolve));
@@ -207,6 +233,12 @@ export class SummonEvent extends GameEvent {
             ++counter;
         };
         this.data.game_event_manager.add_callback(letter_shine_update_callback);
+
+        new Promise<void>(async resolve => {
+            await promised_wait(this.game, 250);
+            this.data.audio.play_se("psynergy/12");
+            resolve();
+        });
 
         await aux_promise;
         this.data.game_event_manager.remove_callback(letter_shine_update_callback);
@@ -290,10 +322,35 @@ export class SummonEvent extends GameEvent {
             this.data.hero.shake();
         });
 
+        new Promise<void>(async resolve => {
+            await promised_wait(this.game, 500);
+            this.data.audio.play_se("summon_tablet/absorb");
+            await promised_wait(this.game, 1100);
+            this.data.audio.play_se("summon_tablet/absorb");
+            await promised_wait(this.game, 1100);
+            this.data.audio.play_se("summon_tablet/absorb");
+
+            await promised_wait(this.game, 1250);
+
+            this.data.audio.play_se("psynergy/21");
+            await promised_wait(this.game, 200);
+            this.data.audio.play_se("psynergy/21");
+            await promised_wait(this.game, 200);
+            this.data.audio.play_se("psynergy/21");
+
+            resolve();
+        });
+
         await aux_promise;
         this.data.game_event_manager.remove_callback(letter_spiral_update_callback);
 
         reset_map();
+
+        this.data.audio.pause_bgm();
+        this.data.audio.play_se("misc/party_join", () => {
+            this.data.audio.resume_bgm();
+        });
+
         const summon_name = this.data.info.abilities_list[this.summon.key_name].name;
         aux_promise = new Promise(resolve => (aux_resolve = resolve));
         this.dialog.next_dialog(
