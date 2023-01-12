@@ -35,6 +35,10 @@
                     "start": 3.199,
                     "end": 3.9
                 },
+                "item_unequip": {
+                    "start": 7.637,
+                    "end": 8.097
+                },
                 "djinn_unset": {
                     "start": 4.010,
                     "end": 4.783
