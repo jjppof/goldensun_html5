@@ -454,11 +454,11 @@ export class DjinnListWindow {
 
     set_action_text() {
         if (this.setting_djinn_status) {
-        } else {
-            const this_char = this.data.info.party_data.members[this.selected_char_index];
-            const this_djinn = this.data.info.djinni_list[this_char.djinni[this.selected_djinn_index]];
-            this.djinn_action_window.set_action_text(this_djinn.status);
+            return;
         }
+        const this_char = this.data.info.party_data.members[this.selected_char_index];
+        const this_djinn = this.data.info.djinni_list[this_char.djinni[this.selected_djinn_index]];
+        this.djinn_action_window.set_action_text(this_djinn.status);
     }
 
     on_char_change(move_cursor: boolean = true) {
@@ -525,6 +525,12 @@ export class DjinnListWindow {
             {
                 buttons: Button.R,
                 on_down: on_change_djinn_status,
+                on_up: () => {
+                    if (!this.setting_djinn_status) {
+                        this.djinn_action_window.unset_while_holding_r_view();
+                    }
+                    this.set_action_text();
+                },
                 sfx: {
                     down: this.get_djinn_status_change_sfx.bind(this),
                 },
@@ -721,6 +727,9 @@ export class DjinnListWindow {
             }
             this.chars_quick_info_window.update_text();
             this.set_action_text();
+            if (!this.setting_djinn_status) {
+                this.djinn_action_window.set_while_holding_r_view(status === djinn_status.STANDBY);
+            }
             this.set_djinn_sprite(false);
         }
     }
@@ -750,6 +759,9 @@ export class DjinnListWindow {
             );
             this.chars_quick_info_window.update_text();
             this.set_action_text();
+            if (!this.setting_djinn_status) {
+                this.djinn_action_window.set_while_holding_r_view(true);
+            }
             this.set_djinn_sprite(false);
         }
     }

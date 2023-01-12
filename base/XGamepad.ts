@@ -482,6 +482,7 @@ export class Gamepad {
      * @param buttons - GBA (custom) button (or array of buttons)
      * @return - GBA button (or array of buttons) state
      */
+    get_button<T extends AnyButton | AnyButton[]>(buttons: T): T extends AnyButton ? GamepadButton : GamepadButton[];
     get_button(buttons: AnyButton | AnyButton[]): GamepadButton | GamepadButton[] {
         if (Array.isArray(buttons)) {
             return buttons.map(button => this.buttons[button]);
