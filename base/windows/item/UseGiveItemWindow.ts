@@ -248,6 +248,7 @@ export class UseGiveItemWindow {
         const action_window_text = equip ? "Equipped it." : "Given.";
         this.item_menu.item_options_window.open_action_message_window(action_window_text, () => {
             if (equip && this.item.curses_when_equipped) {
+                this.data.audio.play_se("misc/on_equip_curse");
                 this.item_menu.item_options_window.open_action_message_window("You were cursed!", () => {
                     this.finish_give();
                 });
@@ -353,7 +354,7 @@ export class UseGiveItemWindow {
             const controls = [
                 {buttons: Button.UP, on_down: this.change_answer.bind(this), sfx: {down: "menu/move"}},
                 {buttons: Button.DOWN, on_down: this.change_answer.bind(this), sfx: {down: "menu/move"}},
-                {buttons: Button.A, on_down: this.on_give.bind(this), sfx: {down: "menu/positive_3"}},
+                {buttons: Button.A, on_down: this.on_give.bind(this), sfx: {down: "menu/item_equip"}},
                 {buttons: Button.B, on_down: this.on_give.bind(this, false), sfx: {down: "menu/negative"}},
             ];
             this.data.control_manager.add_controls(controls, {
