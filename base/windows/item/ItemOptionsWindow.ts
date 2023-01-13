@@ -339,6 +339,7 @@ export class ItemOptionsWindow {
                 //Use
                 this.deactivate();
                 this.give_item_options_window.open(this.item_obj, this.item, this.char, this.item_menu, false, () => {
+                    // todo: play correct sound upon item use
                     this.data.cursor_manager.show();
                     this.item_menu.choosing_destination = false;
                     this.item_menu.shift_item_overview(false);
@@ -364,6 +365,7 @@ export class ItemOptionsWindow {
                 this.char.equip_item(this.item_obj.index);
                 this.open_action_message_window("Equipped it.", () => {
                     if (this.item.curses_when_equipped) {
+                        this.data.audio.play_se("misc/on_equip_curse");
                         this.open_action_message_window("You were cursed!", () => {
                             this.close(this.close_callback);
                         });
@@ -454,14 +456,12 @@ export class ItemOptionsWindow {
 
         this.choose_position(vertical, horizontal);
 
-        //Missing sound for item removal
-        //Missing check for item use and item remove, and using appropriate sound
         const controls = [
             {buttons: Button.LEFT, on_down: this.previous_horizontal.bind(this), sfx: {down: "menu/move"}},
             {buttons: Button.RIGHT, on_down: this.next_horizontal.bind(this), sfx: {down: "menu/move"}},
             {buttons: Button.UP, on_down: this.next_vertical.bind(this), sfx: {down: "menu/move"}},
             {buttons: Button.DOWN, on_down: this.previous_vertical.bind(this), sfx: {down: "menu/move"}},
-            {buttons: Button.A, on_down: this.on_choose.bind(this), sfx: {down: "menu/positive"}},
+            {buttons: Button.A, on_down: this.on_choose.bind(this), sfx: {down: this.get_confirm_sfx.bind(this)}},
             {buttons: Button.B, on_down: this.close.bind(this, this.close_callback), sfx: {down: "menu/negative"}},
         ];
 
@@ -528,5 +528,15 @@ export class ItemOptionsWindow {
         this.unset_header();
         this.data.cursor_manager.hide();
         this.window_active = false;
+    }
+
+    get_confirm_sfx() {
+        if (this.horizontal_index === 1 && this.vertical_index === 0 && this.option_active.equip)
+            return "menu/item_equip";
+        else if (this.horizontal_index === 1 && this.vertical_index === 1 && this.option_active.remove)
+            return "menu/item_unequip";
+        else if (this.horizontal_index === 0 && this.vertical_index === 0 && this.option_active.use)
+            return "menu/positive_4";
+        else return "menu/positive";
     }
 }

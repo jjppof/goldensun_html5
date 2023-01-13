@@ -35,6 +35,10 @@
                     "start": 3.199,
                     "end": 3.9
                 },
+                "item_unequip": {
+                    "start": 7.637,
+                    "end": 8.097
+                },
                 "djinn_unset": {
                     "start": 4.010,
                     "end": 4.783
@@ -227,6 +231,10 @@
                 "item_repair": {
                     "start": 21.964,
                     "end": 26.740
+                },
+                "on_equip_curse": {
+                    "start": 26.740,
+                    "end": 28.070
                 }
             }
         }

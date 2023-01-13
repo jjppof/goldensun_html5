@@ -387,13 +387,19 @@ export class ItemPsynergyChooseWindow {
     }
 
     /*Enables control keys for this menu*/
-    grant_control(on_cancel: Function, on_select: Function, next_char?: Function, previous_char?: Function) {
+    grant_control(
+        on_cancel: Function,
+        on_select: Function,
+        next_char?: Function,
+        previous_char?: Function,
+        confirm_sfx?: string
+    ) {
         const controls = [
             {buttons: Button.LEFT, on_down: this.previous_page.bind(this), sfx: {down: "menu/move"}},
             {buttons: Button.RIGHT, on_down: this.next_page.bind(this), sfx: {down: "menu/move"}},
             {buttons: Button.UP, on_down: this.previous_element.bind(this), sfx: {down: "menu/move"}},
             {buttons: Button.DOWN, on_down: this.next_element.bind(this), sfx: {down: "menu/move"}},
-            {buttons: Button.A, on_down: on_select, sfx: {down: "menu/positive"}},
+            {buttons: Button.A, on_down: on_select, sfx: {down: confirm_sfx ? confirm_sfx : "menu/positive"}},
             {buttons: Button.B, on_down: on_cancel, sfx: {down: "menu/negative"}},
             {buttons: Button.L, on_down: previous_char, sfx: {down: "menu/positive"}},
             {buttons: Button.R, on_down: next_char, sfx: {down: "menu/positive"}},
