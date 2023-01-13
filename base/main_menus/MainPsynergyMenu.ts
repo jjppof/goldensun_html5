@@ -237,7 +237,8 @@ export class MainPsynergyMenu {
                 this.psynergy_choose(selected_psy as Ability, setting_shortcut, shortcut_button);
             },
             this.chars_menu.next_char.bind(this.chars_menu),
-            this.chars_menu.previous_char.bind(this.chars_menu)
+            this.chars_menu.previous_char.bind(this.chars_menu),
+            setting_shortcut ? "psynergy/5" : undefined
         );
     }
 
