@@ -365,7 +365,7 @@ export class ItemOptionsWindow {
                 this.char.equip_item(this.item_obj.index);
                 this.open_action_message_window("Equipped it.", () => {
                     if (this.item.curses_when_equipped) {
-                        // play curse sfx here
+                        this.data.audio.play_se("misc/on_equip_curse");
                         this.open_action_message_window("You were cursed!", () => {
                             this.close(this.close_callback);
                         });

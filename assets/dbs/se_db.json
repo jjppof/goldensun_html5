@@ -231,6 +231,10 @@
                 "item_repair": {
                     "start": 21.964,
                     "end": 26.740
+                },
+                "on_equip_curse": {
+                    "start": 26.740,
+                    "end": 28.070
                 }
             }
         }
