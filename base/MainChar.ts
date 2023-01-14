@@ -859,7 +859,7 @@ export class MainChar extends Player {
         }
 
         if (preview) {
-            const elemental_stats = Object.fromEntries(
+            const eleme_stats = Object.fromEntries(
                 ordered_elements.map(element => {
                     const return_data = [
                         element,
@@ -875,7 +875,7 @@ export class MainChar extends Player {
                     return return_data;
                 })
             );
-            return elemental_stats;
+            return eleme_stats;
         } else {
             return null;
         }
