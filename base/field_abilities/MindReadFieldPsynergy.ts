@@ -18,7 +18,7 @@ export class MindReadFieldPsynergy extends FieldAbilities {
     private cast_char_anim_promise: Promise<void>;
     private cast_finish_promise: Promise<void>;
     private arrows: Phaser.Sprite[];
-    private finished: boolean;
+    private arrows_timer: Phaser.Timer;
 
     protected target_object: NPC;
 
@@ -46,7 +46,7 @@ export class MindReadFieldPsynergy extends FieldAbilities {
         this.control_enable = false;
         this.cast_char_anim_promise = null;
         this.cast_finish_promise = null;
-        this.finished = true;
+        this.arrows_timer = null;
     }
 
     set_controls() {
@@ -75,6 +75,8 @@ export class MindReadFieldPsynergy extends FieldAbilities {
             this.target_object = null;
         }
         this.dialog_manager?.destroy();
+        this.arrows_timer?.stop();
+        this.arrows_timer?.destroy();
         if (this.reset_map) {
             this.reset_map();
         }
@@ -105,8 +107,6 @@ export class MindReadFieldPsynergy extends FieldAbilities {
             this.finish();
             return;
         }
-
-        this.finished = false;
 
         this.target_object.stop_char();
         const previous_movement_type = this.target_object.movement_type;
@@ -150,16 +150,12 @@ export class MindReadFieldPsynergy extends FieldAbilities {
             arrow.visible = false;
         }
 
-        const base_start_delay = 200;
         const start_arrows = async () => {
             this.data.audio.play_se("psynergy/5");
-            const promises: Promise<void>[] = new Array(arrows_number);
             for (let i = 0; i < arrows_number; ++i) {
                 const arrow = this.arrows[i];
                 arrow.x = target_head_pos.x;
                 arrow.y = target_head_pos.y;
-                let resolve_func;
-                promises[i] = new Promise<void>(resolve => (resolve_func = resolve));
                 const tween = this.game.add.tween(arrow).to(
                     {
                         x: char_head_pos.x,
@@ -168,21 +164,20 @@ export class MindReadFieldPsynergy extends FieldAbilities {
                     600,
                     Phaser.Easing.Linear.None,
                     true,
-                    base_start_delay * i
+                    200 * i
                 );
                 tween.onStart.addOnce(() => {
                     arrow.visible = true;
                 });
                 tween.onComplete.addOnce(async () => {
                     arrow.visible = false;
-                    await promised_wait(this.game, 500);
-                    resolve_func();
                 });
             }
-            await Promise.all(promises);
-            if (this.finished) return;
-            start_arrows();
         };
+
         start_arrows();
+        this.arrows_timer = this.game.time.create(false);
+        this.arrows_timer.loop(1750, start_arrows);
+        this.arrows_timer.start();
     }
 }
