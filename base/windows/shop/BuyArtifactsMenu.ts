@@ -20,6 +20,8 @@ const SELL_BROKEN_MULTIPLIER = SELL_MULTIPLIER - REPAIR_MULTIPLIER;
 const YESNO_X = 56;
 const YESNO_Y = 40;
 
+const GAME_TICKET_KEY_NAME = "game_ticket";
+
 export const WindowNames = {
     ITEM_DESC_WIN: "item_desc_win",
     ITEM_PRICE_WIN: "item_price_win",
@@ -236,7 +238,7 @@ export class BuyArtifactsMenu {
 
     on_purchase_success(equip_ask: boolean = false, game_ticket: boolean = false, play_sfx: boolean = false) {
         let quantity = 1;
-        let key_name = game_ticket ? "game_ticket" : this.selected_item.key_name;
+        let key_name = game_ticket ? GAME_TICKET_KEY_NAME : this.selected_item.key_name;
         let item_to_add = this.data.info.items_list[key_name];
 
         if (this.quant_win.is_open && !game_ticket) quantity = this.quant_win.chosen_quantity;
@@ -399,16 +401,20 @@ export class BuyArtifactsMenu {
         this.selected_character =
             this.char_display.lines[this.char_display.current_line][this.char_display.selected_index];
         this.selected_char_index = this.char_display.selected_index;
+        let item_to_receive = game_ticket ? GAME_TICKET_KEY_NAME : this.selected_item.key_name;
         let have_quant = 0;
 
         for (let i = 0; i < this.selected_character.items.length; i++) {
             let itm = this.selected_character.items[i];
-            if (itm.key_name === this.selected_item.key_name) {
+            if (itm.key_name === item_to_receive) {
                 have_quant = itm.quantity;
             }
         }
 
-        if (this.selected_character.items.length === MainChar.MAX_ITEMS_PER_CHAR) {
+        if (
+            this.selected_character.items.length === MainChar.MAX_ITEMS_PER_CHAR &&
+            !(0 < have_quant && have_quant < MainChar.MAX_ITEMS_PER_CHAR)
+        ) {
             let text = this.npc_dialog.get_message("inventory_full");
             text = this.npc_dialog.replace_text(text, this.selected_character.name);
             this.npc_dialog.update_dialog(text, false, false);
@@ -418,7 +424,9 @@ export class BuyArtifactsMenu {
                 this.on_buy_item_select.bind(this, game_ticket)
             );
         } else if (have_quant === MainChar.MAX_GENERAL_ITEM_NUMBER) {
-            let item_name = this.data.info.items_list[this.selected_item.key_name].name;
+            let item_name = game_ticket
+                ? this.data.info.items_list[GAME_TICKET_KEY_NAME].name
+                : this.data.info.items_list[this.selected_item.key_name].name;
 
             let text = this.npc_dialog.get_message("stack_full");
             text = this.npc_dialog.replace_text(text, this.selected_character.name, item_name);
@@ -535,7 +543,7 @@ export class BuyArtifactsMenu {
             if (game_ticket) this.npc_dialog.update_dialog("game_ticket_select");
             else this.npc_dialog.update_dialog("character_select");
 
-            let this_item = game_ticket ? "game_ticket" : this.selected_item.key_name;
+            let this_item = game_ticket ? GAME_TICKET_KEY_NAME : this.selected_item.key_name;
 
             let on_char_display_open = () => {
                 let char_key = this.selected_character
