@@ -116,7 +116,7 @@ export class HorizontalMenu {
         this.mount_buttons();
     }
 
-    set_controls(confirm_sfx?: string) {
+    set_controls(confirm_sfx?: string | (() => string)) {
         const controls = [
             {buttons: Button.LEFT, on_down: this.previous_button.bind(this), sfx: {down: "menu/move"}},
             {buttons: Button.RIGHT, on_down: this.next_button.bind(this), sfx: {down: "menu/move"}},
@@ -225,7 +225,7 @@ export class HorizontalMenu {
         select_index: number = 0,
         start_active: boolean = true,
         custom_scale?: {active_default: number; max_scale: number},
-        confirm_sfx?: string
+        confirm_sfx?: string | (() => string)
     ) {
         this.reset_button();
 
