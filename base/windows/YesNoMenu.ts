@@ -19,6 +19,8 @@ export class YesNoMenu {
     public is_open: boolean;
     public menu: HorizontalMenu;
 
+    public confirm_sfx: string;
+
     constructor(game: Phaser.Game, data: GoldenSun) {
         this.game = game;
         this.data = data;
@@ -29,6 +31,7 @@ export class YesNoMenu {
         this.buttons_keys = [actions.YES_ACTION, actions.NO_ACTION];
 
         this.is_open = false;
+        this.confirm_sfx = undefined;
 
         this.menu = new HorizontalMenu(
             this.game,
@@ -82,9 +85,9 @@ export class YesNoMenu {
             this.data.hero.stop_char();
             this.data.hero.update_shadow();
         }
-
+        this.confirm_sfx = confirm_sfx;
         this.is_open = true;
-        this.menu.open(open_callback, 0, true, undefined, confirm_sfx);
+        this.menu.open(open_callback, 0, true, undefined, this.get_confirm_sfx.bind(this));
 
         if (custom_pos) {
             this.update_position(custom_pos.x, custom_pos.y);
@@ -101,5 +104,13 @@ export class YesNoMenu {
 
     destroy() {
         this.menu.destroy();
+    }
+
+    get_confirm_sfx() {
+        if (this.confirm_sfx && this.buttons_keys[this.menu.selected_button_index] == actions.YES_ACTION) {
+            return this.confirm_sfx;
+        } else {
+            return "menu/positive";
+        }
     }
 }

@@ -157,6 +157,7 @@ export class BuyArtifactsMenu {
         let promise_resolve;
         const promise = new Promise(resolve => (promise_resolve = resolve));
         const cursed_msg_win = new Window(this.game, 64, 32, 140, 20);
+        this.data.audio.play_se("misc/on_equip_curse");
         cursed_msg_win.set_text_in_position("You've been cursed!", undefined, undefined, {italic: true});
         cursed_msg_win.show(() => {
             this.data.control_manager.add_simple_controls(() => {
@@ -236,7 +237,7 @@ export class BuyArtifactsMenu {
         }
     }
 
-    on_purchase_success(equip_ask: boolean = false, game_ticket: boolean = false, play_sfx: boolean = false) {
+    on_purchase_success(equip_ask: boolean = false, game_ticket: boolean = false) {
         let quantity = 1;
         let key_name = game_ticket ? GAME_TICKET_KEY_NAME : this.selected_item.key_name;
         let item_to_add = this.data.info.items_list[key_name];
@@ -259,7 +260,6 @@ export class BuyArtifactsMenu {
         } else {
             this.npc_dialog.update_dialog("after_buy", true);
             this.data.cursor_manager.hide();
-            if (play_sfx) this.data.audio.play_se("menu/shop_buy");
 
             let process_purchase = () => {
                 const item = this.data.info.items_list[this.selected_item.key_name];
@@ -344,7 +344,9 @@ export class BuyArtifactsMenu {
 
                             this.yesno_action.open(
                                 {yes: this.equip_new_item.bind(this), no: this.check_game_ticket.bind(this)},
-                                {x: YESNO_X, y: YESNO_Y}
+                                {x: YESNO_X, y: YESNO_Y},
+                                undefined,
+                                "menu/item_equip"
                             );
                         };
                         this.data.control_manager.add_simple_controls(equip_now.bind(this));
@@ -389,10 +391,10 @@ export class BuyArtifactsMenu {
                     {yes: this.on_purchase_success.bind(this, false, false), no: this.open_equip_compare.bind(this)},
                     {x: YESNO_X, y: YESNO_Y},
                     undefined,
-                    "menu/shop_buy"
+                    this.get_purchase_confirm_sfx()
                 );
             } else {
-                this.on_purchase_success(true, undefined, true);
+                this.on_purchase_success(true, undefined);
             }
         }
     }
@@ -437,7 +439,7 @@ export class BuyArtifactsMenu {
                 this.on_buy_item_select.bind(this, game_ticket)
             );
         } else {
-            if (game_ticket) this.on_purchase_success(false, game_ticket, true);
+            if (game_ticket) this.on_purchase_success(false, game_ticket);
             else {
                 if (
                     this.data.info.party_data.coins - this.data.info.items_list[this.selected_item.key_name].price <
@@ -517,7 +519,22 @@ export class BuyArtifactsMenu {
             this.show_windows(open_windows, () => {
                 this.char_display.grant_control(
                     this.on_cancel_char_select.bind(this),
-                    this.on_buy_equip_select.bind(this)
+                    this.on_buy_equip_select.bind(this),
+                    undefined,
+                    undefined,
+                    () => {
+                        this.selected_character = this.char_display.selected_index
+                            ? this.char_display.lines[this.char_display.current_line][this.char_display.selected_index]
+                            : null;
+                        let curr_char = this.selected_character
+                            ? this.selected_character
+                            : this.data.info.party_data.members[0];
+                        return this.data.info.items_list[this.selected_item.key_name].equipable_chars.includes(
+                            curr_char.key_name
+                        )
+                            ? this.get_purchase_confirm_sfx(false)
+                            : "menu/positive";
+                    }
                 );
             });
         });
@@ -553,7 +570,14 @@ export class BuyArtifactsMenu {
                 let give_control = () => {
                     this.char_display.grant_control(
                         game_ticket ? this.on_cancel_game_ticket.bind(this) : this.on_cancel_char_select.bind(this),
-                        this.on_buy_item_select.bind(this, game_ticket)
+                        this.on_buy_item_select.bind(this, game_ticket),
+                        undefined,
+                        undefined,
+                        this.get_purchase_confirm_sfx.bind(
+                            this,
+                            game_ticket,
+                            game_ticket ? "menu/shop_buy" : "menu/positive"
+                        )
                     );
                 };
 
@@ -707,5 +731,36 @@ export class BuyArtifactsMenu {
         Promise.all(promises).then(() => {
             on_complete();
         });
+    }
+
+    // todo: refactor so this logic doesn't have to be repeated twice when buying an item
+    get_purchase_confirm_sfx(game_ticket: boolean = false, confirm_sfx?: string) {
+        this.selected_character = this.char_display.selected_index
+            ? this.char_display.lines[this.char_display.current_line][this.char_display.selected_index]
+            : null;
+        let curr_char = this.selected_character ? this.selected_character : this.data.info.party_data.members[0];
+
+        let quantity = 1;
+        let item_to_receive = game_ticket ? GAME_TICKET_KEY_NAME : this.selected_item.key_name;
+        let have_quant = 0;
+
+        for (let i = 0; i < curr_char.items.length; i++) {
+            let itm = curr_char.items[i];
+            if (itm.key_name === item_to_receive) {
+                have_quant = itm.quantity;
+            }
+        }
+        if (this.quant_win.is_open && !game_ticket) quantity = this.quant_win.chosen_quantity;
+
+        let not_enough_coins =
+            !game_ticket &&
+            this.data.info.party_data.coins - this.data.info.items_list[this.selected_item.key_name].price * quantity <
+                0;
+        let inventory_full =
+            curr_char.items.length === MainChar.MAX_ITEMS_PER_CHAR &&
+            !(0 < have_quant && have_quant < MainChar.MAX_ITEMS_PER_CHAR);
+        let stack_full = have_quant === MainChar.MAX_GENERAL_ITEM_NUMBER;
+        if (not_enough_coins || inventory_full || stack_full) return "menu/negative";
+        else return confirm_sfx ? confirm_sfx : "menu/shop_buy";
     }
 }

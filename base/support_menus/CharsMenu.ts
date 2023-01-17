@@ -402,7 +402,13 @@ export class CharsMenu {
         this.change_line(new_line, new_index);
     }
 
-    grant_control(on_cancel?: Function, on_select?: Function, enable_swap?: boolean, extra_controls?: Control[]) {
+    grant_control(
+        on_cancel?: Function,
+        on_select?: Function,
+        enable_swap?: boolean,
+        extra_controls?: Control[],
+        confirm_sfx?: string | (() => string)
+    ) {
         const controls = [
             {buttons: Button.LEFT, on_down: this.previous_char.bind(this), sfx: {down: "menu/move"}},
             {buttons: Button.RIGHT, on_down: this.next_char.bind(this), sfx: {down: "menu/move"}},
@@ -413,7 +419,7 @@ export class CharsMenu {
                 buttons: Button.A,
                 on_down: () => on_select?.(),
                 params: {reset_controls: true},
-                sfx: {down: "menu/positive"},
+                sfx: {down: confirm_sfx ? confirm_sfx : "menu/positive"},
             },
             {
                 buttons: Button.B,
