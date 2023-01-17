@@ -354,6 +354,7 @@ export class UseGiveItemWindow {
             const controls = [
                 {buttons: Button.UP, on_down: this.change_answer.bind(this), sfx: {down: "menu/move"}},
                 {buttons: Button.DOWN, on_down: this.change_answer.bind(this), sfx: {down: "menu/move"}},
+                // in the original games, the item equip sfx is played whether or not the item is actually equipped
                 {buttons: Button.A, on_down: this.on_give.bind(this), sfx: {down: "menu/item_equip"}},
                 {buttons: Button.B, on_down: this.on_give.bind(this, false), sfx: {down: "menu/negative"}},
             ];
