@@ -237,7 +237,7 @@ export class BuyArtifactsMenu {
         }
     }
 
-    on_purchase_success(equip_ask: boolean = false, game_ticket: boolean = false, play_sfx: boolean = false) {
+    on_purchase_success(equip_ask: boolean = false, game_ticket: boolean = false) {
         let quantity = 1;
         let key_name = game_ticket ? GAME_TICKET_KEY_NAME : this.selected_item.key_name;
         let item_to_add = this.data.info.items_list[key_name];
@@ -260,7 +260,6 @@ export class BuyArtifactsMenu {
         } else {
             this.npc_dialog.update_dialog("after_buy", true);
             this.data.cursor_manager.hide();
-            if (play_sfx) this.data.audio.play_se("menu/shop_buy");
 
             let process_purchase = () => {
                 const item = this.data.info.items_list[this.selected_item.key_name];
@@ -395,7 +394,7 @@ export class BuyArtifactsMenu {
                     this.get_purchase_confirm_sfx()
                 );
             } else {
-                this.on_purchase_success(true, undefined, true);
+                this.on_purchase_success(true, undefined);
             }
         }
     }
@@ -440,7 +439,7 @@ export class BuyArtifactsMenu {
                 this.on_buy_item_select.bind(this, game_ticket)
             );
         } else {
-            if (game_ticket) this.on_purchase_success(false, game_ticket, true);
+            if (game_ticket) this.on_purchase_success(false, game_ticket);
             else {
                 if (
                     this.data.info.party_data.coins - this.data.info.items_list[this.selected_item.key_name].price <
@@ -574,7 +573,11 @@ export class BuyArtifactsMenu {
                         this.on_buy_item_select.bind(this, game_ticket),
                         undefined,
                         undefined,
-                        this.get_purchase_confirm_sfx.bind(this, game_ticket, "menu/positive")
+                        this.get_purchase_confirm_sfx.bind(
+                            this,
+                            game_ticket,
+                            game_ticket ? "menu/shop_buy" : "menu/positive"
+                        )
                     );
                 };
 
