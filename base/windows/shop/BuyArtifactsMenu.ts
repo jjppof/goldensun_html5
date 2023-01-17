@@ -157,7 +157,7 @@ export class BuyArtifactsMenu {
         let promise_resolve;
         const promise = new Promise(resolve => (promise_resolve = resolve));
         const cursed_msg_win = new Window(this.game, 64, 32, 140, 20);
-        this.data.audio.play_se("on_equip_curse");
+        this.data.audio.play_se("misc/on_equip_curse");
         cursed_msg_win.set_text_in_position("You've been cursed!", undefined, undefined, {italic: true});
         cursed_msg_win.show(() => {
             this.data.control_manager.add_simple_controls(() => {
