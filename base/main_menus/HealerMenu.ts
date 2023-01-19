@@ -525,6 +525,9 @@ export class HealerMenu {
     }
 
     private async cure_animation() {
+        let cure_sfx = this.get_cure_sfx();
+        this.data.audio.pause_bgm();
+        this.data.audio.play_se(cure_sfx);
         const char_sprite = this.chars_menu.selected_char_sprite;
         char_sprite.animations.stop(char_sprite.animations.currentAnim.name, false);
         const hue_filter = this.game.add.filter("Hue") as Phaser.Filter.Hue;
@@ -536,7 +539,7 @@ export class HealerMenu {
         hueshift_timer.start();
         const emitter = this.start_particles_emitter(char_sprite);
 
-        await promised_wait(this.game, 3000);
+        await promised_wait(this.game, 4000);
 
         char_sprite.animations.currentAnim.play();
 
@@ -546,6 +549,22 @@ export class HealerMenu {
         this.data.particle_manager.removeEmitter(emitter);
         emitter.destroy();
         this.data.particle_manager.clearData(HealerMenu.EMITTER_NAME);
+        this.data.audio.play_se("battle/heal_1");
+        this.data.audio.resume_bgm();
+    }
+
+    private get_cure_sfx() {
+        switch (this.selected_perm_status) {
+            case permanent_status.DOWNED:
+                return "psynergy/revive";
+            case permanent_status.VENOM:
+            case permanent_status.POISON:
+                return "psynergy/ply";
+            case permanent_status.EQUIP_CURSE:
+                return "misc/remove_curse";
+            case permanent_status.HAUNT:
+                return "misc/repel_evil";
+        }
     }
 
     private start_particles_emitter(char_sprite: Phaser.Sprite) {
