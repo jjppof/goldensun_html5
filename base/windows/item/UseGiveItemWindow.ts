@@ -8,6 +8,9 @@ import {ItemQuantityManagerWindow} from "./ItemQuantityManagerWindow";
 import {MainItemMenu} from "../../main_menus/MainItemMenu";
 import {CursorManager, PointVariants} from "../../utils/CursorManager";
 import * as _ from "lodash";
+import {ability_types} from "../../Ability";
+import {main_stats} from "../../Player";
+import {effect_types} from "../../Effect";
 
 const WIN_WIDTH = 132;
 const WIN_HEIGHT = 36;
@@ -454,7 +457,13 @@ export class UseGiveItemWindow {
         if (select_char) {
             this.item_menu.chars_menu.select_char(this.item_menu.chars_menu.selected_index);
         }
-        this.item_menu.chars_menu.grant_control(this.close.bind(this), this.on_character_select.bind(this));
+        this.item_menu.chars_menu.grant_control(
+            this.close.bind(this),
+            this.on_character_select.bind(this),
+            undefined,
+            undefined,
+            this.get_sfx_on_char_select.bind(this)
+        );
 
         this.item_menu.item_overview_window.show(undefined, false);
         this.item_menu.shift_item_overview(true);
@@ -517,5 +526,37 @@ export class UseGiveItemWindow {
     deactive() {
         this.window_active = false;
         this.data.cursor_manager.hide();
+    }
+
+    get_sfx_on_char_select() {
+        const positive_sfx = "menu/positive";
+        const unsuccessful_sfx = "psynergy/9";
+        if (this.giving) {
+            return positive_sfx;
+        } else {
+            const ability = this.data.info.abilities_list[this.item.use_ability];
+            const chars_menu = this.item_menu.chars_menu;
+            const dest_char = chars_menu.lines[chars_menu.current_line][chars_menu.selected_index];
+            if (ability.type === ability_types.HEALING) {
+                // check if HP/PP is full when using healing item
+                const current_prop = ability.affects_pp ? main_stats.CURRENT_PP : main_stats.CURRENT_HP;
+                const max_prop = ability.affects_pp ? main_stats.MAX_PP : main_stats.MAX_HP;
+                if (dest_char[max_prop] <= dest_char[current_prop]) return unsuccessful_sfx;
+            } else if (ability.type === ability_types.EFFECT_ONLY) {
+                // check if char has permanent status when using permanent status removal item
+                for (let i = 0; i < ability.effects.length; ++i) {
+                    const effect_obj = ability.effects[i];
+                    if (effect_types.PERMANENT_STATUS && !effect_obj.add_status) {
+                        if (dest_char.has_permanent_status(effect_obj.status_key_name)) return positive_sfx;
+                    } else {
+                        return positive_sfx;
+                    }
+                }
+                return unsuccessful_sfx;
+            } else {
+                return unsuccessful_sfx;
+            }
+            return positive_sfx;
+        }
     }
 }

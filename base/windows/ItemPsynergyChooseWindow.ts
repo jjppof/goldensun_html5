@@ -560,20 +560,16 @@ export class ItemPsynergyChooseWindow {
     }
 
     play_status_removed_sfx(status: permanent_status) {
-        if (this.data.in_battle) {
-            if (permanent_status.DOWNED !== status) this.data.audio.play_se("battle/heal_1");
-        } else {
-            switch (status) {
-                case permanent_status.DOWNED:
-                    this.data.audio.play_se_pausing_bgm("psynergy/revive");
-                    break;
-                case permanent_status.VENOM:
-                case permanent_status.POISON:
-                    this.data.audio.play_se_pausing_bgm("psynergy/ply");
-                    break;
-                default:
-                    this.data.audio.play_se("battle/heal_1");
-            }
+        switch (status) {
+            case permanent_status.DOWNED:
+                this.data.audio.play_se_pausing_bgm("psynergy/revive");
+                break;
+            case permanent_status.VENOM:
+            case permanent_status.POISON:
+                this.data.audio.play_se_pausing_bgm("psynergy/ply");
+                break;
+            default:
+                this.data.audio.play_se("battle/heal_1");
         }
     }
 
