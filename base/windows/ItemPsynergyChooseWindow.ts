@@ -505,6 +505,7 @@ export class ItemPsynergyChooseWindow {
                     case effect_types.EXTRA_MAX_HP:
                     case effect_types.EXTRA_MAX_PP:
                         stats_boosted.push(extra_stat_label_map[effect_obj.type]);
+                        this.data.audio.play_se_pausing_bgm("misc/stat_boost");
                     case effect_types.CURRENT_HP:
                     case effect_types.CURRENT_PP:
                         dest_char.add_effect(effect_obj, ability, true);
@@ -512,6 +513,7 @@ export class ItemPsynergyChooseWindow {
                         break;
                     case effect_types.PERMANENT_STATUS:
                         if (!effect_obj.add_status) {
+                            this.play_status_removed_sfx(effect_obj.status_key_name);
                             if (dest_char.has_permanent_status(effect_obj.status_key_name)) {
                                 Effect.remove_status_from_player(effect_obj, dest_char);
                                 status_removed.removed.push(status_label_map[effect_obj.status_key_name]);
@@ -555,6 +557,24 @@ export class ItemPsynergyChooseWindow {
             "This ability can't be used here."
         );
         return false;
+    }
+
+    play_status_removed_sfx(status: permanent_status) {
+        if (this.data.in_battle) {
+            if (permanent_status.DOWNED !== status) this.data.audio.play_se("battle/heal_1");
+        } else {
+            switch (status) {
+                case permanent_status.DOWNED:
+                    this.data.audio.play_se_pausing_bgm("psynergy/revive");
+                    break;
+                case permanent_status.VENOM:
+                case permanent_status.POISON:
+                    this.data.audio.play_se_pausing_bgm("psynergy/ply");
+                    break;
+                default:
+                    this.data.audio.play_se("battle/heal_1");
+            }
+        }
     }
 
     set_cursor_previous_pos() {
