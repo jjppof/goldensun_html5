@@ -251,6 +251,10 @@
                 "repel_evil": {
                     "start": 30.756,
                     "end": 34.994
+                }, 
+                "stat_boost": {
+                    "start": 34.994,
+                    "end": 37.213
                 }
             }
         }

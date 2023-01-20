@@ -117,6 +117,17 @@ export class Audio {
     }
 
     /**
+     * Plays a registered sound effect, pausing the current bgm before and resuming it after
+     * @param key the sound effect key name.
+     * @param position_shift the amount of time in sec. to initially cut of this sfx.
+     * @param volume the volume that it will be plays. [0,1].
+     */
+    play_se_pausing_bgm(key: string, position_shift: number = 0, volume: number = 1) {
+        this.pause_bgm();
+        this.play_se(key, this.resume_bgm.bind(this), position_shift, volume);
+    }
+
+    /**
      * Sets the current bgm object to played by the engine.
      * @param bgm_key The bgm key name.
      * @param play whether is to already start playing.

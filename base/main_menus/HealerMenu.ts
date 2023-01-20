@@ -526,8 +526,7 @@ export class HealerMenu {
 
     private async cure_animation() {
         let cure_sfx = this.get_cure_sfx();
-        this.data.audio.pause_bgm();
-        this.data.audio.play_se(cure_sfx);
+        this.data.audio.play_se_pausing_bgm(cure_sfx);
         const char_sprite = this.chars_menu.selected_char_sprite;
         char_sprite.animations.stop(char_sprite.animations.currentAnim.name, false);
         const hue_filter = this.game.add.filter("Hue") as Phaser.Filter.Hue;
@@ -539,7 +538,7 @@ export class HealerMenu {
         hueshift_timer.start();
         const emitter = this.start_particles_emitter(char_sprite);
 
-        await promised_wait(this.game, 4000);
+        await promised_wait(this.game, 4500);
 
         char_sprite.animations.currentAnim.play();
 
@@ -550,7 +549,6 @@ export class HealerMenu {
         emitter.destroy();
         this.data.particle_manager.clearData(HealerMenu.EMITTER_NAME);
         this.data.audio.play_se("battle/heal_1");
-        this.data.audio.resume_bgm();
     }
 
     private get_cure_sfx() {
