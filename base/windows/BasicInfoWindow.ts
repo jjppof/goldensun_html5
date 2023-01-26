@@ -1,5 +1,6 @@
 import {MainChar} from "../MainChar";
 import {TextObj, Window} from "../Window";
+import {LOW_HP_THRESHOLD, RED_FONT_COLOR, YELLOW_FONT_COLOR, DEFAULT_FONT_COLOR} from "../magic_numbers";
 
 const BASE_WIN_WIDTH = 100;
 const BASE_WIN_HEIGHT = 92;
@@ -143,7 +144,7 @@ export class BasicInfoWindow {
         this.base_window.update_text(this.char.name, this.name_text);
         this.base_window.update_text(this.char.level.toString(), this.lv_text);
         this.base_window.update_text(this.char.class.name, this.class_text);
-        this.base_window.update_text(this.char.current_hp.toString(), this.hp_text);
+        this.base_window.update_text(this.char.current_hp.toString(), this.hp_text, this.get_hp_color());
         this.base_window.update_text(this.char.current_pp.toString(), this.pp_text);
         this.base_window.update_text(this.char.max_hp.toString(), this.max_hp_text);
         this.base_window.update_text(this.char.max_pp.toString(), this.max_pp_text);
@@ -203,5 +204,12 @@ export class BasicInfoWindow {
                 callback();
             }
         }, false);
+    }
+
+    get_hp_color() {
+        let curr_char = this.char;
+        if (curr_char.current_hp <= 0) return RED_FONT_COLOR;
+        else if (curr_char.current_hp <= curr_char.max_hp * LOW_HP_THRESHOLD) return YELLOW_FONT_COLOR;
+        else return DEFAULT_FONT_COLOR;
     }
 }
