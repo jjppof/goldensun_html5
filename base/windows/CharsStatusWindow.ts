@@ -32,8 +32,6 @@ const STANDBY_COUNT_SHIFT_Y = [8, 16];
 const INITIAL_PADDING__DJINNI_X = 9;
 const INITIAL_PADDING__DJINNI_Y = 9;
 
-const LOW_HP_THRESHOLD = 0.25;
-
 type InfoSprite = {
     group: Phaser.Group;
     name: TextObj;
@@ -382,7 +380,7 @@ export class CharsStatusWindow {
 
     get_char_hp_color(curr_char: MainChar) {
         if (curr_char.current_hp <= 0) return numbers.RED_FONT_COLOR;
-        else if (curr_char.current_hp <= curr_char.max_hp * LOW_HP_THRESHOLD) return numbers.YELLOW_FONT_COLOR;
+        else if (curr_char.current_hp <= curr_char.max_hp * numbers.LOW_HP_THRESHOLD) return numbers.YELLOW_FONT_COLOR;
         else return this.status_window.font_color;
     }
 }

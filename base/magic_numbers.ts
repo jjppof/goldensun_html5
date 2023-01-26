@@ -50,3 +50,4 @@ export const WORLD_MAP_SPEED_DASH_REDUCE = -45;
 export const WORLD_MAP_SPEED_WALK_REDUCE = -40;
 export const WORLD_MAP_SPRITE_SCALE_Y = 0.84;
 export const WORLD_MAP_SPRITE_SCALE_X = 0.84;
+export const LOW_HP_THRESHOLD = 0.25;

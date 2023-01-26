@@ -1056,8 +1056,9 @@ export class Window {
      * @param text_obj The text object to be updated.
      * @param new_x
      * @param new_y
+     * @param color
      */
-    update_text(new_text: string, text_obj: TextObj) {
+    update_text(new_text: string, text_obj: TextObj, color?: number) {
         text_obj.text.setText(new_text);
         if (text_obj.shadow) {
             text_obj.shadow.setText(new_text);
@@ -1070,6 +1071,9 @@ export class Window {
             if (text_obj.text_bg) {
                 text_obj.text_bg.x = text_obj.text.x - 1;
             }
+        }
+        if (color) {
+            text_obj.text.tint = color;
         }
     }
 
