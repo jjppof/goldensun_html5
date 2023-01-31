@@ -184,6 +184,10 @@
                 "ground_hit": {
                     "start": 5.544,
                     "end": 6.690
+                },
+                "jump_2": {
+                    "start": 6.690,
+                    "end": 7.300
                 }
             }
         }
@@ -255,6 +259,10 @@
                 "stat_boost": {
                     "start": 34.994,
                     "end": 37.213
+                },
+                "venus_djinn_get": {
+                    "start": 37.213,
+                    "end": 46.170
                 }
             }
         }
