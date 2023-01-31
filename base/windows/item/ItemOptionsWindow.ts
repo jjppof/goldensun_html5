@@ -339,7 +339,6 @@ export class ItemOptionsWindow {
                 //Use
                 this.deactivate();
                 this.give_item_options_window.open(this.item_obj, this.item, this.char, this.item_menu, false, () => {
-                    // todo: play correct sound upon item use
                     this.data.cursor_manager.show();
                     this.item_menu.choosing_destination = false;
                     this.item_menu.shift_item_overview(false);

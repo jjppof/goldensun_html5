@@ -127,13 +127,17 @@ export class DjinnGetEvent extends GameEvent {
         await this.aux_promise;
 
         /* initial djinn jumps */
+        this.data.audio.play_se("actions/jump");
         await this.origin_npc.jump({
             time_on_finish: 70,
         });
+        this.data.audio.play_se("actions/jump");
         await this.origin_npc.jump({
             time_on_finish: 500,
             duration: 65,
         });
+        this.data.audio.play_se("actions/jump_2");
+        this.data.audio.play_se("misc/venus_djinn_get");
         this.origin_npc.set_rotation(true);
         await this.origin_npc.jump({
             jump_height: 40,
@@ -150,7 +154,7 @@ export class DjinnGetEvent extends GameEvent {
                     x: 0,
                     y: 0,
                 },
-                800,
+                2060,
                 Phaser.Easing.Linear.None,
                 true
             )
@@ -182,13 +186,13 @@ export class DjinnGetEvent extends GameEvent {
         emitter.addToWorld();
         emitter.emit("out_of_ground", this.data.hero.sprite.x, this.data.hero.sprite.y + 10, {
             total: 4,
-            repeat: 15,
+            repeat: 25,
             frequency: 100,
             zone: zone,
             random: true,
         });
 
-        await promised_wait(this.game, 2000);
+        await promised_wait(this.game, 3500);
 
         this.data.particle_manager.removeEmitter(emitter);
         emitter.destroy();
@@ -200,7 +204,7 @@ export class DjinnGetEvent extends GameEvent {
         const particles_circle_number = 25;
         const delta_theta = degree360 / particles_circle_number;
         const rho = {value: 20};
-        const down_time = 1200;
+        const down_time = 2500;
         const phase_speed = 0.07;
         let phase = 0;
         const particles_group = this.game.add.group();
@@ -737,6 +741,7 @@ export class DjinnGetEvent extends GameEvent {
 
         await promised_wait(this.game, 500);
 
+        this.data.audio.play_se("menu/positive_4");
         await this.origin_npc.show_emoticon("annoyed", {
             location: {
                 y: this.origin_npc.y - this.origin_npc.height + 10,
@@ -764,16 +769,19 @@ export class DjinnGetEvent extends GameEvent {
         let tween = this.game.add.tween(tween_target).to({y: [jump_height, bounce_height]}, 500, easing, true);
         this.aux_promise = new Promise(resolve => (this.aux_resolve = resolve));
         tween.onComplete.addOnce(this.aux_resolve);
+        this.data.audio.play_se("actions/jump");
         await this.aux_promise;
 
         tween = this.game.add.tween(tween_target).to({y: [jump_height_2, bounce_height_2]}, 500, easing, true);
         this.aux_promise = new Promise(resolve => (this.aux_resolve = resolve));
         tween.onComplete.addOnce(this.aux_resolve);
+        this.data.audio.play_se("actions/jump");
         await this.aux_promise;
 
         tween = this.game.add.tween(tween_target).to({y: [jump_height_3, bounce_height_2]}, 500, easing, true);
         this.aux_promise = new Promise(resolve => (this.aux_resolve = resolve));
         tween.onComplete.addOnce(this.aux_resolve);
+        this.data.audio.play_se("actions/jump");
         await this.aux_promise;
 
         this.origin_npc.set_rotation(false);
@@ -818,6 +826,7 @@ export class DjinnGetEvent extends GameEvent {
             trail_image.destroy();
             this.aux_resolve();
         });
+        this.data.audio.play_se("actions/jump_2");
         await this.aux_promise;
 
         this.aux_promise = new Promise(resolve => (this.aux_resolve = resolve));
