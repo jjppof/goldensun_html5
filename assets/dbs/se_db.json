@@ -263,6 +263,14 @@
                 "venus_djinn_get": {
                     "start": 37.213,
                     "end": 46.170
+                },
+                "djinn_excite": {
+                    "start": 46.170,
+                    "end": 46.690
+                },
+                "mars_djinn_get": {
+                    "start": 46.690,
+                    "end": 55.660
                 }
             }
         }
