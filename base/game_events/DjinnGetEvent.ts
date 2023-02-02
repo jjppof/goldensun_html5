@@ -308,19 +308,22 @@ export class DjinnGetEvent extends GameEvent {
             side_shake: true,
             max_scale_mult: 0.75,
         });
-
+        this.data.audio.play_se("menu/djinn_unset");
         await promised_wait(this.game, 500);
 
+        this.data.audio.play_se("actions/jump");
         await this.origin_npc.jump({
             duration: 70,
             time_on_finish: 80,
         });
+        this.data.audio.play_se("actions/jump");
         await this.origin_npc.jump({
             jump_height: 35,
-            duration: 120,
+            duration: 80,
             bounce: true,
             time_on_finish: 80,
         });
+        this.data.audio.play_se("actions/jump_2");
         await this.origin_npc.jump({
             jump_height: 60,
             duration: 150,
@@ -344,6 +347,7 @@ export class DjinnGetEvent extends GameEvent {
             Phaser.Easing.Linear.None,
             true
         );
+        this.data.audio.play_se("actions/jump_2");
         this.aux_promise = new Promise(resolve => (this.aux_resolve = resolve));
         final_jump_tween.onComplete.addOnce(() => {
             this.origin_npc.toggle_active(false);
@@ -366,6 +370,7 @@ export class DjinnGetEvent extends GameEvent {
         await promised_wait(this.game, 350);
 
         /* particles getting into the hero */
+        const num_droplet_repeats = 40;
         const x1_s = -8;
         const x2_s = 8;
         const y1_s = -(this.data.hero.sprite.y - this.game.camera.y) - 20;
@@ -386,10 +391,11 @@ export class DjinnGetEvent extends GameEvent {
         };
         this.data.particle_manager.addData("into_hero", in_data);
         const into_emitter = this.data.particle_manager.createEmitter(Phaser.ParticleStorm.SPRITE);
+        this.data.audio.play_se("misc/mercury_djinn_get");
         into_emitter.addToWorld();
         into_emitter.emit("into_hero", this.data.hero.sprite.x, this.data.hero.sprite.y, {
             total: 3,
-            repeat: 26,
+            repeat: num_droplet_repeats,
             frequency: 60,
             random: true,
             zone: zone_source,
@@ -414,12 +420,12 @@ export class DjinnGetEvent extends GameEvent {
         water_hit_emitter.addToWorld();
         water_hit_emitter.emit("water_hit", this.data.hero.sprite.x, this.data.hero.sprite.y - 20, {
             total: 2,
-            repeat: 26,
+            repeat: num_droplet_repeats,
             frequency: 60,
             random: true,
         });
 
-        await promised_wait(this.game, 2100);
+        await promised_wait(this.game, 2700);
 
         this.data.particle_manager.removeEmitter(into_emitter);
         into_emitter.destroy();

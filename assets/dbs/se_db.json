@@ -275,6 +275,10 @@
                 "jupiter_djinn_get": {
                     "start": 55.660,
                     "end": 61.906
+                },
+                "mercury_djinn_get": {
+                    "start": 61.906,
+                    "end": 64.921
                 }
             }
         }
