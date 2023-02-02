@@ -554,10 +554,11 @@ export class DjinnGetEvent extends GameEvent {
             side_shake: true,
             max_scale_mult: 0.75,
         });
-
-        await promised_wait(this.game, 500);
+        this.data.audio.play_se("misc/djinn_excite");
+        await promised_wait(this.game, 520);
 
         this.origin_npc.set_rotation(true);
+        this.data.audio.play_se("misc/jupiter_djinn_get");
         await promised_wait(this.game, 1000);
 
         this.origin_npc.shadow.visible = false;
@@ -579,7 +580,7 @@ export class DjinnGetEvent extends GameEvent {
             this.origin_npc.toggle_active(false);
             this.aux_resolve();
         });
-
+        this.data.audio.play_se("actions/jump_2");
         await this.aux_promise;
 
         //spiral init vars
