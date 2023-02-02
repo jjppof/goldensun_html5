@@ -6,7 +6,6 @@ import * as _ from "lodash";
 
 export type Inn = {
     inn_id: string;
-    avatar_key: string;
     cost: number;
     messages: {
         welcome_message: string;
@@ -59,10 +58,10 @@ export class InnMenu {
     }
 
     //Initial function, loads data from db, shows the welcome message, and opens an yes or no menu
-    start(inn_id: string, voice_key?: string, close_callback?: Function) {
+    start(inn_id: string, voice_key?: string, avatar_key?: string, close_callback?: Function) {
         this.data.inn_open = true;
         this.inn_id = inn_id;
-        this.avatar = this.data.info.inn_list[this.inn_id].avatar_key;
+        this.avatar = avatar_key;
         this.voice_key = voice_key;
         this.cost = this.data.info.inn_list[this.inn_id].cost;
         this.close_callback = close_callback;

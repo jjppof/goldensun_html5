@@ -193,7 +193,7 @@ export class GameEventManager {
             case npc_types.INN:
                 if (!this.data.inn_open) {
                     const previous_npc_direction = await this.handle_npc_interaction_start(npc);
-                    this.data.inn_menu.start(npc.inn_key, npc.voice_key, async () => {
+                    this.data.inn_menu.start(npc.inn_key, npc.voice_key, npc.avatar, async () => {
                         await this.handle_npc_interaction_end(npc, previous_npc_direction);
                     });
                 }
