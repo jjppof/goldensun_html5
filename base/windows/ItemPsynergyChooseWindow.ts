@@ -467,7 +467,6 @@ export class ItemPsynergyChooseWindow {
                         `You recovered ${-value}HP!`
                     );
                 }
-                this.data.audio.play_se("battle/heal_1");
                 return true;
             } else {
                 this.set_description_window_text(
@@ -513,10 +512,10 @@ export class ItemPsynergyChooseWindow {
                         break;
                     case effect_types.PERMANENT_STATUS:
                         if (!effect_obj.add_status) {
-                            this.play_status_removed_sfx(effect_obj.status_key_name);
                             if (dest_char.has_permanent_status(effect_obj.status_key_name)) {
                                 Effect.remove_status_from_player(effect_obj, dest_char);
                                 status_removed.removed.push(status_label_map[effect_obj.status_key_name]);
+                                this.play_status_removed_sfx(effect_obj.status_key_name);
                             } else {
                                 status_removed.not_removed.push(status_label_map[effect_obj.status_key_name]);
                             }
@@ -570,6 +569,38 @@ export class ItemPsynergyChooseWindow {
                 break;
             default:
                 this.data.audio.play_se("battle/heal_1");
+        }
+    }
+
+    get_sfx_on_ability_cast(ability: Ability, dest_char: MainChar, positive_sfx: string, unsuccessful_sfx: string) {
+        if (ability.type === ability_types.HEALING) {
+            // check if HP/PP is full when using healing item. Healing sfx replaces menu/positive
+            const current_prop = ability.affects_pp ? main_stats.CURRENT_PP : main_stats.CURRENT_HP;
+            const max_prop = ability.affects_pp ? main_stats.MAX_PP : main_stats.MAX_HP;
+            if (dest_char[max_prop] <= dest_char[current_prop]) return unsuccessful_sfx;
+            else return "battle/heal_1";
+        } else if (ability.type === ability_types.EFFECT_ONLY) {
+            // check if any of the effects are being used
+            // menu/positive is played on top of effect sfx
+            var perm_status_remover = false;
+            var status_removed = false;
+            for (let i = 0; i < ability.effects.length; ++i) {
+                const effect_obj = ability.effects[i];
+                if (effect_obj.type == effect_types.PERMANENT_STATUS && !effect_obj.add_status) {
+                    // check if char has permanent status when using permanent status removal item
+                    perm_status_remover = true;
+                    status_removed ||= dest_char.has_permanent_status(effect_obj.status_key_name);
+                }
+            }
+            if (perm_status_remover) {
+                return status_removed ? positive_sfx : unsuccessful_sfx;
+            } else {
+                // for other effect types like stat boosters
+                return positive_sfx;
+            }
+        } else {
+            // for un-implemented ability types
+            return positive_sfx;
         }
     }
 

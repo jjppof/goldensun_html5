@@ -6,6 +6,9 @@ import {GoldenSun} from "../GoldenSun";
 import {CharsMenu, CharsMenuModes} from "../support_menus/CharsMenu";
 import {Ability} from "../Ability";
 import {AdvanceButton, Button} from "../XGamepad";
+import {ability_types} from "../Ability";
+import {effect_types} from "../Effect";
+import {main_stats} from "../Player";
 
 const GUIDE_WINDOW_X = 104;
 const GUIDE_WINDOW_Y = 0;
@@ -305,7 +308,10 @@ export class MainPsynergyMenu {
                         } else {
                             grant_char_menu_control();
                         }
-                    }
+                    },
+                    undefined,
+                    undefined,
+                    this.get_sfx_on_psynergy_use.bind(this, ability)
                 );
             };
             if (this_char.current_pp >= ability.pp_cost) {
@@ -317,6 +323,13 @@ export class MainPsynergyMenu {
         } else {
             this.char_choose();
         }
+    }
+
+    get_sfx_on_psynergy_use(ability: Ability) {
+        const positive_sfx = "menu/positive";
+        const unsuccessful_sfx = "psynergy/9";
+        const dest_char = this.chars_menu.lines[this.chars_menu.current_line][this.chars_menu.selected_index];
+        return this.psynergy_choose_window.get_sfx_on_ability_cast(ability, dest_char, positive_sfx, unsuccessful_sfx);
     }
 
     set_guide_window_text() {
