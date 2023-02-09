@@ -347,6 +347,7 @@ export class Hero extends ControllableChar {
                             this.data.game.camera.flash(0xfca103, 150, true);
                             this.splash_sweat_drops();
                             flash_shown = true;
+                            this.data.audio.play_se("battle/poison_hit");
                         }
                         char.current_hp = _.clamp(char.current_hp - damage, 0, char.max_hp);
                         if (char.current_hp === 0) {

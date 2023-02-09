@@ -8,7 +8,7 @@ import {ItemQuantityManagerWindow} from "./ItemQuantityManagerWindow";
 import {MainItemMenu} from "../../main_menus/MainItemMenu";
 import {CursorManager, PointVariants} from "../../utils/CursorManager";
 import * as _ from "lodash";
-import {ability_types} from "../../Ability";
+import {Ability, ability_types} from "../../Ability";
 import {main_stats} from "../../Player";
 import {effect_types} from "../../Effect";
 
@@ -537,26 +537,12 @@ export class UseGiveItemWindow {
             const ability = this.data.info.abilities_list[this.item.use_ability];
             const chars_menu = this.item_menu.chars_menu;
             const dest_char = chars_menu.lines[chars_menu.current_line][chars_menu.selected_index];
-            if (ability.type === ability_types.HEALING) {
-                // check if HP/PP is full when using healing item
-                const current_prop = ability.affects_pp ? main_stats.CURRENT_PP : main_stats.CURRENT_HP;
-                const max_prop = ability.affects_pp ? main_stats.MAX_PP : main_stats.MAX_HP;
-                if (dest_char[max_prop] <= dest_char[current_prop]) return unsuccessful_sfx;
-            } else if (ability.type === ability_types.EFFECT_ONLY) {
-                // check if char has permanent status when using permanent status removal item
-                for (let i = 0; i < ability.effects.length; ++i) {
-                    const effect_obj = ability.effects[i];
-                    if (effect_types.PERMANENT_STATUS && !effect_obj.add_status) {
-                        if (dest_char.has_permanent_status(effect_obj.status_key_name)) return positive_sfx;
-                    } else {
-                        return positive_sfx;
-                    }
-                }
-                return unsuccessful_sfx;
-            } else {
-                return unsuccessful_sfx;
-            }
-            return positive_sfx;
+            return this.item_menu.item_choose_window.get_sfx_on_ability_cast(
+                ability,
+                dest_char,
+                positive_sfx,
+                unsuccessful_sfx
+            );
         }
     }
 }
