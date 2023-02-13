@@ -452,7 +452,14 @@ export class ItemPsynergyChooseWindow {
             const value = BattleFormulas.get_damage(ability, caster, dest_char, 1);
             const current_prop = ability.affects_pp ? main_stats.CURRENT_PP : main_stats.CURRENT_HP;
             const max_prop = ability.affects_pp ? main_stats.MAX_PP : main_stats.MAX_HP;
-            if (dest_char[max_prop] > dest_char[current_prop]) {
+            if (dest_char.has_permanent_status(permanent_status.DOWNED)) {
+                this.set_description_window_text(
+                    description_window,
+                    description_window_text,
+                    `${dest_char.name} is downed!`
+                );
+                return false;
+            } else if (dest_char[max_prop] > dest_char[current_prop]) {
                 dest_char.current_hp = _.clamp(dest_char[current_prop] - value, 0, dest_char[max_prop]);
                 if (dest_char[max_prop] === dest_char[current_prop]) {
                     this.set_description_window_text(

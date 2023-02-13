@@ -352,6 +352,9 @@ export class Hero extends ControllableChar {
                         char.current_hp = _.clamp(char.current_hp - damage, 0, char.max_hp);
                         if (char.current_hp === 0) {
                             char.add_permanent_status(permanent_status.DOWNED);
+                            char.remove_permanent_status(permanent_status.POISON);
+                            char.remove_permanent_status(permanent_status.VENOM);
+                            char.remove_permanent_status(permanent_status.HAUNT);
                         }
                     }
                 });
