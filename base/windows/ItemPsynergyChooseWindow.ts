@@ -584,6 +584,7 @@ export class ItemPsynergyChooseWindow {
             // check if HP/PP is full when using healing item. Healing sfx replaces menu/positive
             const current_prop = ability.affects_pp ? main_stats.CURRENT_PP : main_stats.CURRENT_HP;
             const max_prop = ability.affects_pp ? main_stats.MAX_PP : main_stats.MAX_HP;
+            if (current_prop == main_stats.CURRENT_HP && dest_char[current_prop] <= 0) return unsuccessful_sfx;
             if (dest_char[max_prop] <= dest_char[current_prop]) return unsuccessful_sfx;
             else return "battle/heal_1";
         } else if (ability.type === ability_types.EFFECT_ONLY) {
