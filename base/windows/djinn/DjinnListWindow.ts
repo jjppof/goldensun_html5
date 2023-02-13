@@ -576,6 +576,9 @@ export class DjinnListWindow {
                 djinn_action = djinn_actions.GIVE;
             } else {
                 next_djinn = this.data.info.djinni_list[next_char.djinni[this.selected_djinn_index]];
+                if (next_djinn.status === djinn_status.RECOVERY) {
+                    return;
+                }
                 this_statuses = [
                     next_djinn.status === djinn_status.STANDBY ? djinn_status.ANY : next_djinn.status,
                     this_djinn.status === djinn_status.STANDBY ? djinn_status.ANY : djinn_status.STANDBY,
