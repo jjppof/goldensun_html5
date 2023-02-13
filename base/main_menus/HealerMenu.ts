@@ -62,7 +62,8 @@ const dialog_msgs = {
     [DialogTypes.REVIVE_INIT]: "Hmm, you were downed in battle and need reviving, do you?",
     [DialogTypes.NO_DOWNED]: "Fear not, none of your companions is down.",
     [DialogTypes.SELECT_REVIVE]: "Who shall I revive?",
-    [DialogTypes.DONATION_REVIVE]: (price, char) => `Reviving ${char} requires a donation of ${price} coins. OK?`,
+    [DialogTypes.DONATION_REVIVE]: (price: number, char: string) =>
+        `Reviving ${char} requires a donation of ${price} coins. OK?`,
     [DialogTypes.NO_COIN_REVIVE]: "I'm sorry, but you must be able to pay the donation.",
     [DialogTypes.ACCEPT_REVIVE]: "Then I call upon my healing powers.",
     [DialogTypes.SUCCESS_REVIVE]: char => `${char} has been revived!`,
@@ -70,7 +71,8 @@ const dialog_msgs = {
     [DialogTypes.POISON_INIT]: "Hmm, so you need an antidote to poison or deadly poison?",
     [DialogTypes.NO_POISON]: "Fear not! None of your companions has been poisoned!",
     [DialogTypes.SELECT_POISON]: "Whom shall I cure?",
-    [DialogTypes.DONATION_POISON]: (price, char) => `I require a donation of ${price} coins to cure ${char}, OK?`,
+    [DialogTypes.DONATION_POISON]: (price: number, char: string) =>
+        `I require a donation of ${price} coins to cure ${char}, OK?`,
     [DialogTypes.NO_COIN_POISON]: "You cannot cover the required donation, so I cannot provide a cure.",
     [DialogTypes.ACCEPT_POISON]: "I shall apply the cure.",
     [DialogTypes.SUCCESS_POISON]: char => `The poison has left ${char}.`,
@@ -78,7 +80,7 @@ const dialog_msgs = {
     [DialogTypes.HAUNT_INIT]: "You wish me to drive evil spirits away?",
     [DialogTypes.NO_HAUNT]: "Fear not! None of your companions is being haunted!",
     [DialogTypes.SELECT_HAUNT]: "From whom shall I drive the spirits away?",
-    [DialogTypes.DONATION_HAUNT]: (price, char) =>
+    [DialogTypes.DONATION_HAUNT]: (price: number, char: string) =>
         `A donation of ${price} coins is needed to drive spirits from ${char}.`,
     [DialogTypes.NO_COIN_HAUNT]: "You cannot cover the required donation, so I cannot aid you.",
     [DialogTypes.ACCEPT_HAUNT]: "Then I shall drive the spirits away.",
@@ -87,7 +89,7 @@ const dialog_msgs = {
     [DialogTypes.CURSE_INIT]: "Hmm, so you wish to have the cursed equipment removed, do you?",
     [DialogTypes.NO_CURSE]: "Fear not! None of your companions has any cursed gear!",
     [DialogTypes.SELECT_CURSE]: "From whom shall I remove the curse?",
-    [DialogTypes.DONATION_CURSE]: (price, char) =>
+    [DialogTypes.DONATION_CURSE]: (price: number, char: string) =>
         `Donate ${price} coins for me to remove ${char}${char.endsWith("s") ? "'" : "'s"} curse.`,
     [DialogTypes.NO_COIN_CURSE]: "You cannot cover the required donation, so I cannot aid you.",
     [DialogTypes.ACCEPT_CURSE]: "Then I shall remove the curse.",
@@ -98,42 +100,49 @@ const status_dialogs_map = {
     init: {
         [permanent_status.DOWNED]: DialogTypes.REVIVE_INIT,
         [permanent_status.POISON]: DialogTypes.POISON_INIT,
+        [permanent_status.VENOM]: DialogTypes.POISON_INIT,
         [permanent_status.HAUNT]: DialogTypes.HAUNT_INIT,
         [permanent_status.EQUIP_CURSE]: DialogTypes.CURSE_INIT,
     },
     no_status: {
         [permanent_status.DOWNED]: DialogTypes.NO_DOWNED,
         [permanent_status.POISON]: DialogTypes.NO_POISON,
+        [permanent_status.VENOM]: DialogTypes.NO_POISON,
         [permanent_status.HAUNT]: DialogTypes.NO_HAUNT,
         [permanent_status.EQUIP_CURSE]: DialogTypes.NO_CURSE,
     },
     select: {
         [permanent_status.DOWNED]: DialogTypes.SELECT_REVIVE,
         [permanent_status.POISON]: DialogTypes.SELECT_POISON,
+        [permanent_status.VENOM]: DialogTypes.SELECT_POISON,
         [permanent_status.HAUNT]: DialogTypes.SELECT_HAUNT,
         [permanent_status.EQUIP_CURSE]: DialogTypes.SELECT_CURSE,
     },
     donation: {
         [permanent_status.DOWNED]: DialogTypes.DONATION_REVIVE,
         [permanent_status.POISON]: DialogTypes.DONATION_POISON,
+        [permanent_status.VENOM]: DialogTypes.DONATION_POISON,
         [permanent_status.HAUNT]: DialogTypes.DONATION_HAUNT,
         [permanent_status.EQUIP_CURSE]: DialogTypes.DONATION_CURSE,
     },
     no_coin: {
         [permanent_status.DOWNED]: DialogTypes.NO_COIN_REVIVE,
         [permanent_status.POISON]: DialogTypes.NO_COIN_POISON,
+        [permanent_status.VENOM]: DialogTypes.NO_COIN_POISON,
         [permanent_status.HAUNT]: DialogTypes.NO_COIN_HAUNT,
         [permanent_status.EQUIP_CURSE]: DialogTypes.NO_COIN_CURSE,
     },
     accept: {
         [permanent_status.DOWNED]: DialogTypes.ACCEPT_REVIVE,
         [permanent_status.POISON]: DialogTypes.ACCEPT_POISON,
+        [permanent_status.VENOM]: DialogTypes.ACCEPT_POISON,
         [permanent_status.HAUNT]: DialogTypes.ACCEPT_HAUNT,
         [permanent_status.EQUIP_CURSE]: DialogTypes.ACCEPT_CURSE,
     },
     success: {
         [permanent_status.DOWNED]: DialogTypes.SUCCESS_REVIVE,
         [permanent_status.POISON]: DialogTypes.SUCCESS_POISON,
+        [permanent_status.VENOM]: DialogTypes.SUCCESS_POISON,
         [permanent_status.HAUNT]: DialogTypes.SUCCESS_HAUNT,
         [permanent_status.EQUIP_CURSE]: DialogTypes.SUCCESS_CURSE,
     },
@@ -279,7 +288,15 @@ export class HealerMenu {
             ask_for_input: true,
             show_crystal: true,
             callback: () => {
-                const has_status = this.data.info.party_data.members.some(c => c.has_permanent_status(perm_status));
+                let has_status = this.data.info.party_data.members.some(c => c.has_permanent_status(perm_status));
+                if (!has_status && perm_status === permanent_status.POISON) {
+                    has_status = this.data.info.party_data.members.some(c =>
+                        c.has_permanent_status(permanent_status.VENOM)
+                    );
+                    if (has_status) {
+                        perm_status = permanent_status.VENOM;
+                    }
+                }
                 if (has_status) {
                     this.party_has_status(perm_status);
                 } else {
@@ -411,7 +428,11 @@ export class HealerMenu {
                 this.selected_perm_status
             );
             const price = this.get_price(char, this.selected_perm_status);
-            const donation_msg = dialog_msgs[status_dialogs_map.donation[this.selected_perm_status]](price, char.name);
+            const dialog_type = status_dialogs_map.donation[this.selected_perm_status];
+            const donation_msg = (dialog_msgs[dialog_type] as (price: number, char: string) => string)(
+                price,
+                char.name
+            );
             this.set_dialog({
                 ask_for_input: input_and_crystal,
                 show_crystal: input_and_crystal,
@@ -501,7 +522,9 @@ export class HealerMenu {
         this.set_dialog({
             ask_for_input: true,
             show_crystal: false,
-            custom_msg: dialog_msgs[status_dialogs_map.success[this.selected_perm_status]](char.name),
+            custom_msg: (
+                dialog_msgs[status_dialogs_map.success[this.selected_perm_status]] as (char: string) => string
+            )(char.name),
             callback: () => {
                 const has_status = this.data.info.party_data.members.some(c =>
                     c.has_permanent_status(this.selected_perm_status)
