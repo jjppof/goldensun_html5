@@ -171,7 +171,8 @@ export class HealerMenu {
     private info_window: Window;
     private info_text: TextObj;
 
-    private selected_perm_status: permanent_status;
+    private selected_perm_statuses: permanent_status[];
+    private status_in_char: permanent_status;
 
     private yes_no_menu: YesNoMenu;
 
@@ -181,7 +182,8 @@ export class HealerMenu {
 
         this.npc = null;
         this.dialog = new DialogManager(this.game, this.data);
-        this.selected_perm_status = null;
+        this.selected_perm_statuses = null;
+        this.status_in_char = null;
 
         this._horizontal_menu = new HorizontalMenu(
             this.game,
@@ -270,7 +272,7 @@ export class HealerMenu {
                 this.check_party_status(permanent_status.DOWNED);
                 break;
             case "cure_poison":
-                this.check_party_status(permanent_status.POISON);
+                this.check_party_status(permanent_status.POISON, permanent_status.VENOM);
                 break;
             case "repel_evil":
                 this.check_party_status(permanent_status.HAUNT);
@@ -281,27 +283,21 @@ export class HealerMenu {
         }
     }
 
-    private check_party_status(perm_status: permanent_status) {
+    private check_party_status(...perm_statuses: permanent_status[]) {
         this.horizontal_menu.close();
         this.set_dialog({
-            dialog_type: status_dialogs_map.init[perm_status],
+            dialog_type: status_dialogs_map.init[perm_statuses[0]],
             ask_for_input: true,
             show_crystal: true,
             callback: () => {
-                let has_status = this.data.info.party_data.members.some(c => c.has_permanent_status(perm_status));
-                if (!has_status && perm_status === permanent_status.POISON) {
-                    has_status = this.data.info.party_data.members.some(c =>
-                        c.has_permanent_status(permanent_status.VENOM)
-                    );
-                    if (has_status) {
-                        perm_status = permanent_status.VENOM;
-                    }
-                }
+                const has_status = this.data.info.party_data.members.some(c =>
+                    perm_statuses.some(s => c.has_permanent_status(s))
+                );
                 if (has_status) {
-                    this.party_has_status(perm_status);
+                    this.party_has_status(...perm_statuses);
                 } else {
                     this.set_dialog({
-                        dialog_type: status_dialogs_map.no_status[perm_status],
+                        dialog_type: status_dialogs_map.no_status[perm_statuses[0]],
                         ask_for_input: true,
                         show_crystal: false,
                         callback: () => {
@@ -319,16 +315,16 @@ export class HealerMenu {
         });
     }
 
-    private party_has_status(perm_status: permanent_status) {
+    private party_has_status(...perm_statuses: permanent_status[]) {
         this.horizontal_menu.close();
         this.set_dialog({
-            dialog_type: status_dialogs_map.select[perm_status],
+            dialog_type: status_dialogs_map.select[perm_statuses[0]],
             ask_for_input: false,
             show_crystal: false,
             callback: () => {
-                this.selected_perm_status = perm_status;
+                this.selected_perm_statuses = perm_statuses;
                 const first_char_index = this.data.info.party_data.members.findIndex(c =>
-                    c.has_permanent_status(perm_status)
+                    perm_statuses.some(s => c.has_permanent_status(s))
                 );
                 this.char_change(this.data.info.party_data.members[first_char_index].key_name);
                 this.info_window.show();
@@ -339,7 +335,7 @@ export class HealerMenu {
                         this.enable_chars_menu_control();
                     },
                     undefined,
-                    this.selected_perm_status
+                    this.selected_perm_statuses
                 );
             },
         });
@@ -380,10 +376,11 @@ export class HealerMenu {
 
     private char_change(char_key: string) {
         const char = this.data.info.main_char_list[char_key];
-        if (char.has_permanent_status(this.selected_perm_status)) {
-            const price = this.get_price(char, this.selected_perm_status);
+        const status_in_char = this.selected_perm_statuses.find(s => char.has_permanent_status(s));
+        if (status_in_char !== undefined) {
+            const price = this.get_price(char, status_in_char);
             let info_msg: string;
-            switch (this.selected_perm_status) {
+            switch (status_in_char) {
                 case permanent_status.DOWNED:
                     info_msg = `Revive for ${price} coins`;
                     break;
@@ -401,7 +398,7 @@ export class HealerMenu {
             this.info_window.update_text(info_msg, this.info_text);
         } else {
             let info_msg: string;
-            switch (this.selected_perm_status) {
+            switch (this.selected_perm_statuses[0]) {
                 case permanent_status.DOWNED:
                     info_msg = "This ally needs no healing.";
                     break;
@@ -423,12 +420,12 @@ export class HealerMenu {
     private char_select() {
         const char_index = this.chars_menu.selected_index;
         const char = this.data.info.party_data.members[char_index];
-        if (char.has_permanent_status(this.selected_perm_status)) {
-            const input_and_crystal = [permanent_status.HAUNT, permanent_status.EQUIP_CURSE].includes(
-                this.selected_perm_status
-            );
-            const price = this.get_price(char, this.selected_perm_status);
-            const dialog_type = status_dialogs_map.donation[this.selected_perm_status];
+        const status_in_char = this.selected_perm_statuses.find(s => char.has_permanent_status(s));
+        if (status_in_char !== undefined) {
+            this.status_in_char = status_in_char;
+            const input_and_crystal = [permanent_status.HAUNT, permanent_status.EQUIP_CURSE].includes(status_in_char);
+            const price = this.get_price(char, this.status_in_char);
+            const dialog_type = status_dialogs_map.donation[this.status_in_char];
             const donation_msg = (dialog_msgs[dialog_type] as (price: number, char: string) => string)(
                 price,
                 char.name
@@ -463,17 +460,17 @@ export class HealerMenu {
                 yes: () => {
                     if (price > this.data.info.party_data.coins) {
                         this.set_dialog({
-                            dialog_type: status_dialogs_map.no_coin[this.selected_perm_status],
+                            dialog_type: status_dialogs_map.no_coin[this.status_in_char],
                             ask_for_input: true,
                             show_crystal: true,
                             callback: () => {
-                                this.party_has_status(this.selected_perm_status);
+                                this.party_has_status(this.status_in_char);
                             },
                         });
                     } else {
                         this.data.info.party_data.coins -= price;
                         this.set_dialog({
-                            dialog_type: status_dialogs_map.accept[this.selected_perm_status],
+                            dialog_type: status_dialogs_map.accept[this.status_in_char],
                             ask_for_input: true,
                             show_crystal: true,
                             callback: () => {
@@ -488,7 +485,7 @@ export class HealerMenu {
                         ask_for_input: true,
                         show_crystal: true,
                         callback: () => {
-                            this.party_has_status(this.selected_perm_status);
+                            this.party_has_status(this.status_in_char);
                         },
                     });
                 },
@@ -504,10 +501,10 @@ export class HealerMenu {
         this.data.cursor_manager.hide();
         await this.cure_animation();
         this.data.cursor_manager.show();
-        char.remove_permanent_status(this.selected_perm_status);
-        if (this.selected_perm_status === permanent_status.DOWNED) {
+        char.remove_permanent_status(this.status_in_char);
+        if (this.status_in_char === permanent_status.DOWNED) {
             char.current_hp = char.max_hp;
-        } else if (this.selected_perm_status === permanent_status.EQUIP_CURSE) {
+        } else if (this.status_in_char === permanent_status.EQUIP_CURSE) {
             for (let slot_type in char.equip_slots) {
                 const slot = char.equip_slots[slot_type as equip_slots];
                 if (slot) {
@@ -522,17 +519,18 @@ export class HealerMenu {
         this.set_dialog({
             ask_for_input: true,
             show_crystal: false,
-            custom_msg: (
-                dialog_msgs[status_dialogs_map.success[this.selected_perm_status]] as (char: string) => string
-            )(char.name),
+            custom_msg: (dialog_msgs[status_dialogs_map.success[this.status_in_char]] as (char: string) => string)(
+                char.name
+            ),
             callback: () => {
                 const has_status = this.data.info.party_data.members.some(c =>
-                    c.has_permanent_status(this.selected_perm_status)
+                    this.selected_perm_statuses.some(s => c.has_permanent_status(s))
                 );
                 if (has_status) {
-                    this.party_has_status(this.selected_perm_status);
+                    this.party_has_status(...this.selected_perm_statuses);
                 } else {
-                    this.selected_perm_status = null;
+                    this.selected_perm_statuses = null;
+                    this.status_in_char = null;
                     this.info_window.close();
                     this.chars_menu.close(undefined, true);
                     this.set_dialog({
@@ -575,7 +573,7 @@ export class HealerMenu {
     }
 
     private get_cure_sfx() {
-        switch (this.selected_perm_status) {
+        switch (this.status_in_char) {
             case permanent_status.DOWNED:
                 return "psynergy/revive";
             case permanent_status.VENOM:
@@ -585,6 +583,8 @@ export class HealerMenu {
                 return "misc/remove_curse";
             case permanent_status.HAUNT:
                 return "misc/repel_evil";
+            default:
+                return null;
         }
     }
 

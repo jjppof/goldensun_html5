@@ -88,7 +88,7 @@ export class CharsMenu {
     public is_active: boolean;
     public is_open: boolean;
     public mode: CharsMenuModes;
-    public selected_status: permanent_status;
+    public selected_statuses: permanent_status[];
 
     constructor(game: Phaser.Game, data: GoldenSun, on_change: CharsMenu["on_change"]) {
         this.game = game;
@@ -234,7 +234,7 @@ export class CharsMenu {
             );
 
             if (this.mode === CharsMenuModes.HEALER) {
-                if (char.has_permanent_status(this.selected_status)) {
+                if (this.selected_statuses.some(s => char.has_permanent_status(s))) {
                     sprite.scale.setTo(1, 1);
                 } else {
                     sprite.scale.setTo(0.75, 0.75);
@@ -480,11 +480,11 @@ export class CharsMenu {
         mode: CharsMenuModes = CharsMenuModes.SHOP,
         open_callback?: () => void,
         silent?: boolean,
-        selected_status?: permanent_status
+        selected_statuses?: permanent_status[]
     ) {
         this.current_line = 0;
         this.mode = mode;
-        this.selected_status = selected_status;
+        this.selected_statuses = selected_statuses;
 
         this.make_lines();
         this.check_mode();
