@@ -136,11 +136,7 @@ export class BuyArtifactsMenu {
             if (this.buy_select_pos.should_change) this.buy_select_pos.should_change = false;
         }
 
-        for (let i = 0; i < this.selected_character.items.length; i++) {
-            if (this.selected_character.items[i].key_name === old_item.key_name) {
-                this.selected_character.items.splice(i, 1);
-            }
-        }
+        this.selected_character.remove_item(slot);
 
         let sell_price = slot.broken
             ? this.old_item.price * SELL_BROKEN_MULTIPLIER
@@ -190,17 +186,17 @@ export class BuyArtifactsMenu {
 
         if (this.old_item) {
             for (let i = 0; i < this.selected_character.items.length; i++) {
-                let itm = this.selected_character.items[i];
-                if (itm.key_name === this.old_item.key_name && itm.equipped) {
+                const item = this.selected_character.items[i];
+                if (item.key_name === this.old_item.key_name && item.equipped) {
                     this.selected_character.unequip_item(i);
                     break;
                 }
             }
         }
 
-        for (let i = this.selected_character.items.length - 1; i > 0; i--) {
-            let itm = this.selected_character.items[i];
-            if (itm.key_name === this.selected_item.key_name) {
+        for (let i = this.selected_character.items.length - 1; i >= 0; i--) {
+            const item = this.selected_character.items[i];
+            if (item.key_name === this.selected_item.key_name) {
                 this.selected_character.equip_item(i);
                 break;
             }
@@ -296,21 +292,8 @@ export class BuyArtifactsMenu {
                     }
                 }
 
-                let new_index = this.selected_character.items.length;
                 if (!exists) {
-                    if (item_to_add.equipable)
-                        this.selected_character.items.push({
-                            key_name: item_to_add.key_name,
-                            quantity: 1,
-                            equipped: false,
-                            index: new_index,
-                        });
-                    else
-                        this.selected_character.items.push({
-                            key_name: item_to_add.key_name,
-                            quantity: quantity,
-                            index: new_index,
-                        });
+                    this.selected_character.add_item(item_to_add.key_name, 1, false);
                 }
 
                 if (!game_ticket) {
