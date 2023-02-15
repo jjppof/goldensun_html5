@@ -7,6 +7,7 @@ import {MainChar} from "../../MainChar";
 import {BattlePsynergyWindow} from "./BattlePsynergyWindow";
 import {CursorManager, PointVariants} from "../../utils/CursorManager";
 import {PageIndicatorModes} from "../../support_menus/PageIndicator";
+import {Control} from "utils/ControlManager";
 
 const BASE_WINDOW_X = 160;
 const BASE_WINDOW_Y = 72;
@@ -280,7 +281,7 @@ export class BattleDjinnWindow {
         );
         this.psynergy_window_open = true;
 
-        const controls = [
+        const controls: Control[] = [
             {
                 buttons: Button.LEFT,
                 on_down: this.psynergy_window.previous_page.bind(this.psynergy_window),
@@ -311,6 +312,7 @@ export class BattleDjinnWindow {
     }
 
     djinn_choose() {
+        let control_key: number;
         const controls = [
             {buttons: Button.LEFT, on_down: this.previous_page.bind(this), sfx: {down: "menu/move"}},
             {buttons: Button.RIGHT, on_down: this.next_page.bind(this), sfx: {down: "menu/move"}},
@@ -319,6 +321,7 @@ export class BattleDjinnWindow {
             {
                 buttons: Button.A,
                 on_down: () => {
+                    this.data.control_manager.detach_bindings(control_key);
                     const this_djinn = this.data.info.djinni_list[this.djinni[this.djinn_index]];
                     if (this_djinn.status !== djinn_status.RECOVERY) {
                         this.choosen_ability = this_djinn.ability_key_name;
@@ -337,7 +340,7 @@ export class BattleDjinnWindow {
             },
         ];
 
-        this.data.control_manager.add_controls(controls, {
+        control_key = this.data.control_manager.add_controls(controls, {
             loop_config: {vertical: true, horizontal: true},
         });
 

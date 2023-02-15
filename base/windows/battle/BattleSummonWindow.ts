@@ -9,6 +9,7 @@ import {Button} from "../../XGamepad";
 import * as _ from "lodash";
 import {CursorManager, PointVariants} from "../../utils/CursorManager";
 import {PageIndicatorModes} from "../../support_menus/PageIndicator";
+import {Control} from "utils/ControlManager";
 
 const BASE_WINDOW_X = 104;
 const BASE_WINDOW_Y = 88;
@@ -233,7 +234,8 @@ export class BattleSummonWindow {
     }
 
     summon_choose() {
-        let controls = [
+        let control_key: number;
+        let controls: Control[] = [
             {buttons: Button.LEFT, on_down: this.previous_page.bind(this), sfx: {down: "menu/move"}},
             {buttons: Button.RIGHT, on_down: this.next_page.bind(this), sfx: {down: "menu/move"}},
             {buttons: Button.UP, on_down: this.previous_summon.bind(this), sfx: {down: "menu/move"}},
@@ -241,6 +243,7 @@ export class BattleSummonWindow {
             {
                 buttons: Button.A,
                 on_down: () => {
+                    this.data.control_manager.detach_bindings(control_key);
                     this.choosen_ability = this.summons[this.summon_index].key_name;
                     this.hide(this.close_callback);
                 },
@@ -256,7 +259,7 @@ export class BattleSummonWindow {
             },
         ];
 
-        this.data.control_manager.add_controls(controls, {
+        control_key = this.data.control_manager.add_controls(controls, {
             loop_config: {vertical: true, horizontal: true},
         });
     }

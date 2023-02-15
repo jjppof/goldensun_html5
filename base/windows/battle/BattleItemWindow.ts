@@ -7,6 +7,7 @@ import {ItemSlot, MainChar} from "../../MainChar";
 import * as _ from "lodash";
 import {CursorManager, PointVariants} from "../../utils/CursorManager";
 import {PageIndicatorModes} from "../../support_menus/PageIndicator";
+import {Control} from "utils/ControlManager";
 
 //TO DO: use item sprite instead of ability sprite for items (Spirit Ring)
 
@@ -226,7 +227,8 @@ export class BattleItemWindow {
     }
 
     item_choose() {
-        const controls = [
+        let control_key: number;
+        const controls: Control[] = [
             {buttons: Button.LEFT, on_down: this.previous_page.bind(this), sfx: {down: "menu/move"}},
             {buttons: Button.RIGHT, on_down: this.next_page.bind(this), sfx: {down: "menu/move"}},
             {buttons: Button.UP, on_down: this.previous_item.bind(this), sfx: {down: "menu/move"}},
@@ -234,6 +236,7 @@ export class BattleItemWindow {
             {
                 buttons: Button.A,
                 on_down: () => {
+                    this.data.control_manager.detach_bindings(control_key);
                     const this_item = this.data.info.items_list[this.items[this.item_index].key_name];
                     if (
                         this_item.use_type !== use_types.NO_USE &&
@@ -257,7 +260,7 @@ export class BattleItemWindow {
             },
         ];
 
-        this.data.control_manager.add_controls(controls, {
+        control_key = this.data.control_manager.add_controls(controls, {
             loop_config: {vertical: true, horizontal: true},
         });
     }
