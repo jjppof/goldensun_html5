@@ -3471,5 +3471,24 @@
         "battle_animation_key": "heat_stun",
         "priority_move": false,
         "msg_type": "use"
+    },{
+        "key_name": "flee",
+        "name": "Flee",
+        "description": "",
+        "type": "effect_only",
+        "element": "no_element",
+        "battle_target": "user",
+        "range": 1,
+        "pp_cost": 0,
+        "ability_power": 0,
+        "effects_outside_battle": false,
+        "is_battle_ability": true,
+        "is_field_psynergy": false,
+        "effects": [],
+        "ability_category": "skill",
+        "battle_animation_key": "flee",
+        "priority_move": false,
+        "msg_type": "no_msg",
+        "affects_downed": false
     }
 ]

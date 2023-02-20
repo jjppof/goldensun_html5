@@ -95,6 +95,10 @@ export class Battle {
     public battle_finishing: boolean;
     public can_escape: boolean;
     public party_fled: boolean;
+    public flee_attemps: {
+        allies: number;
+        enemies: number;
+    };
 
     public advance_log_resolve: Function;
     public advance_log_control_key: number;
@@ -197,6 +201,10 @@ export class Battle {
         this.enemies_defeated = false;
         this.battle_finishing = false;
         this.party_fled = false;
+        this.flee_attemps = {
+            allies: 0,
+            enemies: 0,
+        };
     }
 
     start_battle() {
@@ -350,12 +358,45 @@ export class Battle {
         await promise;
     }
 
-    async flee(flee_succeed: boolean) {
-        this.battle_menu.close_menu();
-        this.battle_stage.reset_positions();
-        this.battle_stage.update_stage();
-        this.battle_stage.choosing_actions = false;
-        await this.battle_log.add(`${this.data.info.party_data.members[0].name} and friends run!`);
+    can_flee(ally_attempt: boolean) {
+        const front_pt_lvl =
+            _.mean(
+                this.data.info.party_data.members.slice(0, Battle.MAX_CHARS_IN_BATTLE).flatMap(char => {
+                    return char.has_permanent_status(permanent_status.DOWNED) ? [] : [char.level];
+                })
+            ) | 0;
+        const enemies_lvl =
+            _.mean(
+                this.enemies_info.flatMap(info => {
+                    return info.instance.has_permanent_status(permanent_status.DOWNED) ? [] : [info.instance.level];
+                })
+            ) | 0;
+        const diff = ally_attempt ? front_pt_lvl - enemies_lvl : enemies_lvl - front_pt_lvl;
+        const rate = 500 * (1 + diff + 4 * (ally_attempt ? this.flee_attemps.allies : this.flee_attemps.enemies));
+        if (_.random(9999) < rate) {
+            return true;
+        } else {
+            if (ally_attempt) {
+                ++this.flee_attemps.allies;
+            } else {
+                ++this.flee_attemps.enemies;
+            }
+            return false;
+        }
+    }
+
+    async flee(ally_attempt: boolean, enemy_battle_key?: string) {
+        const flee_succeed = this.can_flee(ally_attempt);
+        if (ally_attempt) {
+            this.battle_menu.close_menu();
+            this.battle_stage.reset_positions();
+            this.battle_stage.update_stage();
+            this.battle_stage.choosing_actions = false;
+            await this.battle_log.add(`${this.data.info.party_data.members[0].name} and friends run!`);
+        } else {
+            const enemy_name = this.this_enemies_list[enemy_battle_key].name;
+            await this.battle_log.add(`${enemy_name} runs!`);
+        }
         await this.wait_for_key();
         if (flee_succeed) {
             this.battle_phase = battle_phases.FLEE;
@@ -368,11 +409,16 @@ export class Battle {
                 false
             );
             const caster_sprite = this.allies_map_sprite[this.data.info.party_data.members[0].key_name];
-            const target_sprites = this.data.info.party_data.members
-                .filter(member => {
-                    return !member.has_permanent_status(permanent_status.DOWNED);
-                })
-                .map(member => this.allies_map_sprite[member.key_name]);
+            let target_sprites: PlayerSprite[];
+            if (ally_attempt) {
+                target_sprites = this.data.info.party_data.members
+                    .filter(member => {
+                        return !member.has_permanent_status(permanent_status.DOWNED);
+                    })
+                    .map(member => this.allies_map_sprite[member.key_name]);
+            } else {
+                target_sprites = [this.enemies_map_sprite[enemy_battle_key]];
+            }
             await this.animation_manager.play_animation(
                 flee_animation,
                 caster_sprite,
@@ -386,8 +432,10 @@ export class Battle {
         } else {
             await this.battle_log.add(`But there's no escape!`);
             await this.wait_for_key();
-            this.allies_abilities = {};
-            this.battle_phase = battle_phases.ROUND_START;
+            if (ally_attempt) {
+                this.allies_abilities = {};
+                this.battle_phase = battle_phases.ROUND_START;
+            }
         }
         this.check_phases();
     }
@@ -648,6 +696,15 @@ export class Battle {
             await this.check_poison_damage(action);
 
             this.check_phases();
+            return;
+        }
+
+        if (ability.key_name === "flee" && action.caster.fighter_type === fighter_types.ENEMY) {
+            await this.flee(false, action.caster_battle_key);
+
+            //check for poison damage
+            await this.check_poison_damage(action);
+
             return;
         }
 

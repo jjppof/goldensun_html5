@@ -64,7 +64,6 @@ export class MainBattleMenu {
     public current_char_index: number;
     public current_buttons: string[];
     public djinni_already_used: {[element: string]: number};
-    public flee_attemps: number;
 
     constructor(game: Phaser.Game, data: GoldenSun, battle_instance: Battle) {
         this.game = game;
@@ -107,7 +106,6 @@ export class MainBattleMenu {
         this.group = this.game.add.group();
         this.avatar_sprite = this.group.create(0, numbers.GAME_HEIGHT - numbers.AVATAR_SIZE);
         this.avatar_sprite.visible = false;
-        this.flee_attemps = 0;
     }
 
     start_button_press() {
@@ -146,7 +144,7 @@ export class MainBattleMenu {
                 });
                 break;
             case "flee":
-                this.battle_instance.flee(this.can_flee());
+                this.battle_instance.flee(true);
                 break;
             case "status":
                 this.start_horizontal_menu.close(() => {
@@ -155,28 +153,6 @@ export class MainBattleMenu {
                     });
                 });
                 break;
-        }
-    }
-
-    can_flee() {
-        const front_pt_lvl =
-            _.mean(
-                this.data.info.party_data.members.slice(0, Battle.MAX_CHARS_IN_BATTLE).flatMap(char => {
-                    return char.has_permanent_status(permanent_status.DOWNED) ? [] : [char.level];
-                })
-            ) | 0;
-        const enemies_lvl =
-            _.mean(
-                this.battle_instance.enemies_info.flatMap(info => {
-                    return info.instance.has_permanent_status(permanent_status.DOWNED) ? [] : [info.instance.level];
-                })
-            ) | 0;
-        const rate = 500 * (1 + front_pt_lvl - enemies_lvl + 4 * this.flee_attemps);
-        if (_.random(9999) < rate) {
-            return true;
-        } else {
-            ++this.flee_attemps;
-            return false;
         }
     }
 
