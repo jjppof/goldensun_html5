@@ -7,6 +7,7 @@ import {Target, CHOOSE_TARGET_ALLY_SHIFT, CHOOSE_TARGET_ENEMY_SHIFT, BattleStage
 import * as _ from "lodash";
 import {Window} from "../Window";
 import {GAME_WIDTH, RED_FONT_COLOR} from "../magic_numbers";
+import {Enemy} from "Enemy";
 
 export class BattleCursorManager {
     public static readonly CHOOSE_TARGET_RIGHT = 1;
@@ -142,8 +143,10 @@ export class BattleCursorManager {
                 group_half_length
             );
         } while (
-            !this.include_downed &&
-            group_info[target_sprite_index].instance.has_permanent_status(permanent_status.DOWNED)
+            (!this.include_downed &&
+                group_info[target_sprite_index].instance.has_permanent_status(permanent_status.DOWNED)) ||
+            (group_info[target_sprite_index].instance.fighter_type === fighter_types.ENEMY &&
+                (group_info[target_sprite_index].instance as Enemy).fled)
         );
 
         this.set_battle_cursors_position(tween_to_pos);
@@ -212,7 +215,7 @@ export class BattleCursorManager {
             player.has_permanent_status(permanent_status.VENOM) &&
             this.status_to_be_healed.includes(permanent_status.VENOM)
         ) {
-            texts.push("Cure venon");
+            texts.push("Cure venom");
         }
         if (
             player.has_temporary_status(temporary_status.DELUSION) &&
@@ -279,7 +282,8 @@ export class BattleCursorManager {
 
             if (
                 target_info &&
-                (this.include_downed || !target_info.instance.has_permanent_status(permanent_status.DOWNED))
+                (this.include_downed || !target_info.instance.has_permanent_status(permanent_status.DOWNED)) &&
+                !(target_info.instance.fighter_type === fighter_types.ENEMY && (target_info.instance as Enemy).fled)
             ) {
                 const target_sprite = target_info.sprite;
                 let this_scale;

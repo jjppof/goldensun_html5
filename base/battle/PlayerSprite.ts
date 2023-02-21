@@ -186,6 +186,13 @@ export class PlayerSprite {
         this.char_sprite.blendMode = blendMode;
     }
 
+    get visible() {
+        return this.group.visible;
+    }
+    set visible(visible) {
+        this.group.visible = visible;
+    }
+
     get data() {
         return this.internal_data;
     }

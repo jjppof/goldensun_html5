@@ -28,6 +28,7 @@ export class Enemy extends Player {
     public target_weaker_chance: number;
     public defeat_voice: string;
     public base_stats: {[main_stat in main_stats]?: number};
+    public fled: boolean;
 
     constructor(enemy_data, name) {
         super(enemy_data.key_name, name ? name : enemy_data.name);
@@ -85,6 +86,7 @@ export class Enemy extends Player {
         );
         this.current_exp = -1;
         this.effects = [];
+        this.fled = false;
         this.set_base_attributes();
     }
 

@@ -262,8 +262,8 @@ export class Battle {
         this.allies_defeated = this.allies_info.every(player =>
             player.instance.has_permanent_status(permanent_status.DOWNED)
         );
-        this.enemies_defeated = this.enemies_info.every(player =>
-            player.instance.has_permanent_status(permanent_status.DOWNED)
+        this.enemies_defeated = this.enemies_info.every(
+            player => player.instance.has_permanent_status(permanent_status.DOWNED) || (player.instance as Enemy).fled
         );
 
         if (this.allies_defeated || this.enemies_defeated) {
@@ -399,7 +399,6 @@ export class Battle {
         }
         await this.wait_for_key();
         if (flee_succeed) {
-            this.battle_phase = battle_phases.FLEE;
             this.battle_stage.pause_players_update = true;
             const animation_recipe = this.data.info.misc_battle_animations_recipes["flee"];
             const flee_animation = BattleAnimationManager.get_animation_instance(
@@ -411,12 +410,14 @@ export class Battle {
             const caster_sprite = this.allies_map_sprite[this.data.info.party_data.members[0].key_name];
             let target_sprites: PlayerSprite[];
             if (ally_attempt) {
+                this.battle_phase = battle_phases.FLEE;
                 target_sprites = this.data.info.party_data.members
                     .filter(member => {
                         return !member.has_permanent_status(permanent_status.DOWNED);
                     })
                     .map(member => this.allies_map_sprite[member.key_name]);
             } else {
+                this.this_enemies_list[enemy_battle_key].fled = true;
                 target_sprites = [this.enemies_map_sprite[enemy_battle_key]];
             }
             await this.animation_manager.play_animation(
@@ -429,8 +430,11 @@ export class Battle {
                 this.battle_stage
             );
             this.battle_stage.pause_players_update = false;
+            if (!ally_attempt) {
+                this.enemies_map_sprite[enemy_battle_key].visible = false;
+            }
         } else {
-            await this.battle_log.add(`But there's no escape!`);
+            await this.battle_log.add("But there's no escape!");
             await this.wait_for_key();
             if (ally_attempt) {
                 this.allies_abilities = {};
@@ -659,6 +663,12 @@ export class Battle {
 
         const action = this.turns_actions.pop();
 
+        //check if enemy fled
+        if (action.caster.fighter_type === fighter_types.ENEMY && (action.caster as Enemy).fled) {
+            this.check_phases();
+            return;
+        }
+
         //check whether this char is downed
         if (action.caster.has_permanent_status(permanent_status.DOWNED)) {
             this.check_phases();
@@ -868,10 +878,18 @@ export class Battle {
     check_for_attack_dodge(action: PlayerAbility, ability: Ability) {
         for (let i = 0; i < action.targets.length; ++i) {
             const target_info = action.targets[i];
-            if (target_info.magnitude === null) continue;
-            const target_instance = target_info.target.instance;
+            if (target_info.magnitude === null) {
+                continue;
+            }
 
-            if (target_instance.has_permanent_status(permanent_status.DOWNED)) continue;
+            const target_instance = target_info.target.instance;
+            if (target_instance.has_permanent_status(permanent_status.DOWNED)) {
+                continue;
+            }
+            if (target_instance.fighter_type === fighter_types.ENEMY && (target_instance as Enemy).fled) {
+                continue;
+            }
+
             if (ability.can_be_evaded) {
                 //check whether the target is going to evade the caster attack
                 if (
@@ -1005,10 +1023,17 @@ export class Battle {
 
         for (let i = 0; i < action.targets.length; ++i) {
             const target_info = action.targets[i];
-            if (target_info.magnitude === null) continue;
-            const target_instance = target_info.target.instance;
+            if (target_info.magnitude === null) {
+                continue;
+            }
 
-            if (target_instance.has_permanent_status(permanent_status.DOWNED)) continue;
+            const target_instance = target_info.target.instance;
+            if (target_instance.has_permanent_status(permanent_status.DOWNED)) {
+                continue;
+            }
+            if (target_instance.fighter_type === fighter_types.ENEMY && (target_instance as Enemy).fled) {
+                continue;
+            }
             if (ability.can_be_evaded) {
                 //check whether the target is going to evade the caster attack
                 if (target_info.dodged) {
@@ -1149,6 +1174,12 @@ export class Battle {
         for (let i = 0; i < action.targets.length; ++i) {
             const target = action.targets[i];
             if (target.magnitude && target.target?.instance.has_permanent_status(permanent_status.DOWNED)) {
+                target.magnitude = null;
+            }
+            if (
+                target.target?.instance?.fighter_type === fighter_types.ENEMY &&
+                (target.target?.instance as Enemy)?.fled
+            ) {
                 target.magnitude = null;
             }
         }
@@ -1393,6 +1424,9 @@ So, if a character will die after 5 turns and you land another Curse on them, it
             if (!ability.affects_downed && target_instance.has_permanent_status(permanent_status.DOWNED)) {
                 continue;
             }
+            if (target_instance.fighter_type === fighter_types.ENEMY && (target_instance as Enemy).fled) {
+                continue;
+            }
 
             switch (effect_obj.type) {
                 case effect_types.PERMANENT_STATUS:
@@ -1606,8 +1640,11 @@ So, if a character will die after 5 turns and you land another Curse on them, it
 
         for (let i = 0; i < this.on_going_effects.length; ++i) {
             const effect = this.on_going_effects[i];
-            if (effect.char.has_permanent_status(permanent_status.DOWNED)) {
-                //clear this effect if the owner char is downed
+            if (
+                effect.char.has_permanent_status(permanent_status.DOWNED) ||
+                (effect.char.fighter_type === fighter_types.ENEMY && (effect.char as Enemy).fled)
+            ) {
+                //clear this effect if the owner char is downed or fled (in case of enemies)
                 effect.char.remove_effect(effect);
                 effect.char.update_all();
                 effects_to_remove.push(i);
@@ -1790,10 +1827,11 @@ So, if a character will die after 5 turns and you land another Curse on them, it
             this.battle_log.add(this.enemies_party_name + " has been defeated!");
             await this.wait_for_key();
 
+            //calculates total exp gained
             const total_exp = this.enemies_info
-                .map(info => {
-                    //calculates total exp gained
-                    return (info.instance as Enemy).exp_reward;
+                .flatMap(info => {
+                    const enemy = info.instance as Enemy;
+                    return enemy.fled ? [] : [enemy.exp_reward];
                 })
                 .reduce((a, b) => a + b, 0);
             this.battle_log.add(`You got ${total_exp.toString()} experience points.`);

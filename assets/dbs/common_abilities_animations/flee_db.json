@@ -1,7 +1,7 @@
 {
     "key_name": "flee",
     "sprites": "targets",
-    "x_sequence": [{
+    "center_shift_sequence": [{
         "to": {
             "starting_value": 65,
             "cumulator": 0
