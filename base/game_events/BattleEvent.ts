@@ -10,12 +10,13 @@ export class BattleEvent extends GameEvent {
     private return_to_sanctum: boolean;
     private bgm: string;
     private reset_previous_bgm: boolean;
+    private all_enemies_fled_events: GameEvent[];
     private victory_events: GameEvent[];
     private defeat_events: GameEvent[];
     private before_fade_victory_events: GameEvent[];
     private before_fade_defeat_events: GameEvent[];
-    private finish_callback: (victory: boolean) => void;
-    private before_fade_finish_callback: (victory: boolean) => void;
+    private finish_callback: (victory: boolean, all_party_fled: boolean) => void;
+    private before_fade_finish_callback: (victory: boolean, all_party_fled: boolean) => void;
 
     constructor(
         game,
@@ -28,6 +29,7 @@ export class BattleEvent extends GameEvent {
         return_to_sanctum,
         bgm,
         reset_previous_bgm,
+        all_enemies_fled_events,
         victory_events,
         defeat_events,
         before_fade_victory_events,
@@ -39,6 +41,13 @@ export class BattleEvent extends GameEvent {
         this.return_to_sanctum = return_to_sanctum ?? true;
         this.bgm = bgm;
         this.reset_previous_bgm = reset_previous_bgm ?? true;
+        this.all_enemies_fled_events = [];
+        if (all_enemies_fled_events !== undefined) {
+            all_enemies_fled_events.forEach(event_info => {
+                const event = this.data.game_event_manager.get_event_instance(event_info);
+                this.all_enemies_fled_events.push(event);
+            });
+        }
         this.victory_events = [];
         if (victory_events !== undefined) {
             victory_events.forEach(event_info => {
@@ -78,9 +87,9 @@ export class BattleEvent extends GameEvent {
             this.enemy_party_key,
             this.bgm,
             this.reset_previous_bgm,
-            (victory, party_fled) => {
+            (victory, all_party_fled) => {
                 if (this.before_fade_finish_callback) {
-                    this.before_fade_finish_callback(victory);
+                    this.before_fade_finish_callback(victory, all_party_fled);
                 }
                 if (victory) {
                     this.before_fade_victory_events.forEach(event => event.fire(this.origin_npc));
@@ -90,7 +99,7 @@ export class BattleEvent extends GameEvent {
                 if (!victory && (this.defeat_events.length || this.before_fade_defeat_events.length)) {
                     return null;
                 }
-                if (this.return_to_sanctum && !victory && !party_fled) {
+                if (this.return_to_sanctum && !victory && !all_party_fled) {
                     const sanctum_data = this.data.info.last_visited_town_with_sanctum;
                     const event = new TeleportEvent(
                         this.game,
@@ -131,12 +140,14 @@ export class BattleEvent extends GameEvent {
                 }
                 return null;
             },
-            victory => {
+            (victory, all_party_fled) => {
                 --this.data.game_event_manager.events_running_count;
                 if (this.finish_callback) {
-                    this.finish_callback(victory);
+                    this.finish_callback(victory, all_party_fled);
                 }
-                if (victory) {
+                if (victory && !all_party_fled) {
+                    this.all_enemies_fled_events.forEach(event => event.fire(this.origin_npc));
+                } else if (victory) {
                     this.victory_events.forEach(event => event.fire(this.origin_npc));
                 } else {
                     this.defeat_events.forEach(event => event.fire(this.origin_npc));

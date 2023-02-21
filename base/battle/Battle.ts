@@ -115,8 +115,8 @@ export class Battle {
     public enemies_map_sprite: {[player_key: string]: PlayerSprite};
 
     public previous_map_state: ReturnType<Map["pause"]>;
-    public before_fade_finish_callback: (victory: boolean, party_fled: boolean) => Promise<void>;
-    public finish_callback: (victory: boolean, party_fled?: boolean) => void;
+    public before_fade_finish_callback: (victory: boolean, all_party_fled: boolean) => Promise<void>;
+    public finish_callback: (victory: boolean, all_party_fled?: boolean) => void;
     public background_key: string;
     public bgm: string;
     public reset_previous_bgm: boolean;
@@ -1945,7 +1945,10 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                 }
 
                 if (this.before_fade_finish_callback) {
-                    return this.before_fade_finish_callback(!this.allies_defeated, this.party_fled);
+                    const all_fled = this.enemies_defeated
+                        ? this.enemies_info.every(player => (player.instance as Enemy).fled)
+                        : this.party_fled;
+                    return this.before_fade_finish_callback(!this.allies_defeated, all_fled);
                 }
                 return null;
             },
@@ -1957,7 +1960,10 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                     this.data.audio.set_bgm(this.previous_bgm, true);
                 }
                 if (this.finish_callback) {
-                    this.finish_callback(!this.allies_defeated, this.party_fled);
+                    const all_fled = this.enemies_defeated
+                        ? this.enemies_info.every(player => (player.instance as Enemy).fled)
+                        : this.party_fled;
+                    this.finish_callback(!this.allies_defeated, all_fled);
                 }
             }
         );

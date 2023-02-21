@@ -445,6 +445,10 @@
             {
                 "key_name": "plasma",
                 "use_weight": 0.75
+            },
+            {
+                "key_name": "flee",
+                "use_weight": 0.15
             }
         ],
         "vulnerabilities": [],

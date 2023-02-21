@@ -317,6 +317,7 @@ export class GameEventManager {
                     info.return_to_sanctum,
                     info.bgm,
                     info.reset_previous_bgm,
+                    info.all_enemies_fled_events,
                     info.victory_events,
                     info.defeat_events,
                     info.before_fade_victory_events,

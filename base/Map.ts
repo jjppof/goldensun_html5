@@ -1427,8 +1427,8 @@ export class Map {
                     reset_previous_bgm: true,
                 }) as BattleEvent;
                 let get_djinn_fire_event;
-                event.assign_before_fade_finish_callback(victory => {
-                    if (victory) {
+                event.assign_before_fade_finish_callback((victory, all_party_fled) => {
+                    if (victory && !all_party_fled) {
                         if (this.data.dbs.enemies_parties_db[party].djinn) {
                             get_djinn_fire_event = this.get_djinn_on_world_map(
                                 this.data.dbs.enemies_parties_db[party].djinn
@@ -1436,8 +1436,8 @@ export class Map {
                         }
                     }
                 });
-                event.assign_finish_callback(victory => {
-                    if (victory) {
+                event.assign_finish_callback((victory, all_party_fled) => {
+                    if (victory && !all_party_fled) {
                         if (this.data.dbs.enemies_parties_db[party].active_storage_key) {
                             this.data.storage.set(this.data.dbs.enemies_parties_db[party].active_storage_key, false);
                         }
