@@ -1,6 +1,7 @@
 import {MainChar} from "../MainChar";
 import {TextObj, Window} from "../Window";
 import {LOW_HP_THRESHOLD, RED_FONT_COLOR, YELLOW_FONT_COLOR, DEFAULT_FONT_COLOR} from "../magic_numbers";
+import {permanent_status} from "../Player";
 
 const BASE_WIN_WIDTH = 100;
 const BASE_WIN_HEIGHT = 92;
@@ -26,6 +27,9 @@ export class BasicInfoWindow {
     public y_avatar: number;
     public avatar: Phaser.Sprite;
     public name_text: TextObj;
+    public perm_status_1_text: TextObj;
+    public perm_status_2_text: TextObj;
+    public lv_label: TextObj;
     public lv_text: TextObj;
     public class_text: TextObj;
     public hp_text: TextObj;
@@ -57,9 +61,11 @@ export class BasicInfoWindow {
         this.basic_stats_group = this.base_window.define_internal_group(BasicInfoWindow.BASIC_STATS_GROUP_KEY);
         this.gear_stats_group = this.base_window.define_internal_group(BasicInfoWindow.GEAR_STATS_GROUP_KEY);
 
-        this.base_window.set_text_in_position("Lv", 48, 24);
+        this.lv_label = this.base_window.set_text_in_position("Lv", 48, 24);
         this.lv_text = this.base_window.set_text_in_position("0", 80, 24);
         this.name_text = this.base_window.set_text_in_position("0", 40, 8);
+        this.perm_status_1_text = this.base_window.set_text_in_position("", 40, 16);
+        this.perm_status_2_text = this.base_window.set_text_in_position("", 40, 24);
 
         this.base_window.set_text_in_position("HP", 8, 48, {internal_group_key: BasicInfoWindow.BASIC_STATS_GROUP_KEY});
         this.base_window.set_text_in_position("PP", 8, 56, {internal_group_key: BasicInfoWindow.BASIC_STATS_GROUP_KEY});
@@ -130,6 +136,37 @@ export class BasicInfoWindow {
         this.avatar_group.y = this.game.camera.y + this.y_avatar;
     }
 
+    set_common_texts() {
+        this.base_window.update_text(this.char.name, this.name_text);
+        this.base_window.update_text("Lv", this.lv_label);
+        this.base_window.update_text(this.char.level.toString(), this.lv_text);
+
+        this.base_window.update_text("", this.perm_status_1_text);
+        this.base_window.update_text("", this.perm_status_2_text);
+
+        if (this.char.has_permanent_status(permanent_status.DOWNED)) {
+            this.base_window.update_text("Downed", this.perm_status_1_text);
+        } else {
+            const text_objs = [this.perm_status_2_text, this.perm_status_1_text];
+            if (this.char.has_permanent_status(permanent_status.HAUNT)) {
+                const text_obj = text_objs.pop();
+                this.base_window.update_text("Haunt", text_obj);
+            }
+            if (this.char.has_permanent_status(permanent_status.POISON)) {
+                const text_obj = text_objs.pop();
+                this.base_window.update_text("Poison", text_obj);
+            }
+            if (this.char.has_permanent_status(permanent_status.VENOM)) {
+                const text_obj = text_objs.pop();
+                this.base_window.update_text("Venom", text_obj);
+            }
+            if (text_objs.length === 0) {
+                this.base_window.update_text("", this.lv_label);
+                this.base_window.update_text("", this.lv_text);
+            }
+        }
+    }
+
     /*Sets the selected character
     The character's avatar is loaded from cache
 
@@ -141,8 +178,8 @@ export class BasicInfoWindow {
         this.gear_stats_group.visible = false;
         this.basic_stats_group.visible = true;
 
-        this.base_window.update_text(this.char.name, this.name_text);
-        this.base_window.update_text(this.char.level.toString(), this.lv_text);
+        this.set_common_texts();
+
         this.base_window.update_text(this.char.class.name, this.class_text);
         this.base_window.update_text(this.char.current_hp.toString(), this.hp_text, this.get_hp_color());
         this.base_window.update_text(this.char.current_pp.toString(), this.pp_text);
@@ -160,8 +197,8 @@ export class BasicInfoWindow {
         this.basic_stats_group.visible = false;
         this.gear_stats_group.visible = true;
 
-        this.base_window.update_text(this.char.name, this.name_text);
-        this.base_window.update_text(this.char.level.toString(), this.lv_text);
+        this.set_common_texts();
+
         this.base_window.update_text(this.char.atk.toString(), this.attack_text);
         this.base_window.update_text(this.char.def.toString(), this.defense_text);
         this.base_window.update_text(this.char.agi.toString(), this.agility_text);
