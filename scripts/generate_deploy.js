@@ -1,5 +1,5 @@
 const packager = require('electron-packager');
-const {spawn} = require("child_process");
+const {spawnSync} = require("child_process");
 
 const packagerOptions = {
     dir: '.',
@@ -15,4 +15,6 @@ const packagerOptions = {
 
 packager(packagerOptions);
 
-spawn(`git log --format="%H" -n 1 > dist/${packagerOptions.name}-${packagerOptions.platform}-${packagerOptions.arch}/gshtml5.version`, {shell: true})
+const version = spawnSync('git log --format="%H" -n 1', {shell: true}).stdout.toString().trim();
+const today = new Date(Date.now()).toLocaleString();
+spawnSync(`echo ${today} : ${version} > dist/${packagerOptions.name}-${packagerOptions.platform}-${packagerOptions.arch}/gshtml5.version`, {shell: true});
