@@ -128,12 +128,18 @@ export enum effect_usages {
     BATTLE_ROUND_END = "battle_round_end",
 }
 
+export enum effect_owner_types {
+    ABILITY = "ability",
+    ITEM = "item",
+}
+
 export class Effect {
     public type: effect_types;
     public quantity: number;
     public operator: effect_operators;
     public expression: string;
     public effect_owner_instance: Ability | Item;
+    public effect_owner_type: effect_owner_types;
     public quantity_is_absolute: boolean;
     public rate: number;
     public chance: number;
@@ -197,6 +203,11 @@ export class Effect {
         this.operator = operator;
         this.expression = expression;
         this.effect_owner_instance = effect_owner_instance;
+        this.effect_owner_type = null;
+        if (this.effect_owner_instance) {
+            this.effect_owner_type =
+                this.effect_owner_instance instanceof Ability ? effect_owner_types.ABILITY : effect_owner_types.ITEM;
+        }
         this.quantity_is_absolute = quantity_is_absolute ?? false;
         this.rate = rate ?? 1.0;
         this.chance = chance ?? 1.0;

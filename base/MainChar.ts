@@ -1,7 +1,7 @@
 import {SpriteBase} from "./SpriteBase";
 import {Classes} from "./Classes";
 import {Djinn, djinn_status} from "./Djinn";
-import {Effect, effect_types} from "./Effect";
+import {Effect, effect_owner_types, effect_types} from "./Effect";
 import {Item, item_types, item_types_sort_priority} from "./Item";
 import {Player, fighter_types, permanent_status, main_stats, effect_type_stat, elemental_stats} from "./Player";
 import {elements, ordered_elements} from "./utils";
@@ -698,7 +698,7 @@ export class MainChar extends Player {
             this[stat] += djinn.boost_stats[stat];
         }
 
-        const effects_group = _.groupBy(this.effects, effect => effect.effect_owner_instance.constructor.name);
+        const effects_group = _.groupBy(this.effects, effect => effect.effect_owner_type);
         const apply_effect = (effect: Effect) => {
             if (
                 preview &&
@@ -715,13 +715,13 @@ export class MainChar extends Player {
                 effect.apply_effect();
             }
         };
-        if ("Item" in effects_group) {
-            effects_group["Item"].forEach(apply_effect);
+        if (effect_owner_types.ITEM in effects_group) {
+            effects_group[effect_owner_types.ITEM].forEach(apply_effect);
         }
         this.before_buff_stats[stat] = this[stat];
         this.buff_stats[stat] = 0;
-        if ("Ability" in effects_group) {
-            effects_group["Ability"].forEach(apply_effect);
+        if (effect_owner_types.ABILITY in effects_group) {
+            effects_group[effect_owner_types.ABILITY].forEach(apply_effect);
         }
         this[stat] += this.buff_stats[stat];
         if (preview) {
