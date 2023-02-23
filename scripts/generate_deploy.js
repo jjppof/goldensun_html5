@@ -13,8 +13,11 @@ const packagerOptions = {
     ignore: '^\/(?!(dist|package\.json|assets|electron|static|index-electron\.html))'
 };
 
-packager(packagerOptions);
+const promise = packager(packagerOptions);
 
-const version = spawnSync('git log --format="%H" -n 1', {shell: true}).stdout.toString().trim();
-const today = new Date(Date.now()).toLocaleString();
-spawnSync(`echo ${today} : ${version} > dist/${packagerOptions.name}-${packagerOptions.platform}-${packagerOptions.arch}/gshtml5.version`, {shell: true});
+promise.then(() => {
+    const version = spawnSync('git log --format="%H" -n 1', {shell: true}).stdout.toString().trim();
+    const today = new Date(Date.now()).toLocaleString();
+    const path = `${packagerOptions.out}/${packagerOptions.name}-${packagerOptions.platform}-${packagerOptions.arch}/gshtml5.version`;
+    spawnSync(`echo ${today} : ${version} > ${path}`, {shell: true});
+});
