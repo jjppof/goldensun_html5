@@ -1,4 +1,5 @@
 const packager = require('electron-packager');
+const {spawn} = require("child_process");
 
 const packagerOptions = {
     dir: '.',
@@ -13,3 +14,5 @@ const packagerOptions = {
 };
 
 packager(packagerOptions);
+
+spawn(`git log --format="%H" -n 1 > dist/${packagerOptions.name}-${packagerOptions.platform}-${packagerOptions.arch}/gshtml5.version`, {shell: true})
