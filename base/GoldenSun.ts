@@ -45,6 +45,7 @@ export class GoldenSun {
     public loading_what: string = "";
     public fps_reduction_active: boolean = false;
     public showing_fps_banner: boolean = false;
+    public ignore_system_scaling: boolean = false;
 
     public electron_app: boolean;
     private ipcRenderer: any;
@@ -242,7 +243,21 @@ export class GoldenSun {
         this.initialize_utils_controls();
 
         this.scale_factor = this.dbs.init_db.initial_scale_factor;
-        this.game.scale.setupScale(this.scale_factor * numbers.GAME_WIDTH, this.scale_factor * numbers.GAME_HEIGHT);
+        let width = this.scale_factor * numbers.GAME_WIDTH;
+        let height = this.scale_factor * numbers.GAME_HEIGHT;
+        this.game.scale.setupScale(width, height);
+        this.ignore_system_scaling = this.dbs.init_db.ignore_system_scaling;
+        if (this.ignore_system_scaling) {
+            window.onresize = () =>
+                ((this.game.canvas.style as any).transform = this.fullscreen
+                    ? "scale(1.0)"
+                    : `scale(${1 / window.devicePixelRatio})`);
+        }
+        if (this.ipcRenderer) {
+            width = this.ignore_system_scaling ? (width * 1) / window.devicePixelRatio : width;
+            height = this.ignore_system_scaling ? (height * 1) / window.devicePixelRatio : height;
+            this.ipcRenderer.send("resize-window", width, height);
+        }
         window.dispatchEvent(new Event("resize"));
 
         this.game.stage.disableVisibilityChange = false;
@@ -390,10 +405,14 @@ export class GoldenSun {
             this.fullscreen = !this.fullscreen;
         }
         this.scale_factor = 1;
-        this.game.scale.setupScale(numbers.GAME_WIDTH, numbers.GAME_HEIGHT);
+        let width = numbers.GAME_WIDTH;
+        let height = numbers.GAME_HEIGHT;
+        this.game.scale.setupScale(width, height);
         window.dispatchEvent(new Event("resize"));
         if (this.ipcRenderer) {
-            this.ipcRenderer.send("resize-window", numbers.GAME_WIDTH, numbers.GAME_HEIGHT);
+            width = this.ignore_system_scaling ? (width * 1) / window.devicePixelRatio : width;
+            height = this.ignore_system_scaling ? (height * 1) / window.devicePixelRatio : height;
+            this.ipcRenderer.send("resize-window", width, height);
         }
     }
 
@@ -414,11 +433,13 @@ export class GoldenSun {
         const setup_scale = (scaleFactor: number) => {
             if (this.fullscreen) return;
             this.scale_factor = scaleFactor;
-            const width = this.scale_factor * numbers.GAME_WIDTH;
-            const height = this.scale_factor * numbers.GAME_HEIGHT;
+            let width = this.scale_factor * numbers.GAME_WIDTH;
+            let height = this.scale_factor * numbers.GAME_HEIGHT;
             this.game.scale.setupScale(width, height);
             window.dispatchEvent(new Event("resize"));
             if (this.ipcRenderer) {
+                width = this.ignore_system_scaling ? (width * 1) / window.devicePixelRatio : width;
+                height = this.ignore_system_scaling ? (height * 1) / window.devicePixelRatio : height;
                 this.ipcRenderer.send("resize-window", width, height);
             }
         };

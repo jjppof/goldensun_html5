@@ -9,8 +9,8 @@ const {
 function createWindow() {
     const is_dev_env = process.argv[2] !== undefined && process.argv[2] == "dev";
     const win = new BrowserWindow({
-        width: 480,
-        height: 320,
+        width: 240,
+        height: 160,
         resizable: is_dev_env ? true : false,
         center: true,
         useContentSize: true,

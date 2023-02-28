@@ -9,6 +9,7 @@
     "collision_layer": 1,
     "coins": 10000,
     "skip_start_menu": false,
+    "ignore_system_scaling": true,
     "artifacts_global_list": [
         {
             "key_name":"apollos_axe",

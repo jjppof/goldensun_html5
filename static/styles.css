@@ -38,6 +38,7 @@ canvas {
     image-rendering: -webkit-crisp-edges;
     image-rendering: pixelated;
     image-rendering: crisp-edges;
+    transform-origin: top left;
 }
 #key_debug {
     display: none;
