@@ -243,9 +243,6 @@ export class GoldenSun {
         this.initialize_utils_controls();
 
         this.scale_factor = this.dbs.init_db.initial_scale_factor;
-        let width = this.scale_factor * numbers.GAME_WIDTH;
-        let height = this.scale_factor * numbers.GAME_HEIGHT;
-        this.game.scale.setupScale(width, height);
         this.ignore_system_scaling = this.dbs.init_db.ignore_system_scaling;
         if (this.ignore_system_scaling) {
             window.onresize = () =>
@@ -253,12 +250,7 @@ export class GoldenSun {
                     ? "scale(1.0)"
                     : `scale(${1 / window.devicePixelRatio})`);
         }
-        if (this.ipcRenderer) {
-            width = this.ignore_system_scaling ? (width * 1) / window.devicePixelRatio : width;
-            height = this.ignore_system_scaling ? (height * 1) / window.devicePixelRatio : height;
-            this.ipcRenderer.send("resize-window", width, height);
-        }
-        window.dispatchEvent(new Event("resize"));
+        this.set_canvas_scale();
 
         this.game.stage.disableVisibilityChange = false;
 
@@ -283,6 +275,21 @@ export class GoldenSun {
             this.start_menu.open(snapshot => {
                 start_game(snapshot);
             });
+        }
+    }
+
+    /**
+     * Changes canvas scale and fires appropriate events related to rescaling and window resizing.
+     */
+    private set_canvas_scale() {
+        let width = this.scale_factor * numbers.GAME_WIDTH;
+        let height = this.scale_factor * numbers.GAME_HEIGHT;
+        this.game.scale.setupScale(width, height);
+        window.dispatchEvent(new Event("resize"));
+        if (this.ipcRenderer) {
+            width = this.ignore_system_scaling ? (width * 1) / window.devicePixelRatio : width;
+            height = this.ignore_system_scaling ? (height * 1) / window.devicePixelRatio : height;
+            this.ipcRenderer.send("resize-window", width, height);
         }
     }
 
@@ -377,8 +384,7 @@ export class GoldenSun {
 
         //set initial zoom
         this.scale_factor = snapshot?.scale_factor ?? this.scale_factor;
-        this.game.scale.setupScale(this.scale_factor * numbers.GAME_WIDTH, this.scale_factor * numbers.GAME_HEIGHT);
-        window.dispatchEvent(new Event("resize"));
+        this.set_canvas_scale();
 
         this.fullscreen = snapshot?.full_screen ?? false;
         if (this.fullscreen) {
@@ -405,15 +411,7 @@ export class GoldenSun {
             this.fullscreen = !this.fullscreen;
         }
         this.scale_factor = 1;
-        let width = numbers.GAME_WIDTH;
-        let height = numbers.GAME_HEIGHT;
-        this.game.scale.setupScale(width, height);
-        window.dispatchEvent(new Event("resize"));
-        if (this.ipcRenderer) {
-            width = this.ignore_system_scaling ? (width * 1) / window.devicePixelRatio : width;
-            height = this.ignore_system_scaling ? (height * 1) / window.devicePixelRatio : height;
-            this.ipcRenderer.send("resize-window", width, height);
-        }
+        this.set_canvas_scale();
     }
 
     /**
@@ -430,18 +428,10 @@ export class GoldenSun {
         this.game.scale.onFullScreenChange.add(this.set_fullscreen_mode.bind(this));
 
         //enable zoom and psynergies shortcuts for testing
-        const setup_scale = (scaleFactor: number) => {
+        const setup_scale = (scale_factor: number) => {
             if (this.fullscreen) return;
-            this.scale_factor = scaleFactor;
-            let width = this.scale_factor * numbers.GAME_WIDTH;
-            let height = this.scale_factor * numbers.GAME_HEIGHT;
-            this.game.scale.setupScale(width, height);
-            window.dispatchEvent(new Event("resize"));
-            if (this.ipcRenderer) {
-                width = this.ignore_system_scaling ? (width * 1) / window.devicePixelRatio : width;
-                height = this.ignore_system_scaling ? (height * 1) / window.devicePixelRatio : height;
-                this.ipcRenderer.send("resize-window", width, height);
-            }
+            this.scale_factor = scale_factor;
+            this.set_canvas_scale();
         };
 
         const controls = [
