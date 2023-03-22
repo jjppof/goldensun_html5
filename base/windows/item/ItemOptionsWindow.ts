@@ -439,8 +439,7 @@ export class ItemOptionsWindow {
         this.set_header();
         this.item_menu.item_choose_window.deactivate();
 
-        if (this.item.type === item_types.ABILITY_GRANTOR) {
-        } else if (this.item.type !== item_types.GENERAL_ITEM) {
+        if (this.item.type !== item_types.GENERAL_ITEM) {
             this.item_menu.item_change_stats_window.open(
                 this.data.info.party_data.members[this.item_menu.item_choose_window.char_index],
                 this.item,

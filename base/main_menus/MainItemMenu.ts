@@ -234,8 +234,7 @@ export class MainItemMenu {
         }
 
         if (this.choosing_destination) {
-            if (this.item_options_window.item.type === item_types.ABILITY_GRANTOR) {
-            } else if (this.item_options_window.item.type !== item_types.GENERAL_ITEM) {
+            if (this.item_options_window.item.type !== item_types.GENERAL_ITEM) {
                 const preview_obj = Object.assign({}, this.item_options_window.item_obj, {equipped: false});
                 this.item_change_stats_window.open(
                     this.data.info.party_data.members[this.selected_char_index],
@@ -318,8 +317,7 @@ export class MainItemMenu {
             this.item_change_stats_window.close();
         }
 
-        if (item.type === item_types.ABILITY_GRANTOR) {
-        } else if (item.type !== item_types.GENERAL_ITEM) {
+        if (item.type !== item_types.GENERAL_ITEM) {
             this.item_change_stats_window.open(
                 this.data.info.party_data.members[this.selected_char_index],
                 item,
@@ -345,8 +343,7 @@ export class MainItemMenu {
                 } else this.char_choose();
             },
             () => {
-                if (item.type === item_types.ABILITY_GRANTOR) {
-                } else if (item.type !== item_types.GENERAL_ITEM) {
+                if (item.type !== item_types.GENERAL_ITEM) {
                     this.item_change_stats_window.update_info(false);
                     this.item_change_stats_window.hide_arrows();
                 }
