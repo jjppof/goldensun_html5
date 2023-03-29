@@ -481,8 +481,14 @@ export class Battle {
 
         this.battle_log.add(this.enemies_party_name + " appeared!");
         this.battle_stage.initialize_stage(() => {
-            this.allies_map_sprite = _.mapValues(_.keyBy(this.allies_info, "instance.key_name"), info => info.sprite);
-            this.enemies_map_sprite = _.mapValues(_.keyBy(this.enemies_info, "battle_key"), info => info.sprite);
+            this.allies_map_sprite = _.mapValues(
+                _.keyBy(this.allies_info, "instance.key_name"),
+                (info: PlayerInfo) => info.sprite
+            );
+            this.enemies_map_sprite = _.mapValues(
+                _.keyBy(this.enemies_info, "battle_key"),
+                (info: PlayerInfo) => info.sprite
+            );
 
             this.data.control_manager.add_simple_controls(() => {
                 this.battle_log.clear();
