@@ -305,8 +305,12 @@ export class Debug {
             }
 
             if (this.game.input.mousePointer.withinGame) {
-                const mouse_x = this.game.camera.x + this.game.input.mousePointer.x / this.data.scale_factor;
-                const mouse_y = this.game.camera.y + this.game.input.mousePointer.y / this.data.scale_factor;
+                const mouse_x =
+                    this.game.camera.x +
+                    (this.game.input.mousePointer.x * window.devicePixelRatio) / this.data.scale_factor;
+                const mouse_y =
+                    this.game.camera.y +
+                    (this.game.input.mousePointer.y * window.devicePixelRatio) / this.data.scale_factor;
                 const mouse_x_tile = (mouse_x / this.data.map.tile_width) | 0;
                 const mouse_y_tile = (mouse_y / this.data.map.tile_height) | 0;
                 this.game.debug.text(
