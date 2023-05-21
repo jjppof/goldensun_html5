@@ -36,11 +36,11 @@ export class Debug {
         const debug_controls = [
             {buttons: Button.DEBUG_PHYSICS, on_down: this.toggle_debug_physics.bind(this)},
             {buttons: Button.DEBUG_FPS, on_down: this.toggle_fps.bind(this)},
+            {buttons: Button.DEBUG_GRID, on_down: this.toggle_grid.bind(this)},
         ];
         if (!this.data.electron_app) {
             debug_controls.push(
                 ...[
-                    {buttons: Button.DEBUG_GRID, on_down: this.toggle_grid.bind(this)},
                     {buttons: Button.DEBUG_KEYS, on_down: this.toggle_keys.bind(this)},
                     {buttons: Button.DEBUG_STATS, on_down: this.toggle_stats.bind(this)},
                     {buttons: Button.DEBUG_SLIDERS, on_down: this.toggle_sliders.bind(this)},
@@ -269,10 +269,6 @@ export class Debug {
             this.game.debug.text("UPS: " + this.game.time.ups || "UPS: --", 5, 27, "#00ff00");
         }
 
-        if (this.data.electron_app) {
-            return;
-        }
-
         if (this.grid) {
             const tile_width = this.data.map.tile_width;
             for (let x = 0; x < this.game.world.width; x += tile_width) {
@@ -319,6 +315,9 @@ export class Debug {
                     15,
                     "#00ff00"
                 );
+                if (this.data.electron_app) {
+                    return;
+                }
                 const event_key = IntegerPairKey.get_key(mouse_x_tile, mouse_y_tile);
                 if (event_key in this.data.map.events) {
                     const events = this.data.map.events[event_key].map(event => {
@@ -357,7 +356,9 @@ export class Debug {
                 this.game.debug.text(`x: --, y: --`, 60, 15, "#00ff00");
             }
         } else {
-            document.getElementById("object_inspector").innerText = "";
+            if (!this.data.electron_app) {
+                document.getElementById("object_inspector").innerText = "";
+            }
         }
     }
 
