@@ -330,9 +330,8 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
-                    info.condition,
-                    info.left_comparator_value,
-                    info.right_comparator_value,
+                    info.combination,
+                    info.comparator_pairs,
                     info.events,
                     info.else_events
                 );
