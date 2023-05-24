@@ -1111,7 +1111,10 @@ export class Map {
                 property_info.affected_by_reveal
             );
             if (interactable_object.pushable) {
-                (interactable_object as Pushable).initialize_pushable(property_info.dock_tile_position);
+                (interactable_object as Pushable).initialize_pushable(
+                    property_info.dock_tile_position,
+                    property_info.after_push_events
+                );
             } else if (interactable_object.is_rope_dock) {
                 (interactable_object as RopeDock).intialize_dock_info(
                     property_info.dest_x,

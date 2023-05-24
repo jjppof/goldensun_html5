@@ -193,9 +193,9 @@ export class DialogEvent extends GameEvent {
             : null;
         this.dialog_manager = new DialogManager(this.game, this.data);
         this.dialog_manager.set_dialog(this.current_info.text, {
-            avatar: this.current_info.avatar ?? (reference_npc ? reference_npc.avatar : this.origin_npc.avatar),
+            avatar: this.current_info.avatar ?? (reference_npc ? reference_npc.avatar : this.origin_npc?.avatar),
             voice_key:
-                this.current_info.voice_key ?? (reference_npc ? reference_npc.voice_key : this.origin_npc.voice_key),
+                this.current_info.voice_key ?? (reference_npc ? reference_npc.voice_key : this.origin_npc?.voice_key),
             hero_direction: this.current_info.consider_hero_direction ? this.data.hero.current_direction : null,
         });
         this.next();
