@@ -17,7 +17,7 @@ import {ClimbEvent} from "../tile_events/ClimbEvent";
 import {GoldenSun} from "../GoldenSun";
 import {Map} from "../Map";
 import {RopeEvent} from "../tile_events/RopeEvent";
-import {GameEvent} from "../game_events/GameEvent";
+import {GameEvent, game_event_origin} from "../game_events/GameEvent";
 import {LiftFieldPsynergy} from "../field_abilities/LiftFieldPsynergy";
 import {StoragePosition} from "../Storage";
 import {SnapshotData} from "../Snapshot";
@@ -242,7 +242,11 @@ export class InteractableObjects {
         this._extra_sprites = [];
         if (toggle_enable_events !== undefined) {
             this.toggle_enable_events = toggle_enable_events.map(event_info => {
-                const event = this.data.game_event_manager.get_event_instance(event_info.event);
+                const event = this.data.game_event_manager.get_event_instance(
+                    event_info.event,
+                    game_event_origin.INTERACTABLE_OBJECT_TOGGLE,
+                    this
+                );
                 return {
                     event: event,
                     on_enable: event_info.on_enable,
@@ -584,7 +588,11 @@ export class InteractableObjects {
                     }
                     psynergy_properties.after_psynergy_cast_events.forEach(event_info => {
                         this.after_psynergy_cast_events[psynergy_key].push(
-                            this.data.game_event_manager.get_event_instance(event_info)
+                            this.data.game_event_manager.get_event_instance(
+                                event_info,
+                                game_event_origin.INTERACTABLE_OBJECT_PSYNERGY,
+                                this
+                            )
                         );
                     });
                 }
@@ -594,7 +602,11 @@ export class InteractableObjects {
                     }
                     psynergy_properties.before_psynergy_cast_events.forEach(event_info => {
                         this.before_psynergy_cast_events[psynergy_key].push(
-                            this.data.game_event_manager.get_event_instance(event_info)
+                            this.data.game_event_manager.get_event_instance(
+                                event_info,
+                                game_event_origin.INTERACTABLE_OBJECT_PSYNERGY,
+                                this
+                            )
                         );
                     });
                 }

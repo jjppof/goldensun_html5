@@ -2,7 +2,7 @@ import {NPC, npc_movement_types, npc_types} from "./NPC";
 import {InteractableObjects} from "./interactable_objects/InteractableObjects";
 import {IntegerPairKey, TileEvent} from "./tile_events/TileEvent";
 import * as numbers from "./magic_numbers";
-import {event_types, GameEvent} from "./game_events/GameEvent";
+import {event_types, GameEvent, game_event_origin} from "./game_events/GameEvent";
 import {GoldenSun} from "./GoldenSun";
 import * as _ from "lodash";
 import {ControllableChar} from "./ControllableChar";
@@ -1422,13 +1422,16 @@ export class Map {
                         : this.data.info.battle_bgms.default;
                 const weights = parties.map(party => this.data.dbs.enemies_parties_db[party].weight ?? 1);
                 const party = weighted_random_pick(parties, weights);
-                const event = this.data.game_event_manager.get_event_instance({
-                    type: event_types.BATTLE,
-                    background_key: background_key,
-                    enemy_party_key: party,
-                    bgm: bgm,
-                    reset_previous_bgm: true,
-                }) as BattleEvent;
+                const event = this.data.game_event_manager.get_event_instance(
+                    {
+                        type: event_types.BATTLE,
+                        background_key: background_key,
+                        enemy_party_key: party,
+                        bgm: bgm,
+                        reset_previous_bgm: true,
+                    },
+                    game_event_origin.MISC
+                ) as BattleEvent;
                 let get_djinn_fire_event;
                 event.assign_before_fade_finish_callback((victory, all_party_fled) => {
                     if (victory && !all_party_fled) {
@@ -1618,7 +1621,7 @@ export class Map {
             const events_arr = JSON.parse(events);
             if (Array.isArray(events_arr)) {
                 events_arr.forEach(event_info => {
-                    const event = this.data.game_event_manager.get_event_instance(event_info);
+                    const event = this.data.game_event_manager.get_event_instance(event_info, game_event_origin.MAP);
                     this.game_events.push(event);
                 });
             } else {
@@ -1711,6 +1714,21 @@ export class Map {
         this._collision_layer = collision_layer;
         this._sprite = this.game.add.tilemap(this.key_name);
 
+        if (this.sprite.properties?.real_tile_width) {
+            if (typeof this.sprite.properties.real_tile_width === "number") {
+                this.sprite.properties.real_tile_width = parseInt(this.sprite.properties.real_tile_width);
+            } else {
+                console.warn("Map real_tile_width property must be an integer.");
+            }
+        }
+        if (this.sprite.properties?.real_tile_height) {
+            if (typeof this.sprite.properties.real_tile_height === "number") {
+                this.sprite.properties.real_tile_height = parseInt(this.sprite.properties.real_tile_height);
+            } else {
+                console.warn("Map real_tile_height property must be an integer.");
+            }
+        }
+
         if (this.sprite.properties?.world_map) {
             this._is_world_map = true;
         }
@@ -1749,11 +1767,19 @@ export class Map {
         }
 
         if (this.sprite.properties?.background_key) {
-            this._background_key = this.sprite.properties.background_key;
+            if (typeof this.sprite.properties.background_key === "string") {
+                this._background_key = this.sprite.properties.background_key;
+            } else {
+                console.warn("Map background_key property must be 'string'.");
+            }
         }
 
         if (this.sprite.properties?.expected_party_level) {
-            this.expected_party_level = this.sprite.properties.expected_party_level;
+            if (typeof this.sprite.properties.background_key === "number") {
+                this.expected_party_level = parseInt(this.sprite.properties.expected_party_level);
+            } else {
+                console.warn("Map background_key property must be an integer.");
+            }
         }
 
         if (retreat_data) {

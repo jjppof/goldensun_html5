@@ -38,7 +38,7 @@ export class CharAnimPlayEvent extends GameEvent {
         this.reset_frame_on_stop = reset_frame_on_stop ?? false;
         if (finish_events !== undefined) {
             finish_events.forEach(event_info => {
-                const event = this.data.game_event_manager.get_event_instance(event_info);
+                const event = this.data.game_event_manager.get_event_instance(event_info, this.type, this.origin_npc);
                 this.finish_events.push(event);
             });
         }

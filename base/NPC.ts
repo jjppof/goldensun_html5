@@ -1,4 +1,4 @@
-import {GameEvent} from "./game_events/GameEvent";
+import {GameEvent, game_event_origin} from "./game_events/GameEvent";
 import {
     directions_angles,
     get_sqr_distance,
@@ -336,7 +336,7 @@ export class NPC extends ControllableChar {
      */
     private set_events(events_info) {
         for (let i = 0; i < events_info.length; ++i) {
-            const event = this.data.game_event_manager.get_event_instance(events_info[i]);
+            const event = this.data.game_event_manager.get_event_instance(events_info[i], game_event_origin.NPC, this);
             this.events.push(event);
         }
     }

@@ -450,7 +450,11 @@ export class TileEventManager {
                 info.rope_collision_layer
             );
         } else {
-            console.warn(`Tile event type ${info.type} not found.`);
+            if (info.type) {
+                console.warn(`Tile event type '${info.type}' not found.`);
+            } else {
+                console.warn("No tile event type was passed.");
+            }
             return null;
         }
     }

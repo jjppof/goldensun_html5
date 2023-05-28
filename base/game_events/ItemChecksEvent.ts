@@ -40,14 +40,14 @@ export class ItemChecksEvent extends GameEvent {
         this.check_ok_events = [];
         if (check_ok_events !== undefined) {
             check_ok_events.forEach(event_info => {
-                const event = this.data.game_event_manager.get_event_instance(event_info);
+                const event = this.data.game_event_manager.get_event_instance(event_info, this.type, this.origin_npc);
                 this.check_ok_events.push(event);
             });
         }
         this.check_fail_events = [];
         if (check_fail_events !== undefined) {
             check_fail_events.forEach(event_info => {
-                const event = this.data.game_event_manager.get_event_instance(event_info);
+                const event = this.data.game_event_manager.get_event_instance(event_info, this.type, this.origin_npc);
                 this.check_fail_events.push(event);
             });
         }

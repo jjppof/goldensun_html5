@@ -4,7 +4,7 @@ import {directions, reverse_directions, base_actions, get_centered_pos_in_px, ge
 import {InteractableObjects} from "./InteractableObjects";
 import {ControllableChar} from "../ControllableChar";
 import {storage_types} from "../Storage";
-import {GameEvent} from "../game_events/GameEvent";
+import {GameEvent, game_event_origin} from "../game_events/GameEvent";
 
 /**
  * An interactable object that can be pushed by a ControllableChar.
@@ -95,7 +95,13 @@ export class Pushable extends InteractableObjects {
         this.dock_tile_position = dock_tile_position ?? null;
         after_push_events = after_push_events ?? [];
         after_push_events.forEach(event_info => {
-            this._after_push_events.push(this.data.game_event_manager.get_event_instance(event_info));
+            this._after_push_events.push(
+                this.data.game_event_manager.get_event_instance(
+                    event_info,
+                    game_event_origin.INTERACTABLE_OBJECT_PUSH,
+                    this
+                )
+            );
         });
     }
 

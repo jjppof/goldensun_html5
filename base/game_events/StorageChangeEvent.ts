@@ -13,7 +13,7 @@ export class StorageChangeEvent extends GameEvent {
         this.callback_call_type = callback_call_type ?? callback_call_types.ONCE;
         this.change_events = [];
         change_events.forEach(event_info => {
-            const event = this.data.game_event_manager.get_event_instance(event_info);
+            const event = this.data.game_event_manager.get_event_instance(event_info, this.type, this.origin_npc);
             this.change_events.push(event);
         });
         this.callback_ids = this.keys.reduce((acc, this_key) => {

@@ -35,13 +35,13 @@ export class BranchEvent extends GameEvent {
     private initialize_events(events_info, else_events_info) {
         if (events_info !== undefined) {
             events_info.forEach(event_info => {
-                const event = this.data.game_event_manager.get_event_instance(event_info);
+                const event = this.data.game_event_manager.get_event_instance(event_info, this.type, this.origin_npc);
                 this.events.push(event);
             });
         }
         if (else_events_info !== undefined) {
             else_events_info.forEach(event_info => {
-                const event = this.data.game_event_manager.get_event_instance(event_info);
+                const event = this.data.game_event_manager.get_event_instance(event_info, this.type, this.origin_npc);
                 this.else_events.push(event);
             });
         }

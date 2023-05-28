@@ -73,16 +73,16 @@ export class DialogEvent extends GameEvent {
 
         if (finish_events !== undefined && !this.end_with_yes_no) {
             finish_events.forEach(event_info => {
-                const event = this.data.game_event_manager.get_event_instance(event_info);
+                const event = this.data.game_event_manager.get_event_instance(event_info, this.type, this.origin_npc);
                 this.finish_events.push(event);
             });
         } else if (this.end_with_yes_no) {
             yes_no_events.yes?.forEach(event_info => {
-                const event = this.data.game_event_manager.get_event_instance(event_info);
+                const event = this.data.game_event_manager.get_event_instance(event_info, this.type, this.origin_npc);
                 this.yes_no_events.yes.push(event);
             });
             yes_no_events.no?.forEach(event_info => {
-                const event = this.data.game_event_manager.get_event_instance(event_info);
+                const event = this.data.game_event_manager.get_event_instance(event_info, this.type, this.origin_npc);
                 this.yes_no_events.no.push(event);
             });
         }
