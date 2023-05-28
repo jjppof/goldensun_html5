@@ -388,7 +388,7 @@ export class SummonEvent extends GameEvent {
     }
 
     _destroy() {
-        this.finish_events.forEach(event => event.destroy());
+        this.finish_events.forEach(event => event?.destroy());
         this.dialog?.destroy();
         this.emitter?.destroy();
         this.letters = null;

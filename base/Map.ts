@@ -1944,7 +1944,7 @@ export class Map {
         if (this.show_footsteps) {
             this.data.hero.footsteps.clean_all();
         }
-        this.game_events.forEach(event => event.destroy());
+        this.game_events.forEach(event => event?.destroy());
 
         this.data.collision.clear_custom_bodies();
 

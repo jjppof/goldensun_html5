@@ -35,6 +35,6 @@ export class EventsLoopEvent extends GameEvent {
     _destroy() {
         this.loop_timer.stop();
         this.loop_timer.destroy();
-        this.events.forEach(event => event.destroy());
+        this.events.forEach(event => event?.destroy());
     }
 }

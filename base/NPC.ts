@@ -807,7 +807,7 @@ export class NPC extends ControllableChar {
             this.footsteps.destroy();
         }
         this.unset_push_timer();
-        this._events.forEach(event => event.destroy());
+        this._events.forEach(event => event?.destroy());
         this.look_target = null;
         this.clear_snapshot();
     }

@@ -214,8 +214,8 @@ export class ChestEvent extends GameEvent {
     }
 
     _destroy() {
-        this.finish_events.forEach(event => event.destroy());
-        this.inventory_full_events.forEach(event => event.destroy());
+        this.finish_events.forEach(event => event?.destroy());
+        this.inventory_full_events.forEach(event => event?.destroy());
         this.dialog_manager?.destroy();
         if (this.control_key !== null) {
             this.data.control_manager.detach_bindings(this.control_key);

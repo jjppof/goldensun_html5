@@ -92,7 +92,7 @@ export class ItemChecksEvent extends GameEvent {
     }
 
     _destroy() {
-        this.check_ok_events.forEach(event => event.destroy());
-        this.check_fail_events.forEach(event => event.destroy());
+        this.check_ok_events.forEach(event => event?.destroy());
+        this.check_fail_events.forEach(event => event?.destroy());
     }
 }

@@ -41,6 +41,6 @@ export class StorageChangeEvent extends GameEvent {
             ids.forEach(id => this.data.storage.remove_callback(state_key, id));
         }
         this.callback_ids = null;
-        this.change_events.forEach(event => event.destroy());
+        this.change_events.forEach(event => event?.destroy());
     }
 }

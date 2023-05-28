@@ -25,6 +25,6 @@ export class TimerEvent extends GameEvent {
     }
 
     _destroy() {
-        this.finish_events.forEach(event => event.destroy());
+        this.finish_events.forEach(event => event?.destroy());
     }
 }

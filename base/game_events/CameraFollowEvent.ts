@@ -59,6 +59,6 @@ export class CameraFollowEvent extends GameEvent {
     }
 
     _destroy() {
-        this.transition_end_events.forEach(event => event.destroy());
+        this.transition_end_events.forEach(event => event?.destroy());
     }
 }

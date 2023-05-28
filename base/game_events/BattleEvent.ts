@@ -167,9 +167,9 @@ export class BattleEvent extends GameEvent {
 
     _destroy() {
         this.battle = null;
-        this.victory_events.forEach(event => event.destroy());
-        this.defeat_events.forEach(event => event.destroy());
-        this.before_fade_defeat_events.forEach(event => event.destroy());
-        this.before_fade_victory_events.forEach(event => event.destroy());
+        this.victory_events.forEach(event => event?.destroy());
+        this.defeat_events.forEach(event => event?.destroy());
+        this.before_fade_defeat_events.forEach(event => event?.destroy());
+        this.before_fade_victory_events.forEach(event => event?.destroy());
     }
 }

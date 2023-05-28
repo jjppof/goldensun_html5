@@ -53,6 +53,6 @@ export class EventTriggerEvent extends TileEvent {
     destroy() {
         this.deactivate();
         this._origin_interactable_object = null;
-        this.events.forEach(event => event.destroy());
+        this.events.forEach(event => event?.destroy());
     }
 }

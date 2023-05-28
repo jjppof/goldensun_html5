@@ -118,7 +118,7 @@ export class EmoticonEvent extends GameEvent {
      * Unsets this event.
      */
     _destroy() {
-        this.finish_events.forEach(event => event.destroy());
+        this.finish_events.forEach(event => event?.destroy());
         this.char = null;
     }
 }

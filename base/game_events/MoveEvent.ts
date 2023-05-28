@@ -203,6 +203,6 @@ export class MoveEvent extends GameEvent {
 
     _destroy() {
         this.previous_camera_target = null;
-        this.finish_events.forEach(event => event.destroy());
+        this.finish_events.forEach(event => event?.destroy());
     }
 }

@@ -214,9 +214,9 @@ export class DialogEvent extends GameEvent {
     }
 
     _destroy() {
-        this.finish_events.forEach(event => event.destroy());
-        this.yes_no_events.yes.forEach(event => event.destroy());
-        this.yes_no_events.no.forEach(event => event.destroy());
+        this.finish_events.forEach(event => event?.destroy());
+        this.yes_no_events.yes.forEach(event => event?.destroy());
+        this.yes_no_events.no.forEach(event => event?.destroy());
         this.dialog_index = 0;
         this.yes_no_menu?.destroy();
         this.yes_no_menu = null;

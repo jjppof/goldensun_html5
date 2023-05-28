@@ -53,6 +53,6 @@ export class MapOpacityEvent extends GameEvent {
 
     _destroy() {
         this.map_layer = null;
-        this.finish_events.forEach(event => event.destroy());
+        this.finish_events.forEach(event => event?.destroy());
     }
 }

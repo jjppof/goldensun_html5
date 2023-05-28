@@ -947,8 +947,8 @@ export class DjinnGetEvent extends GameEvent {
 
     _destroy() {
         this.djinn = null;
-        this.finish_events.forEach(event => event.destroy());
-        this.on_battle_defeat_events.forEach(event => event.destroy());
+        this.finish_events.forEach(event => event?.destroy());
+        this.on_battle_defeat_events.forEach(event => event?.destroy());
         this.dialog_manager?.destroy();
         this.dialog_manager = null;
         this.data.control_manager.detach_bindings(this.control_key);

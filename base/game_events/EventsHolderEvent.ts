@@ -19,6 +19,6 @@ export class EventsHolderEvent extends GameEvent {
     }
 
     _destroy() {
-        this.events.forEach(event => event.destroy());
+        this.events.forEach(event => event?.destroy());
     }
 }
