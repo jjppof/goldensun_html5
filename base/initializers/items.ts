@@ -6,30 +6,34 @@ export function initialize_items(game: Phaser.Game, data: GoldenSun, items_db: a
     const items_list: GameInfo["items_list"] = {};
     for (let i = 0; i < items_db.length; ++i) {
         const item_data = items_db[i];
-        items_list[item_data.key_name] = new Item(
-            item_data.key_name,
-            item_data.name,
-            item_data.type,
-            item_data.description,
-            item_data.use_type,
-            item_data.curses_when_equipped,
-            item_data.cant_be_removed,
-            item_data.rare_item,
-            item_data.important_item,
-            item_data.carry_up_to_30,
-            item_data.effects,
-            item_data.element,
-            item_data.unleash_ability,
-            item_data.unleash_rate,
-            item_data.use_ability,
-            item_data.equipable_chars,
-            item_data.price,
-            item_data.granted_ability,
-            item_data.granted_class_type,
-            item_data.weapon_type,
-            item_data.items_after_forge,
-            i
-        );
+        if (item_data.key_name) {
+            items_list[item_data.key_name] = new Item(
+                item_data.key_name,
+                item_data.name,
+                item_data.type,
+                item_data.description,
+                item_data.use_type,
+                item_data.curses_when_equipped,
+                item_data.cant_be_removed,
+                item_data.rare_item,
+                item_data.important_item,
+                item_data.carry_up_to_30,
+                item_data.effects,
+                item_data.element,
+                item_data.unleash_ability,
+                item_data.unleash_rate,
+                item_data.use_ability,
+                item_data.equipable_chars,
+                item_data.price,
+                item_data.granted_ability,
+                item_data.granted_class_type,
+                item_data.weapon_type,
+                item_data.items_after_forge,
+                i
+            );
+        } else {
+            console.warn("Item registered without a key name. Please double-check.");
+        }
     }
     const loader = game.load.atlasJSONHash(
         "items_icons",
