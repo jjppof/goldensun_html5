@@ -103,10 +103,12 @@ export enum event_types {
 
 export enum game_event_misc_origin {
     INTERACTABLE_OBJECT_PUSH = "interactable_object_push",
-    INTERACTABLE_OBJECT_PSYNERGY = "interactable_object_psynergy",
+    INTERACTABLE_OBJECT_BEFORE_PSYNERGY = "interactable_object_before_psynergy",
+    INTERACTABLE_OBJECT_AFTER_PSYNERGY = "interactable_object_after_psynergy",
     INTERACTABLE_OBJECT_TOGGLE = "interactable_object_toggle",
     TILE_EVENT = "tile_event",
     NPC = "npc",
+    NPC_PSYNERGY = "npc_psynergy",
     MAP = "map",
     MISC = "misc",
 }

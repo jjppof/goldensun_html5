@@ -300,12 +300,8 @@ export abstract class FieldAbilities {
                     this.controllable_char.casting_psynergy = false;
                 }
                 if (this.target_object) {
-                    if (this.target_object.is_interactable_object) {
-                        const events = (this.target_object as InteractableObjects).after_psynergy_cast_events[
-                            this.ability_key_name
-                        ];
-                        events?.forEach(e => e.fire());
-                    }
+                    const events = this.target_object.after_psynergy_cast_events[this.ability_key_name];
+                    events?.forEach(e => e.fire());
                 }
                 if (reset_casting_psy_flag) {
                     this.target_object = null;
