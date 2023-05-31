@@ -1,4 +1,4 @@
-import {GameEvent} from "./game_events/GameEvent";
+import {GameEvent, game_event_origin} from "./game_events/GameEvent";
 import {
     directions_angles,
     get_sqr_distance,
@@ -83,6 +83,9 @@ export class NPC extends ControllableChar {
     private _snapshot_info: SnapshotData["map_data"]["npcs"][0];
     private _map_index: number;
     private _allow_interaction_when_inactive: boolean;
+    private _after_psynergy_cast_events: {
+        [psynergy_key: string]: GameEvent[];
+    };
 
     /** If true, this NPC will move freely while a game event is happening. */
     public move_freely_in_event: boolean;
@@ -135,7 +138,8 @@ export class NPC extends ControllableChar {
         base_step,
         step_max_variation,
         move_freely_in_event,
-        allow_interaction_when_inactive
+        allow_interaction_when_inactive,
+        after_psynergy_cast_events
     ) {
         super(
             game,
@@ -192,7 +196,8 @@ export class NPC extends ControllableChar {
         this.initially_visible = visible ?? true;
         this._ignore_physics = ignore_physics ?? false;
         this._events = [];
-        this.set_events(events_info ?? []);
+        this._after_psynergy_cast_events = {};
+        this.set_events(events_info ?? [], after_psynergy_cast_events);
         this.sprite_misc_db_key = sprite_misc_db_key;
         this._label = label;
         this._max_distance = max_distance;
@@ -291,6 +296,11 @@ export class NPC extends ControllableChar {
         return this._ignore_physics;
     }
 
+    /** Object that contains lists of Game Events to fired per psynergy after it finishes. Psynergy is the key, the list of events is the value of this object. */
+    get after_psynergy_cast_events() {
+        return this._after_psynergy_cast_events;
+    }
+
     /**
      * Updates this NPC properties according to current storage values.
      */
@@ -333,11 +343,28 @@ export class NPC extends ControllableChar {
     /**
      * Initialize the Game Events related to this NPC.
      * @param events_info the events info json.
+     * @param after_psynergy_cast_events the after psynergy cast events info json.
      */
-    private set_events(events_info) {
+    private set_events(events_info: any[], after_psynergy_cast_events: any) {
         for (let i = 0; i < events_info.length; ++i) {
-            const event = this.data.game_event_manager.get_event_instance(events_info[i]);
+            const event = this.data.game_event_manager.get_event_instance(events_info[i], game_event_origin.NPC, this);
             this.events.push(event);
+        }
+        if (after_psynergy_cast_events) {
+            for (let psynergy_key in after_psynergy_cast_events) {
+                if (!this.after_psynergy_cast_events.hasOwnProperty(psynergy_key)) {
+                    this.after_psynergy_cast_events[psynergy_key] = [];
+                }
+                after_psynergy_cast_events[psynergy_key].forEach(event_info => {
+                    this.after_psynergy_cast_events[psynergy_key].push(
+                        this.data.game_event_manager.get_event_instance(
+                            event_info,
+                            game_event_origin.NPC_PSYNERGY,
+                            this
+                        )
+                    );
+                });
+            }
         }
     }
 
@@ -807,7 +834,7 @@ export class NPC extends ControllableChar {
             this.footsteps.destroy();
         }
         this.unset_push_timer();
-        this._events.forEach(event => event.destroy());
+        this._events.forEach(event => event?.destroy());
         this.look_target = null;
         this.clear_snapshot();
     }

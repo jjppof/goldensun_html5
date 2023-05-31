@@ -73,16 +73,16 @@ export class DialogEvent extends GameEvent {
 
         if (finish_events !== undefined && !this.end_with_yes_no) {
             finish_events.forEach(event_info => {
-                const event = this.data.game_event_manager.get_event_instance(event_info);
+                const event = this.data.game_event_manager.get_event_instance(event_info, this.type, this.origin_npc);
                 this.finish_events.push(event);
             });
         } else if (this.end_with_yes_no) {
             yes_no_events.yes?.forEach(event_info => {
-                const event = this.data.game_event_manager.get_event_instance(event_info);
+                const event = this.data.game_event_manager.get_event_instance(event_info, this.type, this.origin_npc);
                 this.yes_no_events.yes.push(event);
             });
             yes_no_events.no?.forEach(event_info => {
-                const event = this.data.game_event_manager.get_event_instance(event_info);
+                const event = this.data.game_event_manager.get_event_instance(event_info, this.type, this.origin_npc);
                 this.yes_no_events.no.push(event);
             });
         }
@@ -193,9 +193,9 @@ export class DialogEvent extends GameEvent {
             : null;
         this.dialog_manager = new DialogManager(this.game, this.data);
         this.dialog_manager.set_dialog(this.current_info.text, {
-            avatar: this.current_info.avatar ?? (reference_npc ? reference_npc.avatar : this.origin_npc.avatar),
+            avatar: this.current_info.avatar ?? (reference_npc ? reference_npc.avatar : this.origin_npc?.avatar),
             voice_key:
-                this.current_info.voice_key ?? (reference_npc ? reference_npc.voice_key : this.origin_npc.voice_key),
+                this.current_info.voice_key ?? (reference_npc ? reference_npc.voice_key : this.origin_npc?.voice_key),
             hero_direction: this.current_info.consider_hero_direction ? this.data.hero.current_direction : null,
         });
         this.next();
@@ -214,9 +214,9 @@ export class DialogEvent extends GameEvent {
     }
 
     _destroy() {
-        this.finish_events.forEach(event => event.destroy());
-        this.yes_no_events.yes.forEach(event => event.destroy());
-        this.yes_no_events.no.forEach(event => event.destroy());
+        this.finish_events.forEach(event => event?.destroy());
+        this.yes_no_events.yes.forEach(event => event?.destroy());
+        this.yes_no_events.no.forEach(event => event?.destroy());
         this.dialog_index = 0;
         this.yes_no_menu?.destroy();
         this.yes_no_menu = null;

@@ -24,7 +24,7 @@ export class PartyJoinEvent extends GameEvent {
         this.finish_events = [];
         if (finish_events !== undefined) {
             finish_events.forEach(event_info => {
-                const event = this.data.game_event_manager.get_event_instance(event_info);
+                const event = this.data.game_event_manager.get_event_instance(event_info, this.type, this.origin_npc);
                 this.finish_events.push(event);
             });
         }
@@ -90,7 +90,7 @@ export class PartyJoinEvent extends GameEvent {
     }
 
     _destroy() {
-        this.finish_events.forEach(event => event.destroy());
+        this.finish_events.forEach(event => event?.destroy());
         this.dialog_manager?.destroy();
         if (this.control_key !== null) {
             this.data.control_manager.detach_bindings(this.control_key);

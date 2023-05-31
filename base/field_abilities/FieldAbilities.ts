@@ -296,18 +296,12 @@ export abstract class FieldAbilities {
             },
             //after_destroy
             (reset_casting_psy_flag: boolean = true) => {
-                this.controllable_char.toggle_collision(this.previous_collision_status.char);
                 if (reset_casting_psy_flag) {
                     this.controllable_char.casting_psynergy = false;
                 }
                 if (this.target_object) {
-                    this.target_object.toggle_collision(this.previous_collision_status.target);
-                    if (this.target_object.is_interactable_object) {
-                        const events = (this.target_object as InteractableObjects).after_psynergy_cast_events[
-                            this.ability_key_name
-                        ];
-                        events?.forEach(e => e.fire());
-                    }
+                    const events = this.target_object.after_psynergy_cast_events[this.ability_key_name];
+                    events?.forEach(e => e.fire());
                 }
                 if (reset_casting_psy_flag) {
                     this.target_object = null;
@@ -316,6 +310,10 @@ export abstract class FieldAbilities {
             //before_destroy
             (reset_map_tint: boolean = true) => {
                 this.cast_finisher();
+                this.controllable_char.toggle_collision(this.previous_collision_status.char);
+                if (this.target_object) {
+                    this.target_object.toggle_collision(this.previous_collision_status.target);
+                }
                 if (this.reset_map && reset_map_tint) {
                     this.reset_map();
                 }

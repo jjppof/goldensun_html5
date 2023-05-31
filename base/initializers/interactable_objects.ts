@@ -9,9 +9,13 @@ export function initialize_interactable_objs_data(
     load_promise_resolve: () => void
 ) {
     const iter_obj_sprite_base_list: GameInfo["iter_objs_sprite_base_list"] = {};
-    let at_least_one_to_laod = false;
+    let at_least_one_to_load = false;
     for (let interactable_objects_key in interactable_objects_db) {
         const iter_obj_data = interactable_objects_db[interactable_objects_key];
+        if (!iter_obj_data.key_name) {
+            console.warn("Interactable object registered without a key name. Please double-check.");
+            continue;
+        }
         if (iter_obj_data.actions) {
             const actions = Object.keys(iter_obj_data.actions);
             const sprite_base = new SpriteBase(iter_obj_data.key_name, actions);
@@ -32,10 +36,10 @@ export function initialize_interactable_objs_data(
             }
             sprite_base.generateAllFrames();
             sprite_base.loadSpritesheets(game, false);
-            at_least_one_to_laod = true;
+            at_least_one_to_load = true;
         }
     }
-    if (at_least_one_to_laod) {
+    if (at_least_one_to_load) {
         game.load.start();
         data.set_whats_loading("interactable objects sprites");
         game.load.onLoadComplete.addOnce(load_promise_resolve);

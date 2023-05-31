@@ -24,7 +24,7 @@ export class PsynergyStoneEvent extends GameEvent {
 
         this.finish_events = [];
         finish_events?.forEach(event_info => {
-            const event = this.data.game_event_manager.get_event_instance(event_info);
+            const event = this.data.game_event_manager.get_event_instance(event_info, this.type, this.origin_npc);
             this.finish_events.push(event);
         });
     }
@@ -149,7 +149,7 @@ export class PsynergyStoneEvent extends GameEvent {
     }
 
     _destroy() {
-        this.finish_events.forEach(event => event.destroy());
+        this.finish_events.forEach(event => event?.destroy());
         this.dialog_manager?.destroy();
         this.dialog_manager = null;
         if (this.control_key !== null) {

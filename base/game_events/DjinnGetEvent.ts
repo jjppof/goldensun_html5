@@ -1,4 +1,4 @@
-import {GameEvent, event_types} from "./GameEvent";
+import {GameEvent, event_types, game_event_misc_origin} from "./GameEvent";
 import * as _ from "lodash";
 import {Djinn, djinn_status} from "../Djinn";
 import {
@@ -68,11 +68,11 @@ export class DjinnGetEvent extends GameEvent {
         this.add_djinn = add_djinn ?? true;
 
         finish_events?.forEach(event_info => {
-            const event = this.data.game_event_manager.get_event_instance(event_info);
+            const event = this.data.game_event_manager.get_event_instance(event_info, this.type, this.origin_npc);
             this.finish_events.push(event);
         });
         on_battle_defeat_events?.forEach(event_info => {
-            const event = this.data.game_event_manager.get_event_instance(event_info);
+            const event = this.data.game_event_manager.get_event_instance(event_info, this.type, this.origin_npc);
             this.on_battle_defeat_events.push(event);
         });
     }
@@ -844,13 +844,17 @@ export class DjinnGetEvent extends GameEvent {
             this.data.info.party_data.members[0].key_name in this.data.info.battle_bgms
                 ? this.data.info.battle_bgms[this.data.info.party_data.members[0].key_name]
                 : this.data.info.battle_bgms.default;
-        const event = this.data.game_event_manager.get_event_instance({
-            type: event_types.BATTLE,
-            background_key: this.custom_battle_bg ?? this.data.map.background_key,
-            enemy_party_key: party,
-            bgm: bgm,
-            reset_previous_bgm: true,
-        }) as BattleEvent;
+        const event = this.data.game_event_manager.get_event_instance(
+            {
+                type: event_types.BATTLE,
+                background_key: this.custom_battle_bg ?? this.data.map.background_key,
+                enemy_party_key: party,
+                bgm: bgm,
+                reset_previous_bgm: true,
+            },
+            game_event_misc_origin.MISC,
+            this.origin_npc
+        ) as BattleEvent;
         event.assign_before_fade_finish_callback(() => {
             this.origin_npc.set_position({
                 x: previous_npc_pos.x,
@@ -947,8 +951,8 @@ export class DjinnGetEvent extends GameEvent {
 
     _destroy() {
         this.djinn = null;
-        this.finish_events.forEach(event => event.destroy());
-        this.on_battle_defeat_events.forEach(event => event.destroy());
+        this.finish_events.forEach(event => event?.destroy());
+        this.on_battle_defeat_events.forEach(event => event?.destroy());
         this.dialog_manager?.destroy();
         this.dialog_manager = null;
         this.data.control_manager.detach_bindings(this.control_key);

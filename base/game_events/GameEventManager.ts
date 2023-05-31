@@ -5,7 +5,14 @@ import {GoldenSun} from "../GoldenSun";
 import {Button} from "../XGamepad";
 import {BattleEvent} from "./BattleEvent";
 import {BranchEvent} from "./BranchEvent";
-import {DetailedValues, EventValue, event_types, event_value_types, game_info_types} from "./GameEvent";
+import {
+    DetailedValues,
+    EventValue,
+    event_types,
+    event_value_types,
+    GameEventOrigin,
+    game_info_types,
+} from "./GameEvent";
 import {SetValueEvent} from "./SetValueEvent";
 import {MoveEvent} from "./MoveEvent";
 import {DialogEvent} from "./DialogEvent";
@@ -65,6 +72,7 @@ import {EventActivationEvent} from "./EventActivationEvent";
 import {SetCharVisibilityEvent} from "./SetCharVisibilityEvent";
 import {EventsHolderEvent} from "./EventsHolderEvent";
 import {EventsLoopEvent} from "./EventsLoopEvent";
+import {InteractableObjects} from "interactable_objects/InteractableObjects";
 
 export enum interaction_patterns {
     NO_INTERACTION = "no_interaction",
@@ -301,9 +309,11 @@ export class GameEventManager {
     /**
      * The GameEvent factory. Returns a specific GameEvent child instance depending on the input.
      * @param info The parsed raw properties of a game event.
+     * @param event_origin The game event the originated this one.
+     * @param entity_origin The entity (IO or NPC) the originated this game event.
      * @returns The GameEvent child class instance.
      */
-    get_event_instance(info: any) {
+    get_event_instance(info: any, event_origin: GameEventOrigin, entity_origin?: InteractableObjects | NPC) {
         switch (info.type) {
             case event_types.BATTLE:
                 return new BattleEvent(
@@ -330,9 +340,8 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
-                    info.condition,
-                    info.left_comparator_value,
-                    info.right_comparator_value,
+                    info.combination,
+                    info.comparator_pairs,
                     info.events,
                     info.else_events
                 );
@@ -1033,7 +1042,16 @@ export class GameEventManager {
                     info.events
                 );
             default:
-                console.warn(`Game event type ${info.type} not found.`);
+                const origin = `Event origin: ${event_origin}. ${
+                    entity_origin?.label
+                        ? (entity_origin.is_interactable_object ? "IO origin: " : "NPC origin: ") + entity_origin.label
+                        : ""
+                }`;
+                if (info.type) {
+                    console.warn(`Game event type '${info.type}' not found. ${origin}`);
+                } else {
+                    console.warn(`No event type was passed. ${origin}`);
+                }
                 return null;
         }
     }
@@ -1121,7 +1139,7 @@ export class GameEventManager {
                         return null;
                 }
             default:
-                console.warn(`Invalid value type passed to event: ${event_value.type}`);
+                console.warn(`Invalid value type passed to event: ${event_value.type}.`);
                 return null;
         }
     }

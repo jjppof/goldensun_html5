@@ -1,4 +1,4 @@
-import {GameEvent} from "../game_events/GameEvent";
+import {GameEvent, game_event_origin} from "../game_events/GameEvent";
 import {event_types, TileEvent} from "./TileEvent";
 
 export class EventTriggerEvent extends TileEvent {
@@ -35,7 +35,7 @@ export class EventTriggerEvent extends TileEvent {
         );
         this.remove_from_field = remove_from_field;
         events.forEach(event_info => {
-            const event = this.data.game_event_manager.get_event_instance(event_info);
+            const event = this.data.game_event_manager.get_event_instance(event_info, game_event_origin.TILE_EVENT);
             this.events.push(event);
         });
     }
@@ -53,6 +53,6 @@ export class EventTriggerEvent extends TileEvent {
     destroy() {
         this.deactivate();
         this._origin_interactable_object = null;
-        this.events.forEach(event => event.destroy());
+        this.events.forEach(event => event?.destroy());
     }
 }

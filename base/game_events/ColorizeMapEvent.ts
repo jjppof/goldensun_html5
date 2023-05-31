@@ -16,7 +16,7 @@ export class ColorizeMapEvent extends GameEvent {
         this.finish_events = [];
         if (finish_events !== undefined) {
             finish_events.forEach(event_info => {
-                const event = this.data.game_event_manager.get_event_instance(event_info);
+                const event = this.data.game_event_manager.get_event_instance(event_info, this.type, this.origin_npc);
                 this.finish_events.push(event);
             });
         }
@@ -81,6 +81,6 @@ export class ColorizeMapEvent extends GameEvent {
     }
 
     _destroy() {
-        this.finish_events.forEach(event => event.destroy());
+        this.finish_events.forEach(event => event?.destroy());
     }
 }

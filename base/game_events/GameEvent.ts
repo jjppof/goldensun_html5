@@ -101,6 +101,21 @@ export enum event_types {
     EVENTS_LOOP = "events_loop",
 }
 
+export enum game_event_misc_origin {
+    INTERACTABLE_OBJECT_PUSH = "interactable_object_push",
+    INTERACTABLE_OBJECT_BEFORE_PSYNERGY = "interactable_object_before_psynergy",
+    INTERACTABLE_OBJECT_AFTER_PSYNERGY = "interactable_object_after_psynergy",
+    INTERACTABLE_OBJECT_TOGGLE = "interactable_object_toggle",
+    TILE_EVENT = "tile_event",
+    NPC = "npc",
+    NPC_PSYNERGY = "npc_psynergy",
+    MAP = "map",
+    MISC = "misc",
+}
+
+export const game_event_origin = {...event_types, ...game_event_misc_origin};
+export type GameEventOrigin = event_types | game_event_misc_origin;
+
 /**
  * This is the class reponsible for general events of the game.
  * Every game event class must inherit from this class. Whenever a game event is instantiated,

@@ -17,7 +17,7 @@ import {ClimbEvent} from "../tile_events/ClimbEvent";
 import {GoldenSun} from "../GoldenSun";
 import {Map} from "../Map";
 import {RopeEvent} from "../tile_events/RopeEvent";
-import {GameEvent} from "../game_events/GameEvent";
+import {GameEvent, game_event_origin} from "../game_events/GameEvent";
 import {LiftFieldPsynergy} from "../field_abilities/LiftFieldPsynergy";
 import {StoragePosition} from "../Storage";
 import {SnapshotData} from "../Snapshot";
@@ -242,7 +242,11 @@ export class InteractableObjects {
         this._extra_sprites = [];
         if (toggle_enable_events !== undefined) {
             this.toggle_enable_events = toggle_enable_events.map(event_info => {
-                const event = this.data.game_event_manager.get_event_instance(event_info.event);
+                const event = this.data.game_event_manager.get_event_instance(
+                    event_info.event,
+                    game_event_origin.INTERACTABLE_OBJECT_TOGGLE,
+                    this
+                );
                 return {
                     event: event,
                     on_enable: event_info.on_enable,
@@ -397,9 +401,11 @@ export class InteractableObjects {
     get has_shadow() {
         return this._has_shadow;
     }
+    /** Object that contains lists of Game Events to fired per psynergy before it starts. Psynergy is the key, the list of events is the value of this object. */
     get before_psynergy_cast_events() {
         return this._before_psynergy_cast_events;
     }
+    /** Object that contains lists of Game Events to fired per psynergy after it finishes. Psynergy is the key, the list of events is the value of this object. */
     get after_psynergy_cast_events() {
         return this._after_psynergy_cast_events;
     }
@@ -584,7 +590,11 @@ export class InteractableObjects {
                     }
                     psynergy_properties.after_psynergy_cast_events.forEach(event_info => {
                         this.after_psynergy_cast_events[psynergy_key].push(
-                            this.data.game_event_manager.get_event_instance(event_info)
+                            this.data.game_event_manager.get_event_instance(
+                                event_info,
+                                game_event_origin.INTERACTABLE_OBJECT_BEFORE_PSYNERGY,
+                                this
+                            )
                         );
                     });
                 }
@@ -594,7 +604,11 @@ export class InteractableObjects {
                     }
                     psynergy_properties.before_psynergy_cast_events.forEach(event_info => {
                         this.before_psynergy_cast_events[psynergy_key].push(
-                            this.data.game_event_manager.get_event_instance(event_info)
+                            this.data.game_event_manager.get_event_instance(
+                                event_info,
+                                game_event_origin.INTERACTABLE_OBJECT_AFTER_PSYNERGY,
+                                this
+                            )
                         );
                     });
                 }

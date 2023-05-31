@@ -4,6 +4,7 @@ import {directions, reverse_directions, base_actions, get_centered_pos_in_px, ge
 import {InteractableObjects} from "./InteractableObjects";
 import {ControllableChar} from "../ControllableChar";
 import {storage_types} from "../Storage";
+import {GameEvent, game_event_origin} from "../game_events/GameEvent";
 
 /**
  * An interactable object that can be pushed by a ControllableChar.
@@ -21,6 +22,7 @@ export class Pushable extends InteractableObjects {
         y: number;
         collision_layer: number;
     };
+    private _after_push_events: GameEvent[];
 
     constructor(
         game,
@@ -86,10 +88,21 @@ export class Pushable extends InteractableObjects {
         );
         this._pushable = true;
         this.dock_tile_position = null;
+        this._after_push_events = [];
     }
 
-    initialize_pushable(dock_tile_position: Pushable["dock_tile_position"]) {
+    initialize_pushable(dock_tile_position: Pushable["dock_tile_position"], after_push_events: any[]) {
         this.dock_tile_position = dock_tile_position ?? null;
+        after_push_events = after_push_events ?? [];
+        after_push_events.forEach(event_info => {
+            this._after_push_events.push(
+                this.data.game_event_manager.get_event_instance(
+                    event_info,
+                    game_event_origin.INTERACTABLE_OBJECT_PUSH,
+                    this
+                )
+            );
+        });
     }
 
     /**
@@ -167,7 +180,9 @@ export class Pushable extends InteractableObjects {
             !char.in_action() &&
             char.stop_by_colliding
         ) {
-            this.fire_push_movement(char);
+            this.fire_push_movement(char, () => {
+                this._after_push_events.forEach(e => e.fire());
+            });
         }
     }
 
@@ -538,5 +553,10 @@ export class Pushable extends InteractableObjects {
             });
             on_animation_end();
         });
+    }
+
+    public custom_unset() {
+        this._after_push_events.forEach(e => e.destroy());
+        this._after_push_events = null;
     }
 }

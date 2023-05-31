@@ -44,35 +44,35 @@ export class BattleEvent extends GameEvent {
         this.all_enemies_fled_events = [];
         if (all_enemies_fled_events !== undefined) {
             all_enemies_fled_events.forEach(event_info => {
-                const event = this.data.game_event_manager.get_event_instance(event_info);
+                const event = this.data.game_event_manager.get_event_instance(event_info, this.type, this.origin_npc);
                 this.all_enemies_fled_events.push(event);
             });
         }
         this.victory_events = [];
         if (victory_events !== undefined) {
             victory_events.forEach(event_info => {
-                const event = this.data.game_event_manager.get_event_instance(event_info);
+                const event = this.data.game_event_manager.get_event_instance(event_info, this.type, this.origin_npc);
                 this.victory_events.push(event);
             });
         }
         this.defeat_events = [];
         if (defeat_events !== undefined) {
             defeat_events.forEach(event_info => {
-                const event = this.data.game_event_manager.get_event_instance(event_info);
+                const event = this.data.game_event_manager.get_event_instance(event_info, this.type, this.origin_npc);
                 this.defeat_events.push(event);
             });
         }
         this.before_fade_victory_events = [];
         if (before_fade_victory_events !== undefined) {
             before_fade_victory_events.forEach(event_info => {
-                const event = this.data.game_event_manager.get_event_instance(event_info);
+                const event = this.data.game_event_manager.get_event_instance(event_info, this.type, this.origin_npc);
                 this.before_fade_victory_events.push(event);
             });
         }
         this.before_fade_defeat_events = [];
         if (before_fade_defeat_events !== undefined) {
             before_fade_defeat_events.forEach(event_info => {
-                const event = this.data.game_event_manager.get_event_instance(event_info);
+                const event = this.data.game_event_manager.get_event_instance(event_info, this.type, this.origin_npc);
                 this.before_fade_defeat_events.push(event);
             });
         }
@@ -167,9 +167,9 @@ export class BattleEvent extends GameEvent {
 
     _destroy() {
         this.battle = null;
-        this.victory_events.forEach(event => event.destroy());
-        this.defeat_events.forEach(event => event.destroy());
-        this.before_fade_defeat_events.forEach(event => event.destroy());
-        this.before_fade_victory_events.forEach(event => event.destroy());
+        this.victory_events.forEach(event => event?.destroy());
+        this.defeat_events.forEach(event => event?.destroy());
+        this.before_fade_defeat_events.forEach(event => event?.destroy());
+        this.before_fade_victory_events.forEach(event => event?.destroy());
     }
 }
