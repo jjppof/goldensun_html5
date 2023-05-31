@@ -55,33 +55,33 @@ export class BranchEvent extends GameEvent {
         switch (this.condition) {
             case conditions.EQ:
                 result =
-                    this.data.game_event_manager.get_value(this.left_comparator_value) ===
-                    this.data.game_event_manager.get_value(this.right_comparator_value);
+                    this.data.game_event_manager.get_value(this.right_comparator_value) ===
+                    this.data.game_event_manager.get_value(this.left_comparator_value);
                 break;
             case conditions.GREATER_EQ:
                 result =
-                    this.data.game_event_manager.get_value(this.left_comparator_value) >=
-                    this.data.game_event_manager.get_value(this.right_comparator_value);
+                    this.data.game_event_manager.get_value(this.right_comparator_value) >=
+                    this.data.game_event_manager.get_value(this.left_comparator_value);
                 break;
             case conditions.LESS_EQ:
                 result =
-                    this.data.game_event_manager.get_value(this.left_comparator_value) <=
-                    this.data.game_event_manager.get_value(this.right_comparator_value);
+                    this.data.game_event_manager.get_value(this.right_comparator_value) <=
+                    this.data.game_event_manager.get_value(this.left_comparator_value);
                 break;
             case conditions.GREATER:
                 result =
-                    this.data.game_event_manager.get_value(this.left_comparator_value) >
-                    this.data.game_event_manager.get_value(this.right_comparator_value);
+                    this.data.game_event_manager.get_value(this.right_comparator_value) >
+                    this.data.game_event_manager.get_value(this.left_comparator_value);
                 break;
             case conditions.LESS:
                 result =
-                    this.data.game_event_manager.get_value(this.left_comparator_value) <
-                    this.data.game_event_manager.get_value(this.right_comparator_value);
+                    this.data.game_event_manager.get_value(this.right_comparator_value) <
+                    this.data.game_event_manager.get_value(this.left_comparator_value);
                 break;
             case conditions.DIFF:
                 result =
-                    this.data.game_event_manager.get_value(this.left_comparator_value) !==
-                    this.data.game_event_manager.get_value(this.right_comparator_value);
+                    this.data.game_event_manager.get_value(this.right_comparator_value) !==
+                    this.data.game_event_manager.get_value(this.left_comparator_value);
                 break;
             default:
                 console.warn(`Invalid condition passed to branch event: ${this.condition}`);
