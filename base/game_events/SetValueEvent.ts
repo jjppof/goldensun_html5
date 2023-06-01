@@ -2,12 +2,14 @@ import {GameEvent, event_types, game_info_types, EventValue, event_value_types, 
 import * as _ from "lodash";
 import {TileEvent} from "../tile_events/TileEvent";
 import {NPC} from "NPC";
+import {storage_types} from "../Storage";
 
 export class SetValueEvent extends GameEvent {
     private event_value: EventValue;
     private check_npc_storage_values: boolean;
     private npc_label: string;
     private npc_index: number;
+    private increment: boolean;
 
     constructor(
         game,
@@ -18,47 +20,71 @@ export class SetValueEvent extends GameEvent {
         event_value,
         check_npc_storage_values,
         npc_label,
-        npc_index
+        npc_index,
+        increment
     ) {
         super(game, data, event_types.SET_VALUE, active, key_name, keep_reveal);
         this.event_value = event_value;
         this.check_npc_storage_values = check_npc_storage_values ?? false;
         this.npc_label = npc_label;
         this.npc_index = npc_index;
+        this.increment = increment ?? false;
     }
 
     _fire() {
         const detailed_value = this.event_value.value as DetailedValues;
+        let value_to_be_set = detailed_value.value;
         switch (this.event_value.type) {
             case event_value_types.STORAGE:
-                this.data.storage.set(detailed_value.key_name, detailed_value.value);
+                if (this.increment) {
+                    const storage = this.data.storage.get_object(detailed_value.key_name);
+                    if (storage.type === storage_types.NUMBER || storage.type === storage_types.STRING) {
+                        value_to_be_set += storage.value as any;
+                    }
+                }
+                this.data.storage.set(detailed_value.key_name, value_to_be_set);
                 break;
             case event_value_types.GAME_INFO:
                 switch (detailed_value.type) {
                     case game_info_types.CHAR:
                         const char = this.data.info.main_char_list[detailed_value.key_name];
-                        _.set(char, detailed_value.property, detailed_value.value);
+                        if (this.increment) {
+                            value_to_be_set += _.get(char, detailed_value.property);
+                        }
+                        _.set(char, detailed_value.property, value_to_be_set);
                         break;
                     case game_info_types.HERO:
-                        _.set(this.data.hero, detailed_value.property, detailed_value.value);
+                        if (this.increment) {
+                            value_to_be_set += _.get(this.data.hero, detailed_value.property);
+                        }
+                        _.set(this.data.hero, detailed_value.property, value_to_be_set);
                         break;
                     case game_info_types.NPC:
                         const npc = detailed_value.label
                             ? this.data.map.npcs_label_map[detailed_value.label]
                             : this.data.map.npcs[detailed_value.index];
-                        _.set(npc, detailed_value.property, detailed_value.value);
+                        if (this.increment) {
+                            value_to_be_set += _.get(npc, detailed_value.property);
+                        }
+                        _.set(npc, detailed_value.property, value_to_be_set);
                         break;
                     case game_info_types.INTERACTABLE_OBJECT:
                         const interactable_object = detailed_value.label
                             ? this.data.map.interactable_objects_label_map[detailed_value.label]
                             : this.data.map.interactable_objects[detailed_value.index];
-                        _.set(interactable_object, detailed_value.property, detailed_value.value);
+                        if (this.increment) {
+                            value_to_be_set += _.get(interactable_object, detailed_value.property);
+                        }
+                        _.set(interactable_object, detailed_value.property, value_to_be_set);
                         break;
                     case game_info_types.EVENT:
                         const event = detailed_value.label
                             ? TileEvent.get_labeled_event(detailed_value.label)
                             : TileEvent.get_event(detailed_value.index);
-                        _.set(event, detailed_value.property, detailed_value.value);
+                        if (this.increment) {
+                            value_to_be_set += _.get(event, detailed_value.property);
+                        }
+                        _.set(event, detailed_value.property, value_to_be_set);
                         break;
                 }
                 break;

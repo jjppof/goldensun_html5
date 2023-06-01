@@ -355,7 +355,8 @@ export class GameEventManager {
                     info.event_value,
                     info.check_npc_storage_values,
                     info.npc_label,
-                    info.npc_index
+                    info.npc_index,
+                    info.increment
                 );
             case event_types.MOVE:
                 return new MoveEvent(
