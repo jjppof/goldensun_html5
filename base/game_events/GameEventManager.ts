@@ -10,6 +10,7 @@ import {
     EventValue,
     event_types,
     event_value_types,
+    GameEvent,
     GameEventOrigin,
     game_info_types,
 } from "./GameEvent";
@@ -1110,31 +1111,78 @@ export class GameEventManager {
                 return event_value.value;
             case event_value_types.STORAGE:
                 const storage = this.data.storage.get_object(detailed_value.key_name);
-                return storage.type === storage_types.POSITION
-                    ? `${(storage.value as StoragePosition).x}/${(storage.value as StoragePosition).y}`
-                    : storage.value;
+                if (storage) {
+                    return storage.type === storage_types.POSITION
+                        ? `${(storage.value as StoragePosition).x}/${(storage.value as StoragePosition).y}`
+                        : storage.value;
+                }
+                return null;
             case event_value_types.GAME_INFO:
                 switch (detailed_value.type) {
                     case game_info_types.CHAR:
+                        if (!(detailed_value.key_name in this.data.info.main_char_list)) {
+                            console.warn(`There's no char with key '${detailed_value.key_name}'.`);
+                            break;
+                        }
                         const char = this.data.info.main_char_list[detailed_value.key_name];
-                        return _.get(char, detailed_value.property);
+                        if (_.hasIn(char, detailed_value.property)) {
+                            const char = this.data.info.main_char_list[detailed_value.key_name];
+                            return _.get(char, detailed_value.property);
+                        }
+                        console.warn(`Char has no property named '${detailed_value.property}'.`);
+                        return null;
                     case game_info_types.HERO:
-                        return _.get(this.data.hero, detailed_value.property);
+                        if (_.hasIn(this.data.hero, detailed_value.property)) {
+                            return _.get(this.data.hero, detailed_value.property);
+                        }
+                        console.warn(`Hero has no property named '${detailed_value.property}'.`);
+                        return null;
                     case game_info_types.NPC:
-                        const npc = detailed_value.label
-                            ? this.data.map.npcs_label_map[detailed_value.label]
-                            : this.data.map.npcs[detailed_value.index];
-                        return _.get(npc, detailed_value.property);
+                        const npc = GameEvent.get_char(this.data, {
+                            is_npc: true,
+                            npc_label: detailed_value.label,
+                            npc_index: detailed_value.index,
+                        });
+                        if (npc && _.hasIn(npc, detailed_value.property)) {
+                            return _.get(npc, detailed_value.property);
+                        } else if (npc) {
+                            console.warn(`NPC has no property named '${detailed_value.property}'.`);
+                        }
+                        return null;
                     case game_info_types.INTERACTABLE_OBJECT:
                         const interactable_object = detailed_value.label
                             ? this.data.map.interactable_objects_label_map[detailed_value.label]
                             : this.data.map.interactable_objects[detailed_value.index];
-                        return _.get(interactable_object, detailed_value.property);
+                        if (!interactable_object) {
+                            if (detailed_value.label) {
+                                console.warn(`There's no interactable object with label '${detailed_value.label}'.`);
+                            } else {
+                                console.warn(`There's no interactable object with index '${detailed_value.index}'.`);
+                            }
+                            break;
+                        }
+                        if (_.hasIn(interactable_object, detailed_value.property)) {
+                            return _.get(interactable_object, detailed_value.property);
+                        }
+                        console.warn(`Interactable object has no property named '${detailed_value.property}'.`);
+                        return null;
                     case game_info_types.EVENT:
                         const event = detailed_value.label
                             ? TileEvent.get_labeled_event(detailed_value.label)
                             : TileEvent.get_event(detailed_value.index);
-                        return _.get(event, detailed_value.property);
+                        if (!event) {
+                            if (detailed_value.label) {
+                                console.warn(`There's no tile event with label '${detailed_value.label}'.`);
+                            } else {
+                                console.warn(`There's no tile event with index '${detailed_value.index}'.`);
+                            }
+                            break;
+                        }
+                        if (_.hasIn(event, detailed_value.property)) {
+                            return _.get(event, detailed_value.property);
+                        }
+                        console.warn(`Tile event has no property named '${detailed_value.property}'.`);
+                        return null;
                     default:
                         console.warn(`Invalid value type passed to game_info: ${detailed_value.type}`);
                         return null;

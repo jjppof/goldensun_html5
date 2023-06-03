@@ -132,7 +132,11 @@ export class Storage {
      * @returns returns the storage object
      */
     get_object(key_name: string) {
-        return this.internal_storage[key_name];
+        if (key_name in this.internal_storage) {
+            return this.internal_storage[key_name];
+        }
+        console.warn(`There's no storage value with key '${key_name}'.`);
+        return null;
     }
 
     /**
@@ -146,6 +150,7 @@ export class Storage {
         } else if (key_name in this.engine_storage) {
             return this.engine_storage[key_name].value;
         }
+        console.warn(`There's no storage value with key '${key_name}'.`);
         return null;
     }
 
@@ -157,6 +162,10 @@ export class Storage {
      */
     set(key_name: string, value: RawStorageRecord["value"], engine_storage: boolean = false) {
         const storage = engine_storage ? this.engine_storage : this.internal_storage;
+        if (!(key_name in storage)) {
+            console.warn(`There's no storage value with key '${key_name}'.`);
+            return;
+        }
         storage[key_name].value = value;
         for (let id in storage[key_name].callbacks) {
             const callback_obj = storage[key_name].callbacks[id];

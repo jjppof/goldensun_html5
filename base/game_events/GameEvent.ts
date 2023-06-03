@@ -269,10 +269,23 @@ export abstract class GameEvent {
         if (options.is_npc === undefined && options.npc_index === undefined && options.npc_label === undefined) {
             return null;
         } else if (options.is_npc) {
+            if (options.npc_index === undefined && options.npc_label === undefined) {
+                return null;
+            }
             if (options.npc_label) {
-                return data.map.npcs_label_map[options.npc_label];
+                if (options.npc_label in data.map.npcs_label_map) {
+                    return data.map.npcs_label_map[options.npc_label];
+                } else {
+                    console.warn(`There's no NPC with '${options.npc_label}' label.`);
+                    return null;
+                }
             } else {
-                return data.map.npcs[options.npc_index];
+                if (options.npc_index in data.map.npcs) {
+                    return data.map.npcs[options.npc_index];
+                } else {
+                    console.warn(`There's no NPC with '${options.npc_index}' index.`);
+                    return null;
+                }
             }
         } else {
             return data.hero;

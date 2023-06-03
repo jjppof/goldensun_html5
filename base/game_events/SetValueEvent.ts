@@ -47,44 +47,86 @@ export class SetValueEvent extends GameEvent {
             case event_value_types.GAME_INFO:
                 switch (detailed_value.type) {
                     case game_info_types.CHAR:
-                        const char = this.data.info.main_char_list[detailed_value.key_name];
-                        if (this.increment) {
-                            value_to_be_set += _.get(char, detailed_value.property);
+                        if (!(detailed_value.key_name in this.data.info.main_char_list)) {
+                            console.warn(`There's no char with key '${detailed_value.key_name}'.`);
+                            break;
                         }
-                        _.set(char, detailed_value.property, value_to_be_set);
+                        const char = this.data.info.main_char_list[detailed_value.key_name];
+                        if (_.hasIn(char, detailed_value.property)) {
+                            if (this.increment) {
+                                value_to_be_set += _.get(char, detailed_value.property);
+                            }
+                            _.set(char, detailed_value.property, value_to_be_set);
+                        } else {
+                            console.warn(`Char has no property named '${detailed_value.property}'.`);
+                        }
                         break;
                     case game_info_types.HERO:
-                        if (this.increment) {
-                            value_to_be_set += _.get(this.data.hero, detailed_value.property);
+                        if (_.hasIn(this.data.hero, detailed_value.property)) {
+                            if (this.increment) {
+                                value_to_be_set += _.get(this.data.hero, detailed_value.property);
+                            }
+                            _.set(this.data.hero, detailed_value.property, value_to_be_set);
+                        } else {
+                            console.warn(`Hero has no property named '${detailed_value.property}'.`);
                         }
-                        _.set(this.data.hero, detailed_value.property, value_to_be_set);
                         break;
                     case game_info_types.NPC:
-                        const npc = detailed_value.label
-                            ? this.data.map.npcs_label_map[detailed_value.label]
-                            : this.data.map.npcs[detailed_value.index];
-                        if (this.increment) {
-                            value_to_be_set += _.get(npc, detailed_value.property);
+                        const npc = GameEvent.get_char(this.data, {
+                            is_npc: true,
+                            npc_label: detailed_value.label,
+                            npc_index: detailed_value.index,
+                        });
+                        if (npc && _.hasIn(npc, detailed_value.property)) {
+                            if (this.increment) {
+                                value_to_be_set += _.get(npc, detailed_value.property);
+                            }
+                            _.set(npc, detailed_value.property, value_to_be_set);
+                        } else if (npc) {
+                            console.warn(`NPC has no property named '${detailed_value.property}'.`);
                         }
-                        _.set(npc, detailed_value.property, value_to_be_set);
                         break;
                     case game_info_types.INTERACTABLE_OBJECT:
                         const interactable_object = detailed_value.label
                             ? this.data.map.interactable_objects_label_map[detailed_value.label]
                             : this.data.map.interactable_objects[detailed_value.index];
-                        if (this.increment) {
-                            value_to_be_set += _.get(interactable_object, detailed_value.property);
+                        if (!interactable_object) {
+                            if (detailed_value.label) {
+                                console.warn(`There's no interactable object with label '${detailed_value.label}'.`);
+                            } else {
+                                console.warn(`There's no interactable object with index '${detailed_value.index}'.`);
+                            }
+                            break;
                         }
-                        _.set(interactable_object, detailed_value.property, value_to_be_set);
+                        if (_.hasIn(interactable_object, detailed_value.property)) {
+                            if (this.increment) {
+                                value_to_be_set += _.get(interactable_object, detailed_value.property);
+                            }
+                            _.set(interactable_object, detailed_value.property, value_to_be_set);
+                        } else {
+                            console.warn(`Interactable object has no property named '${detailed_value.property}'.`);
+                        }
                         break;
                     case game_info_types.EVENT:
                         const event = detailed_value.label
                             ? TileEvent.get_labeled_event(detailed_value.label)
                             : TileEvent.get_event(detailed_value.index);
-                        if (this.increment) {
-                            value_to_be_set += _.get(event, detailed_value.property);
+                        if (!event) {
+                            if (detailed_value.label) {
+                                console.warn(`There's no tile event with label '${detailed_value.label}'.`);
+                            } else {
+                                console.warn(`There's no tile event with index '${detailed_value.index}'.`);
+                            }
+                            break;
                         }
-                        _.set(event, detailed_value.property, value_to_be_set);
+                        if (_.hasIn(event, detailed_value.property)) {
+                            if (this.increment) {
+                                value_to_be_set += _.get(event, detailed_value.property);
+                            }
+                            _.set(event, detailed_value.property, value_to_be_set);
+                        } else {
+                            console.warn(`Tile event has no property named '${detailed_value.property}'.`);
+                        }
                         break;
                 }
                 break;
