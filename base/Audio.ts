@@ -110,7 +110,7 @@ export class Audio {
             }
             return audio;
         } else {
-            console.warn(`SFX key not registered: ${key}.`);
+            this.data.logger.log_message(`SFX key not registered: ${key}.`);
         }
 
         return null;

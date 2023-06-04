@@ -133,7 +133,7 @@ export class StartMenu {
                     this.choose_callback(snapshot);
                 });
             } catch {
-                console.warn("Input snapshot is not a valid JSON.");
+                this.data.logger.log_message("Input snapshot is not a valid JSON.");
             }
         };
     }

@@ -14,10 +14,10 @@ export class DestroyerEvent extends GameEvent {
             if (target_event) {
                 target_event.destroy();
             } else {
-                console.warn(`Could not find an event with "${this.target_event_key}" key.`);
+                this.data.logger.log_message(`Could not find an event with "${this.target_event_key}" key.`);
             }
         } else {
-            console.warn('The target event is undefined. Check "target_event_key" property.');
+            this.data.logger.log_message('The target event is undefined. Check "target_event_key" property.');
         }
     }
 

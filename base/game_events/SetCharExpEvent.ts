@@ -20,7 +20,7 @@ export class SetCharExpEvent extends GameEvent {
     _fire() {
         const char = this.data.info.main_char_list[this.char_key];
         if (!char) {
-            console.warn(`Could not set exp. for ${this.char_key} char. Check "char_key" property.`);
+            this.data.logger.log_message(`Could not set exp. for ${this.char_key} char. Check "char_key" property.`);
             return;
         }
         switch (this.control_type) {

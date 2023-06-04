@@ -93,7 +93,7 @@ export async function initialize_game_data(game: Phaser.Game, data: GoldenSun) {
     await load_maps_promise;
 
     // Initializes CLASSES
-    data.info.classes_list = initialize_classes(data.dbs.classes_db);
+    data.info.classes_list = initialize_classes(data, data.dbs.classes_db);
 
     // Initializes ENEMIES
     let load_enemies_sprites_promise_resolve;
@@ -102,7 +102,7 @@ export async function initialize_game_data(game: Phaser.Game, data: GoldenSun) {
     await load_enemies_sprites_promise;
 
     // Initializes DJINN
-    data.info.djinni_list = initialize_djinni(data.dbs.djinni_db);
+    data.info.djinni_list = initialize_djinni(data, data.dbs.djinni_db);
 
     // Initializes ABILITIES
     let load_abilities_promise_resolve;
@@ -175,13 +175,13 @@ export async function initialize_game_data(game: Phaser.Game, data: GoldenSun) {
     await load_npcs_promise;
 
     // Initializes SHOPS
-    data.info.shops_list = initialize_shops(data.dbs.shops_db);
+    data.info.shops_list = initialize_shops(data, data.dbs.shops_db);
 
     // Initializes INNS
-    data.info.inn_list = initialize_inn(data.dbs.inn_db);
+    data.info.inn_list = initialize_inn(data, data.dbs.inn_db);
 
     // Initializes SUMMONS
-    data.info.summons_list = initialize_summons(data.dbs.summons_db, snapshot);
+    data.info.summons_list = initialize_summons(data, data.dbs.summons_db, snapshot);
 
     // Initializes FIELD ABILITIES
     data.info.field_abilities_list = initialize_field_abilities(game, data);

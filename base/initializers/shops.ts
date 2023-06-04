@@ -1,6 +1,7 @@
+import {GoldenSun} from "../GoldenSun";
 import {Shop} from "../main_menus/ShopMenu";
 
-export function initialize_shops(shops_db) {
+export function initialize_shops(data: GoldenSun, shops_db: any) {
     let shops_list = {};
     for (let i = 0; i < shops_db.length; ++i) {
         const shop_data: Shop = shops_db[i];
@@ -10,7 +11,7 @@ export function initialize_shops(shops_db) {
                 item_data.global_artifact = false;
             });
         } else {
-            console.warn("Shop registered without a key name. Please double-check.");
+            data.logger.log_message("Shop registered without a key name. Please double-check.");
         }
     }
     return shops_list;

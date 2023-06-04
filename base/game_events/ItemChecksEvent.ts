@@ -56,7 +56,9 @@ export class ItemChecksEvent extends GameEvent {
     _fire() {
         const char = this.data.info.main_char_list[this.char_key];
         if (!char) {
-            console.warn(`Could not manipulate items for "${this.char_key}" char. Check "char_key" property.`);
+            this.data.logger.log_message(
+                `Could not manipulate items for "${this.char_key}" char. Check "char_key" property.`
+            );
             return;
         }
         let item_slot: ItemSlot = null;
@@ -66,7 +68,7 @@ export class ItemChecksEvent extends GameEvent {
             item_slot = char.items.find(item_slot => item_slot.key_name === this.item_key);
         }
         if (this.control_type !== control_types.HAS_ITEM && !item_slot) {
-            console.warn(`Could not find an item slot with given info.`);
+            this.data.logger.log_message(`Could not find an item slot with given info.`);
             return;
         }
         let check = false;

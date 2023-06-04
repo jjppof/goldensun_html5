@@ -898,7 +898,7 @@ export class Map {
                 this.events[this_event_location_key].push(event);
             }
         } catch {
-            console.warn(`Tile Event "${property_key}" is not a valid JSON.`);
+            this.data.logger.log_message(`Tile Event "${property_key}" is not a valid JSON.`);
         }
     }
 
@@ -1006,14 +1006,14 @@ export class Map {
             this.npcs.push(npc);
             if (npc.label) {
                 if (npc.label in this._npcs_label_map) {
-                    console.warn(`NPC with '${npc.label}' label is already set in this map.`);
+                    this.data.logger.log_message(`NPC with '${npc.label}' label is already set in this map.`);
                 } else {
                     this._npcs_label_map[npc.label] = npc;
                 }
             }
             return npc;
         } catch {
-            console.warn(`NPC "${property_key}" is not a valid JSON or does not exist in db file.`);
+            this.data.logger.log_message(`NPC "${property_key}" is not a valid JSON or does not exist in db file.`);
             return null;
         }
     }
@@ -1135,7 +1135,7 @@ export class Map {
             this.interactable_objects.push(interactable_object);
             if (interactable_object.label) {
                 if (interactable_object.label in this.interactable_objects_label_map) {
-                    console.warn(
+                    this.data.logger.log_message(
                         `Interactable Object with '${interactable_object.label}' label is already set in this map.`
                     );
                 } else {
@@ -1143,7 +1143,9 @@ export class Map {
                 }
             }
         } catch {
-            console.warn(`Interactable Object "${property_key}" is not a valid JSON or does not exist in db file.`);
+            this.data.logger.log_message(
+                `Interactable Object "${property_key}" is not a valid JSON or does not exist in db file.`
+            );
         }
     }
 
@@ -1255,7 +1257,7 @@ export class Map {
                             background_key: this_obj.properties?.background_key ?? null,
                         });
                     } catch {
-                        console.warn(`Parties data is not a valid JSON in ${layer_name} layer.`);
+                        this.data.logger.log_message(`Parties data is not a valid JSON in ${layer_name} layer.`);
                     }
                 });
                 return layer_name;
@@ -1316,7 +1318,7 @@ export class Map {
             case "number":
                 return property_value > this.collision_layer ? property_value : -1;
             default:
-                console.warn(`'${property_type}' is not a valid type for 'over'.`);
+                this.data.logger.log_message(`'${property_type}' is not a valid type for 'over'.`);
                 return -1;
         }
     }
@@ -1524,7 +1526,7 @@ export class Map {
                 event.fire(npc);
             };
         } else {
-            console.warn("Null NPC gotten...");
+            this.data.logger.log_message("Null NPC gotten...");
             return () => {};
         }
     }
@@ -1575,7 +1577,7 @@ export class Map {
         }
     ) {
         if (key_name in this.generic_sprites) {
-            console.warn(`Generic sprite "${key_name}" already exists.`);
+            this.data.logger.log_message(`Generic sprite "${key_name}" already exists.`);
             return null;
         }
         const sprite_base = this.data.info.misc_sprite_base_list[misc_sprite_key];
@@ -1626,10 +1628,10 @@ export class Map {
                     this.game_events.push(event);
                 });
             } else {
-                console.warn("Map Game Events list is not an Array type.");
+                this.data.logger.log_message("Map Game Events list is not an Array type.");
             }
         } catch {
-            console.warn("Map Game Events list is not a valid JSON.");
+            this.data.logger.log_message("Map Game Events list is not a valid JSON.");
         }
     }
 
@@ -1719,14 +1721,14 @@ export class Map {
             if (typeof this.sprite.properties.real_tile_width === "number") {
                 this.sprite.properties.real_tile_width = parseInt(this.sprite.properties.real_tile_width);
             } else {
-                console.warn("Map real_tile_width property must be an integer.");
+                this.data.logger.log_message("Map real_tile_width property must be an integer.");
             }
         }
         if (this.sprite.properties?.real_tile_height) {
             if (typeof this.sprite.properties.real_tile_height === "number") {
                 this.sprite.properties.real_tile_height = parseInt(this.sprite.properties.real_tile_height);
             } else {
-                console.warn("Map real_tile_height property must be an integer.");
+                this.data.logger.log_message("Map real_tile_height property must be an integer.");
             }
         }
 
@@ -1746,7 +1748,7 @@ export class Map {
                     },
                 };
             } catch {
-                console.warn("The sanctum data is not a valid JSON.");
+                this.data.logger.log_message("The sanctum data is not a valid JSON.");
             }
         }
 
@@ -1771,7 +1773,7 @@ export class Map {
             if (typeof this.sprite.properties.background_key === "string") {
                 this._background_key = this.sprite.properties.background_key;
             } else {
-                console.warn("Map background_key property must be 'string'.");
+                this.data.logger.log_message("Map background_key property must be 'string'.");
             }
         }
 
@@ -1779,7 +1781,7 @@ export class Map {
             if (typeof this.sprite.properties.background_key === "number") {
                 this.expected_party_level = parseInt(this.sprite.properties.expected_party_level);
             } else {
-                console.warn("Map background_key property must be an integer.");
+                this.data.logger.log_message("Map background_key property must be an integer.");
             }
         }
 
@@ -1798,7 +1800,7 @@ export class Map {
                 this._retreat_data = closest_retreat_point;
                 this._retreat_data.direction = directions[closest_retreat_point.direction as string];
             } catch {
-                console.warn("The Retreat data is not a valid JSON.");
+                this.data.logger.log_message("The Retreat data is not a valid JSON.");
             }
         }
 

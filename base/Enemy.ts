@@ -4,6 +4,7 @@ import * as _ from "lodash";
 import * as numbers from "./magic_numbers";
 import {effect_types} from "./Effect";
 import {Classes} from "./Classes";
+import {GoldenSun} from "GoldenSun";
 
 export class Enemy extends Player {
     public items: {
@@ -30,8 +31,8 @@ export class Enemy extends Player {
     public base_stats: {[main_stat in main_stats]?: number};
     public fled: boolean;
 
-    constructor(enemy_data, name) {
-        super(enemy_data.key_name, name ? name : enemy_data.name);
+    constructor(data: GoldenSun, enemy_data: any, name: string) {
+        super(data, enemy_data.key_name, name ? name : enemy_data.name);
         this.level = enemy_data.level;
         this.turns = enemy_data.turns;
         this.base_turns = this.turns;
@@ -162,6 +163,6 @@ export class Enemy extends Player {
     }
 }
 
-export function get_enemy_instance(enemy_data, suffix: string) {
-    return new Enemy(enemy_data, enemy_data.name + suffix);
+export function get_enemy_instance(data: GoldenSun, enemy_data: any, suffix: string) {
+    return new Enemy(data, enemy_data, enemy_data.name + suffix);
 }

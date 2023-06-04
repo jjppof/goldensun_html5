@@ -48,7 +48,7 @@ export class SetValueEvent extends GameEvent {
                 switch (detailed_value.type) {
                     case game_info_types.CHAR:
                         if (!(detailed_value.key_name in this.data.info.main_char_list)) {
-                            console.warn(`There's no char with key '${detailed_value.key_name}'.`);
+                            this.data.logger.log_message(`There's no char with key '${detailed_value.key_name}'.`);
                             break;
                         }
                         const char = this.data.info.main_char_list[detailed_value.key_name];
@@ -58,7 +58,7 @@ export class SetValueEvent extends GameEvent {
                             }
                             _.set(char, detailed_value.property, value_to_be_set);
                         } else {
-                            console.warn(`Char has no property named '${detailed_value.property}'.`);
+                            this.data.logger.log_message(`Char has no property named '${detailed_value.property}'.`);
                         }
                         break;
                     case game_info_types.HERO:
@@ -68,7 +68,7 @@ export class SetValueEvent extends GameEvent {
                             }
                             _.set(this.data.hero, detailed_value.property, value_to_be_set);
                         } else {
-                            console.warn(`Hero has no property named '${detailed_value.property}'.`);
+                            this.data.logger.log_message(`Hero has no property named '${detailed_value.property}'.`);
                         }
                         break;
                     case game_info_types.NPC:
@@ -83,7 +83,7 @@ export class SetValueEvent extends GameEvent {
                             }
                             _.set(npc, detailed_value.property, value_to_be_set);
                         } else if (npc) {
-                            console.warn(`NPC has no property named '${detailed_value.property}'.`);
+                            this.data.logger.log_message(`NPC has no property named '${detailed_value.property}'.`);
                         }
                         break;
                     case game_info_types.INTERACTABLE_OBJECT:
@@ -92,9 +92,13 @@ export class SetValueEvent extends GameEvent {
                             : this.data.map.interactable_objects[detailed_value.index];
                         if (!interactable_object) {
                             if (detailed_value.label) {
-                                console.warn(`There's no interactable object with label '${detailed_value.label}'.`);
+                                this.data.logger.log_message(
+                                    `There's no interactable object with label '${detailed_value.label}'.`
+                                );
                             } else {
-                                console.warn(`There's no interactable object with index '${detailed_value.index}'.`);
+                                this.data.logger.log_message(
+                                    `There's no interactable object with index '${detailed_value.index}'.`
+                                );
                             }
                             break;
                         }
@@ -104,7 +108,9 @@ export class SetValueEvent extends GameEvent {
                             }
                             _.set(interactable_object, detailed_value.property, value_to_be_set);
                         } else {
-                            console.warn(`Interactable object has no property named '${detailed_value.property}'.`);
+                            this.data.logger.log_message(
+                                `Interactable object has no property named '${detailed_value.property}'.`
+                            );
                         }
                         break;
                     case game_info_types.EVENT:
@@ -113,9 +119,13 @@ export class SetValueEvent extends GameEvent {
                             : TileEvent.get_event(detailed_value.index);
                         if (!event) {
                             if (detailed_value.label) {
-                                console.warn(`There's no tile event with label '${detailed_value.label}'.`);
+                                this.data.logger.log_message(
+                                    `There's no tile event with label '${detailed_value.label}'.`
+                                );
                             } else {
-                                console.warn(`There's no tile event with index '${detailed_value.index}'.`);
+                                this.data.logger.log_message(
+                                    `There's no tile event with index '${detailed_value.index}'.`
+                                );
                             }
                             break;
                         }
@@ -125,7 +135,9 @@ export class SetValueEvent extends GameEvent {
                             }
                             _.set(event, detailed_value.property, value_to_be_set);
                         } else {
-                            console.warn(`Tile event has no property named '${detailed_value.property}'.`);
+                            this.data.logger.log_message(
+                                `Tile event has no property named '${detailed_value.property}'.`
+                            );
                         }
                         break;
                 }

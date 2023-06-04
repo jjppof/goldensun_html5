@@ -15,6 +15,7 @@ node_modules/
 *.old
 *.swp
 *.tmp
+gshtml5.version
 
 ## System files
 .directory

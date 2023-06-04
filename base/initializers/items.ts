@@ -32,7 +32,7 @@ export function initialize_items(game: Phaser.Game, data: GoldenSun, items_db: a
                 i
             );
         } else {
-            console.warn("Item registered without a key name. Please double-check.");
+            data.logger.log_message("Item registered without a key name. Please double-check.");
         }
     }
     const loader = game.load.atlasJSONHash(

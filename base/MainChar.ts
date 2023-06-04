@@ -78,6 +78,7 @@ export class MainChar extends Player {
     public in_party: boolean;
 
     constructor(
+        data,
         key_name,
         info,
         sprite_base,
@@ -106,7 +107,7 @@ export class MainChar extends Player {
         special_class_type,
         weapon_sprite_shift
     ) {
-        super(key_name, name);
+        super(data, key_name, name);
         this.info = info;
         this._sprite_base = sprite_base;
         this._weapons_sprite_base = weapons_sprite_base;
@@ -1069,7 +1070,7 @@ export class MainChar extends Player {
             this.current_exp = this.exp_curve[value - 1];
             this.update_all();
         } else {
-            console.warn("Target level out of range");
+            this.data.logger.log_message("Target level out of range");
         }
     }
 }

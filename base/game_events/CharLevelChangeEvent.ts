@@ -15,7 +15,7 @@ export class CharLevelChangeEvent extends GameEvent {
             const target_char = this.data.info.main_char_list[this.target_char_key];
             target_char.change_level(this.target_level_value);
         } else {
-            console.warn(
+            this.data.logger.log_message(
                 `Could not find a char to change level.${
                     this.target_char_key ?? ` Could not find ${this.target_char_key}.`
                 }`

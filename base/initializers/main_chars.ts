@@ -6,7 +6,7 @@ import {SpriteBase} from "../SpriteBase";
 import {base_actions} from "../utils";
 import {GameInfo} from "./initialize_info";
 
-export function initialize_classes(classes_db) {
+export function initialize_classes(data: GoldenSun, classes_db: any) {
     let classes_list = {};
     for (let i = 0; i < classes_db.classes.length; ++i) {
         const class_data = classes_db.classes[i];
@@ -26,7 +26,7 @@ export function initialize_classes(classes_db) {
                 class_data.vulnerabilities
             );
         } else {
-            console.warn("Main char class registered without a key name. Please double-check.");
+            data.logger.log_message("Main char class registered without a key name. Please double-check.");
         }
     }
     return classes_list;
@@ -45,11 +45,11 @@ export function initialize_main_chars(
     for (let i = 0; i < main_chars_db.length; ++i) {
         const char_data = main_chars_db[i];
         if (!char_data.key_name) {
-            console.warn("Main char data registered without a key name. Please double-check.");
+            data.logger.log_message("Main char data registered without a key name. Please double-check.");
             continue;
         }
         if (!(char_data.key_name in npc_db)) {
-            console.warn(`Main char '${char_data.key_name}' not registered in npc db. Please double-check.`);
+            data.logger.log_message(`Main char '${char_data.key_name}' not registered in npc db. Please double-check.`);
             continue;
         }
         const char_db = npc_db[char_data.key_name];
@@ -63,6 +63,7 @@ export function initialize_main_chars(
         );
         const snapshot_djinn = char_snapshot_data?.djinn?.map(d => d.key_name);
         const main_char = new MainChar(
+            data,
             char_data.key_name,
             data.info,
             sprite_base,

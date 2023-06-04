@@ -26,6 +26,7 @@ import {StartMenu} from "./main_menus/StartMenu";
 import {initialize_save_menu, SaveMenu} from "./main_menus/SaveMenu";
 import {ParticlesWrapper} from "./ParticlesWrapper";
 import {initialize_bgm_data} from "./initializers/bgm";
+import {Logger} from "./Logger";
 
 /**
  * The project has basically two important folders: assets and base. All the source code is located inside base folder.
@@ -48,7 +49,7 @@ export class GoldenSun {
     public ignore_system_scaling: boolean = false;
 
     public electron_app: boolean;
-    private ipcRenderer: any;
+    public ipcRenderer: any;
 
     //main game states
     public menu_open: boolean = false;
@@ -114,6 +115,9 @@ export class GoldenSun {
     /** A wrapper for Particles Storm. */
     public particle_wrapper: ParticlesWrapper = null;
 
+    /** Class responsible to log stuff. It logs mainly user bad input. */
+    public logger: Logger = null;
+
     //managers
     public control_manager: ControlManager = null;
     public cursor_manager: CursorManager = null;
@@ -137,6 +141,7 @@ export class GoldenSun {
 
     constructor() {
         this.init_electron();
+        this.logger = new Logger(this);
         const config: Phaser.IGameConfig = {
             width: numbers.GAME_WIDTH,
             height: numbers.GAME_HEIGHT,

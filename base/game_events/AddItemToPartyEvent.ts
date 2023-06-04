@@ -14,7 +14,7 @@ export class AddItemToPartyEvent extends GameEvent {
     _fire() {
         const item = this.data.info.items_list[this.item_key];
         if (!item) {
-            console.warn(`Could not find item for "${this.item_key}". Check "item_key" property.`);
+            this.data.logger.log_message(`Could not find item for "${this.item_key}". Check "item_key" property.`);
             return;
         }
         MainChar.add_item_to_party(this.data.info.party_data, item, this.quantity);

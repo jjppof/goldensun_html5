@@ -1,7 +1,8 @@
+import {GoldenSun} from "../GoldenSun";
 import {SnapshotData} from "../Snapshot";
 import {Summon} from "../Summon";
 
-export function initialize_summons(summons_db, snapshot: SnapshotData) {
+export function initialize_summons(data: GoldenSun, summons_db: any, snapshot: SnapshotData) {
     const summons_list = {};
     const snapshot_summons_availability = snapshot?.summons_availability ?? {};
     for (let i = 0; i < summons_db.length; ++i) {
@@ -14,7 +15,7 @@ export function initialize_summons(summons_db, snapshot: SnapshotData) {
                 snapshot_summons_availability[summon_data.key_name] ?? summon_data.available
             );
         } else {
-            console.warn("Summon registered without a key name. Please double-check.");
+            data.logger.log_message("Summon registered without a key name. Please double-check.");
         }
     }
     return summons_list;

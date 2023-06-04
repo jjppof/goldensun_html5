@@ -211,7 +211,7 @@ export class Gamepad {
                     km.button_codes = buttons.map(get_button_code).filter(bc => bc !== undefined);
                     km.game_buttons = buttons.map(get_game_button).filter(bc => bc !== undefined);
                     if (km.button_codes.length !== km.game_buttons.length)
-                        console.warn(`${button_code} not well recognized!`);
+                        data.logger.log_message(`${button_code} not well recognized!`);
                 } else km.button_code = get_button_code(matches[matches.length - 1]);
                 return km;
             }

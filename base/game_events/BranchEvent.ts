@@ -56,7 +56,7 @@ export class BranchEvent extends GameEvent {
             case combinations.NOT:
                 return !next;
             default:
-                console.warn(`Invalid combination passed to branch event: ${this.combination}`);
+                this.data.logger.log_message(`Invalid combination passed to branch event: ${this.combination}`);
                 return next;
         }
     }
@@ -108,7 +108,9 @@ export class BranchEvent extends GameEvent {
                     );
                     break;
                 default:
-                    console.warn(`Invalid condition passed to branch event: ${comparator_pair.condition}`);
+                    this.data.logger.log_message(
+                        `Invalid condition passed to branch event: ${comparator_pair.condition}`
+                    );
                     break;
             }
         }

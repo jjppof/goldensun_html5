@@ -53,7 +53,7 @@ export function initialize_abilities(
                 ability_data.affects_downed
             );
         } else {
-            console.warn("Ability registered without a key name. Please double-check.");
+            data.logger.log_message("Ability registered without a key name. Please double-check.");
         }
     }
     const loader = game.load.atlasJSONHash(

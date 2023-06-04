@@ -122,7 +122,7 @@ export class GenericSpriteEvent extends GameEvent {
             case control_types.UPDATE:
                 const generic_sprite = this.data.map.generic_sprites[this.generic_sprite_key_name];
                 if (!generic_sprite) {
-                    console.warn(`Generic sprite "${this.generic_sprite_key_name}" doesn't exist.`);
+                    this.data.logger.log_message(`Generic sprite "${this.generic_sprite_key_name}" doesn't exist.`);
                     break;
                 }
                 if (this.group !== generic_sprite.parent) {

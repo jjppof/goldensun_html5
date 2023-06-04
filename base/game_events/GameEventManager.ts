@@ -1050,9 +1050,9 @@ export class GameEventManager {
                         : ""
                 }`;
                 if (info.type) {
-                    console.warn(`Game event type '${info.type}' not found. ${origin}`);
+                    this.data.logger.log_message(`Game event type '${info.type}' not found. ${origin}`);
                 } else {
-                    console.warn(`No event type was passed. ${origin}`);
+                    this.data.logger.log_message(`No event type was passed. ${origin}`);
                 }
                 return null;
         }
@@ -1121,7 +1121,7 @@ export class GameEventManager {
                 switch (detailed_value.type) {
                     case game_info_types.CHAR:
                         if (!(detailed_value.key_name in this.data.info.main_char_list)) {
-                            console.warn(`There's no char with key '${detailed_value.key_name}'.`);
+                            this.data.logger.log_message(`There's no char with key '${detailed_value.key_name}'.`);
                             break;
                         }
                         const char = this.data.info.main_char_list[detailed_value.key_name];
@@ -1129,13 +1129,13 @@ export class GameEventManager {
                             const char = this.data.info.main_char_list[detailed_value.key_name];
                             return _.get(char, detailed_value.property);
                         }
-                        console.warn(`Char has no property named '${detailed_value.property}'.`);
+                        this.data.logger.log_message(`Char has no property named '${detailed_value.property}'.`);
                         return null;
                     case game_info_types.HERO:
                         if (_.hasIn(this.data.hero, detailed_value.property)) {
                             return _.get(this.data.hero, detailed_value.property);
                         }
-                        console.warn(`Hero has no property named '${detailed_value.property}'.`);
+                        this.data.logger.log_message(`Hero has no property named '${detailed_value.property}'.`);
                         return null;
                     case game_info_types.NPC:
                         const npc = GameEvent.get_char(this.data, {
@@ -1146,7 +1146,7 @@ export class GameEventManager {
                         if (npc && _.hasIn(npc, detailed_value.property)) {
                             return _.get(npc, detailed_value.property);
                         } else if (npc) {
-                            console.warn(`NPC has no property named '${detailed_value.property}'.`);
+                            this.data.logger.log_message(`NPC has no property named '${detailed_value.property}'.`);
                         }
                         return null;
                     case game_info_types.INTERACTABLE_OBJECT:
@@ -1155,16 +1155,22 @@ export class GameEventManager {
                             : this.data.map.interactable_objects[detailed_value.index];
                         if (!interactable_object) {
                             if (detailed_value.label) {
-                                console.warn(`There's no interactable object with label '${detailed_value.label}'.`);
+                                this.data.logger.log_message(
+                                    `There's no interactable object with label '${detailed_value.label}'.`
+                                );
                             } else {
-                                console.warn(`There's no interactable object with index '${detailed_value.index}'.`);
+                                this.data.logger.log_message(
+                                    `There's no interactable object with index '${detailed_value.index}'.`
+                                );
                             }
                             break;
                         }
                         if (_.hasIn(interactable_object, detailed_value.property)) {
                             return _.get(interactable_object, detailed_value.property);
                         }
-                        console.warn(`Interactable object has no property named '${detailed_value.property}'.`);
+                        this.data.logger.log_message(
+                            `Interactable object has no property named '${detailed_value.property}'.`
+                        );
                         return null;
                     case game_info_types.EVENT:
                         const event = detailed_value.label
@@ -1172,23 +1178,27 @@ export class GameEventManager {
                             : TileEvent.get_event(detailed_value.index);
                         if (!event) {
                             if (detailed_value.label) {
-                                console.warn(`There's no tile event with label '${detailed_value.label}'.`);
+                                this.data.logger.log_message(
+                                    `There's no tile event with label '${detailed_value.label}'.`
+                                );
                             } else {
-                                console.warn(`There's no tile event with index '${detailed_value.index}'.`);
+                                this.data.logger.log_message(
+                                    `There's no tile event with index '${detailed_value.index}'.`
+                                );
                             }
                             break;
                         }
                         if (_.hasIn(event, detailed_value.property)) {
                             return _.get(event, detailed_value.property);
                         }
-                        console.warn(`Tile event has no property named '${detailed_value.property}'.`);
+                        this.data.logger.log_message(`Tile event has no property named '${detailed_value.property}'.`);
                         return null;
                     default:
-                        console.warn(`Invalid value type passed to game_info: ${detailed_value.type}`);
+                        this.data.logger.log_message(`Invalid value type passed to game_info: ${detailed_value.type}`);
                         return null;
                 }
             default:
-                console.warn(`Invalid value type passed to event: ${event_value.type}.`);
+                this.data.logger.log_message(`Invalid value type passed to event: ${event_value.type}.`);
                 return null;
         }
     }

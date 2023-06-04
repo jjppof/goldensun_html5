@@ -130,8 +130,8 @@ export class MoveEvent extends GameEvent {
         }
 
         if (this.is_npc && (char as NPC).ignore_physics) {
-            console.warn(
-                `NPC ${char.key_name} needs to have a collision body to move. Please set "ignore_physics" to true`
+            this.data.logger.log_message(
+                `NPC ${char.key_name} needs to have a collision body to move. Please set "ignore_physics" to true.`
             );
         }
 

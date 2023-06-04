@@ -183,6 +183,7 @@ export class Battle {
                 }
 
                 this.enemies_info[counter].instance = get_enemy_instance(
+                    this.data,
                     this.data.info.enemies_list[member_info.key].data,
                     name_suffix
                 );
@@ -1624,7 +1625,7 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                     break;
 
                 case effect_types.COUNTER_STRIKE:
-                    console.warn('"counter_strike" effect is not available yet.');
+                    this.data.logger.log_message('"counter_strike" effect is not available yet.');
                     break;
 
                 default:

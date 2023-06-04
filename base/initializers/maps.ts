@@ -35,7 +35,7 @@ export function initialize_maps(
                 snapshot?.internal_map_objs_storage_keys[map_data.key_name]
             );
         } else {
-            console.warn("Map registered without a key name. Please double-check.");
+            data.logger.log_message("Map registered without a key name. Please double-check.");
         }
     }
     let at_least_one_map_loaded = false;

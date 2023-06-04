@@ -61,7 +61,7 @@ export class EnemyAI {
             .filter(ability => caster.instance.current_pp >= data.info.abilities_list[ability.key_name].pp_cost);
 
         if (all_abilities.length === 0) {
-            console.warn(`${caster.instance.key_name} should have at least one ability.`);
+            data.logger.log_message(`${caster.instance.key_name} should have at least one ability.`);
         }
 
         const can_recover_hp = all_abilities.some(ability => {

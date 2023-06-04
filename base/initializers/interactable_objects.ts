@@ -13,7 +13,7 @@ export function initialize_interactable_objs_data(
     for (let interactable_objects_key in interactable_objects_db) {
         const iter_obj_data = interactable_objects_db[interactable_objects_key];
         if (!iter_obj_data.key_name) {
-            console.warn("Interactable object registered without a key name. Please double-check.");
+            data.logger.log_message("Interactable object registered without a key name. Please double-check.");
             continue;
         }
         if (iter_obj_data.actions) {

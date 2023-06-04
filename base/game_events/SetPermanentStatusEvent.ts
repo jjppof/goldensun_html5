@@ -19,7 +19,7 @@ export class SetPermanentStatusEvent extends GameEvent {
 
     _fire() {
         if (this.permanent_status === permanent_status.EQUIP_CURSE && this.add) {
-            console.warn("Equip curse can only be added by equipping a cursed item.");
+            this.data.logger.log_message("Equip curse can only be added by equipping a cursed item.");
             return;
         }
         if (this.target_char_key !== undefined && this.target_char_key in this.data.info.main_char_list) {
@@ -46,7 +46,7 @@ export class SetPermanentStatusEvent extends GameEvent {
                 target_char.remove_permanent_status(this.permanent_status);
             }
         } else {
-            console.warn(
+            this.data.logger.log_message(
                 `Could not find a char to change level.${
                     this.target_char_key ?? ` Could not find ${this.target_char_key}.`
                 }`

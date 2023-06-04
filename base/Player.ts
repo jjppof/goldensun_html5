@@ -2,6 +2,7 @@ import {Effect, effect_types} from "./Effect";
 import {elements, ordered_elements} from "./utils";
 import * as _ from "lodash";
 import {Subject} from "rxjs";
+import {GoldenSun} from "GoldenSun";
 
 export enum fighter_types {
     ALLY = 1,
@@ -148,6 +149,8 @@ export const debuff_recovery_base_chances = {
 
 /** The base class of MainChar and Enemy. */
 export abstract class Player {
+    /** Main GoldenSun object. */
+    protected data: GoldenSun;
     /** The player key name. */
     public key_name: string;
     /** The player name. */
@@ -247,7 +250,8 @@ export abstract class Player {
     /** Stats points added/decreased by ability (buffers debuffers) on this player. */
     public buff_stats: {[main_stat in main_stats]?: number};
 
-    constructor(key_name, name) {
+    constructor(data: GoldenSun, key_name: string, name: string) {
+        this.data = data;
         this.key_name = key_name;
         this.name = name;
         this.temporary_status = new Set();

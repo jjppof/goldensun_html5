@@ -276,14 +276,14 @@ export abstract class GameEvent {
                 if (options.npc_label in data.map.npcs_label_map) {
                     return data.map.npcs_label_map[options.npc_label];
                 } else {
-                    console.warn(`There's no NPC with '${options.npc_label}' label.`);
+                    data.logger.log_message(`There's no NPC with '${options.npc_label}' label.`);
                     return null;
                 }
             } else {
                 if (options.npc_index in data.map.npcs) {
                     return data.map.npcs[options.npc_index];
                 } else {
-                    console.warn(`There's no NPC with '${options.npc_index}' index.`);
+                    data.logger.log_message(`There's no NPC with '${options.npc_index}' index.`);
                     return null;
                 }
             }

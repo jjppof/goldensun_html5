@@ -75,7 +75,7 @@ export class Storage {
                     return storage_types.POSITION;
                     break;
                 default:
-                    console.warn(`Invalid data type for "${key}" storage key.`);
+                    this.data.logger.log_message(`Invalid data type for "${key}" storage key.`);
                     return null;
             }
         };
@@ -114,7 +114,7 @@ export class Storage {
     ) {
         const storage = engine_storage ? this.engine_storage : this.internal_storage;
         if (key_name in storage) {
-            console.warn(`${key_name} already defined in game storage.`);
+            this.data.logger.log_message(`${key_name} already defined in game storage.`);
             return;
         }
         storage[key_name] = {
@@ -135,7 +135,7 @@ export class Storage {
         if (key_name in this.internal_storage) {
             return this.internal_storage[key_name];
         }
-        console.warn(`There's no storage value with key '${key_name}'.`);
+        this.data.logger.log_message(`There's no storage value with key '${key_name}'.`);
         return null;
     }
 
@@ -150,7 +150,7 @@ export class Storage {
         } else if (key_name in this.engine_storage) {
             return this.engine_storage[key_name].value;
         }
-        console.warn(`There's no storage value with key '${key_name}'.`);
+        this.data.logger.log_message(`There's no storage value with key '${key_name}'.`);
         return null;
     }
 
@@ -163,7 +163,7 @@ export class Storage {
     set(key_name: string, value: RawStorageRecord["value"], engine_storage: boolean = false) {
         const storage = engine_storage ? this.engine_storage : this.internal_storage;
         if (!(key_name in storage)) {
-            console.warn(`There's no storage value with key '${key_name}'.`);
+            this.data.logger.log_message(`There's no storage value with key '${key_name}'.`);
             return;
         }
         storage[key_name].value = value;

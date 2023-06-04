@@ -30,7 +30,7 @@ export class CreateStorageVarEvent extends GameEvent {
                     type = storage_types.POSITION;
                     break;
                 default:
-                    console.warn(`Invalid data type for "${this.var_name}" storage key.`);
+                    this.data.logger.log_message(`Invalid data type for "${this.var_name}" storage key.`);
                     return;
             }
             this.data.storage.add(this.var_name, type, this.initial_value);

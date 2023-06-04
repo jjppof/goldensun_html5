@@ -1,4 +1,5 @@
 const path = require('path');
+const fs = require('fs');
 const url = require('url');
 const {
     app,
@@ -41,8 +42,29 @@ app.commandLine.appendSwitch('disable-gpu-vsync');
 // app.commandLine.appendSwitch('show-fps-counter');
 app.commandLine.appendSwitch('force_high_performance_gpu');
 
+function initializeLogger() {
+    const log_dir = path.join(__dirname, '../logs');
+    if (!fs.existsSync(log_dir)){
+        fs.mkdirSync(log_dir);
+    }
+    const log_filename = `gshtml5.${Date.now()}.log`;
+    const log_full_path = path.join(log_dir, log_filename);
+    const log_stream = fs.createWriteStream(log_full_path, {flags: 'a'});
+    const writeLine = msg => log_stream.write(msg + "\n");
+    try {
+        const version_info = fs.readFileSync('gshtml5.version', 'utf8');
+        writeLine(`VERSION: ${version_info.toString()}`);
+    } catch(e) {
+        writeLine("Could not get GSHTML5 version.");
+    }
+    ipcMain.on('register-log', (event, msg) => {
+        writeLine(msg);
+    });
+}
+
 app.whenReady().then(() => {
     createWindow();
+    initializeLogger();
 });
 
 app.on('window-all-closed', function () {

@@ -1,6 +1,7 @@
+import {GoldenSun} from "../GoldenSun";
 import {Djinn} from "../Djinn";
 
-export function initialize_djinni(djinni_db) {
+export function initialize_djinni(data: GoldenSun, djinni_db: any) {
     let djinni_list = {};
     for (let i = 0; i < djinni_db.length; ++i) {
         const djinn_data = djinni_db[i];
@@ -20,7 +21,7 @@ export function initialize_djinni(djinni_db) {
                 i
             );
         } else {
-            console.warn("Djinni registered in db without a key name. Please double-check.");
+            data.logger.log_message("Djinni registered in db without a key name. Please double-check.");
         }
     }
     return djinni_list;

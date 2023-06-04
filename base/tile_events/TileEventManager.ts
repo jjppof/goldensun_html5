@@ -451,9 +451,9 @@ export class TileEventManager {
             );
         } else {
             if (info.type) {
-                console.warn(`Tile event type '${info.type}' not found.`);
+                this.data.logger.log_message(`Tile event type '${info.type}' not found.`);
             } else {
-                console.warn("No tile event type was passed.");
+                this.data.logger.log_message("No tile event type was passed.");
             }
             return null;
         }

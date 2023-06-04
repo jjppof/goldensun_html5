@@ -235,7 +235,7 @@ export class MainStatusPsynergy extends StatusComponent {
                 count = 0;
             }
             if (!this.data.info.abilities_list[key_name]) {
-                console.warn(`Ability "${key_name}" does not exist in the database.`);
+                this.data.logger.log_message(`Ability "${key_name}" does not exist in the database.`);
             } else {
                 page_abilities.push(this.data.info.abilities_list[key_name]);
                 count++;
