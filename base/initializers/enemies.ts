@@ -15,7 +15,7 @@ export function initialize_enemies(
             data: enemies_db[i],
             sprite_base: null,
         };
-        info.sprite_base = new SpriteBase(info.data.key_name, [base_actions.BATTLE]);
+        info.sprite_base = new SpriteBase(data, info.data.key_name, [base_actions.BATTLE]);
 
         const battle_spritesheet = info.data.battle_spritesheet;
         if (battle_spritesheet !== undefined) {

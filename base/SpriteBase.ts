@@ -1,3 +1,5 @@
+import {GoldenSun} from "GoldenSun";
+
 /**
  * This class holds all the info related to spritesheet data, animations, actions
  * and the appropriate methods to generate this info.
@@ -5,6 +7,7 @@
 export class SpriteBase {
     public static readonly ACTION_ANIM_SEPARATOR = "/";
 
+    private data: GoldenSun;
     public key_name: string;
     private actions: {
         [action: string]: {
@@ -17,7 +20,8 @@ export class SpriteBase {
         };
     };
 
-    constructor(key_name, actions) {
+    constructor(data, key_name, actions) {
+        this.data = data;
         this.key_name = key_name;
         this.actions = {};
         for (let i = 0; i < actions.length; ++i) {
@@ -108,19 +112,23 @@ export class SpriteBase {
     }
 
     setAnimation(sprite: Phaser.Sprite, action) {
-        const animations = this.actions[action].animations;
-        const loop = this.actions[action].loop ?? true;
-        for (let i = 0; i < animations.length; ++i) {
-            const animation = animations[i];
-            const frame_rate = this.actions[action].frame_rate[animation];
-            const anim_key = this.getAnimationKey(action, animation);
-            sprite.animations.add(
-                anim_key,
-                this.actions[action].frame_names[animation],
-                frame_rate,
-                Array.isArray(loop) ? loop[i] : loop,
-                false
-            );
+        if (action in this.actions) {
+            const animations = this.actions[action].animations;
+            const loop = this.actions[action].loop ?? true;
+            for (let i = 0; i < animations.length; ++i) {
+                const animation = animations[i];
+                const frame_rate = this.actions[action].frame_rate[animation];
+                const anim_key = this.getAnimationKey(action, animation);
+                sprite.animations.add(
+                    anim_key,
+                    this.actions[action].frame_names[animation],
+                    frame_rate,
+                    Array.isArray(loop) ? loop[i] : loop,
+                    false
+                );
+            }
+        } else {
+            this.data.logger.log_message(`Action '${action}' not available for '${this.key_name}'.`);
         }
     }
 
@@ -141,11 +149,29 @@ export class SpriteBase {
     }
 
     getFrameRate(action, animation) {
-        return this.actions[action].frame_rate[animation];
+        if (action in this.actions) {
+            if (animation in this.actions[action].frame_rate) {
+                return this.actions[action].frame_rate[animation];
+            } else {
+                this.data.logger.log_message(`Animation '${animation}' not available for '${this.key_name}'.`);
+            }
+        } else {
+            this.data.logger.log_message(`Action '${action}' not available for '${this.key_name}'.`);
+        }
+        return null;
     }
 
     getFrameNumber(action, animation) {
-        return this.actions[action].frame_names[animation].length;
+        if (action in this.actions) {
+            if (animation in this.actions[action].frame_names) {
+                return this.actions[action].frame_names[animation].length;
+            } else {
+                this.data.logger.log_message(`Animation '${animation}' not available for '${this.key_name}'.`);
+            }
+        } else {
+            this.data.logger.log_message(`Action '${action}' not available for '${this.key_name}'.`);
+        }
+        return null;
     }
 
     getSpriteKey(action) {

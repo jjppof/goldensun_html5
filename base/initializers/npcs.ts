@@ -13,7 +13,7 @@ export function initialize_npcs_data(
         const npc_info = npc_db[npc_key];
         if (npc_info.actions === undefined) continue;
         const actions = Object.keys(npc_info.actions);
-        const npc_sprite_info = new SpriteBase(npc_key, actions);
+        const npc_sprite_info = new SpriteBase(data, npc_key, actions);
         npc_sprite_base_list[npc_key] = npc_sprite_info;
         for (let i = 0; i < actions.length; ++i) {
             const action_key = actions[i];

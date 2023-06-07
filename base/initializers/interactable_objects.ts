@@ -18,7 +18,7 @@ export function initialize_interactable_objs_data(
         }
         if (iter_obj_data.actions) {
             const actions = Object.keys(iter_obj_data.actions);
-            const sprite_base = new SpriteBase(iter_obj_data.key_name, actions);
+            const sprite_base = new SpriteBase(data, iter_obj_data.key_name, actions);
             iter_obj_sprite_base_list[iter_obj_data.key_name] = sprite_base;
             for (let i = 0; i < actions.length; ++i) {
                 const action_key = actions[i];

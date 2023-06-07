@@ -11,7 +11,7 @@ export function initialize_misc_data(
     const misc_sprite_base_list: GameInfo["misc_sprite_base_list"] = {};
     for (let misc_key in misc_db) {
         const misc_data = misc_db[misc_key];
-        const sprite_base = new SpriteBase(misc_data.key_name, Object.keys(misc_data.actions));
+        const sprite_base = new SpriteBase(data, misc_data.key_name, Object.keys(misc_data.actions));
         misc_sprite_base_list[misc_data.key_name] = sprite_base;
         for (let action_key in misc_data.actions) {
             const action = misc_data.actions[action_key];

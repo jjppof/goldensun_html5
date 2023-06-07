@@ -53,11 +53,12 @@ export function initialize_main_chars(
             continue;
         }
         const char_db = npc_db[char_data.key_name];
-        const sprite_base = new SpriteBase(char_data.key_name, Object.keys(char_db.actions));
+        const sprite_base = new SpriteBase(data, char_data.key_name, Object.keys(char_db.actions));
         const char_snapshot_data = snapshot?.main_chars.find(
             member_info => member_info.key_name === char_data.key_name
         );
         const weapons_sprite_base = new SpriteBase(
+            data,
             `${char_data.key_name}_weapons`,
             Object.keys(char_data.weapons_sprites)
         );
