@@ -854,8 +854,7 @@ export abstract class ControllableChar {
                 .to(tween_obj, duration, Phaser.Easing.Linear.None, true)
                 .onComplete.addOnce(() => {
                     if (this.shadow) {
-                        this.shadow.x = dest_char.x;
-                        this.shadow.y = dest_char.y;
+                        this.update_shadow();
                         if (!keep_shadow_hidden) {
                             this.shadow.visible = true;
                         }

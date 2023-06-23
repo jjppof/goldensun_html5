@@ -166,6 +166,9 @@ export class RevealFieldPsynergy extends FieldAbilities {
             0,
             -1
         );
+        this.waving_tween.onUpdateCallback(() => {
+            this.controllable_char.update_shadow();
+        });
         this.game.add
             .tween(this.reveal_wave_filter)
             .to(
