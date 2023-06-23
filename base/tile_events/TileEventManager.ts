@@ -374,7 +374,8 @@ export class TileEventManager {
                 info.active_storage_key,
                 null,
                 info.affected_by_reveal,
-                info.key_name
+                info.key_name,
+                info.ignore_destination_rule
             );
         } else if (info.type === event_types.STEP) {
             return new StepEvent(

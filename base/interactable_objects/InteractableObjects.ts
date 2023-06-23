@@ -930,6 +930,7 @@ export class InteractableObjects {
             undefined,
             this,
             false,
+            undefined,
             undefined
         );
         const this_event_location_key = IntegerPairKey.get_key(new_event.x, new_event.y);
@@ -1037,6 +1038,7 @@ export class InteractableObjects {
                 undefined,
                 this,
                 false,
+                undefined,
                 undefined
             ) as JumpEvent;
             const this_event_location_key = IntegerPairKey.get_key(new_event.x, new_event.y);
