@@ -335,7 +335,8 @@ export class TileEventManager {
                 info.skip_map_change_events,
                 info.fade_duration,
                 info.door_settings,
-                info.spiral_stair
+                info.spiral_stair,
+                info.on_event_toggle_layers
             );
         } else if (info.type === event_types.SLIDER) {
             return new SliderEvent(

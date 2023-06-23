@@ -1345,7 +1345,7 @@ export class Map {
                 if (layer_obj.alpha !== undefined) {
                     layer_sprite.alpha = layer_obj.alpha;
                 }
-                if (layer_obj.properties.reveal_layer) {
+                if (layer_obj.properties.reveal_layer || layer_obj.properties.hidden) {
                     layer_sprite.visible = false;
                 }
             } else {

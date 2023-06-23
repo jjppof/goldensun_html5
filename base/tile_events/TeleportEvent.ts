@@ -35,6 +35,7 @@ export class TeleportEvent extends TileEvent {
         door_open_sfx: string;
     };
     private spiral_stair: "up" | "down";
+    private on_event_toggle_layers: string[];
 
     constructor(
         game,
@@ -62,7 +63,8 @@ export class TeleportEvent extends TileEvent {
         skip_map_change_events,
         fade_duration,
         door_settings,
-        spiral_stair
+        spiral_stair,
+        on_event_toggle_layers
     ) {
         super(
             game,
@@ -96,6 +98,11 @@ export class TeleportEvent extends TileEvent {
         this.fadein_callback = null;
         this.door_settings = door_settings ?? null;
         this.spiral_stair = spiral_stair ?? null;
+        this.on_event_toggle_layers = on_event_toggle_layers
+            ? Array.isArray(on_event_toggle_layers)
+                ? on_event_toggle_layers
+                : [on_event_toggle_layers]
+            : [];
     }
 
     get open_door() {
@@ -114,6 +121,14 @@ export class TeleportEvent extends TileEvent {
         }
         this.data.tile_event_manager.on_event = true;
         this.data.hero.teleporting = true;
+
+        this.on_event_toggle_layers.forEach(layer => {
+            const layer_obj = this.data.map.get_layer(layer);
+            if (layer_obj) {
+                layer_obj.sprite.visible = !layer_obj.sprite.visible;
+            }
+        });
+
         if (this.open_door && this.door_settings) {
             this.open_door_teleport();
         } else if (this.start_climbing) {
