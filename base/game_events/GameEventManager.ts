@@ -74,6 +74,8 @@ import {SetCharVisibilityEvent} from "./SetCharVisibilityEvent";
 import {EventsHolderEvent} from "./EventsHolderEvent";
 import {EventsLoopEvent} from "./EventsLoopEvent";
 import {InteractableObjects} from "interactable_objects/InteractableObjects";
+import {LayerTweenEvent} from "./LayerTweenEvent";
+import {LayerVisibilityEvent} from "./LayerVisibilityEvent";
 
 export enum interaction_patterns {
     NO_INTERACTION = "no_interaction",
@@ -1042,6 +1044,29 @@ export class GameEventManager {
                     info.keep_reveal,
                     info.interval,
                     info.events
+                );
+            case event_types.LAYER_TWEEN:
+                return new LayerTweenEvent(
+                    this.game,
+                    this.data,
+                    info.active,
+                    info.key_name,
+                    info.keep_reveal,
+                    info.map_layer_name,
+                    info.finish_events,
+                    info.destination_offset,
+                    info.duration,
+                    info.easing
+                );
+            case event_types.LAYER_VISIBILITY:
+                return new LayerVisibilityEvent(
+                    this.game,
+                    this.data,
+                    info.active,
+                    info.key_name,
+                    info.keep_reveal,
+                    info.map_layer_name,
+                    info.visible
                 );
             default:
                 const origin = `Event origin: ${event_origin}. ${

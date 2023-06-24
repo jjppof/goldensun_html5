@@ -99,6 +99,8 @@ export enum event_types {
     SET_CHAR_VISIBILITY = "set_char_visibility",
     EVENTS_HOLDER = "events_holder",
     EVENTS_LOOP = "events_loop",
+    LAYER_TWEEN = "layer_tween",
+    LAYER_VISIBILITY = "layer_visibility",
 }
 
 export enum game_event_misc_origin {

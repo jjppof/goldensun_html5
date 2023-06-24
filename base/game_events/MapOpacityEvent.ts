@@ -21,7 +21,7 @@ export class MapOpacityEvent extends GameEvent {
         this.duration = duration ?? 0;
     }
 
-    async _fire() {
+    _fire() {
         this.map_layer = this.data.map.get_layer(this.map_layer_name);
 
         if (!this.map_layer || !this.map_layer.sprite) {
@@ -29,6 +29,8 @@ export class MapOpacityEvent extends GameEvent {
         }
 
         ++this.data.game_event_manager.events_running_count;
+
+        this.map_layer.visible = true;
 
         if (this.duration > 30) {
             this.game.add
