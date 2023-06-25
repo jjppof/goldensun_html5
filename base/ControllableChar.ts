@@ -510,8 +510,12 @@ export abstract class ControllableChar {
         anchor_x = anchor_x ?? ControllableChar.default_anchor.x;
         anchor_y = anchor_y ?? ControllableChar.default_anchor.y;
         this._sprite_info = sprite_info;
-        const sprite_key = this.sprite_info.getSpriteKey(this.current_action);
-        this.sprite = group.create(0, 0, sprite_key);
+        if (this.current_action) {
+            const sprite_key = this.sprite_info.getSpriteKey(this.current_action);
+            this.sprite = group.create(0, 0, sprite_key);
+        } else {
+            this.sprite = group.create(0, 0);
+        }
         if (!this.active) {
             this.sprite.visible = false;
         }
@@ -653,6 +657,9 @@ export abstract class ControllableChar {
         loop?: boolean
     ) {
         action = action ?? this.current_action;
+        if (!action) {
+            return null;
+        }
         if (animation === null || animation === undefined) {
             if (this.current_direction in reverse_directions) {
                 animation = reverse_directions[this.current_direction];
@@ -1320,7 +1327,7 @@ export abstract class ControllableChar {
         if (this.sprite.body) {
             this.sprite.body.velocity.y = this.sprite.body.velocity.x = 0;
         }
-        if (change_sprite) {
+        if (change_sprite && this.sprite_info) {
             if (this.climbing) {
                 this.data.hero.idle_climbing = true;
                 this.data.hero.play(base_actions.CLIMB, climb_actions.IDLE);

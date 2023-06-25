@@ -922,7 +922,10 @@ export class Map {
                     ? initial_action
                     : npc_db.action_aliases[initial_action];
             initial_action = snapshot_info?.action ?? initial_action;
-            let initial_animation = property_info.animation ?? npc_db.actions[actual_action].initial_animation;
+            let initial_animation = property_info.animation;
+            if (npc_db.actions && actual_action in npc_db.actions) {
+                initial_animation = npc_db.actions[actual_action].initial_animation;
+            }
             initial_animation = snapshot_info?.animation ?? initial_animation;
             const interaction_pattern = property_info.interaction_pattern ?? npc_db.interaction_pattern;
             const ignore_physics = property_info.ignore_physics ?? npc_db.ignore_physics;
