@@ -1348,7 +1348,11 @@ export class Map {
                 if (layer_obj.alpha !== undefined) {
                     layer_sprite.alpha = layer_obj.alpha;
                 }
-                if (layer_obj.properties.reveal_layer || layer_obj.properties.hidden) {
+                const hidden =
+                    typeof layer_obj.properties.hidden === "string"
+                        ? this.data.storage.get(layer_obj.properties.hidden)
+                        : layer_obj.properties.hidden;
+                if (layer_obj.properties.reveal_layer || hidden) {
                     layer_sprite.visible = false;
                 }
             } else {
