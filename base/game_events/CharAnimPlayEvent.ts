@@ -27,7 +27,7 @@ export class CharAnimPlayEvent extends GameEvent {
         reset_frame_on_stop,
         finish_events
     ) {
-        super(game, data, event_types.CHAR_ANIM_PLAY, active, key_name, keep_reveal);
+        super(game, data, event_types.CHAR_ANIMATION_PLAY, active, key_name, keep_reveal);
         this.npc_label = npc_label;
         this.is_npc = is_npc;
         this.action = action;
@@ -54,7 +54,7 @@ export class CharAnimPlayEvent extends GameEvent {
         if (this.stop_animation) {
             target_char.sprite.animations.currentAnim.stop(this.reset_frame_on_stop);
         } else {
-            const animation = target_char.play(this.animation, this.action, true, this.frame_rate, this.loop);
+            const animation = target_char.play(this.action, this.animation, true, this.frame_rate, this.loop);
             if (!animation.loop) {
                 ++this.data.game_event_manager.events_running_count;
                 const previous_force_idle_action_in_event = target_char.force_idle_action_in_event;

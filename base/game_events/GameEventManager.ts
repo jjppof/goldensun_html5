@@ -615,7 +615,7 @@ export class GameEventManager {
                     info.reset_frame_on_stop,
                     info.finish_events
                 );
-            case event_types.CHAR_ANIM_PLAY:
+            case event_types.CHAR_ANIMATION_PLAY:
                 return new CharAnimPlayEvent(
                     this.game,
                     this.data,

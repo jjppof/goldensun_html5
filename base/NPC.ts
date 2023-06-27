@@ -65,6 +65,7 @@ export class NPC extends ControllableChar {
         visible?: string;
         movement_type?: string;
         move_freely_in_event?: string;
+        interaction_pattern?: string;
     };
     private sprite_misc_db_key: string;
     private _ignore_physics: boolean;
@@ -185,6 +186,9 @@ export class NPC extends ControllableChar {
         this.anchor_y = anchor_y;
         this.scale_x = scale_x;
         this.scale_y = scale_y;
+        if (this.storage_keys.interaction_pattern !== undefined) {
+            interaction_pattern = this.data.storage.get(this.storage_keys.interaction_pattern);
+        }
         this._interaction_pattern = interaction_pattern ?? interaction_patterns.NO_INTERACTION;
         if (this.storage_keys.affected_by_reveal !== undefined) {
             affected_by_reveal = this.data.storage.get(this.storage_keys.affected_by_reveal);
@@ -336,6 +340,12 @@ export class NPC extends ControllableChar {
             const storage_value = this.data.storage.get(this.storage_keys.movement_type);
             if (this.movement_type !== storage_value) {
                 this.movement_type = storage_value as npc_movement_types;
+            }
+        }
+        if (this.storage_keys.interaction_pattern !== undefined) {
+            const storage_value = this.data.storage.get(this.storage_keys.movement_type);
+            if (this.interaction_pattern !== storage_value) {
+                this._interaction_pattern = storage_value as interaction_patterns;
             }
         }
     }

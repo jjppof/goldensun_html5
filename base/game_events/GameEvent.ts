@@ -63,7 +63,7 @@ export enum event_types {
     MAP_OPACITY = "map_opacity",
     MAP_BLEND_MODE = "map_blend_mode",
     IO_ANIM_PLAY = "io_animation_play",
-    CHAR_ANIM_PLAY = "char_animation_play",
+    CHAR_ANIMATION_PLAY = "char_animation_play",
     CHAR_SET_ACTIVATION = "char_set_activation",
     AUDIO_PLAY = "audio_play",
     CONTROL_BGM = "control_bgm",
