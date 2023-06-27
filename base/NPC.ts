@@ -343,7 +343,7 @@ export class NPC extends ControllableChar {
             }
         }
         if (this.storage_keys.interaction_pattern !== undefined) {
-            const storage_value = this.data.storage.get(this.storage_keys.movement_type);
+            const storage_value = this.data.storage.get(this.storage_keys.interaction_pattern);
             if (this.interaction_pattern !== storage_value) {
                 this._interaction_pattern = storage_value as interaction_patterns;
             }
