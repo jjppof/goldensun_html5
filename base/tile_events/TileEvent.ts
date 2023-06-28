@@ -108,8 +108,6 @@ export abstract class TileEvent {
         this._initial_activation_directions = new Set(TileEvent.format_activation_directions(activation_directions));
         if (snapshot_info?.activation_directions) {
             activation_directions = new Set(snapshot_info?.activation_directions);
-        } else if (this.active_storage_key && !this.data.storage.get(this.active_storage_key)) {
-            activation_directions = new Set();
         } else {
             activation_directions = new Set(
                 [...this._initial_activation_directions].filter(x => !this._initial_disabled_directions.has(x))
