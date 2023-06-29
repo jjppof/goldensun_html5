@@ -89,6 +89,7 @@ export class RevealFieldPsynergy extends FieldAbilities {
 
     finish(force: boolean = false, stop_char: boolean = true, finish_callback?: () => void) {
         this.controllable_char.on_reveal = false;
+        const previous_psynergy_state = this.controllable_char.casting_psynergy;
         this.controllable_char.casting_psynergy = true;
         this.toggle_reveal();
         this.data.map.gray_filter.intensity = 0;
@@ -102,12 +103,12 @@ export class RevealFieldPsynergy extends FieldAbilities {
         this.reveal_wave.destroy();
         this.reveal_wave_filter.destroy();
         this.waving_tween.stop();
-        if (stop_char && !this.controllable_char.jumping) {
+        if (stop_char && !this.controllable_char.jumping && !previous_psynergy_state) {
             this.controllable_char.stop_char(true);
         }
         this.data.audio.play_se("psynergy/11");
         const reset_states = () => {
-            this.controllable_char.casting_psynergy = false;
+            this.controllable_char.casting_psynergy = previous_psynergy_state;
             if (finish_callback) {
                 finish_callback();
             }
