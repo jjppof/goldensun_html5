@@ -1319,7 +1319,7 @@ export class Map {
             case "boolean":
                 return property_value ? this.collision_layers_number : -1;
             case "number":
-                return property_value > this.collision_layer ? property_value : -1;
+                return property_value;
             default:
                 this.data.logger.log_message(`'${property_type}' is not a valid type for 'over'.`);
                 return -1;

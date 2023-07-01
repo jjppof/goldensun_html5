@@ -7,7 +7,6 @@ import {InteractableObjects} from "./InteractableObjects";
  * An interactable object that can be broken by a ControllableChar when jumping on it.
  */
 export class Breakable extends InteractableObjects {
-    private static readonly ACTION_KEY = "breaking_pillar";
     private static readonly DOWN_DUST_COUNT = 7;
     private static readonly DOWN_FRAME_RATE = 20;
     private static readonly BROKEN_DUST_COUNT = 8;
@@ -111,7 +110,7 @@ export class Breakable extends InteractableObjects {
         this._one_level_broken = true;
 
         char.play(base_actions.IDLE);
-        this.play("to_break", Breakable.ACTION_KEY);
+        this.play("to_break", this.current_action);
         this.data.audio.play_se("actions/first_break");
 
         this.manage_filter(this.tint_filter, true);
@@ -150,7 +149,7 @@ export class Breakable extends InteractableObjects {
         await this.down_dust_animation(char);
         this.data.camera.disable_shake();
 
-        this.play("broken", Breakable.ACTION_KEY);
+        this.play("broken", this.current_action);
 
         let fall_resolve;
         const fall_promise = new Promise(resolve => (fall_resolve = resolve));

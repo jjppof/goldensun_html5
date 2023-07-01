@@ -185,8 +185,9 @@ export class Collision {
     /**
      * Changes the map body according to a given collision layer index.
      * @param new_collision_layer_index Target collision layer.
+     * @param sort_sprites if true, it will also sort the sprites in the map after reordering the layers.
      */
-    change_map_body(new_collision_layer_index: number) {
+    change_map_body(new_collision_layer_index: number, sort_sprites: boolean = false) {
         if (this.data.map.collision_layer === new_collision_layer_index) {
             return;
         }
@@ -195,6 +196,9 @@ export class Collision {
         this.config_collision_groups(this.data.map);
         this.config_collisions(new_collision_layer_index);
         this.data.map.config_layers(true);
+        if (sort_sprites) {
+            this.data.map.sort_sprites();
+        }
     }
 
     /**

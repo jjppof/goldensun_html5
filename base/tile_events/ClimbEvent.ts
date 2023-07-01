@@ -154,7 +154,7 @@ export class ClimbEvent extends TileEvent {
                 return;
             }
             if (this.change_to_collision_layer !== null) {
-                this.data.collision.change_map_body(this.change_to_collision_layer);
+                this.data.collision.change_map_body(this.change_to_collision_layer, true);
             }
             this.data.tile_event_manager.on_event = true;
             this.data.map.sprites_sort_paused = true;
@@ -200,7 +200,7 @@ export class ClimbEvent extends TileEvent {
             });
         } else if (activation_direction === directions.down) {
             if (this.change_to_collision_layer !== null) {
-                this.data.collision.change_map_body(this.change_to_collision_layer);
+                this.data.collision.change_map_body(this.change_to_collision_layer, true);
             }
             this.data.tile_event_manager.on_event = true;
             this.data.map.sprites_sort_paused = true;
