@@ -6,13 +6,15 @@ export class ColorizeMapEvent extends GameEvent {
     private intensity: number;
     private gray: number;
     private duration: number;
+    private layer: string;
 
-    constructor(game, data, active, key_name, keep_reveal, color_key, intensity, gray, duration, finish_events) {
+    constructor(game, data, active, key_name, keep_reveal, color_key, intensity, gray, duration, finish_events, layer) {
         super(game, data, event_types.COLORIZE_MAP, active, key_name, keep_reveal);
         this.color_key = color_key;
         this.intensity = intensity;
         this.gray = gray;
         this.duration = duration ?? 500;
+        this.layer = layer ?? null;
         this.finish_events = [];
         if (finish_events !== undefined) {
             finish_events.forEach(event_info => {
@@ -32,10 +34,10 @@ export class ColorizeMapEvent extends GameEvent {
         this.data.map.colorize_filter.color = color_key;
 
         if (gray) {
-            this.data.map.manage_filter(this.data.map.gray_filter, true);
+            this.data.map.manage_filter(this.data.map.gray_filter, true, this.layer);
         }
         if (intensity) {
-            this.data.map.manage_filter(this.data.map.colorize_filter, true);
+            this.data.map.manage_filter(this.data.map.colorize_filter, true, this.layer);
         }
 
         if (this.duration > 30) {
@@ -69,11 +71,11 @@ export class ColorizeMapEvent extends GameEvent {
 
         if (intensity === 0) {
             this.data.map.colorize_filter.color = -1;
-            this.data.map.manage_filter(this.data.map.colorize_filter, false);
+            this.data.map.manage_filter(this.data.map.colorize_filter, false, this.layer);
         }
 
         if (gray === 0) {
-            this.data.map.manage_filter(this.data.map.gray_filter, false);
+            this.data.map.manage_filter(this.data.map.gray_filter, false, this.layer);
         }
 
         --this.data.game_event_manager.events_running_count;

@@ -624,6 +624,12 @@ export class Map {
                 if (collision_object.properties) {
                     sensor_active =
                         collision_object.properties.affected_by_reveal && collision_object.properties.collide_on_reveal;
+                    if (collision_object.properties.controller_variable) {
+                        const storage_value = this.data.storage.get(
+                            collision_object.properties.controller_variable
+                        ) as boolean;
+                        sensor_active = storage_value ? sensor_active : true;
+                    }
                     split_polygon = collision_object.properties.split_polygon ?? false;
                 }
                 let max_x = -Infinity,
@@ -922,10 +928,11 @@ export class Map {
                     ? initial_action
                     : npc_db.action_aliases[initial_action];
             initial_action = snapshot_info?.action ?? initial_action;
-            let initial_animation = property_info.animation;
+            let initial_animation;
             if (npc_db.actions && actual_action in npc_db.actions) {
                 initial_animation = npc_db.actions[actual_action].initial_animation;
             }
+            initial_animation = property_info.animation ?? initial_animation;
             initial_animation = snapshot_info?.animation ?? initial_animation;
             const interaction_pattern = property_info.interaction_pattern ?? npc_db.interaction_pattern;
             const ignore_physics = property_info.ignore_physics ?? npc_db.ignore_physics;
@@ -1930,22 +1937,43 @@ export class Map {
      * Sets or unsets a Phaser.Filter in this map.
      * @param filter the filter you want to set.
      * @param set whether it's to set or unset the filter.
+     * @param layer specify a layer if you want that this filter management should be only for the given layer.
      */
-    manage_filter(filter: Phaser.Filter, set: boolean) {
+    manage_filter(filter: Phaser.Filter, set: boolean, layer?: string) {
         this.active_filters[filter.key] = set;
         const test_sprite = this.layers[0].sprite;
         if (set) {
             if (test_sprite.filters && !test_sprite.filters.includes(filter)) {
-                this.layers.forEach(l => (l.sprite.filters = [...l.sprite.filters, filter]));
+                this.layers.forEach(l => {
+                    if (layer && l.name !== layer) {
+                        return;
+                    }
+                    l.sprite.filters = [...l.sprite.filters, filter];
+                });
             } else if (!test_sprite.filters) {
-                this.layers.forEach(l => (l.sprite.filters = [filter]));
+                this.layers.forEach(l => {
+                    if (layer && l.name !== layer) {
+                        return;
+                    }
+                    l.sprite.filters = [filter];
+                });
             }
         } else {
             if (test_sprite.filters?.includes(filter)) {
                 if (test_sprite.filters.length === 1) {
-                    this.layers.forEach(l => (l.sprite.filters = undefined));
+                    this.layers.forEach(l => {
+                        if (layer && l.name !== layer) {
+                            return;
+                        }
+                        l.sprite.filters = undefined;
+                    });
                 } else {
-                    this.layers.forEach(l => (l.sprite.filters = l.sprite.filters.filter(f => f !== filter)));
+                    this.layers.forEach(l => {
+                        if (layer && l.name !== layer) {
+                            return;
+                        }
+                        l.sprite.filters = l.sprite.filters.filter(f => f !== filter);
+                    });
                 }
             }
         }

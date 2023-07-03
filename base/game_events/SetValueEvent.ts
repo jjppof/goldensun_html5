@@ -7,6 +7,7 @@ import {storage_types} from "../Storage";
 export class SetValueEvent extends GameEvent {
     private event_value: EventValue;
     private check_npc_storage_values: boolean;
+    private check_collision_structures: boolean;
     private npc_label: string;
     private npc_index: number;
     private increment: boolean;
@@ -19,6 +20,7 @@ export class SetValueEvent extends GameEvent {
         keep_reveal,
         event_value,
         check_npc_storage_values,
+        check_collision_structures,
         npc_label,
         npc_index,
         increment
@@ -26,6 +28,7 @@ export class SetValueEvent extends GameEvent {
         super(game, data, event_types.SET_VALUE, active, key_name, keep_reveal);
         this.event_value = event_value;
         this.check_npc_storage_values = check_npc_storage_values ?? false;
+        this.check_collision_structures = check_collision_structures ?? false;
         this.npc_label = npc_label;
         this.npc_index = npc_index;
         this.increment = increment ?? false;
@@ -151,6 +154,14 @@ export class SetValueEvent extends GameEvent {
                     npc_label: this.npc_label,
                 }) ?? this.origin_npc;
             (char as NPC).check_storage_keys();
+        }
+        if (this.check_collision_structures) {
+            this.data.map.collision_sprite.body.data.shapes.forEach(shape => {
+                if (shape.properties?.controller_variable) {
+                    const storage_value = this.data.storage.get(shape.properties.controller_variable) as boolean;
+                    shape.sensor = storage_value ? shape.sensor : true;
+                }
+            });
         }
     }
 

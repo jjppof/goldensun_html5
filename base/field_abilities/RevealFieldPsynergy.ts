@@ -60,6 +60,12 @@ export class RevealFieldPsynergy extends FieldAbilities {
         });
         this.data.map.collision_sprite.body.data.shapes.forEach(shape => {
             if (shape.properties?.affected_by_reveal) {
+                if (
+                    shape.properties?.controller_variable &&
+                    !this.data.storage.get(shape.properties?.controller_variable)
+                ) {
+                    return;
+                }
                 shape.sensor = !shape.sensor;
             }
         });

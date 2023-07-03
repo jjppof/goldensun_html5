@@ -357,6 +357,7 @@ export class GameEventManager {
                     info.keep_reveal,
                     info.event_value,
                     info.check_npc_storage_values,
+                    info.check_collision_structures,
                     info.npc_label,
                     info.npc_index,
                     info.increment
@@ -746,7 +747,8 @@ export class GameEventManager {
                     info.intensity,
                     info.gray,
                     info.duration,
-                    info.finish_events
+                    info.finish_events,
+                    info.layer
                 );
             case event_types.COLORIZE_CHAR:
                 return new ColorizeCharEvent(
