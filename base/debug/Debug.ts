@@ -5,6 +5,7 @@ import {reverse_directions, ordered_elements, elements} from "../utils";
 import * as _ from "lodash";
 import {IntegerPairKey} from "../tile_events/TileEvent";
 import {elemental_stats} from "../Player";
+import {BattleAnimationTester} from "../battle/BattleAnimationTester";
 
 export class Debug {
     public game: Phaser.Game;
@@ -15,11 +16,13 @@ export class Debug {
     public debug_stats: boolean;
     public show_fps: boolean;
     public show_sliders: boolean;
+    public show_animation_controls: boolean;
     public debug_stats_info: {
         chars: MainChar[];
         selected: number;
         listener: EventListener;
     };
+    public battle_anim_tester: BattleAnimationTester;
 
     constructor(game, data) {
         this.game = game;
@@ -30,6 +33,8 @@ export class Debug {
         this.debug_stats = false;
         this.show_fps = false;
         this.show_sliders = false;
+        this.show_animation_controls = false;
+        this.battle_anim_tester = null;
     }
 
     initialize_controls() {
@@ -44,6 +49,7 @@ export class Debug {
                     {buttons: Button.DEBUG_KEYS, on_down: this.toggle_keys.bind(this)},
                     {buttons: Button.DEBUG_STATS, on_down: this.toggle_stats.bind(this)},
                     {buttons: Button.DEBUG_SLIDERS, on_down: this.toggle_sliders.bind(this)},
+                    {buttons: Button.DEBUG_BATTLE_ANIMATION, on_down: this.toggle_animation_controls.bind(this)},
                 ]
             );
         }
@@ -134,6 +140,30 @@ export class Debug {
             document.getElementById("sliders_debug").style.display = "block";
         } else {
             document.getElementById("sliders_debug").style.display = "none";
+        }
+    }
+
+    toggle_animation_controls() {
+        this.show_animation_controls = !this.show_animation_controls;
+        if (this.show_animation_controls) {
+            document.getElementById("animation_tester").style.display = "block";
+        } else {
+            document.getElementById("animation_tester").style.display = "none";
+        }
+    }
+
+    start_battle_animation_tester() {
+        const enemy_pt_keyname = (document.getElementById("animation_tester_enemy_party") as HTMLInputElement).value;
+        if (enemy_pt_keyname && !this.battle_anim_tester) {
+            this.battle_anim_tester = new BattleAnimationTester(this.game, this.data, "bg_world_map", enemy_pt_keyname);
+            this.battle_anim_tester.start_battle();
+        }
+    }
+
+    fire_battle_animation() {
+        const ability_keyname = (document.getElementById("animation_tester_ability_keyname") as HTMLInputElement).value;
+        if (ability_keyname && this.battle_anim_tester) {
+            this.battle_anim_tester.fire_animation(ability_keyname);
         }
     }
 

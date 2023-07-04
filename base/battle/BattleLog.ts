@@ -107,7 +107,7 @@ export class BattleLog {
                 await this.add(`${caster.name} is defending!`);
                 break;
             case ability_msg_types.ITEM_UNLEASH:
-                await this.add(`${caster.name}'s ${item_name}`);
+                await this.add(`${caster.name}'s ${item_name ? item_name : "item"}`);
                 await this.add(`lets out a howl! ${ability.name}!`);
                 break;
             case ability_msg_types.SET_DJINN:

@@ -27,6 +27,7 @@ import {initialize_save_menu, SaveMenu} from "./main_menus/SaveMenu";
 import {ParticlesWrapper} from "./ParticlesWrapper";
 import {initialize_bgm_data} from "./initializers/bgm";
 import {Logger} from "./Logger";
+import {BattleAnimationTester} from "battle/BattleAnimationTester";
 
 /**
  * The project has basically two important folders: assets and base. All the source code is located inside base folder.
@@ -98,7 +99,7 @@ export class GoldenSun {
     public game_event_manager: GameEventManager = null;
 
     /** Class responsible for a battle */
-    public battle_instance: Battle = null;
+    public battle_instance: Battle | BattleAnimationTester = null;
 
     /** Class responsible for controlling the game audio engine */
     public audio: Audio = null;
@@ -432,7 +433,7 @@ export class GoldenSun {
         });
         this.game.scale.onFullScreenChange.add(this.set_fullscreen_mode.bind(this));
 
-        //enable zoom and psynergies shortcuts for testing
+        //enable zoom shortcuts for testing
         const setup_scale = (scale_factor: number) => {
             if (this.fullscreen) return;
             this.scale_factor = scale_factor;

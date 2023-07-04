@@ -111,3 +111,7 @@ canvas {
 #sliders_debug .holder input[type="number"] {
     max-width: 100px;
 }
+#animation_tester {
+    margin: 1rem 20%;
+    display: none;
+}

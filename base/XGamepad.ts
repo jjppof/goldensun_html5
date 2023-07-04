@@ -84,6 +84,7 @@ export enum EngineButton {
     DEBUG_SLIDERS,
     DEBUG_CAM_MINUS,
     DEBUG_CAM_PLUS,
+    DEBUG_BATTLE_ANIMATION,
 }
 
 /** Custom engine button list, for mapping */
@@ -108,6 +109,7 @@ const EngineButtons = [
     "DEBUG_SLIDERS",
     "DEBUG_CAM_MINUS",
     "DEBUG_CAM_PLUS",
+    "DEBUG_BATTLE_ANIMATION",
 ];
 
 // export type Button = AdvanceButton | EngineButton;
