@@ -293,6 +293,13 @@ export class InteractableObjects {
     get tile_y_pos() {
         return this._tile_y_pos;
     }
+    /** Gets the tile pos object for this interactable object. */
+    get tile_pos() {
+        return {
+            x: this._tile_x_pos,
+            y: this._tile_y_pos,
+        };
+    }
     /** Gets the x position in px. */
     get x(): number {
         if (this.sprite) {

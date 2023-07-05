@@ -48,6 +48,7 @@ export class BranchEvent extends GameEvent {
     }
 
     private apply_combination(current: boolean, next: boolean) {
+        current = current === null ? next : current;
         switch (this.combination) {
             case combinations.AND:
                 return current && next;
@@ -62,7 +63,7 @@ export class BranchEvent extends GameEvent {
     }
 
     _fire() {
-        let result: boolean = false;
+        let result: boolean = null;
         for (let comparator_pair of this.comparator_pairs) {
             switch (comparator_pair.condition) {
                 case conditions.EQ:

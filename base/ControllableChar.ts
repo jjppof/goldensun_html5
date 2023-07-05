@@ -297,6 +297,13 @@ export abstract class ControllableChar {
     get tile_y_pos() {
         return this._tile_y_pos;
     }
+    /** Gets the tile pos object for this char. */
+    get tile_pos() {
+        return {
+            x: this._tile_x_pos,
+            y: this._tile_y_pos,
+        };
+    }
 
     /** The current x position in px. */
     get x(): number {
