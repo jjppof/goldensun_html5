@@ -69,43 +69,43 @@ export class BranchEvent extends GameEvent {
                 case conditions.EQ:
                     result = this.apply_combination(
                         result,
-                        this.data.game_event_manager.get_value(comparator_pair.left_comparator_value) ===
-                            this.data.game_event_manager.get_value(comparator_pair.right_comparator_value)
+                        this.data.game_event_manager.get_value(comparator_pair.left_comparator_value, true) ===
+                            this.data.game_event_manager.get_value(comparator_pair.right_comparator_value, true)
                     );
                     break;
                 case conditions.GREATER_EQ:
                     result = this.apply_combination(
                         result,
-                        this.data.game_event_manager.get_value(comparator_pair.left_comparator_value) >=
-                            this.data.game_event_manager.get_value(comparator_pair.right_comparator_value)
+                        this.data.game_event_manager.get_value(comparator_pair.left_comparator_value, true) >=
+                            this.data.game_event_manager.get_value(comparator_pair.right_comparator_value, true)
                     );
                     break;
                 case conditions.LESS_EQ:
                     result = this.apply_combination(
                         result,
-                        this.data.game_event_manager.get_value(comparator_pair.left_comparator_value) <=
-                            this.data.game_event_manager.get_value(comparator_pair.right_comparator_value)
+                        this.data.game_event_manager.get_value(comparator_pair.left_comparator_value, true) <=
+                            this.data.game_event_manager.get_value(comparator_pair.right_comparator_value, true)
                     );
                     break;
                 case conditions.GREATER:
                     result = this.apply_combination(
                         result,
-                        this.data.game_event_manager.get_value(comparator_pair.left_comparator_value) >
-                            this.data.game_event_manager.get_value(comparator_pair.right_comparator_value)
+                        this.data.game_event_manager.get_value(comparator_pair.left_comparator_value, true) >
+                            this.data.game_event_manager.get_value(comparator_pair.right_comparator_value, true)
                     );
                     break;
                 case conditions.LESS:
                     result = this.apply_combination(
                         result,
-                        this.data.game_event_manager.get_value(comparator_pair.left_comparator_value) <
-                            this.data.game_event_manager.get_value(comparator_pair.right_comparator_value)
+                        this.data.game_event_manager.get_value(comparator_pair.left_comparator_value, true) <
+                            this.data.game_event_manager.get_value(comparator_pair.right_comparator_value, true)
                     );
                     break;
                 case conditions.DIFF:
                     result = this.apply_combination(
                         result,
-                        this.data.game_event_manager.get_value(comparator_pair.left_comparator_value) !==
-                            this.data.game_event_manager.get_value(comparator_pair.right_comparator_value)
+                        this.data.game_event_manager.get_value(comparator_pair.left_comparator_value, true) !==
+                            this.data.game_event_manager.get_value(comparator_pair.right_comparator_value, true)
                     );
                     break;
                 default:

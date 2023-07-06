@@ -1129,19 +1129,21 @@ export class GameEventManager {
      * This function is used in BranchEvents, for instance. The values used for comparison
      * in this kind of event are retrieved using this function.
      * @param event_value The value specification.
+     * @param stringfy if true, will stringfy position objects.
      * @returns The engine value issued by the user.
      */
-    get_value(event_value: EventValue) {
+    get_value(event_value: EventValue, stringfy: boolean = false) {
         const detailed_value = event_value.value as DetailedValues;
+        let return_value = null;
         switch (event_value.type) {
             case event_value_types.VALUE:
-                return event_value.value;
+                return_value = event_value.value;
+                break;
             case event_value_types.STORAGE:
                 const storage = this.data.storage.get_object(detailed_value.key_name);
                 if (storage) {
-                    return storage.type === storage_types.POSITION
-                        ? `${(storage.value as StoragePosition).x}/${(storage.value as StoragePosition).y}`
-                        : storage.value;
+                    return_value = storage.value;
+                    break;
                 }
                 return null;
             case event_value_types.GAME_INFO:
@@ -1154,13 +1156,15 @@ export class GameEventManager {
                         const char = this.data.info.main_char_list[detailed_value.key_name];
                         if (_.hasIn(char, detailed_value.property)) {
                             const char = this.data.info.main_char_list[detailed_value.key_name];
-                            return _.get(char, detailed_value.property);
+                            return_value = _.get(char, detailed_value.property);
+                            break;
                         }
                         this.data.logger.log_message(`Char has no property named '${detailed_value.property}'.`);
                         return null;
                     case game_info_types.HERO:
                         if (_.hasIn(this.data.hero, detailed_value.property)) {
-                            return _.get(this.data.hero, detailed_value.property);
+                            return_value = _.get(this.data.hero, detailed_value.property);
+                            break;
                         }
                         this.data.logger.log_message(`Hero has no property named '${detailed_value.property}'.`);
                         return null;
@@ -1171,7 +1175,8 @@ export class GameEventManager {
                             npc_index: detailed_value.index,
                         });
                         if (npc && _.hasIn(npc, detailed_value.property)) {
-                            return _.get(npc, detailed_value.property);
+                            return_value = _.get(npc, detailed_value.property);
+                            break;
                         } else if (npc) {
                             this.data.logger.log_message(`NPC has no property named '${detailed_value.property}'.`);
                         }
@@ -1193,7 +1198,8 @@ export class GameEventManager {
                             break;
                         }
                         if (_.hasIn(interactable_object, detailed_value.property)) {
-                            return _.get(interactable_object, detailed_value.property);
+                            return_value = _.get(interactable_object, detailed_value.property);
+                            break;
                         }
                         this.data.logger.log_message(
                             `Interactable object has no property named '${detailed_value.property}'.`
@@ -1216,7 +1222,8 @@ export class GameEventManager {
                             break;
                         }
                         if (_.hasIn(event, detailed_value.property)) {
-                            return _.get(event, detailed_value.property);
+                            return_value = _.get(event, detailed_value.property);
+                            break;
                         }
                         this.data.logger.log_message(`Tile event has no property named '${detailed_value.property}'.`);
                         return null;
@@ -1225,9 +1232,13 @@ export class GameEventManager {
                         return null;
                 }
             default:
+                if (return_value !== null) {
+                    break;
+                }
                 this.data.logger.log_message(`Invalid value type passed to event: ${event_value.type}.`);
                 return null;
         }
+        return typeof return_value === "object" && stringfy ? JSON.stringify(return_value) : return_value;
     }
 
     static get_interaction_directions(
