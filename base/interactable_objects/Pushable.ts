@@ -129,7 +129,9 @@ export class Pushable extends InteractableObjects {
                 );
                 if (this.position_allowed(front_pos.x, front_pos.y)) {
                     char.set_push_timer(() => {
-                        this.normal_push(char);
+                        if (!this.data.main_menu.open && !this.data.save_menu.open) {
+                            this.normal_push(char);
+                        }
                         char.trying_to_push = false;
                         char.unset_push_timer();
                     });

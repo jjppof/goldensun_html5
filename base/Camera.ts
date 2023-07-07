@@ -12,12 +12,20 @@ export class Camera {
     private _target: ControllableChar | InteractableObjects;
     private _camera_shake_enable: boolean;
     private _following: boolean;
+    private _shake_ref_pos: {
+        x: number;
+        y: number;
+    };
 
     constructor(game: Phaser.Game) {
         this.game = game;
         this._target = null;
         this._camera_shake_enable = false;
         this._following = false;
+        this._shake_ref_pos = {
+            x: 0,
+            y: 0,
+        };
     }
 
     /** The target that the camera is following. */
@@ -103,6 +111,8 @@ export class Camera {
      * Enables camera shake.
      */
     enable_shake() {
+        this._shake_ref_pos.x = this.game.camera.x;
+        this._shake_ref_pos.y = this.game.camera.y;
         this._camera_shake_enable = true;
     }
 
@@ -118,8 +128,8 @@ export class Camera {
      */
     update() {
         if (this.camera_shake_enable) {
-            this.game.camera.x += (Math.random() - 0.5) * Camera.SHAKE_INTENSITY;
-            this.game.camera.y += (Math.random() - 0.5) * Camera.SHAKE_INTENSITY;
+            this.game.camera.x = this._shake_ref_pos.x + (Math.random() - 0.5) * Camera.SHAKE_INTENSITY;
+            this.game.camera.y = this._shake_ref_pos.y + (Math.random() - 0.5) * Camera.SHAKE_INTENSITY;
         }
     }
 }

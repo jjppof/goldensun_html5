@@ -23,6 +23,12 @@ export class MainMenu {
     private djinn_menu: MainDjinnMenu;
     private status_menu: MainStatusMenu;
 
+    private _open: boolean;
+
+    get open() {
+        return this._open;
+    }
+
     public constructor(game: Phaser.Game, data: GoldenSun) {
         this.game = game;
         this.data = data;
@@ -46,6 +52,8 @@ export class MainMenu {
         this.item_menu = new MainItemMenu(this.game, this.data);
         this.djinn_menu = new MainDjinnMenu(this.game, this.data);
         this.status_menu = new MainStatusMenu(this.game, this.data);
+
+        this._open = false;
     }
 
     public get is_active() {
@@ -90,6 +98,7 @@ export class MainMenu {
     }
 
     public open_menu() {
+        this._open = true;
         if (this.data.map.map_name_window.open) {
             this.data.map.map_name_window.close();
         }
@@ -101,6 +110,7 @@ export class MainMenu {
 
     public close_menu() {
         if (!this.horizontal_menu.menu_active) return;
+        this._open = false;
         this.data.control_manager.reset();
         this.data.cursor_manager.hide();
 

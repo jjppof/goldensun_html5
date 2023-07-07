@@ -12,6 +12,12 @@ export class SaveMenu {
     private button_tween: Phaser.Tween;
     private button: Phaser.Sprite;
 
+    private _open: boolean;
+
+    get open() {
+        return this._open;
+    }
+
     constructor(game: Phaser.Game, data: GoldenSun) {
         this.game = game;
         this.data = data;
@@ -21,6 +27,8 @@ export class SaveMenu {
         this.button.anchor.setTo(0.5, 0.5);
 
         this.window.set_text_in_position("Save your quest", 48, 10, {italic: true});
+
+        this._open = false;
     }
 
     set_controls() {
@@ -46,6 +54,7 @@ export class SaveMenu {
     }
 
     close_menu() {
+        this._open = false;
         this.data.cursor_manager.hide();
         this.data.control_manager.reset();
         this.button_tween.stop();
@@ -56,6 +65,7 @@ export class SaveMenu {
     }
 
     open_menu() {
+        this._open = true;
         this.window.show(() => {
             this.data.cursor_manager.move_to({x: 38, y: 55}, {animate: false});
             this.data.cursor_manager.show();

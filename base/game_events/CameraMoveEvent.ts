@@ -42,6 +42,8 @@ export class CameraMoveEvent extends GameEvent {
         ++this.data.game_event_manager.events_running_count;
         const camera_was_following = this.data.camera.following;
         const previous_target = this.data.camera.unfollow();
+        const was_shaking = this.data.camera.camera_shake_enable;
+        this.data.camera.disable_shake();
         for (let i = 0; i < this.positions.length; ++i) {
             const point = this.positions[i];
             const x = point.x ?? this.game.camera.x;
@@ -66,6 +68,9 @@ export class CameraMoveEvent extends GameEvent {
         }
         if (this.reset_follow && camera_was_following) {
             await this.data.camera.follow(previous_target, this.return_to_target_duration);
+        }
+        if (was_shaking) {
+            this.data.camera.enable_shake();
         }
         --this.data.game_event_manager.events_running_count;
         this.finish_events.forEach(event => event.fire(this.origin_npc));
