@@ -351,6 +351,15 @@ export class NPC extends ControllableChar {
     }
 
     /**
+     * Gets the storage key name associated to a given NPC property.
+     * @param property the property name that you want to get the storage key.
+     * @returns returns the storage key name for the given property.
+     */
+    get_associated_storage_key(property: keyof NPC["storage_keys"]) {
+        return this.storage_keys[property];
+    }
+
+    /**
      * Initialize the Game Events related to this NPC.
      * @param events_info the events info json.
      * @param after_psynergy_cast_events the after psynergy cast events info json.

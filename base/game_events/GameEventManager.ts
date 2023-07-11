@@ -426,7 +426,8 @@ export class GameEventManager {
                     info.inventory_full_events,
                     info.custom_init_text,
                     info.no_chest,
-                    info.hide_on_finish
+                    info.hide_on_finish,
+                    info.standard_chest
                 );
             case event_types.PSYNERGY_STONE:
                 return new PsynergyStoneEvent(

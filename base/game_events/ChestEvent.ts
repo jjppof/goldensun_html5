@@ -9,6 +9,8 @@ const INIT_TEXT = (hero_name: string) => `${hero_name} checked the chest...`;
 const ITEM_TEXT = (hero_name: string, item_name: string) => `${hero_name} got ${item_name}.`;
 const FOUND_TEXT = (hero_name: string, item_name: string) => `${hero_name} found a ${item_name}.`;
 const INV_FULL_TEXT = (hero_name: string) => `But ${hero_name}'s party can't carry any more, so they left it behind.`;
+const EMPTY_TEXT_1 = (hero_name: string) => `${hero_name} checked the chest...`;
+const EMPTY_TEXT_2 = () => "but the chest was empty.";
 
 export class ChestEvent extends GameEvent {
     private item: Item;
@@ -22,6 +24,7 @@ export class ChestEvent extends GameEvent {
     private no_chest: boolean;
     private hide_on_finish: boolean;
     private control_key: number;
+    private standard_chest: boolean;
 
     constructor(
         game,
@@ -35,7 +38,8 @@ export class ChestEvent extends GameEvent {
         inventory_full_events,
         custom_init_text,
         no_chest,
-        hide_on_finish
+        hide_on_finish,
+        standard_chest
     ) {
         super(game, data, event_types.CHEST, active, key_name, keep_reveal);
         this.item = this.data.info.items_list[item_key_name];
@@ -43,6 +47,7 @@ export class ChestEvent extends GameEvent {
         this.no_chest = no_chest ?? false;
         this.custom_init_text = custom_init_text;
         this.hide_on_finish = hide_on_finish ?? false;
+        this.standard_chest = standard_chest ?? false;
         this.control_key = null;
 
         this.finish_events = [];
@@ -59,7 +64,6 @@ export class ChestEvent extends GameEvent {
 
     async _fire() {
         ++this.data.game_event_manager.events_running_count;
-        const item_retrieved = MainChar.add_item_to_party(this.data.info.party_data, this.item, this.quantity);
         this.control_enable = false;
         this.control_key = this.data.control_manager.add_controls(
             [
@@ -79,6 +83,34 @@ export class ChestEvent extends GameEvent {
         const hero_name = this.data.info.party_data.members[0].name;
         this.dialog_manager = new DialogManager(this.game, this.data);
         let promise = new Promise<void>(resolve => (this.resolve = resolve));
+
+        if (
+            this.standard_chest &&
+            this.data.storage.get(this.origin_npc.get_associated_storage_key("animation")) === "empty"
+        ) {
+            this.dialog_manager.next_dialog(EMPTY_TEXT_1(hero_name), () => {
+                this.control_enable = true;
+            });
+            await promise;
+
+            promise = new Promise<void>(resolve => (this.resolve = resolve));
+            this.dialog_manager.next_dialog(EMPTY_TEXT_2(), () => {
+                this.control_enable = true;
+            });
+            await promise;
+
+            this.control_enable = false;
+            this.data.control_manager.detach_bindings(this.control_key);
+            this.control_key = null;
+            this.dialog_manager?.destroy();
+            --this.data.game_event_manager.events_running_count;
+            this.finish_events.forEach(event => event.fire(this.origin_npc));
+
+            return;
+        }
+
+        const item_retrieved = MainChar.add_item_to_party(this.data.info.party_data, this.item, this.quantity);
+
         this.dialog_manager.next_dialog(this.custom_init_text ?? INIT_TEXT(hero_name), () => {
             this.control_enable = true;
         });
@@ -207,6 +239,9 @@ export class ChestEvent extends GameEvent {
         --this.data.game_event_manager.events_running_count;
 
         if (item_retrieved) {
+            if (this.standard_chest) {
+                this.data.storage.set(this.origin_npc.get_associated_storage_key("animation"), "empty");
+            }
             this.finish_events.forEach(event => event.fire(this.origin_npc));
         } else {
             this.inventory_full_events.forEach(event => event.fire(this.origin_npc));

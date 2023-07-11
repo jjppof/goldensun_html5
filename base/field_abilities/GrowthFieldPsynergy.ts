@@ -128,7 +128,7 @@ export class GrowthFieldPsynergy extends FieldAbilities {
             event.activate();
         });
         this.data.audio.play_se("battle/heal_1");
-        const anim_key = this.sprite_base.getAnimationKey(GrowthFieldPsynergy.ABILITY_KEY_NAME, "growing");
+        const anim_key = this.sprite_base.getAnimationKey(this.target_object.current_action, "growing");
         this.target_object.sprite.animations.play(anim_key);
         this.target_object.sprite.animations.currentAnim.onComplete.addOnce(() => {
             this.target_object.sprite.send_to_back = true;
