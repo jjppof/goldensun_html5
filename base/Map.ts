@@ -555,6 +555,12 @@ export class Map {
                 if (collision_object.properties) {
                     sensor_active =
                         collision_object.properties.affected_by_reveal && collision_object.properties.collide_on_reveal;
+                    if (collision_object.properties.controller_variable) {
+                        const is_sensor_by_controller = !(this.data.storage.get(
+                            collision_object.properties.controller_variable
+                        ) as boolean);
+                        sensor_active = is_sensor_by_controller ? true : sensor_active;
+                    }
                 }
                 if (collision_object.rectangle) {
                     const width = Math.round(collision_object.width);
@@ -625,10 +631,10 @@ export class Map {
                     sensor_active =
                         collision_object.properties.affected_by_reveal && collision_object.properties.collide_on_reveal;
                     if (collision_object.properties.controller_variable) {
-                        const storage_value = this.data.storage.get(
+                        const is_sensor_by_controller = !(this.data.storage.get(
                             collision_object.properties.controller_variable
-                        ) as boolean;
-                        sensor_active = storage_value ? sensor_active : true;
+                        ) as boolean);
+                        sensor_active = is_sensor_by_controller ? true : sensor_active;
                     }
                     split_polygon = collision_object.properties.split_polygon ?? false;
                 }

@@ -145,10 +145,12 @@ export class Storage {
      * @returns returns the state value.
      */
     get(key_name: string) {
+        const apply_not = key_name.startsWith("not:");
+        key_name = apply_not ? key_name.replace("not:", "") : key_name;
         if (key_name in this.internal_storage) {
-            return this.internal_storage[key_name].value;
+            return apply_not ? !this.internal_storage[key_name].value : this.internal_storage[key_name].value;
         } else if (key_name in this.engine_storage) {
-            return this.engine_storage[key_name].value;
+            return apply_not ? !this.engine_storage[key_name].value : this.engine_storage[key_name].value;
         }
         this.data.logger.log_message(`There's no storage value with key '${key_name}'.`);
         return null;

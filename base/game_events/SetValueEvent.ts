@@ -158,8 +158,10 @@ export class SetValueEvent extends GameEvent {
         if (this.check_collision_structures) {
             this.data.map.collision_sprite.body.data.shapes.forEach(shape => {
                 if (shape.properties?.controller_variable) {
-                    const storage_value = this.data.storage.get(shape.properties.controller_variable) as boolean;
-                    shape.sensor = storage_value ? shape.sensor : true;
+                    const is_sensor_by_controller = !(this.data.storage.get(
+                        shape.properties.controller_variable
+                    ) as boolean);
+                    shape.sensor = is_sensor_by_controller ? true : shape.sensor;
                 }
             });
         }
