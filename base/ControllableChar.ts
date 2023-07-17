@@ -1567,6 +1567,41 @@ export abstract class ControllableChar {
     }
 
     /**
+     * Gets the update callback that need to be fired under a loop in order to move this char to a specific position.
+     * @param dest the desitiona position object.
+     * @param on_position_reach_callback the callback that will be called when this char reaches the position.
+     * @param minimal_distance the minimal distance to be regarded to when check whether this char is close enough to the destination.
+     * @returns return the update callback to keep this char moving and checking whether it should stop.
+     */
+    get_move_callback(
+        dest: {x: number; y: number},
+        on_position_reach_callback: () => void,
+        minimal_distance: number = 3
+    ) {
+        const direction = new Phaser.Point(dest.x - this.x, dest.y - this.y).normalize();
+        this.set_speed(direction.x, direction.y, false);
+        const minimal_distance_sqr = minimal_distance * minimal_distance;
+
+        let previous_sqr_dist = Infinity;
+        let stop_update_callback = false;
+        const udpate_callback = () => {
+            if (stop_update_callback) {
+                return;
+            }
+            this.update_movement(true);
+            this.data.map.sort_sprites();
+            const this_sqr_dist = get_sqr_distance(this.x, dest.x, this.y, dest.y);
+            if (this_sqr_dist < minimal_distance_sqr || this_sqr_dist > previous_sqr_dist) {
+                this.stop_char();
+                stop_update_callback = true;
+                on_position_reach_callback();
+            }
+            previous_sqr_dist = this_sqr_dist;
+        };
+        return udpate_callback;
+    }
+
+    /**
      * Updates the tile positions.
      */
     update_tile_position() {

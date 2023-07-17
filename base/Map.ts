@@ -909,6 +909,22 @@ export class Map {
     }
 
     /**
+     * Removes a NPC from this map.
+     * @param npc the npc to be removed.
+     * @param unset if true, will also unset the npc.
+     */
+    remove_npc(npc: NPC, unset: boolean = true) {
+        this.remove_body_tile(npc);
+        if (npc.label in this.npcs_label_map) {
+            delete this.npcs_label_map[npc.label];
+        }
+        this._npcs = this._npcs.filter(n => n !== npc);
+        if (unset) {
+            npc.unset();
+        }
+    }
+
+    /**
      * Creates a NPC.
      * @param property_key the property name.
      * @param properties the properties of this NPC, parsed or not.
@@ -916,7 +932,7 @@ export class Map {
      * @param map_index the map unique index of this NPC.
      * @returns returns the created npc.
      */
-    private create_npc(property_key: string, properties: any, not_parsed: boolean = true, map_index: number) {
+    create_npc(property_key: string, properties: any, not_parsed: boolean = true, map_index: number) {
         try {
             const npc_index = this.npcs.length;
             const snapshot_info = this.data.snapshot_manager.snapshot?.map_data.npcs[npc_index];
@@ -1196,20 +1212,31 @@ export class Map {
 
     /**
      * Initializes all the NPCs of this map.
+     * @param custom_pos an initial custom position for this npc in px.
      */
     private config_npc() {
         for (let i = 0; i < this.npcs.length; ++i) {
             const npc = this.npcs[i];
-            const snapshot_info = this.data.snapshot_manager.snapshot?.map_data.npcs[i];
-            npc.init_npc(this, snapshot_info);
-            if ((!snapshot_info && npc.base_collision_layer in this._bodies_positions) || snapshot_info?.body_in_map) {
-                const bodies_positions = this._bodies_positions[npc.base_collision_layer];
-                const location_key = IntegerPairKey.get_key(npc.tile_x_pos, npc.tile_y_pos);
-                if (location_key in bodies_positions) {
-                    bodies_positions[location_key].push(npc);
-                } else {
-                    bodies_positions[location_key] = [npc];
-                }
+            this.config_single_npc(npc, i);
+        }
+    }
+
+    /**
+     * Initializes a single NPC in this map.
+     * @param npc the npc to be initialized.
+     * @param map_index the map unique index of this interactable object.
+     * @param custom_pos an initial custom position for this npc in px.
+     */
+    config_single_npc(npc: NPC, map_index: number, custom_pos?: {x?: number; y?: number}) {
+        const snapshot_info = this.data.snapshot_manager.snapshot?.map_data.npcs[map_index];
+        npc.init_npc(this, snapshot_info, custom_pos);
+        if ((!snapshot_info && npc.base_collision_layer in this._bodies_positions) || snapshot_info?.body_in_map) {
+            const bodies_positions = this._bodies_positions[npc.base_collision_layer];
+            const location_key = IntegerPairKey.get_key(npc.tile_x_pos, npc.tile_y_pos);
+            if (location_key in bodies_positions) {
+                bodies_positions[location_key].push(npc);
+            } else {
+                bodies_positions[location_key] = [npc];
             }
         }
     }

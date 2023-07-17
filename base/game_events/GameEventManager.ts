@@ -22,7 +22,6 @@ import {ChestEvent} from "./ChestEvent";
 import {PsynergyStoneEvent} from "./PsynergyStoneEvent";
 import {TimerEvent} from "./TimerEvent";
 import {PartyJoinEvent} from "./PartyJoinEvent";
-import {StoragePosition, storage_types} from "../Storage";
 import {TileEvent} from "../tile_events/TileEvent";
 import * as _ from "lodash";
 import {SummonEvent} from "./SummonEvent";
@@ -76,6 +75,7 @@ import {EventsLoopEvent} from "./EventsLoopEvent";
 import {InteractableObjects} from "interactable_objects/InteractableObjects";
 import {LayerTweenEvent} from "./LayerTweenEvent";
 import {LayerVisibilityEvent} from "./LayerVisibilityEvent";
+import {MainCharsJoinSplitEvent} from "./MainCharsSplitEvent";
 
 export enum interaction_patterns {
     NO_INTERACTION = "no_interaction",
@@ -1070,6 +1070,24 @@ export class GameEventManager {
                     info.keep_reveal,
                     info.map_layer_name,
                     info.visible
+                );
+            case event_types.MAIN_CHARS_JOIN_SPLIT:
+                return new MainCharsJoinSplitEvent(
+                    this.game,
+                    this.data,
+                    info.active,
+                    info.key_name,
+                    info.keep_reveal,
+                    info.mode,
+                    info.main_char_key_name,
+                    info.destination_incremental,
+                    info.destination_type,
+                    info.destination,
+                    info.wait_after,
+                    info.final_direction,
+                    info.finish_events,
+                    info.keep_npc_collision_disable,
+                    info.dash
                 );
             default:
                 const origin = `Event origin: ${event_origin}. ${

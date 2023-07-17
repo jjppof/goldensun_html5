@@ -637,11 +637,25 @@ export class NPC extends ControllableChar {
     }
 
     /**
+     * Sets this NPC visibility.
+     * @param visible whether to be visible or not.
+     */
+    set_visible(visible: boolean) {
+        if (this.sprite) {
+            this.sprite.visible = visible;
+        }
+        if (this.shadow) {
+            this.shadow.visible = visible;
+        }
+    }
+
+    /**
      * Initializes this NPC.
      * @param map the map that's being mounted.
      * @param snapshot_info the snapshot data of this npc.
+     * @param custom_pos an initial custom position for this npc in px.
      */
-    init_npc(map: Map, snapshot_info?: SnapshotData["map_data"]["npcs"][0]) {
+    init_npc(map: Map, snapshot_info?: SnapshotData["map_data"]["npcs"][0], custom_pos?: {x?: number; y?: number}) {
         const npc_db = this.data.dbs.npc_db[this.key_name];
         const npc_sprite_info =
             this.sprite_misc_db_key !== undefined
@@ -668,8 +682,8 @@ export class NPC extends ControllableChar {
             this.anchor_y ?? npc_db.anchor_y,
             this.scale_x ?? npc_db.scale_x,
             this.scale_y ?? npc_db.scale_y,
-            snapshot_info?.position.x_px,
-            snapshot_info?.position.y_px
+            custom_pos?.x ?? snapshot_info?.position.x_px,
+            custom_pos?.y ?? snapshot_info?.position.y_px
         );
         this._initial_x = this.sprite.x;
         this._initial_y = this.sprite.y;

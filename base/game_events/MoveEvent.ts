@@ -83,7 +83,6 @@ export class MoveEvent extends GameEvent {
         previous_force_char_stop_in_event: boolean,
         previous_move_freely_in_event: boolean
     ) {
-        char.stop_char();
         if (this.final_direction !== null) {
             await char.face_direction(this.final_direction);
         }
@@ -164,21 +163,14 @@ export class MoveEvent extends GameEvent {
             await this.data.camera.follow(char, this.camera_follow_duration);
         }
 
-        const direction = new Phaser.Point(dest.x - char.x, dest.y - char.y).normalize();
-        char.set_speed(direction.x, direction.y, false);
-        const minimal_distance_sqr = this.minimal_distance * this.minimal_distance;
-
-        let previous_sqr_dist = Infinity;
-        const udpate_callback = async () => {
-            char.update_movement(true);
-            this.data.map.sort_sprites();
-            const this_sqr_dist = get_sqr_distance(char.x, dest.x, char.y, dest.y);
-            if (this_sqr_dist < minimal_distance_sqr || this_sqr_dist > previous_sqr_dist) {
+        const udpate_callback = char.get_move_callback(
+            dest,
+            () => {
                 this.data.game_event_manager.remove_callback(udpate_callback);
-                await this.on_position_reach(char, previous_force_char_stop_in_event, previous_move_freely_in_event);
-            }
-            previous_sqr_dist = this_sqr_dist;
-        };
+                this.on_position_reach(char, previous_force_char_stop_in_event, previous_move_freely_in_event);
+            },
+            this.minimal_distance
+        );
         this.data.game_event_manager.add_callback(udpate_callback);
     }
 

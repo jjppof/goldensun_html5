@@ -101,6 +101,7 @@ export enum event_types {
     EVENTS_LOOP = "events_loop",
     LAYER_TWEEN = "layer_tween",
     LAYER_VISIBILITY = "layer_visibility",
+    MAIN_CHARS_JOIN_SPLIT = "main_chars_join_split",
 }
 
 export enum game_event_misc_origin {
