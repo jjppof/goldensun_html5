@@ -358,6 +358,7 @@ export class GameEventManager {
                     info.event_value,
                     info.check_npc_storage_values,
                     info.check_collision_structures,
+                    info.check_layers_visibility,
                     info.npc_label,
                     info.npc_index,
                     info.increment

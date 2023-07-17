@@ -8,6 +8,7 @@ export class SetValueEvent extends GameEvent {
     private event_value: EventValue;
     private check_npc_storage_values: boolean;
     private check_collision_structures: boolean;
+    private check_layers_visibility: boolean;
     private npc_label: string;
     private npc_index: number;
     private increment: boolean;
@@ -21,6 +22,7 @@ export class SetValueEvent extends GameEvent {
         event_value,
         check_npc_storage_values,
         check_collision_structures,
+        check_layers_visibility,
         npc_label,
         npc_index,
         increment
@@ -29,6 +31,7 @@ export class SetValueEvent extends GameEvent {
         this.event_value = event_value;
         this.check_npc_storage_values = check_npc_storage_values ?? false;
         this.check_collision_structures = check_collision_structures ?? false;
+        this.check_layers_visibility = check_layers_visibility ?? false;
         this.npc_label = npc_label;
         this.npc_index = npc_index;
         this.increment = increment ?? false;
@@ -164,6 +167,14 @@ export class SetValueEvent extends GameEvent {
                     shape.sensor = is_sensor_by_controller ? true : shape.sensor;
                 }
             });
+        }
+        if (this.check_layers_visibility) {
+            for (let i = 0; i < this.data.map.layers.length; ++i) {
+                const layer_obj = this.data.map.layers[i];
+                if (layer_obj.properties?.hidden !== undefined && typeof layer_obj.properties.hidden === "string") {
+                    layer_obj.sprite.visible = !(this.data.storage.get(layer_obj.properties.hidden) as boolean);
+                }
+            }
         }
     }
 
