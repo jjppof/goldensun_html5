@@ -58,6 +58,16 @@ type GeneralFilterAttr = {
     ignore_if_dodge?: boolean;
 };
 
+type BlinkAttr = Omit<GeneralFilterAttr, "remove"> & {
+    count: number;
+    interval: number;
+    color: {
+        r: number;
+        g: number;
+        b: number;
+    };
+};
+
 enum sprite_types {
     SPRITE = "sprite",
     CIRCLE = "circle",
@@ -105,6 +115,7 @@ export class BattleAnimation {
     public rotation_sequence: DefaultAttr[] = [];
     public stage_angle_sequence: DefaultAttr[] = [];
     public hue_angle_sequence: DefaultAttr[] = [];
+    public blink_sequence: BlinkAttr[] = [];
     public tint_sequence: (GeneralFilterAttr & {
         r: number;
         g: number;
@@ -230,6 +241,7 @@ export class BattleAnimation {
         flame_filter_sequence,
         particles_sequence,
         sfx_sequence,
+        blink_sequence,
         cast_type,
         wait_for_cast_animation,
         follow_caster,
@@ -265,6 +277,7 @@ export class BattleAnimation {
         this.blend_mode_sequence = blend_mode_sequence ?? [];
         this.particles_sequence = particles_sequence ?? [];
         this.sfx_sequence = sfx_sequence ?? [];
+        this.blink_sequence = blink_sequence ?? [];
         this.running = false;
         this.cast_type = cast_type;
         this.wait_for_cast_animation = wait_for_cast_animation;
@@ -529,6 +542,7 @@ export class BattleAnimation {
         this.play_stage_angle_sequence();
         this.play_particles();
         this.play_sfx();
+        this.play_blink_sequence();
         this.unmount_animation(finish_callback);
     }
 
@@ -1086,6 +1100,66 @@ export class BattleAnimation {
                 filter.intensity = filter_seq.intensity ?? filter.intensity;
             }
         );
+    }
+
+    play_blink_sequence() {
+        for (let i = 0; i < this.blink_sequence.length; ++i) {
+            const filter_seq = this.blink_sequence[i];
+            if (filter_seq.ignore_if_dodge && this.target_dodged) {
+                continue;
+            }
+            const sprites = this.get_sprites(filter_seq);
+            if (!Array.isArray(filter_seq.start_delay) && typeof filter_seq.start_delay === "object") {
+                filter_seq.start_delay = this.get_expanded_values(
+                    filter_seq.start_delay as CompactValuesSpecifier,
+                    Object.keys(sprites).length
+                );
+            }
+            for (let key in sprites) {
+                const sprite_info = sprites[key];
+                const sprite = sprite_info.obj as PlayerSprite | Phaser.Sprite;
+                let resolve_function;
+                const this_promise = new Promise(resolve => (resolve_function = resolve));
+                this.promises.push(this_promise);
+                const start_delay = Array.isArray(filter_seq.start_delay)
+                    ? filter_seq.start_delay[sprite_info.index]
+                    : (filter_seq.start_delay as number);
+                this.game.time.events.add(start_delay, async () => {
+                    const filter = sprite.available_filters[engine_filters.TINT] as Phaser.Filter.Tint;
+                    this.manage_filter(filter as Phaser.Filter, sprite, false);
+
+                    let counter = filter_seq.count << 1;
+                    const blink_timer = this.game.time.create(false);
+                    let timer_resolve;
+                    const timer_promise = new Promise(resolve => (timer_resolve = resolve));
+                    const r = filter_seq?.color?.r ?? 1.0;
+                    const g = filter_seq?.color?.g ?? 1.0;
+                    const b = filter_seq?.color?.b ?? 1.0;
+                    blink_timer.loop(filter_seq.interval, () => {
+                        if (counter % 2 === 0) {
+                            filter.r = r;
+                            filter.g = g;
+                            filter.b = b;
+                        } else {
+                            filter.r = -1;
+                            filter.g = -1;
+                            filter.b = -1;
+                        }
+                        --counter;
+                        if (counter === 0) {
+                            blink_timer.stop();
+                            timer_resolve();
+                        }
+                    });
+                    blink_timer.start();
+                    await timer_promise;
+                    blink_timer.destroy();
+                    this.manage_filter(filter as Phaser.Filter, sprite, true);
+
+                    resolve_function();
+                });
+            }
+        }
     }
 
     play_stage_angle_sequence() {

@@ -113,70 +113,21 @@
         "sprite_index": "targets",
         "duration": 350
     }],
-    "tint_sequence": [{
+    "blink_sequence": [{
         "sprite_index": "targets",
         "start_delay": 1300,
-        "r": 1,
-        "g": 1,
-        "b": 1
+        "count": 4,
+        "interval": 40
     },{
         "sprite_index": "targets",
-        "start_delay": 1650,
-        "r": -1,
-        "g": -1,
-        "b": -1
-    },{
-        "sprite_index": "targets",
-        "start_delay": 1900,
-        "r": 1,
-        "g": 1,
-        "b": 1
-    },{
-        "sprite_index": "targets",
-        "start_delay": 1930,
-        "r": -1,
-        "g": -1,
-        "b": -1
-    },{
-        "sprite_index": "targets",
-        "start_delay": 1960,
-        "r": 1,
-        "g": 1,
-        "b": 1
+        "start_delay": 1700,
+        "count": 3,
+        "interval": 100
     },{
         "sprite_index": "targets",
         "start_delay": 2500,
-        "r": -1,
-        "g": -1,
-        "b": -1
-    },{
-        "sprite_index": "targets",
-        "start_delay": 3000,
-        "r": -1,
-        "g": -1,
-        "b": -1
-    },{
-        "sprite_index": "targets",
-        "start_delay": 3030,
-        "r": 1,
-        "g": 1,
-        "b": 1
-    },{
-        "sprite_index": "targets",
-        "start_delay": 3060,
-        "r": -1,
-        "g": -1,
-        "b": -1
-    },{
-        "sprite_index": "targets",
-        "start_delay": 3090,
-        "r": 1,
-        "g": 1,
-        "b": 1
-    },{
-        "sprite_index": "targets",
-        "start_delay": 3200,
-        "remove": true
+        "count": 10,
+        "interval": 70
     }],
     "cast_type": "psynergy_cast",
     "wait_for_cast_animation": false,

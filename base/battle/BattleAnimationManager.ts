@@ -66,6 +66,7 @@ export class BattleAnimationManager {
             animation_recipe.flame_filter_sequence,
             animation_recipe.particles_sequence,
             animation_recipe.sfx_sequence,
+            animation_recipe.blink_sequence,
             animation_recipe.cast_type,
             animation_recipe.wait_for_cast_animation,
             animation_recipe.follow_caster,

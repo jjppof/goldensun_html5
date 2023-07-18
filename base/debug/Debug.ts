@@ -153,7 +153,10 @@ export class Debug {
     }
 
     start_battle_animation_tester() {
-        const enemy_pt_keyname = (document.getElementById("animation_tester_enemy_party") as HTMLInputElement).value;
+        let enemy_pt_keyname = (document.getElementById("animation_tester_enemy_party") as HTMLInputElement).value;
+        if (!enemy_pt_keyname) {
+            enemy_pt_keyname = Object.keys(this.data.dbs.enemies_parties_db)[0];
+        }
         if (enemy_pt_keyname && !this.battle_anim_tester) {
             this.battle_anim_tester = new BattleAnimationTester(this.game, this.data, "bg_world_map", enemy_pt_keyname);
             this.battle_anim_tester.start_battle();

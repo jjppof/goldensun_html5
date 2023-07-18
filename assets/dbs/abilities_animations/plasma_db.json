@@ -111,40 +111,16 @@
         "sprite_index": "targets",
         "duration": 350
     }],
-    "tint_sequence": [{
+    "blink_sequence": [{
         "sprite_index": "targets",
         "start_delay": 1500,
-        "r": 1,
-        "g": 1,
-        "b": 1
-    },{
-        "sprite_index": "targets",
-        "start_delay": 1650,
-        "r": -1,
-        "g": -1,
-        "b": -1
+        "count": 1,
+        "interval": 150
     },{
         "sprite_index": "targets",
         "start_delay": 1900,
-        "r": 1,
-        "g": 1,
-        "b": 1
-    },{
-        "sprite_index": "targets",
-        "start_delay": 1930,
-        "r": -1,
-        "g": -1,
-        "b": -1
-    },{
-        "sprite_index": "targets",
-        "start_delay": 1960,
-        "r": 1,
-        "g": 1,
-        "b": 1
-    },{
-        "sprite_index": "targets",
-        "start_delay": 1990,
-        "remove": true
+        "count": 2,
+        "interval": 30
     }],
     "cast_type": "psynergy_cast",
     "wait_for_cast_animation": false,
