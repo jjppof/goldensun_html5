@@ -3312,8 +3312,7 @@
         "ability_category": "djinn",
         "battle_animation_key": "spring",
         "priority_move": false,
-        "msg_type": "unleash",
-        "affects_downed": true
+        "msg_type": "unleash"
     },{
         "key_name": "chill",
         "name": "Chill",

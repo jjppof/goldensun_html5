@@ -260,11 +260,9 @@ export class Battle {
     }
 
     check_parties() {
-        this.allies_defeated = this.allies_info.every(player =>
-            player.instance.has_permanent_status(permanent_status.DOWNED)
-        );
+        this.allies_defeated = this.allies_info.every(player => player.instance.is_downed());
         this.enemies_defeated = this.enemies_info.every(
-            player => player.instance.has_permanent_status(permanent_status.DOWNED) || (player.instance as Enemy).fled
+            player => player.instance.is_downed() || (player.instance as Enemy).fled
         );
 
         if (this.allies_defeated || this.enemies_defeated) {
@@ -363,13 +361,13 @@ export class Battle {
         const front_pt_lvl =
             _.mean(
                 this.data.info.party_data.members.slice(0, Battle.MAX_CHARS_IN_BATTLE).flatMap(char => {
-                    return char.has_permanent_status(permanent_status.DOWNED) ? [] : [char.level];
+                    return char.is_downed() ? [] : [char.level];
                 })
             ) | 0;
         const enemies_lvl =
             _.mean(
                 this.enemies_info.flatMap(info => {
-                    return info.instance.has_permanent_status(permanent_status.DOWNED) ? [] : [info.instance.level];
+                    return info.instance.is_downed() ? [] : [info.instance.level];
                 })
             ) | 0;
         const diff = ally_attempt ? front_pt_lvl - enemies_lvl : enemies_lvl - front_pt_lvl;
@@ -414,7 +412,7 @@ export class Battle {
                 this.battle_phase = battle_phases.FLEE;
                 target_sprites = this.data.info.party_data.members
                     .filter(member => {
-                        return !member.has_permanent_status(permanent_status.DOWNED);
+                        return !member.is_downed();
                     })
                     .map(member => this.allies_map_sprite[member.key_name]);
             } else {
@@ -677,7 +675,7 @@ export class Battle {
         }
 
         //check whether this char is downed
-        if (action.caster.has_permanent_status(permanent_status.DOWNED)) {
+        if (action.caster.is_downed()) {
             this.check_phases();
             return;
         }
@@ -726,7 +724,9 @@ export class Battle {
         }
 
         //check whether all targets are downed and change ability to "defend" in the case it's true
-        if (!ability.affects_downed) this.check_if_all_targets_are_downed(action);
+        if (!ability.affects_downed) {
+            this.check_if_all_targets_are_downed(action);
+        }
 
         //gets item's name in the case this ability is related to an item
         let item_name = action.item_slot ? this.data.info.items_list[action.item_slot.key_name].name : "";
@@ -890,7 +890,7 @@ export class Battle {
             }
 
             const target_instance = target_info.target.instance;
-            if (target_instance.has_permanent_status(permanent_status.DOWNED)) {
+            if (target_instance.is_downed()) {
                 continue;
             }
             if (target_instance.fighter_type === fighter_types.ENEMY && (target_instance as Enemy).fled) {
@@ -1035,7 +1035,7 @@ export class Battle {
             }
 
             const target_instance = target_info.target.instance;
-            if (target_instance.has_permanent_status(permanent_status.DOWNED)) {
+            if (target_instance.is_downed()) {
                 continue;
             }
             if (target_instance.fighter_type === fighter_types.ENEMY && (target_instance as Enemy).fled) {
@@ -1180,7 +1180,7 @@ export class Battle {
     check_if_all_targets_are_downed(action: PlayerAbility) {
         for (let i = 0; i < action.targets.length; ++i) {
             const target = action.targets[i];
-            if (target.magnitude && target.target?.instance.has_permanent_status(permanent_status.DOWNED)) {
+            if (target.magnitude && target.target?.instance.is_downed()) {
                 target.magnitude = null;
             }
             if (
@@ -1428,7 +1428,7 @@ So, if a character will die after 5 turns and you land another Curse on them, it
             }
 
             const target_instance = target_info.target.instance;
-            if (!ability.affects_downed && target_instance.has_permanent_status(permanent_status.DOWNED)) {
+            if (!ability.affects_downed && target_instance.is_downed()) {
                 continue;
             }
             if (target_instance.fighter_type === fighter_types.ENEMY && (target_instance as Enemy).fled) {
@@ -1648,7 +1648,7 @@ So, if a character will die after 5 turns and you land another Curse on them, it
         for (let i = 0; i < this.on_going_effects.length; ++i) {
             const effect = this.on_going_effects[i];
             if (
-                effect.char.has_permanent_status(permanent_status.DOWNED) ||
+                effect.char.is_downed() ||
                 (effect.char.fighter_type === fighter_types.ENEMY && (effect.char as Enemy).fled)
             ) {
                 //clear this effect if the owner char is downed or fled (in case of enemies)
@@ -1847,7 +1847,7 @@ So, if a character will die after 5 turns and you land another Curse on them, it
             for (let i = 0; i < this.allies_info.length; ++i) {
                 const info = this.allies_info[i];
                 const char = info.instance as MainChar;
-                if (!char.has_permanent_status(permanent_status.DOWNED)) {
+                if (!char.is_downed()) {
                     //downed chars don't receive exp
                     //chars that not entered in battle, receive only hald exp
                     const change = char.add_exp(info.entered_in_battle ? total_exp : total_exp >> 1);

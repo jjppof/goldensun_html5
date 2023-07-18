@@ -487,6 +487,10 @@ export abstract class Player {
         return this.temporary_status.has(status);
     }
 
+    is_downed() {
+        return this.permanent_status.has(permanent_status.DOWNED);
+    }
+
     is_paralyzed(include_downed: boolean = false, exclude_no_downed_anim: boolean = false) {
         return (
             (!exclude_no_downed_anim && this.temporary_status.has(temporary_status.SLEEP)) ||
