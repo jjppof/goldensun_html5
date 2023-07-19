@@ -151,6 +151,7 @@ export abstract class ControllableChar {
     private _gray_filter: Phaser.Filter.Gray;
     private _flame_filter: Phaser.Filter.Flame;
     private _outline_filter: Phaser.Filter.Outline;
+    private _pixel_shift_filter: Phaser.Filter.PixelShift;
     private _active_filters: {[key in engine_filters]?: boolean};
     protected _push_timer: Phaser.Timer;
     private _footsteps: Footsteps;
@@ -256,6 +257,7 @@ export abstract class ControllableChar {
         this._gray_filter = this.game.add.filter("Gray") as Phaser.Filter.Gray;
         this._flame_filter = this.game.add.filter("Flame") as Phaser.Filter.Flame;
         this._outline_filter = this.game.add.filter("Outline") as Phaser.Filter.Outline;
+        this._pixel_shift_filter = this.game.add.filter("PixelShift") as Phaser.Filter.PixelShift;
         this._active_filters = {
             [engine_filters.COLORIZE]: false,
             [engine_filters.OUTLINE]: false,
@@ -395,9 +397,13 @@ export abstract class ControllableChar {
     get active_filters() {
         return this._active_filters;
     }
-    /** The Phaser.Filter that avtivates an oouotline in this char sprite. */
+    /** The Phaser.Filter that activates an outline in this char sprite. */
     get outline_filter() {
         return this._outline_filter;
+    }
+    /** The Phaser.Filter that ashifts the texture of this char sprite. */
+    get pixel_shift_filter() {
+        return this._pixel_shift_filter;
     }
     /** The Footsteps object (in the case this char is letting footprints in the ground). */
     get footsteps() {

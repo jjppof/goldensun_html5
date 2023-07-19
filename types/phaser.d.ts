@@ -1258,6 +1258,15 @@ declare module Phaser {
             distance: number;
         }
 
+        class PixelShift extends Phaser.Filter {
+            x_shift: number;
+            y_shift: number;
+            frame_width: number;
+            frame_height: number;
+            base_texture_width: number;
+            base_texture_height: number;
+        }
+
         class BinarySerpents extends Phaser.Filter {
 
             constructor(game: Phaser.Game, width: number, height: number, march?: number, maxDistance?: number);
