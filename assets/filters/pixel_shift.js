@@ -22,17 +22,10 @@ Phaser.Filter.PixelShift = function (game) {
         void main(void) {
             vec2 uv = vTextureCoord.xy;
             vec2 uv_px = uv * resolution;
-            float mod_pos;
+            vec2 frame_size = floor(vec2(frame_width, frame_height));
+            vec2 shift = vec2(x_shift, y_shift);
 
-            if (uv_px.y >= 0.0 && uv_px.y <= frame_height) {
-                mod_pos = mod(uv_px.y + y_shift, frame_height);
-                uv.y = mod_pos / resolution.y;
-            }
-
-            if (uv_px.x >= 0.0 && uv_px.x <= frame_width) {
-                mod_pos = mod(uv_px.x + x_shift, frame_width);
-                uv.x = mod_pos / resolution.x;
-            }
+            uv = mod(uv_px + shift, frame_size) / resolution;
 
             gl_FragColor = texture2D(uSampler, uv);
         }

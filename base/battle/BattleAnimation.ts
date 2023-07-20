@@ -49,6 +49,7 @@ type DefaultAttr = {
     direction?: string;
     remove?: boolean;
     ignore_if_dodge?: boolean;
+    round_final_value?: boolean;
 };
 
 type GeneralFilterAttr = {
@@ -818,6 +819,7 @@ export class BattleAnimation {
                     if (seq.to_expression) {
                         to_value = mathjs.evaluate(seq.to_expression, {v: to_value});
                     }
+                    to_value = seq.round_final_value ? Math.floor(to_value) : to_value;
                     return to_value;
                 };
                 if (seq.tween === "initial") {
@@ -1123,8 +1125,9 @@ export class BattleAnimation {
                 filter: Phaser.Filter.PixelShift,
                 sprite: PlayerSprite | Phaser.Sprite
             ) => {
-                filter.frame_height = sprite.texture.crop.height;
-                filter.frame_width = sprite.texture.crop.width;
+                sprite.avoidFilterCapping = true;
+                filter.frame_height = sprite.texture.crop.height * sprite.scale.y;
+                filter.frame_width = sprite.texture.crop.width * sprite.scale.x;
                 if (filter_seq.duration > 30) {
                     let resolve_function;
                     const promise = new Promise(resolve => (resolve_function = resolve));

@@ -172,6 +172,13 @@ export class PlayerSprite {
         this.group.alpha = alpha;
     }
 
+    get avoidFilterCapping() {
+        return this.char_sprite.avoidFilterCapping;
+    }
+    set avoidFilterCapping(avoidFilterCapping: boolean) {
+        this.char_sprite.avoidFilterCapping = avoidFilterCapping;
+    }
+
     get tint() {
         return this.char_sprite.tint;
     }
