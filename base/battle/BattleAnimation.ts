@@ -116,6 +116,13 @@ export class BattleAnimation {
     public stage_angle_sequence: DefaultAttr[] = [];
     public hue_angle_sequence: DefaultAttr[] = [];
     public blink_sequence: BlinkAttr[] = [];
+    public texture_displacement_sequence: (GeneralFilterAttr & {
+        duration: number;
+        shift: {
+            x?: number;
+            y?: number;
+        };
+    })[] = [];
     public tint_sequence: (GeneralFilterAttr & {
         r: number;
         g: number;
@@ -242,6 +249,7 @@ export class BattleAnimation {
         particles_sequence,
         sfx_sequence,
         blink_sequence,
+        texture_displacement_sequence,
         cast_type,
         wait_for_cast_animation,
         follow_caster,
@@ -278,6 +286,7 @@ export class BattleAnimation {
         this.particles_sequence = particles_sequence ?? [];
         this.sfx_sequence = sfx_sequence ?? [];
         this.blink_sequence = blink_sequence ?? [];
+        this.texture_displacement_sequence = texture_displacement_sequence ?? [];
         this.running = false;
         this.cast_type = cast_type;
         this.wait_for_cast_animation = wait_for_cast_animation;
@@ -497,6 +506,8 @@ export class BattleAnimation {
             sprite.available_filters[gray_filter.key] = gray_filter;
             const flame_filter = this.game.add.filter("Flame") as Phaser.Filter.Flame;
             sprite.available_filters[flame_filter.key] = flame_filter;
+            const pixel_shift_filter = this.game.add.filter("PixelShift") as Phaser.Filter.PixelShift;
+            sprite.available_filters[pixel_shift_filter.key] = pixel_shift_filter;
         });
     }
 
@@ -543,6 +554,7 @@ export class BattleAnimation {
         this.play_particles();
         this.play_sfx();
         this.play_blink_sequence();
+        this.play_texture_displacement_sequence();
         this.unmount_animation(finish_callback);
     }
 
@@ -801,7 +813,7 @@ export class BattleAnimation {
                     }
                     to_value = seq.is_absolute
                         ? to_value
-                        : this.sprites_prev_properties[uniq_key][property_to_set] + seq_to;
+                        : this.sprites_prev_properties[uniq_key][property_to_set] + to_value;
                     this.sprites_prev_properties[uniq_key][property_to_set] = to_value;
                     if (seq.to_expression) {
                         to_value = mathjs.evaluate(seq.to_expression, {v: to_value});
@@ -1014,7 +1026,7 @@ export class BattleAnimation {
     play_general_filter(
         sequence: GeneralFilterAttr[],
         filter_key: engine_filters,
-        set_filter?: (sequence: GeneralFilterAttr, filter: Phaser.Filter) => void
+        set_filter?: (sequence: GeneralFilterAttr, filter: Phaser.Filter, sprite?: PlayerSprite | Phaser.Sprite) => void
     ) {
         for (let i = 0; i < sequence.length; ++i) {
             const filter_seq = sequence[i];
@@ -1037,12 +1049,12 @@ export class BattleAnimation {
                 const start_delay = Array.isArray(filter_seq.start_delay)
                     ? filter_seq.start_delay[sprite_info.index]
                     : (filter_seq.start_delay as number);
-                this.game.time.events.add(start_delay, () => {
+                this.game.time.events.add(start_delay, async () => {
                     const filter = sprite.available_filters[filter_key];
                     this.manage_filter(filter as Phaser.Filter, sprite, filter_seq.remove);
                     if (!filter_seq.remove) {
                         if (set_filter) {
-                            set_filter(filter_seq, filter as Phaser.Filter);
+                            await set_filter(filter_seq, filter as Phaser.Filter, sprite);
                         }
                     }
                     resolve_function();
@@ -1098,6 +1110,41 @@ export class BattleAnimation {
             (filter_seq: BattleAnimation["colorize_sequence"][0], filter: Phaser.Filter.Colorize) => {
                 filter.color = filter_seq.color ?? filter.color;
                 filter.intensity = filter_seq.intensity ?? filter.intensity;
+            }
+        );
+    }
+
+    play_texture_displacement_sequence() {
+        this.play_general_filter(
+            this.texture_displacement_sequence,
+            engine_filters.PIXEL_SHIFT,
+            async (
+                filter_seq: BattleAnimation["texture_displacement_sequence"][0],
+                filter: Phaser.Filter.PixelShift,
+                sprite: PlayerSprite | Phaser.Sprite
+            ) => {
+                filter.frame_height = sprite.texture.crop.height;
+                filter.frame_width = sprite.texture.crop.width;
+                if (filter_seq.duration > 30) {
+                    let resolve_function;
+                    const promise = new Promise(resolve => (resolve_function = resolve));
+                    this.game.add
+                        .tween(filter)
+                        .to(
+                            {
+                                x_shift: filter_seq.shift.x ?? filter.x_shift,
+                                y_shift: filter_seq.shift.y ?? filter.y_shift,
+                            },
+                            filter_seq.duration,
+                            Phaser.Easing.Linear.None,
+                            true
+                        )
+                        .onComplete.addOnce(resolve_function);
+                    await promise;
+                } else {
+                    filter.x_shift = filter_seq.shift.x ?? filter.x_shift;
+                    filter.y_shift = filter_seq.shift.y ?? filter.y_shift;
+                }
             }
         );
     }

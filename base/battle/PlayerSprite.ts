@@ -179,6 +179,10 @@ export class PlayerSprite {
         this.char_sprite.tint = tint;
     }
 
+    get texture() {
+        return this.char_sprite.texture;
+    }
+
     get blendMode() {
         return this.char_sprite.blendMode;
     }
@@ -264,6 +268,8 @@ export class PlayerSprite {
         this.char_sprite.available_filters[gray_filter.key] = gray_filter;
         const flame_filter = this.game.add.filter("Flame") as Phaser.Filter.Flame;
         this.char_sprite.available_filters[flame_filter.key] = flame_filter;
+        const pixel_shift_filter = this.game.add.filter("PixelShift") as Phaser.Filter.PixelShift;
+        this.char_sprite.available_filters[pixel_shift_filter.key] = pixel_shift_filter;
 
         this.reset_hue_angle();
 

@@ -1263,8 +1263,6 @@ declare module Phaser {
             y_shift: number;
             frame_width: number;
             frame_height: number;
-            base_texture_width: number;
-            base_texture_height: number;
         }
 
         class BinarySerpents extends Phaser.Filter {
