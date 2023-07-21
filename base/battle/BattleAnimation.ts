@@ -143,6 +143,7 @@ export class BattleAnimation {
         r: number;
         g: number;
         b: number;
+        fake_blend: boolean;
     })[] = [];
     public flame_filter_sequence: GeneralFilterAttr[] = [];
     public play_sequence: {
@@ -992,7 +993,7 @@ export class BattleAnimation {
                 const start_delay = Array.isArray(blend_mode_seq.start_delay)
                     ? blend_mode_seq.start_delay[sprite_info.index]
                     : blend_mode_seq.start_delay;
-                this.game.time.events.add(start_delay, () => {
+                const apply_blend_mode = () => {
                     switch (blend_mode_seq.mode) {
                         case "screen":
                             sprite.blendMode = PIXI.blendModes.SCREEN;
@@ -1002,7 +1003,12 @@ export class BattleAnimation {
                             break;
                     }
                     resolve_function();
-                });
+                };
+                if (start_delay > 30) {
+                    this.game.time.events.add(start_delay, apply_blend_mode);
+                } else {
+                    apply_blend_mode();
+                }
             }
         }
     }
@@ -1051,7 +1057,7 @@ export class BattleAnimation {
                 const start_delay = Array.isArray(filter_seq.start_delay)
                     ? filter_seq.start_delay[sprite_info.index]
                     : (filter_seq.start_delay as number);
-                this.game.time.events.add(start_delay, async () => {
+                const apply_filter = async () => {
                     const filter = sprite.available_filters[filter_key];
                     this.manage_filter(filter as Phaser.Filter, sprite, filter_seq.remove);
                     if (!filter_seq.remove) {
@@ -1060,7 +1066,12 @@ export class BattleAnimation {
                         }
                     }
                     resolve_function();
-                });
+                };
+                if (start_delay > 30) {
+                    this.game.time.events.add(start_delay, apply_filter);
+                } else {
+                    apply_filter();
+                }
             }
         }
     }
@@ -1085,6 +1096,7 @@ export class BattleAnimation {
                 filter.r = filter_seq.r ?? filter.r;
                 filter.g = filter_seq.g ?? filter.g;
                 filter.b = filter_seq.b ?? filter.b;
+                filter.fake_blend = filter_seq.fake_blend ?? filter.fake_blend;
             }
         );
     }

@@ -4,6 +4,7 @@ Phaser.Filter.ColorBlend = function (game) {
     this.uniforms.r = { type: '1f', value: -1.0 };
     this.uniforms.g = { type: '1f', value: -1.0 };
     this.uniforms.b = { type: '1f', value: -1.0 };
+    this.uniforms.fake_blend = { type: '1f', value: 0.0 };
 
     this.fragmentSrc = [
         "precision mediump float;",
@@ -13,9 +14,13 @@ Phaser.Filter.ColorBlend = function (game) {
         "uniform float      r;",
         "uniform float      g;",
         "uniform float      b;",
+        "uniform float      fake_blend;",
 
         "void main(void) {",
             "gl_FragColor = texture2D(uSampler, vTextureCoord);",
+            "if (fake_blend != 0.0) {",
+                "gl_FragColor.a = (gl_FragColor.r + gl_FragColor.g + gl_FragColor.b) / 3.0;",
+            "}",
             "float r_blend = r != -1.0 ? gl_FragColor.a * r : gl_FragColor.r;",
             "float g_blend = g != -1.0 ? gl_FragColor.a * g : gl_FragColor.g;",
             "float b_blend = b != -1.0 ? gl_FragColor.a * b : gl_FragColor.b;",
@@ -50,5 +55,13 @@ Object.defineProperty(Phaser.Filter.ColorBlend.prototype, 'b', {
     },
     set: function(value) {
         this.uniforms.b.value = value;
+    }
+});
+Object.defineProperty(Phaser.Filter.ColorBlend.prototype, 'fake_blend', {
+    get: function() {
+        return Boolean(this.uniforms.fake_blend.value);
+    },
+    set: function(value) {
+        this.uniforms.fake_blend.value = value ? 1.0 : 0.0;
     }
 });

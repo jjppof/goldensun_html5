@@ -1234,6 +1234,7 @@ declare module Phaser {
             r: number;
             g: number;
             b: number;
+            fake_blend: boolean;
         }
 
         class Flame extends Phaser.Filter { }

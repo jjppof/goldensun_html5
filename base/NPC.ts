@@ -731,6 +731,7 @@ export class NPC extends ControllableChar {
                 this.color_blend_filter.r = this.snapshot_info.filter_settings.color_blend.r;
                 this.color_blend_filter.g = this.snapshot_info.filter_settings.color_blend.g;
                 this.color_blend_filter.b = this.snapshot_info.filter_settings.color_blend.b;
+                this.color_blend_filter.fake_blend = this.snapshot_info.filter_settings.color_blend.fake_blend;
             }
             if (active_filters[engine_filters.HUE]) {
                 this.manage_filter(this.hue_filter, true);

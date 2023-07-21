@@ -30,6 +30,7 @@ type FilterSettings = {
         r: number;
         g: number;
         b: number;
+        fake_blend: boolean;
     };
     [engine_filters.TINT]?: {
         r: number;
@@ -339,6 +340,7 @@ export class Snapshot {
                                     r: npc.color_blend_filter.r,
                                     g: npc.color_blend_filter.g,
                                     b: npc.color_blend_filter.b,
+                                    fake_blend: npc.color_blend_filter.fake_blend,
                                 },
                             }),
                             ...(npc.active_filters.tint && {
@@ -452,6 +454,7 @@ export class Snapshot {
                                     r: io.color_blend_filter.r,
                                     g: io.color_blend_filter.g,
                                     b: io.color_blend_filter.b,
+                                    fake_blend: io.color_blend_filter.fake_blend,
                                 },
                             }),
                             ...(io.active_filters.tint && {

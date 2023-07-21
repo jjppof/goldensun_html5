@@ -1,5 +1,5 @@
 {
-    "key_name": "ice",
+    "key_name": "leaf_blower",
     "sprites": [{
         "key_name": "slash",
         "position": "between",
@@ -10,7 +10,7 @@
     }],
     "x_sequence": [{
         "to": ["targets","targets","targets","targets","targets","targets","targets","targets","targets","targets"],
-        "shift": [-22, -21, -21,  -8,  -7, -17, -16, -13, -21, -18],
+        "shift": [-22, -21, -21, -8, -7, -17, -16, -13, -21, -18],
         "is_absolute": true,
         "tween": "initial",
         "sprite_index": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
