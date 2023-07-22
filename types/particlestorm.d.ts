@@ -24,7 +24,7 @@ declare module Phaser {
         blendModeMap: any;
         hsv: any[];
 
-        createEmitter(renderType?: string, force?: Phaser.Point, scrollSpeed?: Phaser.Point, render_white_core?: boolean): ParticleStorm.Emitter;
+        createEmitter(renderType?: string, force?: Phaser.Point, scrollSpeed?: Phaser.Point, render_white_core?: boolean, core_custom_color?: string): ParticleStorm.Emitter;
         removeEmitter(emitter: ParticleStorm.Emitter): void;
         addData(key: string | string[], obj?: any): ParticleStorm;
         getData(key: string): any;
@@ -179,7 +179,7 @@ declare module Phaser {
 
         class Emitter {
 
-            constructor(parent: Phaser.ParticleStorm, renderType?: string, force?: Phaser.Point, scrollSpeed?: Phaser.Point, render_white_core?: boolean);
+            constructor(parent: Phaser.ParticleStorm, renderType?: string, force?: Phaser.Point, scrollSpeed?: Phaser.Point, render_white_core?: boolean, core_custom_color?: string);
 
             game: Phaser.Game;
             parent: Phaser.ParticleStorm;
@@ -204,6 +204,7 @@ declare module Phaser {
             total: number;
             alive: number;
             dead: number;
+            core_custom_color: string;
 
             init(renderType?: string, force?: Phaser.Point, scrollSpeed?: Phaser.Point, render_white_core?: boolean): void;
             addToWorld(group?: Phaser.Group): (Phaser.Image | Phaser.Sprite | Phaser.Group)[];

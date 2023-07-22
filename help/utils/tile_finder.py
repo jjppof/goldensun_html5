@@ -3,7 +3,7 @@ import numpy as np
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--tilset_path', default='tilset_path.png')
+parser.add_argument('--tileset_path', default='tileset_path.png')
 parser.add_argument('--map_path', default='map.png')
 parser.add_argument('--scale', default=2)
 parser.add_argument('--tile_size', default=8)

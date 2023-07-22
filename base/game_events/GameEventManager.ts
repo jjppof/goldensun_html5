@@ -75,7 +75,7 @@ import {EventsLoopEvent} from "./EventsLoopEvent";
 import {InteractableObjects} from "interactable_objects/InteractableObjects";
 import {LayerTweenEvent} from "./LayerTweenEvent";
 import {LayerVisibilityEvent} from "./LayerVisibilityEvent";
-import {MainCharsJoinSplitEvent} from "./MainCharsSplitEvent";
+import {MainCharsJoinSplitEvent} from "./MainCharsJoinSplitEvent";
 
 export enum interaction_patterns {
     NO_INTERACTION = "no_interaction",

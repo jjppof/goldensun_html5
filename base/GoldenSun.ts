@@ -403,7 +403,11 @@ export class GoldenSun {
 
         this.initialize_psynergy_controls();
 
-        this.map.fire_game_events();
+        if (this.dbs.init_db.start_battle_tester_on_init) {
+            this.debug.start_battle_animation_tester();
+        } else {
+            this.map.fire_game_events();
+        }
 
         this.snapshot_manager.clear_snapshot();
     }

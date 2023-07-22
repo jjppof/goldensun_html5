@@ -191,9 +191,9 @@ Phaser.ParticleStorm.PI_180 = Math.PI / 180.0;
 *     This is different to force which is applied as a velocity on the particle, where-as scrollSpeed directly adjusts their final position.
 * @return {Phaser.ParticleStorm.Emitter} The Emitter object.
 */
-Phaser.ParticleStorm.prototype.createEmitter = function (renderType, force, scrollSpeed, render_white_core = false) {
+Phaser.ParticleStorm.prototype.createEmitter = function (renderType, force, scrollSpeed, render_white_core = false, core_custom_color = null) {
 
-    var emitter = new Phaser.ParticleStorm.Emitter(this, renderType, force, scrollSpeed, render_white_core);
+    var emitter = new Phaser.ParticleStorm.Emitter(this, renderType, force, scrollSpeed, render_white_core, core_custom_color);
 
     this.emitters.push(emitter);
 
@@ -697,7 +697,7 @@ Phaser.ParticleStorm.prototype.update = function () {
 * @param {Phaser.Point} [scrollSpeed] - All particles can be scrolled. This offsets their positions by the amount in this Point each update.
 *     This is different to force which is applied as a velocity on the particle, where-as scrollSpeed directly adjusts their final position.
 */
-Phaser.ParticleStorm.Emitter = function (parent, renderType, force, scrollSpeed, render_white_core = false) {
+Phaser.ParticleStorm.Emitter = function (parent, renderType, force, scrollSpeed, render_white_core = false, core_custom_color = null) {
 
     /**
     * @property {Phaser.Game} game - A reference to the Phaser Game instance.
@@ -886,6 +886,8 @@ Phaser.ParticleStorm.Emitter = function (parent, renderType, force, scrollSpeed,
     * @protected
     */
     this.wells = [];
+
+    this.core_custom_color = core_custom_color;
 
     /**
     * Internal Point object used by the emit methods.
@@ -5772,17 +5774,22 @@ Phaser.ParticleStorm.Renderer.Pixel.prototype.update = function (particle) {
     var a = Math.floor(particle.color.alpha.calc * 255);
     var a2 = Math.sign(a) * 255;
 
+    let core_color;
+    if (this.bmd2) {
+        core_color = particle.emitter.core_custom_color ? particle.emitter.core_custom_color : `rgba(255,255,255,${a2/255})`;
+    }
+
     if (this.pixelSize > 2)
     {
         if (this.useRect) {
             this.bmd.rect(x, y, this.pixelSize, this.pixelSize, particle.color.rgba);
             if (this.bmd2) {
-                this.bmd2.rect(x, y, this.pixelSize, this.pixelSize, `rgba(255,255,255,${a2/255})`);
+                this.bmd2.rect(x, y, this.pixelSize, this.pixelSize, core_color);
             }
         } else {
             this.bmd.circle(x, y, this.pixelSize/2, particle.color.rgba);
             if (this.bmd2) {
-                this.bmd2.circle(x, y, this.pixelSize/2, `rgba(255,255,255,${a2/255})`);
+                this.bmd2.circle(x, y, this.pixelSize/2, core_color);
             }
         }
     }

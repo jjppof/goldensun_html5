@@ -87,6 +87,7 @@ export type Emitter = {
     };
     particles_display_blend_mode: string;
     render_white_core: boolean;
+    core_custom_color: string;
     zone_key: string;
     random_in_zone: boolean;
     spacing: number | number[];
@@ -246,7 +247,8 @@ export class ParticlesWrapper {
                     emitter_info.render_type,
                     undefined,
                     undefined,
-                    emitter_info.render_white_core
+                    emitter_info.render_white_core,
+                    emitter_info.core_custom_color
                 );
                 emitter.force.x = emitter_info.force?.x ?? emitter.force.x;
                 emitter.force.y = emitter_info.force?.y ?? emitter.force.y;
