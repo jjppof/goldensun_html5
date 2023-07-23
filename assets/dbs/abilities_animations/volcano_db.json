@@ -176,11 +176,51 @@
                 "blue": 0,
                 "lifespan": 2000,
                 "alpha": 0.8,
-                "ay": -0.02,
+                "ay": {
+                    "value": 0.03,
+                    "control": [
+                        {"x": 0.0, "y": 0.6},
+                        {"x": 0.4, "y": 0.1},
+                        {"x": 0.5, "y": -0.66},
+                        {"x": 0.8, "y": -0.66},
+                        {"x": 1.0, "y": -3.5}
+                    ]
+                },
                 "velocity": {
-                    "initial": {"min": 1.0, "max": 6.5},
+                    "initial": {"min": 2.0, "max": 7.5},
                     "radial": { "arcStart": -90, "arcEnd": 90 },
-                    "control": [ { "x": 0, "y": 1 }, { "x": 0.5, "y": 0.85 }, { "x": 0.6, "y": 0.3 }, { "x": 1.0, "y": 0.15 } ]
+                    "control": [
+                        {"x": 0.0, "y": 1.0},
+                        {"x": 0.4, "y": 0.8},
+                        {"x": 0.5, "y": 0.17},
+                        {"x": 1.0, "y": 0.15}
+                    ]
+                }
+            },
+            "final_explosion" : {
+                "red": 255,
+                "green": 10,
+                "blue": 0,
+                "lifespan": 2000,
+                "alpha": 0.8,
+                "ay": {
+                    "value": -0.035,
+                    "control": [
+                        {"x": 0.0, "y": 1.0},
+                        {"x": 0.5, "y": 1.0},
+                        {"x": 0.85, "y": 1.2},
+                        {"x": 1.0, "y": 2.0}
+                    ]
+                },
+                "velocity": {
+                    "initial": {"min": 1.0, "max": 3.0},
+                    "radial": { "arcStart": -90, "arcEnd": 90 },
+                    "control": [
+                        {"x": 0.0, "y": 1.0},
+                        {"x": 0.4, "y": 0.8},
+                        {"x": 0.5, "y": 0.25},
+                        {"x": 1.0, "y": 0.125}
+                    ]
                 }
             }
         },
@@ -198,7 +238,7 @@
             "particles_display_blend_mode": "screen",
             "render_white_core": true,
             "core_custom_color": "rgba(255,255,170,0.95)",
-            "total": 50,
+            "total": 60,
             "repeat": 5,
             "frequency": 70,
             "emitter_data_key": "explosion",
@@ -212,18 +252,18 @@
             "position": "between",
             "render_type": "pixel",
             "show_trails": true,
-            "trails_clear_factor": 0.2,
+            "trails_clear_factor": 0.15,
             "pixel_size": 4,
-            "pixel_reducing_factor": 0.08,
+            "pixel_reducing_factor": 0.05,
             "pixel_is_rect": false,
             "particles_display_blend_mode": "screen",
             "render_white_core": true,
-            "total": 4,
-            "repeat": 8,
-            "frequency": 60,
-            "emitter_data_key": "explosion",
+            "total": 3,
+            "repeat": 30,
+            "frequency": 30,
+            "emitter_data_key": "final_explosion",
             "delay": {
-                "start": 1500,
+                "start": 1200,
                 "visible": false
             }
         }],
