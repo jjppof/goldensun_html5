@@ -292,10 +292,12 @@ export class GoldenSun {
         let height = this.scale_factor * numbers.GAME_HEIGHT;
         this.game.scale.setupScale(width, height);
         window.dispatchEvent(new Event("resize"));
+        height = this.ignore_system_scaling ? (height * 1) / window.devicePixelRatio : height;
         if (this.ipcRenderer) {
             width = this.ignore_system_scaling ? (width * 1) / window.devicePixelRatio : width;
-            height = this.ignore_system_scaling ? (height * 1) / window.devicePixelRatio : height;
             this.ipcRenderer.send("resize-window", width, height);
+        } else {
+            document.getElementById("game").style.height = `${height}px`;
         }
     }
 

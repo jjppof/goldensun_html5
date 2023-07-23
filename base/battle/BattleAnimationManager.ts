@@ -94,7 +94,12 @@ export class BattleAnimationManager {
         this.game.load.onLoadComplete.addOnce(load_complete_promise_resolve);
         this.game.load.start();
         await load_complete_promise;
-        const animation_recipe = this.game.cache.getJSON(recipe_key);
+        let animation_recipe = this.game.cache.getJSON(recipe_key);
+        if (this.data.debug.battle_anim_editor?.getValue()) {
+            try {
+                animation_recipe = JSON.parse(this.data.debug.battle_anim_editor.getValue());
+            } catch (e) {}
+        }
         if (animation_recipe) {
             const key = `${battle_anim_key}/${caster_battle_key}`;
             this.animations[key] = BattleAnimationManager.get_animation_instance(

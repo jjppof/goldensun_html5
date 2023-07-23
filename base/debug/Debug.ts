@@ -23,6 +23,8 @@ export class Debug {
         listener: EventListener;
     };
     public battle_anim_tester: BattleAnimationTester;
+    public battle_anim_sandbox_initialized: boolean;
+    public battle_anim_editor: CodeMirror.EditorFromTextArea;
 
     constructor(game, data) {
         this.game = game;
@@ -35,6 +37,8 @@ export class Debug {
         this.show_sliders = false;
         this.show_animation_controls = false;
         this.battle_anim_tester = null;
+        this.battle_anim_sandbox_initialized = false;
+        this.battle_anim_editor = null;
     }
 
     initialize_controls() {
@@ -146,6 +150,29 @@ export class Debug {
     toggle_animation_controls() {
         this.show_animation_controls = !this.show_animation_controls;
         if (this.show_animation_controls) {
+            if (!this.battle_anim_sandbox_initialized) {
+                this.battle_anim_sandbox_initialized = true;
+                this.battle_anim_editor = CodeMirror.fromTextArea(
+                    document.getElementById("battle_anim_recipe") as HTMLTextAreaElement,
+                    {
+                        mode: {name: "javascript", json: true},
+                        lineNumbers: true,
+                        tabSize: 2,
+                        lineWrapping: true,
+                        readOnly: false,
+                        spellcheck: false,
+                        autocorrect: false,
+                        autocapitalize: false,
+                    }
+                );
+                this.battle_anim_editor.on("focus", () => {
+                    this.data.game.input.enabled = false;
+                });
+                this.battle_anim_editor.on("blur", () => {
+                    this.data.game.input.enabled = true;
+                });
+                this.battle_anim_editor.refresh();
+            }
             document.getElementById("animation_tester").style.display = "block";
         } else {
             document.getElementById("animation_tester").style.display = "none";

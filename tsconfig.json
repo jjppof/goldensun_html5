@@ -19,7 +19,8 @@
             "types/p2.d.ts",
             "types/particlestorm.d.ts",
             "types/phaser.d.ts",
-            "types/pixi.d.ts"
+            "types/pixi.d.ts",
+            "types/codemirror.d.ts"
         ],
 
         // Misc

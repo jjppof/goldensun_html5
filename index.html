@@ -28,6 +28,9 @@
         <link rel="stylesheet" href="/static/styles.css">
         <script type="text/javascript" src="/static/phaser.js"></script>
         <script type="module" src="/dist/bundle.js"></script>
+        <script src="/static/codemirror.js"></script>
+        <link rel="stylesheet" href="/static/codemirror.css">
+        <script src="/static/mode-javascript.js"></script>
         <script src="/static/home.js"></script>
 
         <!-- GOOGLE -->
@@ -50,7 +53,7 @@ For this demo, please use <b>Chromium</b> based browsers instead of Firefox.
 • Use the same controls of VBA: arrows, Z, X, A, S, Backspace and Enter.
 • Press 1,2, 3, or 4 for zoom. Double click on screen to fullscreen.
 • Press M to unmute. Press SHIFT + PGUP/PGDN to control the volume.
-• D for debug colision. F for fps. G for grid. K for keys debug. T for battle stats. L for sliders.
+• D for debug colision. F for fps. G for grid. K for keys debug. T for battle stats. L for sliders. Y for battle animation tester.
 • Use Q to cast Move. Use W to cast Whirlwind. Use E to cast Growth (swap djinn first). Use R to cast Reveal.
 
 Check the <a href="https://github.com/jjppof/goldensun_html5">source code</a> on github.
@@ -64,7 +67,8 @@ Join our <b><a href="https://discord.gg/fYFSxPMjmS">discord</a></b> server, feel
             <input type="text" id="animation_tester_enemy_party" placeholder="enemy party key name" /> <br>
             <button onclick="data.debug.start_battle_animation_tester()">Start animation tester</button> <br><br>
             <input type="text" id="animation_tester_ability_keyname" placeholder="ability key name"/> <br>
-            <button onclick="data.debug.fire_battle_animation()">Fire animation</button>
+            <button onclick="data.debug.fire_battle_animation()">Fire animation</button> <br><br>
+            <textarea id="battle_anim_recipe"></textarea>
         </div>
         <div id="key_debug">
             <div class="up"><img src="./assets/images/debug/keyboard_arrow.png"/></div>
