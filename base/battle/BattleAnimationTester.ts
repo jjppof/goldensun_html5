@@ -247,7 +247,7 @@ export class BattleAnimationTester {
     }
 
     async set_action_animation_settings(action: PlayerAbility, ability: Ability) {
-        if (action.caster.is_paralyzed(true)) {
+        if (!(action.key_name in this.data.info.abilities_list)) {
             return;
         }
         //check whether the player of this action has a variation for this battle animation
@@ -277,17 +277,11 @@ export class BattleAnimationTester {
     async battle_phase_combat() {
         //gets the ability of this phase
         let ability = this.data.info.abilities_list[this.action.key_name];
-        if (!ability) {
-            await this.wait_for_key();
-
-            return;
-        }
 
         //check whether this ability exists
         if (ability === undefined) {
             await this.battle_log.add(`${this.action.key_name} ability key not registered.`);
             await this.wait_for_key();
-
             return;
         }
 

@@ -119,6 +119,7 @@ export class BattleAnimation {
     public blink_sequence: BlinkAttr[] = [];
     public texture_displacement_sequence: (GeneralFilterAttr & {
         duration: number;
+        repeat_texture: boolean;
         shift: {
             x?: number;
             y?: number;
@@ -158,7 +159,12 @@ export class BattleAnimation {
         hide_on_complete: boolean;
         ignore_if_dodge?: boolean;
     }[] = [];
-    public set_frame_sequence: any[] = [];
+    public set_frame_sequence: {
+        start_delay: number | number[];
+        sprite_index: target_types | number | number[];
+        frame_name: string;
+        ignore_if_dodge?: boolean;
+    }[] = [];
     public blend_mode_sequence: {
         start_delay: number | number[];
         sprite_index: string | number | number[];
@@ -243,7 +249,7 @@ export class BattleAnimation {
         grayscale_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, yoyo: bool, duration: value, shift: value}
         colorize_sequence,
         play_sequence, //{start_delay: value, sprite_index: index, reverse: bool, frame_rate: value, repeat: bool, animation_key: key, wait: bool, hide_on_complete: bool}
-        set_frame_sequence, //{start_delay: value, frame: string, sprite_index: index}
+        set_frame_sequence, //{start_delay: value, frame_name: string, sprite_index: index}
         blend_mode_sequence, //{start_delay: value, mode: type, sprite_index: index}
         levels_filter_sequence,
         color_blend_filter_sequence,
@@ -546,6 +552,7 @@ export class BattleAnimation {
             filter_key: "gray",
         });
         this.play_sprite_sequence();
+        this.play_set_frame_sequence();
         this.play_blend_modes();
         this.play_colorize_filter();
         this.play_tint_filter();
@@ -975,6 +982,39 @@ export class BattleAnimation {
         }
     }
 
+    play_set_frame_sequence() {
+        for (let i = 0; i < this.set_frame_sequence.length; ++i) {
+            const set_frame_seq = this.set_frame_sequence[i];
+            if (set_frame_seq.ignore_if_dodge && this.target_dodged) {
+                continue;
+            }
+            const sprites = this.get_sprites(set_frame_seq);
+            for (let key in sprites) {
+                const sprite_info = sprites[key];
+                const sprite = sprite_info.obj as PlayerSprite | Phaser.Sprite;
+                let resolve_function;
+                let this_promise = new Promise(resolve => {
+                    resolve_function = resolve;
+                });
+                this.promises.push(this_promise);
+                const start_delay = Array.isArray(set_frame_seq.start_delay)
+                    ? set_frame_seq.start_delay[sprite_info.index]
+                    : set_frame_seq.start_delay;
+                const set_sprite_frame = () => {
+                    sprite.frameName = Array.isArray(set_frame_seq.frame_name)
+                        ? set_frame_seq.frame_name[sprite_info.index]
+                        : set_frame_seq.frame_name;
+                    resolve_function();
+                };
+                if (start_delay > 30) {
+                    this.game.time.events.add(start_delay, set_sprite_frame);
+                } else {
+                    set_sprite_frame();
+                }
+            }
+        }
+    }
+
     play_blend_modes() {
         for (let i = 0; i < this.blend_mode_sequence.length; ++i) {
             const blend_mode_seq = this.blend_mode_sequence[i];
@@ -1034,7 +1074,12 @@ export class BattleAnimation {
     play_general_filter(
         sequence: GeneralFilterAttr[],
         filter_key: engine_filters,
-        set_filter?: (sequence: GeneralFilterAttr, filter: Phaser.Filter, sprite?: PlayerSprite | Phaser.Sprite) => void
+        set_filter?: (
+            sequence: GeneralFilterAttr,
+            filter: Phaser.Filter,
+            sprite?: PlayerSprite | Phaser.Sprite,
+            sprite_index?: number
+        ) => void
     ) {
         for (let i = 0; i < sequence.length; ++i) {
             const filter_seq = sequence[i];
@@ -1062,7 +1107,7 @@ export class BattleAnimation {
                     this.manage_filter(filter as Phaser.Filter, sprite, filter_seq.remove);
                     if (!filter_seq.remove) {
                         if (set_filter) {
-                            await set_filter(filter_seq, filter as Phaser.Filter, sprite);
+                            await set_filter(filter_seq, filter as Phaser.Filter, sprite, sprite_info.index);
                         }
                     }
                     resolve_function();
@@ -1135,30 +1180,41 @@ export class BattleAnimation {
             async (
                 filter_seq: BattleAnimation["texture_displacement_sequence"][0],
                 filter: Phaser.Filter.PixelShift,
-                sprite: PlayerSprite | Phaser.Sprite
+                sprite: PlayerSprite | Phaser.Sprite,
+                sprite_index: number
             ) => {
                 sprite.avoidFilterCapping = true;
                 filter.frame_height = sprite.texture.crop.height * sprite.scale.y;
                 filter.frame_width = sprite.texture.crop.width * sprite.scale.x;
-                if (filter_seq.duration > 30) {
+                filter.repeat_texture = filter_seq.repeat_texture ?? filter.repeat_texture;
+                const x_shift =
+                    (Array.isArray(filter_seq.shift.x) ? filter_seq.shift.x[sprite_index] : filter_seq.shift.x) ??
+                    filter.x_shift;
+                const y_shift =
+                    (Array.isArray(filter_seq.shift.y) ? filter_seq.shift.y[sprite_index] : filter_seq.shift.y) ??
+                    filter.y_shift;
+                const duration = Array.isArray(filter_seq.duration)
+                    ? filter_seq.duration[sprite_index]
+                    : filter_seq.duration;
+                if (duration > 30) {
                     let resolve_function;
                     const promise = new Promise(resolve => (resolve_function = resolve));
                     this.game.add
                         .tween(filter)
                         .to(
                             {
-                                x_shift: filter_seq.shift.x ?? filter.x_shift,
-                                y_shift: filter_seq.shift.y ?? filter.y_shift,
+                                x_shift: x_shift,
+                                y_shift: y_shift,
                             },
-                            filter_seq.duration,
+                            duration,
                             Phaser.Easing.Linear.None,
                             true
                         )
                         .onComplete.addOnce(resolve_function);
                     await promise;
                 } else {
-                    filter.x_shift = filter_seq.shift.x ?? filter.x_shift;
-                    filter.y_shift = filter_seq.shift.y ?? filter.y_shift;
+                    filter.x_shift = x_shift;
+                    filter.y_shift = y_shift;
                 }
             }
         );

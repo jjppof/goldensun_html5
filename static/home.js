@@ -1,7 +1,9 @@
 //Prevent arrows to scroll the page
 window.addEventListener("keydown", function(e) {
     if ([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) { // space and arrow keys
-        e.preventDefault();
+        if (data.game.input.enabled) {
+            e.preventDefault();
+        }
     }
 }, false);
 

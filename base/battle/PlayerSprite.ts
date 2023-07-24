@@ -172,6 +172,13 @@ export class PlayerSprite {
         this.group.alpha = alpha;
     }
 
+    get frameName() {
+        return this.char_sprite.frameName;
+    }
+    set frameName(frameName: string) {
+        this.char_sprite.frameName = frameName;
+    }
+
     get avoidFilterCapping() {
         return this.char_sprite.avoidFilterCapping;
     }

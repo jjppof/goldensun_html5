@@ -407,6 +407,7 @@ export class GoldenSun {
 
         if (this.dbs.init_db.start_battle_tester_on_init) {
             this.debug.start_battle_animation_tester();
+            this.debug.toggle_animation_controls();
         } else {
             this.map.fire_game_events();
         }
