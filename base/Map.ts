@@ -944,18 +944,36 @@ export class Map {
             const snapshot_info = this.data.snapshot_manager.snapshot?.map_data.npcs[npc_index];
             const property_info = not_parsed ? JSON.parse(properties) : properties;
             const npc_db = this.data.dbs.npc_db[property_info.key_name];
+            if (!npc_db) {
+                this.data.logger.log_message(
+                    `Could not find NPC db with '${property_info.key_name}' key. Please double-check if you registered this NPC.`
+                );
+            }
             let initial_action = property_info.action ?? npc_db.initial_action;
-            const actual_action =
+            initial_action =
                 (npc_db.actions && initial_action in npc_db.actions) || !npc_db.action_aliases
                     ? initial_action
                     : npc_db.action_aliases[initial_action];
             initial_action = snapshot_info?.action ?? initial_action;
             let initial_animation;
-            if (npc_db.actions && actual_action in npc_db.actions) {
-                initial_animation = npc_db.actions[actual_action].initial_animation;
+            if (npc_db.actions && initial_action in npc_db.actions) {
+                initial_animation = npc_db.actions[initial_action].initial_animation;
+            } else if (initial_action && !property_info.sprite_misc_db_key) {
+                this.data.logger.log_message(
+                    `NPC with '${property_info.key_name}' key seems not to have '${initial_action}' action registered. Please double-check the db.`
+                );
             }
             initial_animation = property_info.animation ?? initial_animation;
             initial_animation = snapshot_info?.animation ?? initial_animation;
+            if (
+                npc_db.actions &&
+                initial_action in npc_db.actions &&
+                !npc_db.actions[initial_action].animations.includes(initial_animation)
+            ) {
+                this.data.logger.log_message(
+                    `NPC with '${property_info.key_name}' key seems not to have '${initial_animation}' animation registered. Please double-check the db.`
+                );
+            }
             const interaction_pattern = property_info.interaction_pattern ?? npc_db.interaction_pattern;
             const ignore_physics = property_info.ignore_physics ?? npc_db.ignore_physics;
             const voice_key = property_info.voice_key ?? npc_db.voice_key;
@@ -1063,6 +1081,11 @@ export class Map {
             const io_index = this.interactable_objects.length;
             const snapshot_info = this.data.snapshot_manager.snapshot?.map_data.interactable_objects[io_index];
             const interactable_object_db = this.data.dbs.interactable_objects_db[property_info.key_name];
+            if (!interactable_object_db) {
+                this.data.logger.log_message(
+                    `Could not find IO db with '${property_info.key_name}' key. Please double-check if you registered this IO.`
+                );
+            }
             let io_class: typeof InteractableObjects = InteractableObjects;
             if (interactable_object_db.pushable) {
                 io_class = Pushable;
