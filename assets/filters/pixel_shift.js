@@ -5,6 +5,7 @@ Phaser.Filter.PixelShift = function (game) {
     this.uniforms.y_shift = { type: '1f', value: 0.0 };
     this.uniforms.frame_width = { type: '1f', value: 0.0 };
     this.uniforms.frame_height = { type: '1f', value: 0.0 };
+    this.uniforms.repeat_texture = { type: '1f', value: 1.0 };
 
     this.setResolution(game.config.width, game.config.height);
 
@@ -17,6 +18,7 @@ Phaser.Filter.PixelShift = function (game) {
         uniform float      y_shift;
         uniform float      frame_width;
         uniform float      frame_height;
+        uniform float      repeat_texture;
         uniform vec2       resolution;
 
         void main(void) {
@@ -25,7 +27,11 @@ Phaser.Filter.PixelShift = function (game) {
             vec2 frame_size = floor(vec2(frame_width, frame_height));
             vec2 shift = vec2(x_shift, y_shift);
 
-            uv = mod(uv_px + shift, frame_size) / resolution;
+            if (repeat_texture == 1.0) {
+                uv = mod(uv_px + shift, frame_size) / resolution;
+            } else {
+                uv = (uv_px + shift) / resolution;
+            }
 
             gl_FragColor = texture2D(uSampler, uv);
         }
@@ -69,5 +75,14 @@ Object.defineProperty(Phaser.Filter.PixelShift.prototype, 'frame_height', {
     },
     set: function(value) {
         this.uniforms.frame_height.value = value;
+    }
+});
+
+Object.defineProperty(Phaser.Filter.PixelShift.prototype, 'repeat_texture', {
+    get: function() {
+        return Boolean(this.uniforms.repeat_texture.value);
+    },
+    set: function(value) {
+        this.uniforms.repeat_texture.value = value ? 1.0 : 0.0;
     }
 });
