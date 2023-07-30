@@ -462,13 +462,14 @@ export class InteractableObjects {
             return;
         }
         allowed_tiles.forEach(tile_info => {
-            if (tile_info.type === "tile") {
+            const type = tile_info.type ?? "tile";
+            if (type === "tile") {
                 this.allowed_tiles.push({
                     x: tile_info.x,
                     y: tile_info.y,
                     collision_layer: tile_info.collision_layer,
                 });
-            } else if (tile_info.type === "rect") {
+            } else if (type === "rect") {
                 const x0 = Math.min(tile_info.x0, tile_info.x1);
                 const x1 = Math.max(tile_info.x0, tile_info.x1);
                 const y0 = Math.min(tile_info.y0, tile_info.y1);
