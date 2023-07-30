@@ -45,7 +45,11 @@ export class InteractableObjects {
     protected game: Phaser.Game;
     protected data: GoldenSun;
 
-    private allowed_tiles: {x: number; y: number; collision_layer: number}[];
+    private allowed_tiles: {
+        x: number;
+        y: number;
+        collision_layer: number;
+    }[];
     private not_allowed_tiles: {x: number; y: number}[];
     private events_id: Set<TileEvent["id"]>;
     private collision_change_functions: Function[];
@@ -185,7 +189,7 @@ export class InteractableObjects {
         this._tile_x_pos = x;
         this._tile_y_pos = y;
         this._sprite_info = null;
-        this.allowed_tiles = allowed_tiles ?? [];
+        this.parse_allowed_tiles(allowed_tiles);
         if (this.storage_keys.base_collision_layer !== undefined) {
             base_collision_layer = this.data.storage.get(this.storage_keys.base_collision_layer);
         }
@@ -439,6 +443,47 @@ export class InteractableObjects {
     /** Whether this IO is affected by Reveal psynergy or not. */
     get affected_by_reveal() {
         return this._affected_by_reveal;
+    }
+
+    parse_allowed_tiles(
+        allowed_tiles: {
+            x?: number;
+            y?: number;
+            x0?: number;
+            y0?: number;
+            x1?: number;
+            y1?: number;
+            collision_layer: number;
+            type: "tile" | "rect";
+        }[]
+    ) {
+        this.allowed_tiles = [];
+        if (!allowed_tiles) {
+            return;
+        }
+        allowed_tiles.forEach(tile_info => {
+            if (tile_info.type === "tile") {
+                this.allowed_tiles.push({
+                    x: tile_info.x,
+                    y: tile_info.y,
+                    collision_layer: tile_info.collision_layer,
+                });
+            } else if (tile_info.type === "rect") {
+                const x0 = Math.min(tile_info.x0, tile_info.x1);
+                const x1 = Math.max(tile_info.x0, tile_info.x1);
+                const y0 = Math.min(tile_info.y0, tile_info.y1);
+                const y1 = Math.max(tile_info.y0, tile_info.y1);
+                for (let x = x0; x <= x1; ++x) {
+                    for (let y = y0; y <= y1; ++y) {
+                        this.allowed_tiles.push({
+                            x: x,
+                            y: y,
+                            collision_layer: tile_info.collision_layer,
+                        });
+                    }
+                }
+            }
+        });
     }
 
     position_allowed(x: number, y: number) {
