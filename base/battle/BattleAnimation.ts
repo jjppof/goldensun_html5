@@ -33,6 +33,7 @@ type CompactValuesSpecifier = {
     starting_value: number;
     cumulator: number;
     reverse?: boolean;
+    amount?: number;
 };
 
 type DefaultAttr = {
@@ -57,6 +58,7 @@ type GeneralFilterAttr = {
     sprite_index: string | number | number[];
     remove: boolean;
     ignore_if_dodge?: boolean;
+    duration?: number;
 };
 
 type BlinkAttr = Omit<GeneralFilterAttr, "remove"> & {
@@ -642,6 +644,19 @@ export class BattleAnimation {
                         };
                         return prev;
                     }, {});
+                } else if (!Array.isArray(seq.sprite_index) && typeof seq.sprite_index === "object") {
+                    const sprite_index_arr = this.get_expanded_values(
+                        seq.sprite_index as CompactValuesSpecifier,
+                        seq.sprite_index.amount
+                    );
+                    return sprite_index_arr.reduce((prev, cur, index) => {
+                        prev[this.sprites[cur].data.custom_key] = {
+                            obj: _.get(this.sprites[cur], obj_propety),
+                            sprite: this.sprites[cur],
+                            index: index,
+                        };
+                        return prev;
+                    }, {});
                 } else {
                     return {
                         [this.sprites[seq.sprite_index].data.custom_key]: {
@@ -674,6 +689,18 @@ export class BattleAnimation {
                 }, {});
             } else if (Array.isArray(seq.sprite_index)) {
                 return seq.sprite_index.reduce((prev, cur, index) => {
+                    prev[this.sprites[cur].data.custom_key] = {
+                        obj: this.sprites[cur],
+                        index: index,
+                    };
+                    return prev;
+                }, {});
+            } else if (!Array.isArray(seq.sprite_index) && typeof seq.sprite_index === "object") {
+                const sprite_index_arr = this.get_expanded_values(
+                    seq.sprite_index as CompactValuesSpecifier,
+                    seq.sprite_index.amount
+                );
+                return sprite_index_arr.reduce((prev, cur, index) => {
                     prev[this.sprites[cur].data.custom_key] = {
                         obj: this.sprites[cur],
                         index: index,
@@ -1125,10 +1152,29 @@ export class BattleAnimation {
         this.play_general_filter(
             this.levels_filter_sequence,
             engine_filters.LEVELS,
-            (filter_seq: BattleAnimation["levels_filter_sequence"][0], filter: Phaser.Filter.Levels) => {
-                filter.min_input = filter_seq.min_input ?? filter.min_input;
-                filter.max_input = filter_seq.max_input ?? filter.max_input;
-                filter.gamma = filter_seq.gamma ?? filter.gamma;
+            async (filter_seq: BattleAnimation["levels_filter_sequence"][0], filter: Phaser.Filter.Levels) => {
+                if (filter_seq.duration && filter_seq.duration > 30) {
+                    let promise_resolve;
+                    const promise = new Promise(resolve => (promise_resolve = resolve));
+                    this.data.game.add
+                        .tween(filter)
+                        .to(
+                            {
+                                min_input: filter_seq.min_input ?? filter.min_input,
+                                max_input: filter_seq.max_input ?? filter.max_input,
+                                gamma: filter_seq.gamma ?? filter.gamma,
+                            },
+                            filter_seq.duration,
+                            Phaser.Easing.Linear.None,
+                            true
+                        )
+                        .onComplete.addOnce(promise_resolve);
+                    await promise;
+                } else {
+                    filter.min_input = filter_seq.min_input ?? filter.min_input;
+                    filter.max_input = filter_seq.max_input ?? filter.max_input;
+                    filter.gamma = filter_seq.gamma ?? filter.gamma;
+                }
             }
         );
     }
