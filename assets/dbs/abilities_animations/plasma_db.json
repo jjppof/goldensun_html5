@@ -133,7 +133,7 @@
                 "lifespan": 1000,
                 "ay": 0.04,
                 "velocity": {
-                    "initial": {"min": 0.2, "max": 5.3},
+                    "initial": {"min": 0.7, "max": 6.0},
                     "radial": { "arcStart": -90, "arcEnd": 90 },
                     "control": [ { "x": 0, "y": 1 }, { "x": 0.5, "y": 0.75 }, { "x": 1, "y": 0.25 } ]
                 }
@@ -146,12 +146,13 @@
             "position": "between",
             "render_type": "pixel",
             "show_trails": true,
-            "trails_clear_factor": 0.2,
-            "pixel_size": 12,
-            "pixel_reducing_factor": 0.16,
+            "trails_clear_factor": 0.3,
+            "pixel_size": 8,
+            "pixel_reducing_factor": 0.1,
             "pixel_is_rect": false,
             "particles_display_blend_mode": "screen",
             "render_white_core": true,
+            "core_custom_color": "rgba(255,255,255,0.85)",
             "total": 250,
             "frequency": 10,
             "emitter_data_key": "explosion",

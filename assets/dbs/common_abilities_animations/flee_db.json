@@ -21,8 +21,9 @@
             "cumulator": 0
         },
         "start_delay": {
-            "starting_value": 0,
-            "cumulator": 0
+            "starting_value": 200,
+            "cumulator": 150,
+            "reverse": true
         },
         "duration": 80,
         "is_absolute": false,
@@ -49,8 +50,9 @@
             "cumulator": 0
         },
         "start_delay": {
-            "starting_value": 0,
-            "cumulator": 0
+            "starting_value": 200,
+            "cumulator": 150,
+            "reverse": true
         },
         "duration": 80,
         "is_absolute": false,

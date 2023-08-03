@@ -61,7 +61,7 @@
         "sprite_index": "background",
         "duration": 400
     },{
-        "start_delay": 1500,
+        "start_delay": 2500,
         "to": 1.0,
         "is_absolute": true,
         "tween": "Linear.None",

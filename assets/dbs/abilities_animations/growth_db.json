@@ -53,23 +53,23 @@
         "is_absolute": false,
         "tween": "Linear.None",
         "sprite_index": "background",
-        "duration": 30,
+        "duration": 60,
         "yoyo": true
     },{
-        "start_delay": 30,
+        "start_delay": 1130,
         "to": 1,
         "is_absolute": false,
         "tween": "Linear.None",
         "sprite_index": "background",
-        "duration": 30,
+        "duration": 60,
         "yoyo": true
     },{
-        "start_delay": 30,
+        "start_delay": 1260,
         "to": 1,
         "is_absolute": false,
         "tween": "Linear.None",
         "sprite_index": "background",
-        "duration": 30,
+        "duration": 60,
         "yoyo": true
     }],
     "set_frame_sequence": [{
@@ -103,7 +103,7 @@
         "sprite_index": "background",
         "duration": 400
     },{
-        "start_delay": 1500,
+        "start_delay": 2000,
         "to": 1.0,
         "is_absolute": true,
         "tween": "Linear.None",

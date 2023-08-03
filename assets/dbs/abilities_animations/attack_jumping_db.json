@@ -19,7 +19,7 @@
         "to_expression": "v - 13",
         "duration": 125
     },{
-        "start_delay": 0,
+        "start_delay": 125,
         "to": "targets",
         "is_absolute": true,
         "tween": "Linear.None",

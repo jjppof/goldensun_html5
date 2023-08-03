@@ -61,7 +61,7 @@
         "intensity": 0.1
     },{
         "sprite_index": "background",
-        "start_delay": 3800,
+        "start_delay": 3300,
         "remove": true
     }],
     "alpha_sequence": [{
@@ -72,7 +72,7 @@
         "sprite_index": "background",
         "duration": 400
     },{
-        "start_delay": 3800,
+        "start_delay": 3400,
         "to": 1.0,
         "is_absolute": true,
         "tween": "Linear.None",
@@ -84,7 +84,7 @@
         "tween": "initial",
         "sprite_index": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
     },{
-        "start_delay": [1800, 2100, 2300, 2500, 2700, 2900, 3100, 3300, 3500, 3700],
+        "start_delay": [1200, 1400, 1600, 1800, 2000, 2200, 2400, 2600, 2800, 3000],
         "to": 1.0,
         "is_absolute": true,
         "duration": "instantly",
@@ -92,26 +92,40 @@
     }],
     "play_sequence": [{
         "animation_key": "damage",
-        "start_delay": 1300,
+        "start_delay": 1200,
         "sprite_index": "targets",
         "wait": false
     },{
         "animation_key": "slash",
-        "start_delay": [1800, 2100, 2300, 2500, 2700, 2900, 3100, 3300, 3500, 3700],
+        "start_delay": [1200, 1400, 1600, 1800, 2000, 2200, 2400, 2600, 2800, 3000],
         "sprite_index": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
         "reverse": false,
-        "frame_rate": 20,
+        "frame_rate": 40,
         "repeat": false,
         "wait": true,
         "hide_on_complete": true
     }],
     "center_shift_sequence": [{
-        "start_delay": 1500,
-        "to": 15,
+        "start_delay": 1100,
+        "to": 7,
         "is_absolute": false,
         "tween": "Quadratic.Out",
         "sprite_index": "targets",
-        "duration": 350
+        "duration": 100
+    },{
+        "start_delay": 1500,
+        "to": 5,
+        "is_absolute": false,
+        "tween": "Quadratic.Out",
+        "sprite_index": "targets",
+        "duration": 50
+    },{
+        "start_delay": 1700,
+        "to": 8,
+        "is_absolute": false,
+        "tween": "Quadratic.Out",
+        "sprite_index": "targets",
+        "duration": 60
     }],
     "blink_sequence": [{
         "sprite_index": "targets",
@@ -122,12 +136,12 @@
         "sprite_index": "targets",
         "start_delay": 1700,
         "count": 3,
-        "interval": 100
+        "interval": 60
     },{
         "sprite_index": "targets",
-        "start_delay": 2500,
+        "start_delay": 2100,
         "count": 10,
-        "interval": 70
+        "interval": 65
     }],
     "cast_type": "psynergy_cast",
     "wait_for_cast_animation": false,
@@ -145,10 +159,10 @@
                     }
                 },
                 "lifespan": 1850,
-                "vy": { "min": -0.6, "max": 0.5 },
+                "vy": { "min": -0.7, "max": 0.5 },
                 "vx": {
-                    "value": 0,
-                    "control": [ { "x": 0, "y": 0.7 }, { "x": 0.3, "y": 1.3 }, { "x": 0.7, "y": 0.4 }, { "x": 1, "y": 0.1 } ]
+                    "value": -5,
+                    "control": [ { "x": 0, "y": 0.55 }, { "x": 0.3, "y": 1.0 }, { "x": 0.7, "y": 0.4 }, { "x": 1, "y": 0.05 } ]
                 }
             }
         },
@@ -163,7 +177,7 @@
             "render_type": "sprite",
             "particles_display_blend_mode": "screen",
             "repeat": 40,
-            "frequency": 70,
+            "frequency": 55,
             "emitter_data_key": "wind",
             "force": {
                 "x": -0.2
@@ -173,6 +187,6 @@
                 "visible": false
             }
         }],
-        "emission_finish": 4800
+        "emission_finish": 3400
     }]
 }

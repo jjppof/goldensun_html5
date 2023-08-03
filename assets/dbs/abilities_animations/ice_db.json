@@ -96,7 +96,7 @@
         "sprite_index": "background",
         "duration": 400
     },{
-        "start_delay": 1800,
+        "start_delay": 2700,
         "to": 1.0,
         "is_absolute": true,
         "tween": "Linear.None",
@@ -124,7 +124,7 @@
         "g": 0.6,
         "b": 2.3
     },{
-        "start_delay": 3800, 
+        "start_delay": 3200, 
         "sprite_index": "targets", 
         "remove": true
     }],
@@ -135,7 +135,7 @@
         "max_input": 0.8,
         "gamma": 0.7
     },{
-        "start_delay": 3800, 
+        "start_delay": 3200, 
         "sprite_index": "targets", 
         "remove": true
     }],
@@ -204,6 +204,6 @@
                 "visible": false
             }
         }],
-        "emission_finish": 3800
+        "emission_finish": 3200
     }]
 }

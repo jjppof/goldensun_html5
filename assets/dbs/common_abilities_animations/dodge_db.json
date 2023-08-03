@@ -17,7 +17,7 @@
         "sprite_index": "caster",
         "duration": 100
     },{
-        "start_delay": 250,
+        "start_delay": 350,
         "to": "reset",
         "is_absolute": false,
         "tween": "Linear.None",
