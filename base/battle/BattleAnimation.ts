@@ -42,7 +42,7 @@ type DefaultAttr = {
     to_expression: string;
     is_absolute: boolean;
     tween: string;
-    duration: number | string;
+    duration: number;
     sprite_index?: string | number | number[];
     yoyo?: boolean;
     shift?: number | number[] | CompactValuesSpecifier;
@@ -87,6 +87,21 @@ type GeometryInfo = {
     keep_core_white: boolean;
 };
 
+type InitialConfig = {
+    x: number | string;
+    y: number | string;
+    alpha: number;
+    scale: {
+        x: number;
+        y: number;
+    };
+    anchor: {
+        x: number;
+        y: number;
+    };
+    blend_mode: "screen" | "normal";
+};
+
 type SpriteKey = {
     key_name: string;
     per_target: boolean;
@@ -97,6 +112,7 @@ type SpriteKey = {
     frames_number: number;
     type: sprite_types;
     geometry_info: GeometryInfo;
+    initial_config: InitialConfig;
 };
 
 export class BattleAnimation {
@@ -223,12 +239,10 @@ export class BattleAnimation {
     };
     private destroy_sprites: boolean;
 
-    //tween type can be 'initial' for first position
     //sprite_index: "targets" is the target, "caster" is the caster, "allies" are the allies, "background" is the background sprite, 0...n is the sprites_key_names index
     //property "to" value can be "targets" or an actual value. In the case of "targets" is the the corresponding property value. In the case of using "targets", a "shift" property is available to be added to the resulting value
     //values in rad can have "direction" set to "clockwise", "counter_clockwise" or "closest" if "absolute" is true
     //in sprite_keys, position can be: "between", "over" or "behind"
-    //"duration" set to "instantly" must have the "start_delay" value set as absolute
     constructor(
         game,
         data,
@@ -472,6 +486,24 @@ export class BattleAnimation {
                         psy_sprite.data.custom_key = `${sprite_type}/${i}/${j}`;
                         psy_sprite.data.trail_image = trail_image;
                         psy_sprite.data.ignore_trim = true;
+                        if (sprite_info.initial_config) {
+                            psy_sprite.anchor.x = sprite_info.initial_config.anchor?.x ?? psy_sprite.anchor.x;
+                            psy_sprite.anchor.y = sprite_info.initial_config.anchor?.y ?? psy_sprite.anchor.y;
+                            psy_sprite.scale.x = sprite_info.initial_config.scale?.x ?? psy_sprite.scale.x;
+                            psy_sprite.scale.y = sprite_info.initial_config.scale?.y ?? psy_sprite.scale.y;
+                            psy_sprite.alpha = sprite_info.initial_config.alpha ?? psy_sprite.alpha;
+                            const pos = this.get_sprite_xy_pos(
+                                sprite_info.initial_config.x ?? psy_sprite.x,
+                                sprite_info.initial_config.y ?? psy_sprite.y,
+                                0,
+                                0
+                            );
+                            psy_sprite.x = pos.x;
+                            psy_sprite.y = pos.y;
+                            if (sprite_info.initial_config.blend_mode === "screen") {
+                                psy_sprite.blendMode = Phaser.blendModes.SCREEN;
+                            }
+                        }
                         this.sprites.push(psy_sprite);
                     }
                 } else {
@@ -846,18 +878,19 @@ export class BattleAnimation {
                     to_value = seq.round_final_value ? Math.floor(to_value) : to_value;
                     return to_value;
                 };
-                if (seq.tween === "initial") {
+                const start_delay = Array.isArray(seq.start_delay)
+                    ? seq.start_delay[sprite_info.index]
+                    : (seq.start_delay as number) ?? 0;
+                if (start_delay < 30) {
                     this_sprite[property_to_set] = get_to_value();
                 } else {
-                    const start_delay = Array.isArray(seq.start_delay)
-                        ? seq.start_delay[sprite_info.index]
-                        : (seq.start_delay as number);
                     let resolve_function;
-                    let this_promise = new Promise(resolve => {
+                    const this_promise = new Promise(resolve => {
                         resolve_function = resolve;
                     });
                     this.promises.push(this_promise);
-                    if (seq.duration === "instantly") {
+                    const duration = Array.isArray(seq.duration) ? seq.duration[sprite_info.index] : seq.duration ?? 0;
+                    if (duration < 30) {
                         this.game.time.events.add(start_delay, () => {
                             this_sprite[property_to_set] = get_to_value();
                             if (
@@ -873,16 +906,18 @@ export class BattleAnimation {
                             }
                         });
                     } else {
-                        const tween = this.game.add.tween(this_sprite).to(
-                            {[property_to_set]: get_to_value},
-                            Array.isArray(seq.duration) ? seq.duration[sprite_info.index] : seq.duration,
-                            seq.tween.split(".").reduce((p, prop) => p[prop], Phaser.Easing),
-                            true,
-                            start_delay,
-                            0,
-                            seq.yoyo ?? false,
-                            true
-                        );
+                        const tween = this.game.add
+                            .tween(this_sprite)
+                            .to(
+                                {[property_to_set]: get_to_value},
+                                duration,
+                                seq.tween ? _.get(Phaser.Easing, seq.tween) : Phaser.Easing.Linear.None,
+                                true,
+                                start_delay,
+                                0,
+                                seq.yoyo ?? false,
+                                true
+                            );
                         if (["ellipses_semi_major", "ellipses_semi_minor", "center_shift"].includes(property_to_set)) {
                             tween.onStart.addOnce(() => {
                                 (this_sprite as PlayerSprite).force_stage_update = true;
@@ -993,7 +1028,7 @@ export class BattleAnimation {
                 const sprite_info = sprites[key];
                 const sprite = sprite_info.obj as PlayerSprite | Phaser.Sprite;
                 let resolve_function;
-                let this_promise = new Promise(resolve => {
+                const this_promise = new Promise(resolve => {
                     resolve_function = resolve;
                 });
                 this.promises.push(this_promise);
@@ -1026,7 +1061,7 @@ export class BattleAnimation {
                 const sprite_info = sprites[key];
                 const sprite = sprite_info.obj as PlayerSprite | Phaser.Sprite;
                 let resolve_function;
-                let this_promise = new Promise(resolve => {
+                const this_promise = new Promise(resolve => {
                     resolve_function = resolve;
                 });
                 this.promises.push(this_promise);
@@ -1060,14 +1095,19 @@ export class BattleAnimation {
                 continue;
             }
             let resolve_function;
-            let this_promise = new Promise(resolve => {
+            const this_promise = new Promise(resolve => {
                 resolve_function = resolve;
             });
             this.promises.push(this_promise);
-            this.game.time.events.add(sfx_seq.start_delay, () => {
+            const play = () => {
                 this.data.audio.play_se(sfx_seq.sfx_key, undefined, sfx_seq.position_shift, sfx_seq.volume);
                 resolve_function();
-            });
+            };
+            if (sfx_seq.start_delay < 30) {
+                play();
+            } else {
+                this.game.time.events.add(sfx_seq.start_delay, play);
+            }
         }
     }
 
@@ -1214,7 +1254,7 @@ export class BattleAnimation {
                     filter.y_shift;
                 const duration = Array.isArray(filter_seq.duration)
                     ? filter_seq.duration[sprite_index]
-                    : filter_seq.duration;
+                    : filter_seq.duration ?? 0;
                 if (duration > 30) {
                     let resolve_function;
                     const promise = new Promise(resolve => (resolve_function = resolve));
@@ -1260,8 +1300,8 @@ export class BattleAnimation {
                 this.promises.push(this_promise);
                 const start_delay = Array.isArray(filter_seq.start_delay)
                     ? filter_seq.start_delay[sprite_info.index]
-                    : (filter_seq.start_delay as number);
-                this.game.time.events.add(start_delay, async () => {
+                    : (filter_seq.start_delay as number) ?? 0;
+                const apply_blink = async () => {
                     const filter = sprite.available_filters[engine_filters.TINT] as Phaser.Filter.Tint;
                     this.manage_filter(filter as Phaser.Filter, sprite, false);
 
@@ -1294,13 +1334,17 @@ export class BattleAnimation {
                     this.manage_filter(filter as Phaser.Filter, sprite, true);
 
                     resolve_function();
-                });
+                };
+                if (start_delay < 30) {
+                    apply_blink();
+                } else {
+                    this.game.time.events.add(start_delay, apply_blink);
+                }
             }
         }
     }
 
     play_stage_angle_sequence() {
-        let chained_tweens = [];
         for (let i = 0; i < this.stage_angle_sequence.length; ++i) {
             const stage_angle_seq = this.stage_angle_sequence[i];
             let to_value = stage_angle_seq.to as number;
@@ -1326,39 +1370,55 @@ export class BattleAnimation {
                 to_value = this.stage_prev_value + (stage_angle_seq.to as number);
             }
             this.stage_prev_value = to_value;
-            if (stage_angle_seq.tween === "initial") {
-                if (is_absolute) {
-                    this.battle_stage.camera_angle.rad = to_value;
+            const duration = (stage_angle_seq.duration as number) ?? 0;
+            const set_stage_angle = () => {
+                if (duration < 30) {
+                    if (is_absolute) {
+                        this.battle_stage.camera_angle.rad = to_value;
+                    } else {
+                        this.battle_stage.camera_angle.rad += to_value;
+                    }
                 } else {
-                    this.battle_stage.camera_angle.rad += to_value;
+                    const tween = this.game.add
+                        .tween(this.battle_stage.camera_angle)
+                        .to(
+                            {rad: to_value},
+                            duration,
+                            stage_angle_seq.tween
+                                ? _.get(Phaser.Easing, stage_angle_seq.tween)
+                                : Phaser.Easing.Linear.None,
+                            true
+                        );
+                    let resolve_function;
+                    const this_promise = new Promise(resolve => {
+                        resolve_function = resolve;
+                    });
+                    this.promises.push(this_promise);
+                    tween.onStart.addOnce(() => {
+                        this.battle_stage.pause_players_update = false;
+                    });
+                    tween.onComplete.addOnce(() => {
+                        if (is_absolute) {
+                            this.battle_stage.camera_angle.rad = range_360(this.battle_stage.camera_angle.rad);
+                        }
+                        this.battle_stage.pause_players_update = true;
+                        resolve_function();
+                    });
                 }
+            };
+            const start_delay = (stage_angle_seq.start_delay as number) ?? 0;
+            if (start_delay < 30) {
+                set_stage_angle();
             } else {
-                const tween = this.game.add.tween(this.battle_stage.camera_angle).to(
-                    {rad: to_value},
-                    stage_angle_seq.duration as number,
-                    stage_angle_seq.tween.split(".").reduce((p, prop) => p[prop], Phaser.Easing),
-                    chained_tweens.length === 0,
-                    stage_angle_seq.start_delay as number
-                );
                 let resolve_function;
-                let this_promise = new Promise(resolve => {
+                const this_promise = new Promise(resolve => {
                     resolve_function = resolve;
                 });
                 this.promises.push(this_promise);
-                tween.onStart.addOnce(() => {
-                    this.battle_stage.pause_players_update = false;
-                });
-                tween.onComplete.addOnce(() => {
-                    if (is_absolute) {
-                        this.battle_stage.camera_angle.rad = range_360(this.battle_stage.camera_angle.rad);
-                    }
-                    this.battle_stage.pause_players_update = true;
+                this.game.time.events.add(start_delay, () => {
+                    set_stage_angle();
                     resolve_function();
                 });
-                if (chained_tweens.length) {
-                    chained_tweens[chained_tweens.length - 1].chain(tween);
-                }
-                chained_tweens.push(tween);
             }
         }
     }

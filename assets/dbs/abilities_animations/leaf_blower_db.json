@@ -12,33 +12,33 @@
         "to": ["targets","targets","targets","targets","targets","targets","targets","targets","targets","targets"],
         "shift": [-22, -21, -21, -8, -7, -17, -16, -13, -21, -18],
         "is_absolute": true,
-        "tween": "initial",
+        "start_delay": 0,
         "sprite_index": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
     }],
     "y_sequence": [{
         "to": ["targets","targets","targets","targets","targets","targets","targets","targets","targets","targets"],
         "shift": [-29, -35, -30, -25, -33, -40, -34, -30, -36, -29],
         "is_absolute": true,
-        "tween": "initial",
+        "start_delay": 0,
         "sprite_index": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
     }],
     "x_anchor_sequence": [{
         "to": [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5],
         "is_absolute": true,
-        "tween": "initial",
+        "start_delay": 0,
         "sprite_index": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
     }],
     "y_anchor_sequence": [{
         "to": [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5],
         "is_absolute": true,
-        "tween": "initial",
+        "start_delay": 0,
         "sprite_index": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
     }],
     "rotation_sequence": [{
         "to": [0.58307614, 0.02373602, 0.12060801, 0.56726273, 0.40282001,
             0.45712441, 0.00145962, 0.49899853, 0.55934018, 0.65832995],
         "is_absolute": true,
-        "tween": "initial",
+        "start_delay": 0,
         "sprite_index": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
     }],
     "blend_mode_sequence": [{
@@ -81,13 +81,13 @@
     },{
         "to": 0.0,
         "is_absolute": true,
-        "tween": "initial",
+        "start_delay": 0,
         "sprite_index": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
     },{
         "start_delay": [1200, 1400, 1600, 1800, 2000, 2200, 2400, 2600, 2800, 3000],
         "to": 1.0,
         "is_absolute": true,
-        "duration": "instantly",
+        "duration": 0,
         "sprite_index": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
     }],
     "play_sequence": [{

@@ -14,13 +14,13 @@
     "wait_for_cast_animation": false,
     "x_scale_sequence": [{
         "to": [1.8, 1.9, -1.9],
-        "tween": "initial",
+        "start_delay": 0,
         "is_absolute": true,
         "sprite_index": [0, 1, 2]
     }],
     "y_scale_sequence": [{
         "to": [1.1, 1.0, 1.0],
-        "tween": "initial",
+        "start_delay": 0,
         "is_absolute": true,
         "sprite_index": [0, 1, 2]
     }],
@@ -38,19 +38,19 @@
     }],
     "alpha_sequence": [{
         "to": [0, 0, 0],
-        "tween": "initial",
+        "start_delay": 0,
         "is_absolute": true,
         "sprite_index": [0, 1, 2]
     },{
         "to": [0.8, 0.8, 0.8],
         "start_delay": 1000,
-        "duration": "instantly",
+        "duration": 0,
         "is_absolute": true,
         "sprite_index": [0, 1, 2]
     },{
         "to": [0, 0, 0],
         "start_delay": 2000,
-        "duration": "instantly",
+        "duration": 0,
         "is_absolute": true,
         "sprite_index": [0, 1, 2]
     },{
@@ -70,7 +70,7 @@
     }],
     "x_sequence": [{
         "to": ["targets", "targets", "targets"],
-        "tween": "initial",
+        "start_delay": 0,
         "is_absolute": true,
         "sprite_index": [0, 1, 2],
         "round_final_value": true
@@ -78,7 +78,7 @@
     "y_sequence": [{
         "to": ["targets", "targets", "targets"],
         "shift": [0, 8, 8],
-        "tween": "initial",
+        "start_delay": 0,
         "is_absolute": true,
         "sprite_index": [0, 1, 2],
         "round_final_value": true
@@ -101,13 +101,13 @@
     }],
     "x_anchor_sequence": [{
         "to": [0.5, 1.0, 1.0],
-        "tween": "initial",
+        "start_delay": 0,
         "is_absolute": true,
         "sprite_index": [0, 1, 2]
     }],
     "y_anchor_sequence": [{
         "to": [1.0, 1.0, 1.0],
-        "tween": "initial",
+        "start_delay": 0,
         "is_absolute": true,
         "sprite_index": [0, 1, 2]
     }],

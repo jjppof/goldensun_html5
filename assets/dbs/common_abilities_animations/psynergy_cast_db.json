@@ -18,7 +18,7 @@
     "x_sequence": [{
         "to": ["caster", "caster", "caster"],
         "is_absolute": true,
-        "tween": "initial",
+        "start_delay": 0,
         "sprite_index": [0, 1, 2]
     },{
         "to": 20,
@@ -43,7 +43,7 @@
         "to": ["caster", "caster", "caster"],
         "shift": [-43, -43, -43],
         "is_absolute": true,
-        "tween": "initial",
+        "start_delay": 0,
         "sprite_index": [0, 1, 2]
     },{
         "to": -20,
@@ -62,20 +62,20 @@
         "to": [0.5, 0.5, 0.5],
         "shift": [0, 0, 0],
         "is_absolute": true,
-        "tween": "initial",
+        "start_delay": 0,
         "sprite_index": [0, 1, 2]
     }],
     "y_anchor_sequence": [{
         "to": [0.5, 0.5, 0.5],
         "shift": [0, 0, 0],
         "is_absolute": true,
-        "tween": "initial",
+        "start_delay": 0,
         "sprite_index": [0, 1, 2]
     }],
     "alpha_sequence": [{
         "to": [0.8, 0.8, 0.8],
         "is_absolute": true,
-        "tween": "initial",
+        "start_delay": 0,
         "sprite_index": [0, 1, 2]
     },{
         "to": [0, 0, 0],

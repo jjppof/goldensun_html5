@@ -21,13 +21,13 @@
     "x_sequence": [{
         "to": 16,
         "is_absolute": true,
-        "tween": "initial",
+        "start_delay": 0,
         "sprite_index": 0
     }],
     "y_sequence": [{
         "to": 16,
         "is_absolute": true,
-        "tween": "initial",
+        "start_delay": 0,
         "sprite_index": 0
     },{
         "start_delay": 1520,
@@ -64,13 +64,13 @@
     "alpha_sequence": [{
         "to": 0.0,
         "is_absolute": true,
-        "tween": "initial",
+        "start_delay": 0,
         "sprite_index": 0
     },{
         "to": 0.95,
         "is_absolute": true,
         "start_delay": 1500,
-        "duration": "instantly",
+        "duration": 0,
         "sprite_index": 0
     },{
         "start_delay": 900,
@@ -90,7 +90,7 @@
     "x_scale_sequence": [{
         "to": 1.75,
         "is_absolute": true,
-        "tween": "initial",
+        "start_delay": 0,
         "sprite_index": 0
     }],
     "colorize_sequence": [{
