@@ -53,6 +53,14 @@ type DefaultAttr = {
     round_final_value?: boolean;
 };
 
+type MiscAttr = {
+    type: "trail_toggle";
+    start_delay: number | number[] | CompactValuesSpecifier;
+    sprite_index?: string | number | number[];
+    ignore_if_dodge?: boolean;
+    value: any;
+};
+
 type GeneralFilterAttr = {
     start_delay: number | number[] | CompactValuesSpecifier;
     sprite_index: string | number | number[];
@@ -135,6 +143,7 @@ export class BattleAnimation {
     public stage_angle_sequence: DefaultAttr[] = [];
     public hue_angle_sequence: DefaultAttr[] = [];
     public blink_sequence: BlinkAttr[] = [];
+    public misc_sequence: MiscAttr[] = [];
     public texture_displacement_sequence: (GeneralFilterAttr & {
         duration: number;
         repeat_texture: boolean;
@@ -274,6 +283,7 @@ export class BattleAnimation {
         sfx_sequence,
         blink_sequence,
         texture_displacement_sequence,
+        misc_sequence,
         cast_type,
         wait_for_cast_animation,
         follow_caster,
@@ -311,6 +321,7 @@ export class BattleAnimation {
         this.sfx_sequence = sfx_sequence ?? [];
         this.blink_sequence = blink_sequence ?? [];
         this.texture_displacement_sequence = texture_displacement_sequence ?? [];
+        this.misc_sequence = misc_sequence ?? [];
         this.running = false;
         this.cast_type = cast_type;
         this.wait_for_cast_animation = wait_for_cast_animation;
@@ -485,6 +496,7 @@ export class BattleAnimation {
                         this.ability_sprites_groups[sprite_info.position].addChild(psy_sprite);
                         psy_sprite.data.custom_key = `${sprite_type}/${i}/${j}`;
                         psy_sprite.data.trail_image = trail_image;
+                        psy_sprite.data.trail_enabled = true;
                         psy_sprite.data.ignore_trim = true;
                         if (sprite_info.initial_config) {
                             psy_sprite.anchor.x = sprite_info.initial_config.anchor?.x ?? psy_sprite.anchor.x;
@@ -598,6 +610,7 @@ export class BattleAnimation {
         this.play_sfx();
         this.play_blink_sequence();
         this.play_texture_displacement_sequence();
+        this.play_misc_sequence();
         this.unmount_animation(finish_callback);
     }
 
@@ -1111,6 +1124,45 @@ export class BattleAnimation {
         }
     }
 
+    play_misc_sequence() {
+        for (let i = 0; i < this.misc_sequence.length; ++i) {
+            const misc_seq = this.misc_sequence[i];
+            if (misc_seq.ignore_if_dodge && this.target_dodged) {
+                continue;
+            }
+            const sprites = this.get_sprites(misc_seq);
+            if (!Array.isArray(misc_seq.start_delay) && typeof misc_seq.start_delay === "object") {
+                misc_seq.start_delay = this.get_expanded_values(
+                    misc_seq.start_delay as CompactValuesSpecifier,
+                    Object.keys(sprites).length
+                );
+            }
+            for (let key in sprites) {
+                const sprite_info = sprites[key];
+                const sprite = sprite_info.obj as PlayerSprite | Phaser.Sprite;
+                let resolve_function;
+                const this_promise = new Promise(resolve => {
+                    resolve_function = resolve;
+                });
+                this.promises.push(this_promise);
+                const start_delay = Array.isArray(misc_seq.start_delay)
+                    ? misc_seq.start_delay[sprite_info.index]
+                    : misc_seq.start_delay;
+                const apply_misc = () => {
+                    if (misc_seq.type === "trail_toggle" && sprite.data.trail_image) {
+                        sprite.data.trail_enabled = !sprite.data.trail_enabled;
+                    }
+                    resolve_function();
+                };
+                if (start_delay > 30) {
+                    this.game.time.events.add(start_delay, apply_misc);
+                } else {
+                    apply_misc();
+                }
+            }
+        }
+    }
+
     play_general_filter(
         sequence: GeneralFilterAttr[],
         filter_key: engine_filters,
@@ -1466,7 +1518,7 @@ export class BattleAnimation {
     render() {
         this.trails_bmps.forEach(bmp => bmp.fill(0, 0, 0, bmp.trail_factor));
         this.sprites.forEach(sprite => {
-            if (!sprite.data.trail_image) return;
+            if (!sprite.data.trail_image || !sprite.data.trail_enabled) return;
             const bm_data = sprite.data.trail_image.key as Phaser.BitmapData;
             if (sprite.data.keep_core_white) {
                 sprite.tint = sprite.data.color;
