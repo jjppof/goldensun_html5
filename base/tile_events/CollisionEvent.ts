@@ -1,10 +1,13 @@
-import {directions} from "../utils";
+import {directions, split_direction} from "../utils";
 import {TileEvent, event_types} from "./TileEvent";
+import * as _ from "lodash";
 
 export class CollisionEvent extends TileEvent {
     private dest_collision_layer: number;
-    private next_x: number;
-    private next_y: number;
+    private fire_positions: {
+        x: number;
+        y: number;
+    }[];
 
     constructor(
         game,
@@ -34,29 +37,33 @@ export class CollisionEvent extends TileEvent {
             key_name
         );
         this.dest_collision_layer = dest_collision_layer;
-        this.next_x = 0;
-        this.next_y = 0;
+        this.fire_positions = [];
     }
 
     set() {
-        let next_x = this.x,
-            next_y = this.y;
-        if (this.get_activation_direction() === directions.left) {
-            next_x = this.x - 1;
-        } else if (this.get_activation_direction() === directions.right) {
-            next_x = this.x + 1;
-        } else if (this.get_activation_direction() === directions.up) {
-            next_y = this.y - 1;
-        } else if (this.get_activation_direction() === directions.down) {
-            next_y = this.y + 1;
-        }
-        this.next_x = next_x;
-        this.next_y = next_y;
+        this.fire_positions = [];
+        _.uniq([...this.activation_directions].flatMap(dir => split_direction(dir))).forEach(dir => {
+            const pos = {x: this.x, y: this.y};
+            if (dir === directions.left) {
+                --pos.x;
+            } else if (dir === directions.right) {
+                ++pos.x;
+            } else if (dir === directions.up) {
+                --pos.y;
+            } else if (dir === directions.down) {
+                ++pos.y;
+            }
+            if (pos.x !== this.x || pos.y !== this.y) {
+                this.fire_positions.push(pos);
+            }
+        });
         this.data.tile_event_manager.set_triggered_event(this);
     }
 
     fire() {
-        if (this.data.hero.tile_x_pos === this.next_x && this.data.hero.tile_y_pos === this.next_y) {
+        if (
+            this.fire_positions.some(pos => pos.x === this.data.hero.tile_pos.x && pos.y === this.data.hero.tile_pos.y)
+        ) {
             this.data.tile_event_manager.unset_triggered_event(this);
             this.data.collision.change_map_body(this.dest_collision_layer);
         } else if (!this.check_position()) {
