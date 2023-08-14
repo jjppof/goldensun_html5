@@ -707,7 +707,7 @@
              "encounter_zone":"bool"
             },
          "type":"objectgroup",
-         "visible":true,
+         "visible":false,
          "x":0,
          "y":0
         }, 
@@ -1552,11 +1552,11 @@
                          "y":-248
                         }, 
                         {
-                         "x":152,
+                         "x":144,
                          "y":-248
                         }, 
                         {
-                         "x":152,
+                         "x":144,
                          "y":-56
                         }, 
                         {
@@ -1591,7 +1591,7 @@
              "join_with_layer":"int"
             },
          "type":"objectgroup",
-         "visible":false,
+         "visible":true,
          "x":0,
          "y":0
         }, 
@@ -1747,6 +1747,14 @@
                          "x":-56,
                          "y":56
                         }],
+                 "properties":
+                    {
+                     "split_polygon":true
+                    },
+                 "propertytypes":
+                    {
+                     "split_polygon":"bool"
+                    },
                  "rotation":0,
                  "visible":true,
                  "width":0,
@@ -2279,13 +2287,15 @@
  "orientation":"orthogonal",
  "properties":
     {
-     "interactable_object\/01":"{\n\"key_name\": \"tree_log_horizontal\",\n\"x\": 17,\n\"y\": 10,\n\"base_collision_layer\": 0,\n\"pillar_direction\": \"horizontal\",\n\"contact_points\": [{\n  \"x\": 17,\n  \"y\": 10\n}],\n\"falling_pos\": {\n  \"x\": 17,\n  \"y\": 11\n}\n}",
-     "interactable_object\/02":"{\n\"key_name\": \"tree_log_vertical\",\n\"x\": 28,\n\"y\": 5,\n\"base_collision_layer\": 0,\n\"pillar_direction\": \"vertical\",\n\"contact_points\": [{\n  \"x\": 28,\n  \"y\": 5\n}],\n\"falling_pos\": {\n  \"x\": 23,\n  \"y\": 5\n}\n}",
-     "interactable_object\/03":"{\n\"key_name\": \"tree_log_horizontal\",\n\"x\": 26,\n\"y\": 13,\n\"base_collision_layer\": 0,\n\"pillar_direction\": \"horizontal\",\n\"contact_points\": [{\n  \"x\": 26,\n  \"y\": 13\n},{\n  \"x\": 26,\n  \"y\": 11\n}]\n}",
-     "interactable_object\/04":"{\n\"key_name\": \"tree_log_horizontal\",\n\"x\": 19,\n\"y\": 17,\n\"base_collision_layer\": 0,\n\"pillar_direction\": \"horizontal\",\n\"contact_points\": [{\n  \"x\": 19,\n  \"y\": 17\n}],\n\"falling_pos\": {\n  \"x\": 19,\n  \"y\": 14\n}\n}",
-     "interactable_object\/05":"{\n\"key_name\": \"tree_log_vertical\",\n\"x\": 3,\n\"y\": 18,\n\"base_collision_layer\": 0,\n\"pillar_direction\": \"vertical\",\n\"contact_points\": [{\n  \"x\": 3,\n  \"y\": 18\n}],\n\"falling_pos\": {\n  \"x\": 4,\n  \"y\": 18\n}\n}",
-     "interactable_object\/06":"{\n\"key_name\": \"tree_log_horizontal\",\n\"x\": 50,\n\"y\": 2,\n\"base_collision_layer\": 1,\n\"dest_collision_layer\": 0,\n\"pillar_direction\": \"horizontal\",\n\"contact_points\": [{\n  \"x\": 50,\n  \"y\": 2\n}],\n\"falling_pos\": {\n  \"x\": 50,\n  \"y\": 4\n},\n\"dest_pos_after_fall\": {\n  \"x\": 50,\n  \"y\": 7\n}\n}",
+     "interactable_object\/01":"{\n\"key_name\": \"tree_log_horizontal\",\n\"x\": 17,\n\"y\": 10,\n\"base_collision_layer\": 0,\n\"pillar_direction\": \"horizontal\",\n\"contact_points\": [{\n  \"x\": 17,\n  \"y\": 9\n}],\n\"falling_pos\": {\n  \"x\": 17,\n  \"y\": 11\n}\n}",
+     "interactable_object\/02":"{\n\"key_name\": \"tree_log_vertical\",\n\"x\": 28,\n\"y\": 5,\n\"base_collision_layer\": 0,\n\"pillar_direction\": \"vertical\",\n\"contact_points\": [{\n  \"x\": 29,\n  \"y\": 5\n}],\n\"falling_pos\": {\n  \"x\": 23,\n  \"y\": 5\n}\n}",
+     "interactable_object\/03":"{\n\"key_name\": \"tree_log_horizontal\",\n\"x\": 26,\n\"y\": 13,\n\"base_collision_layer\": 0,\n\"pillar_direction\": \"horizontal\",\n\"contact_points\": [{\n  \"x\": 25,\n  \"y\": 14\n},{\n  \"x\": 25,\n  \"y\": 10\n}]\n}",
+     "interactable_object\/04":"{\n\"key_name\": \"tree_log_horizontal\",\n\"x\": 19,\n\"y\": 17,\n\"base_collision_layer\": 0,\n\"pillar_direction\": \"horizontal\",\n\"contact_points\": [{\n  \"x\": 19,\n  \"y\": 18\n}],\n\"falling_pos\": {\n  \"x\": 19,\n  \"y\": 14\n}\n}",
+     "interactable_object\/05":"{\n\"key_name\": \"tree_log_vertical\",\n\"x\": 3,\n\"y\": 18,\n\"base_collision_layer\": 0,\n\"pillar_direction\": \"vertical\",\n\"contact_points\": [{\n  \"x\": 2,\n  \"y\": 18\n}],\n\"falling_pos\": {\n  \"x\": 4,\n  \"y\": 18\n}\n}",
+     "interactable_object\/06":"{\n\"key_name\": \"tree_log_horizontal\",\n\"x\": 50,\n\"y\": 2,\n\"base_collision_layer\": 1,\n\"dest_collision_layer\": 0,\n\"pillar_direction\": \"horizontal\",\n\"contact_points\": [{\n  \"x\": 50,\n  \"y\": 1\n}],\n\"falling_pos\": {\n  \"x\": 50,\n  \"y\": 4\n},\n\"dest_pos_after_fall\": {\n  \"x\": 50,\n  \"y\": 7\n}\n}",
      "interactable_object\/07":"{\n\"key_name\": \"push_pillar\",\n\"storage_keys\": {\n  \"position\": \"forest_pillar_position\",\n  \"base_collision_layer\": \"forest_pillar_collision_layer\",\n  \"animation\": \"forest_pillar_animation\"\n},\n\"allowed_tiles\": [\n  {\"x\":24, \"y\":9, \"collision_layer\": 0},\n  {\"x\":23, \"y\":9, \"collision_layer\": 0},\n  {\"x\":22, \"y\":9, \"collision_layer\": 0}\n],\n\"dock_tile_position\": {\n  \"x\": 22,\n  \"y\": 11,\n  \"collision_layer\": -1\n},\n\"object_drop_tiles\": [{\n  \"x\":22,\n  \"y\":9,\n  \"destination_collision_layer\": -1,\n  \"animation_duration\": 200,\n  \"dest_y\": 11,\n  \"water_animation\": true\n}],\n\"events_info\": {\n  \"0\": {\n    \"collision_layer_shift\": 1\n  }\n}\n}",
+     "interactable_object\/08":"{\n\"key_name\": \"push_pillar\",\n\"x\": 21,\n\"y\": 3,\n\"anchor_y\": 0.75,\n\"base_collision_layer\": -1,\n\"animation\": \"pillar_in_the_water\",\n\"events_info\": {\n  \"0\": {\n    \"collision_layer_shift\": 1,\n    \"y_shift\": 0\n  }\n}\n}",
+     "interactable_object\/09":"{\n\"key_name\": \"frost_pool\",\n\"x\": 25,\n\"y\": 4,\n\"base_collision_layer\": 0,\n\"events_info\": {\n  \"1\": {\n    \"collision_layer_shift\": 2\n    }\n}\n}",
      "npc\/01":"{\n    \"key_name\": \"chest\",\n    \"storage_keys\":{\n        \"animation\": \"lifting_gem_chest\"\n    },\n    \"x\": 66,\n    \"y\": 2,\n    \"npc_type\": \"normal\",\n    \"movement_type\": \"idle\",\n    \"base_collision_layer\": 0,\n    \"events\": [\n        {\n            \"type\": \"branch\",\n            \"comparator_pairs\": [{\n                \"condition\": \"=\",\n                \"left_comparator_value\": {\n                    \"type\": \"storage\",\n                    \"value\": {\n                        \"key_name\": \"lifting_gem_chest\"\n                    }\n                },\n                \"right_comparator_value\": {\n                    \"type\": \"value\",\n                    \"value\": \"closed\"\n                }\n            }],\n            \"events\": [{\n                \"type\": \"chest\",\n                \"item\": \"lifting_gem\",\n                \"finish_events\": [{\n                    \"type\": \"set_value\",\n                    \"event_value\": {\n                        \"type\": \"storage\",\n                        \"value\": {\n                            \"key_name\": \"lifting_gem_chest\",\n                            \"value\": \"empty\"\n                        }\n                    }\n                }]\n            }],\n            \"else_events\": [{\n                \"type\": \"dialog\",\n                \"dialog_info\": {\n                    \"text\": \"${HERO} checked the chest...${BREAK}but the chest was empty.\"\n                }\n            }]\n        }\n    ]\n}",
      "real_tile_height":16,
      "real_tile_width":16,
@@ -2335,7 +2345,8 @@
      "tile_event\/43":"{\n\"type\": \"speed\",\n\"x\": 64,\n\"y\": 2,\n\"speed\": -15,\n\"on_stairs\": true,\n\"activation_collision_layers\": 0\n}",
      "tile_event\/44":"{\n\"type\": \"speed\",\n\"x\": 64,\n\"y\": 3,\n\"speed\": -15,\n\"on_stairs\": true,\n\"activation_collision_layers\": 0\n}",
      "tile_event\/45":"{\n\"type\": \"speed\",\n\"x\": 63,\n\"y\": 3,\n\"speed\": -15,\n\"on_stairs\": true,\n\"activation_collision_layers\": 0\n}",
-     "tile_event\/46":"{\n\"type\": \"speed\",\n\"x\": 63,\n\"y\": 4,\n\"speed\": -15,\n\"on_stairs\": true,\n\"activation_collision_layers\": 0\n}"
+     "tile_event\/46":"{\n\"type\": \"speed\",\n\"x\": 63,\n\"y\": 4,\n\"speed\": -15,\n\"on_stairs\": true,\n\"activation_collision_layers\": 0\n}",
+     "tile_event\/47":"{\n\"type\": \"jump\",\n\"x\": 23,\n\"y\": 3,\n\"activation_directions\": \"left\",\n\"activation_collision_layers\": 0,\n\"active\": true\n}"
     },
  "propertytypes":
     {
@@ -2346,6 +2357,8 @@
      "interactable_object\/05":"string",
      "interactable_object\/06":"string",
      "interactable_object\/07":"string",
+     "interactable_object\/08":"string",
+     "interactable_object\/09":"string",
      "npc\/01":"string",
      "real_tile_height":"int",
      "real_tile_width":"int",
@@ -2395,7 +2408,8 @@
      "tile_event\/43":"string",
      "tile_event\/44":"string",
      "tile_event\/45":"string",
-     "tile_event\/46":"string"
+     "tile_event\/46":"string",
+     "tile_event\/47":"string"
     },
  "renderorder":"right-down",
  "tiledversion":"1.9.2",

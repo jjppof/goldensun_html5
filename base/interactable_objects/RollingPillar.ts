@@ -1,14 +1,8 @@
 import {ControllableChar} from "../ControllableChar";
 import {Map} from "../Map";
-import {
-    base_actions,
-    directions,
-    get_centered_pos_in_px,
-    get_distance,
-    get_sqr_distance,
-    get_vector_direction,
-} from "../utils";
+import {base_actions, directions, get_centered_pos_in_px, get_distance, get_sqr_distance} from "../utils";
 import {InteractableObjects} from "./InteractableObjects";
+import * as _ from "lodash";
 
 enum pillar_directions {
     HORIZONTAL = "horizontal",
@@ -146,38 +140,111 @@ export class RollablePillar extends InteractableObjects {
             !this._pillar_is_stuck &&
             char.stop_by_colliding
         ) {
+            if (
+                [directions.down, directions.up].includes(char.trying_to_push_direction) &&
+                this._pillar_direction === pillar_directions.VERTICAL
+            ) {
+                return;
+            }
+            if (
+                [directions.left, directions.right].includes(char.trying_to_push_direction) &&
+                this._pillar_direction === pillar_directions.HORIZONTAL
+            ) {
+                return;
+            }
+
+            const get_extreme = (index: number, init: number, func: "max" | "min", axis: "x" | "y") => {
+                return (
+                    this.body.world.mpx(
+                        this.body.data.shapes.reduce((acc, cur) => {
+                            return Math[func](
+                                acc,
+                                cur.vertices.reduce((acc, cur) => {
+                                    return Math[func](acc, cur[index]);
+                                }, init)
+                            );
+                        }, init)
+                    ) + this[axis]
+                );
+            };
+            const min_x = get_extreme(0, Infinity, "min", "x");
+            const max_x = get_extreme(0, -Infinity, "max", "x");
+            const min_y = get_extreme(1, Infinity, "min", "y");
+            const max_y = get_extreme(1, -Infinity, "max", "y");
+
             let next_contact: RollablePillar["_contact_points"][0] = null;
             let last_distance = Infinity;
-            for (let i = 0; i < this._contact_points.length; ++i) {
-                const point = this._contact_points[i];
-                if (point.x === this.tile_x_pos && point.y === this.tile_y_pos) {
+            const contact_points = this._contact_points.concat(
+                this.data.map.interactable_objects.flatMap(io => {
+                    if (
+                        io !== this &&
+                        io.active &&
+                        !io.allow_jumping_over_it &&
+                        !io.allow_jumping_through_it &&
+                        io.shapes_collision_active &&
+                        io.base_collision_layer === this.base_collision_layer &&
+                        ((this._pillar_direction === pillar_directions.VERTICAL && io.y >= min_y && io.y <= max_y) ||
+                            (this._pillar_direction === pillar_directions.HORIZONTAL && io.x >= min_x && io.x <= max_x))
+                    ) {
+                        return [io.tile_pos];
+                    } else {
+                        return [];
+                    }
+                })
+            );
+
+            for (let i = 0; i < contact_points.length; ++i) {
+                const point = contact_points[i];
+                if (char.trying_to_push_direction === directions.down && point.y <= this.tile_pos.y) {
+                    continue;
+                }
+                if (char.trying_to_push_direction === directions.up && point.y >= this.tile_pos.y) {
+                    continue;
+                }
+                if (char.trying_to_push_direction === directions.right && point.x <= this.tile_pos.x) {
+                    continue;
+                }
+                if (char.trying_to_push_direction === directions.left && point.x >= this.tile_pos.x) {
                     continue;
                 }
                 const distance = get_sqr_distance(point.x, this.tile_x_pos, point.y, this.tile_y_pos);
                 if (distance < last_distance) {
-                    next_contact = point;
+                    next_contact = Object.assign({}, point);
                     last_distance = distance;
                 }
             }
-            let rolling_pillar_will_fall = false;
-            if (next_contact === null) {
-                next_contact = this._falling_pos;
-                rolling_pillar_will_fall = true;
+            if (next_contact !== null) {
+                if (char.trying_to_push_direction === directions.down) {
+                    next_contact.y--;
+                } else if (char.trying_to_push_direction === directions.up) {
+                    next_contact.y++;
+                } else if (char.trying_to_push_direction === directions.right) {
+                    next_contact.x--;
+                } else if (char.trying_to_push_direction === directions.left) {
+                    next_contact.x++;
+                }
+                if (next_contact.x === this.tile_pos.x && next_contact.y === this.tile_pos.y) {
+                    return;
+                }
             }
-            const rolling_direction = get_vector_direction(
-                this.tile_x_pos,
-                next_contact.x,
-                this.tile_y_pos,
-                next_contact.y
-            );
-            if (rolling_direction !== char.trying_to_push_direction) {
-                return;
+            let rolling_pillar_will_fall = false;
+            if (this._falling_pos) {
+                const distance = get_sqr_distance(
+                    this._falling_pos.x,
+                    this.tile_x_pos,
+                    this._falling_pos.y,
+                    this.tile_y_pos
+                );
+                if (distance < last_distance) {
+                    next_contact = this._falling_pos;
+                    rolling_pillar_will_fall = true;
+                }
             }
 
-            if (rolling_direction === directions.up && char.tile_y_pos <= this.tile_y_pos) return;
-            if (rolling_direction === directions.down && char.tile_y_pos >= this.tile_y_pos) return;
-            if (rolling_direction === directions.right && char.tile_x_pos >= this.tile_x_pos) return;
-            if (rolling_direction === directions.left && char.tile_x_pos <= this.tile_x_pos) return;
+            if (char.trying_to_push_direction === directions.up && char.tile_y_pos <= this.tile_y_pos) return;
+            if (char.trying_to_push_direction === directions.down && char.tile_y_pos >= this.tile_y_pos) return;
+            if (char.trying_to_push_direction === directions.right && char.tile_x_pos >= this.tile_x_pos) return;
+            if (char.trying_to_push_direction === directions.left && char.tile_x_pos <= this.tile_x_pos) return;
 
             char.pushing = true;
             char.toggle_collision(false);
@@ -207,8 +274,8 @@ export class RollablePillar extends InteractableObjects {
             RollablePillar.ROLLING_SPEED_PER_TILE;
         const pillar_tween = this.game.add.tween(this.sprite.body).to(
             {
-                x: dest_x,
-                y: dest_y,
+                x: this._pillar_direction === pillar_directions.VERTICAL ? dest_x : this.x,
+                y: this._pillar_direction === pillar_directions.HORIZONTAL ? dest_y : this.y,
             },
             rolling_time,
             Phaser.Easing.Linear.None,

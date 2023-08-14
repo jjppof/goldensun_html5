@@ -1306,20 +1306,25 @@ export class InteractableObjects {
      * @param event_shift_y the y shift amount.
      */
     shift_events(event_shift_x: number, event_shift_y: number) {
+        if (event_shift_x === 0 && event_shift_y === 0) {
+            return;
+        }
         const object_events = this.get_events();
         for (let i = 0; i < object_events.length; ++i) {
             const event = object_events[i];
-            this.data.map.events[event.location_key] = this.data.map.events[event.location_key].filter(e => {
-                return e.id !== event.id;
-            });
-            if (this.data.map.events[event.location_key].length === 0) {
-                delete this.data.map.events[event.location_key];
+            if (event.location_key in this.data.map.events && Array.isArray(this.data.map.events[event.location_key])) {
+                this.data.map.events[event.location_key] = this.data.map.events[event.location_key].filter(e => {
+                    return e.id !== event.id;
+                });
+                if (this.data.map.events[event.location_key].length === 0) {
+                    delete this.data.map.events[event.location_key];
+                }
+                let old_x = event.x;
+                let old_y = event.y;
+                let new_x = old_x + event_shift_x;
+                let new_y = old_y + event_shift_y;
+                event.set_position(new_x, new_y, true);
             }
-            let old_x = event.x;
-            let old_y = event.y;
-            let new_x = old_x + event_shift_x;
-            let new_y = old_y + event_shift_y;
-            event.set_position(new_x, new_y, true);
         }
     }
 

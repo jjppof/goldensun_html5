@@ -673,6 +673,11 @@ export class Map {
                     max_x = x + width;
                     min_y = y;
                     max_y = y + height;
+                    if (split_polygon) {
+                        this.data.logger.log_message(
+                            "'split_polygon' property doesn't work for objects of 'rectangle' type. It works only for polygons."
+                        );
+                    }
                 } else if (collision_object.ellipse) {
                     //even though this is an ellipse, gshtml5 only supports circles
                     const width = Math.round(collision_object.width);
@@ -682,6 +687,11 @@ export class Map {
                     max_x = x + width;
                     min_y = y;
                     max_y = y + width;
+                    if (split_polygon) {
+                        this.data.logger.log_message(
+                            "'split_polygon' property doesn't work for objects of 'ellipse' type. It works only for polygons."
+                        );
+                    }
                 }
                 if (collision_object.polygon || collision_object.rectangle || collision_object.ellipse) {
                     const intersections = Collision.get_polygon_tile_intersection(
