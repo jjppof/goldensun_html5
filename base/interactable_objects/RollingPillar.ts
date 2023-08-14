@@ -179,6 +179,7 @@ export class RollablePillar extends InteractableObjects {
                     if (
                         io !== this &&
                         io.active &&
+                        io.body &&
                         !io.allow_jumping_over_it &&
                         !io.allow_jumping_through_it &&
                         io.shapes_collision_active &&
@@ -207,7 +208,10 @@ export class RollablePillar extends InteractableObjects {
                 if (char.trying_to_push_direction === directions.left && point.x >= this.tile_pos.x) {
                     continue;
                 }
-                const distance = get_sqr_distance(point.x, this.tile_x_pos, point.y, this.tile_y_pos);
+                const distance =
+                    this._pillar_direction === pillar_directions.VERTICAL
+                        ? Math.abs(point.x - this.tile_x_pos)
+                        : Math.abs(point.y - this.tile_y_pos);
                 if (distance < last_distance) {
                     next_contact = Object.assign({}, point);
                     last_distance = distance;
@@ -229,15 +233,23 @@ export class RollablePillar extends InteractableObjects {
             }
             let rolling_pillar_will_fall = false;
             if (this._falling_pos) {
-                const distance = get_sqr_distance(
-                    this._falling_pos.x,
-                    this.tile_x_pos,
-                    this._falling_pos.y,
-                    this.tile_y_pos
-                );
-                if (distance < last_distance) {
-                    next_contact = this._falling_pos;
-                    rolling_pillar_will_fall = true;
+                if (
+                    !(
+                        (char.trying_to_push_direction === directions.down && this._falling_pos.y <= this.tile_pos.y) ||
+                        (char.trying_to_push_direction === directions.up && this._falling_pos.y >= this.tile_pos.y) ||
+                        (char.trying_to_push_direction === directions.right &&
+                            this._falling_pos.x <= this.tile_pos.x) ||
+                        (char.trying_to_push_direction === directions.left && this._falling_pos.x >= this.tile_pos.x)
+                    )
+                ) {
+                    const distance =
+                        this._pillar_direction === pillar_directions.VERTICAL
+                            ? Math.abs(this._falling_pos.x - this.tile_x_pos)
+                            : Math.abs(this._falling_pos.y - this.tile_y_pos);
+                    if (distance < last_distance) {
+                        next_contact = this._falling_pos;
+                        rolling_pillar_will_fall = true;
+                    }
                 }
             }
 
