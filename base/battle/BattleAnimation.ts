@@ -61,6 +61,16 @@ type MiscAttr = {
     value: any;
 };
 
+type ShakeAttr = {
+    start_delay: number | number[] | CompactValuesSpecifier;
+    sprite_index: string | number | number[];
+    ignore_if_dodge: boolean;
+    interval: number;
+    direction: "x" | "y";
+    shake_count: number;
+    intensity: number;
+};
+
 type GeneralFilterAttr = {
     start_delay: number | number[] | CompactValuesSpecifier;
     sprite_index: string | number | number[];
@@ -119,6 +129,7 @@ type SpriteKey = {
     trails_factor: number;
     frames_number: number;
     type: sprite_types;
+    follow_sprite: string | number;
     geometry_info: GeometryInfo;
     initial_config: InitialConfig;
 };
@@ -143,6 +154,7 @@ export class BattleAnimation {
     public stage_angle_sequence: DefaultAttr[] = [];
     public hue_angle_sequence: DefaultAttr[] = [];
     public blink_sequence: BlinkAttr[] = [];
+    public shake_sequence: ShakeAttr[] = [];
     public misc_sequence: MiscAttr[] = [];
     public texture_displacement_sequence: (GeneralFilterAttr & {
         duration: number;
@@ -282,6 +294,7 @@ export class BattleAnimation {
         particles_sequence,
         sfx_sequence,
         blink_sequence,
+        shake_sequence,
         texture_displacement_sequence,
         misc_sequence,
         cast_type,
@@ -320,6 +333,7 @@ export class BattleAnimation {
         this.particles_sequence = particles_sequence ?? [];
         this.sfx_sequence = sfx_sequence ?? [];
         this.blink_sequence = blink_sequence ?? [];
+        this.shake_sequence = shake_sequence ?? [];
         this.texture_displacement_sequence = texture_displacement_sequence ?? [];
         this.misc_sequence = misc_sequence ?? [];
         this.running = false;
@@ -498,6 +512,7 @@ export class BattleAnimation {
                         psy_sprite.data.trail_image = trail_image;
                         psy_sprite.data.trail_enabled = true;
                         psy_sprite.data.ignore_trim = true;
+                        psy_sprite.data.follow_sprite = sprite_info.follow_sprite;
                         if (sprite_info.initial_config) {
                             psy_sprite.anchor.x = sprite_info.initial_config.anchor?.x ?? psy_sprite.anchor.x;
                             psy_sprite.anchor.y = sprite_info.initial_config.anchor?.y ?? psy_sprite.anchor.y;
@@ -523,6 +538,13 @@ export class BattleAnimation {
                 }
             }
         }
+        this.sprites.forEach(sprite => {
+            if (sprite.data.follow_sprite !== undefined) {
+                sprite.data.follow_sprite = Object.values(
+                    this.get_sprites({sprite_index: sprite.data.follow_sprite})
+                )[0].obj;
+            }
+        });
         this.set_filters();
     }
 
@@ -609,6 +631,7 @@ export class BattleAnimation {
         this.play_particles();
         this.play_sfx();
         this.play_blink_sequence();
+        this.play_shake_sequence();
         this.play_texture_displacement_sequence();
         this.play_misc_sequence();
         this.unmount_animation(finish_callback);
@@ -971,6 +994,12 @@ export class BattleAnimation {
             }
             const sprites = this.get_sprites(play_seq);
             const sprites_length = Object.keys(sprites).length;
+            if (!Array.isArray(play_seq.start_delay) && typeof play_seq.start_delay === "object") {
+                play_seq.start_delay = this.get_expanded_values(
+                    play_seq.start_delay as CompactValuesSpecifier,
+                    Object.keys(sprites).length
+                );
+            }
             for (let key in sprites) {
                 const sprite_info = sprites[key];
                 const sprite = sprite_info.obj as PlayerSprite | Phaser.Sprite;
@@ -1337,6 +1366,63 @@ export class BattleAnimation {
         );
     }
 
+    play_shake_sequence() {
+        for (let i = 0; i < this.shake_sequence.length; ++i) {
+            const shake_seq = this.shake_sequence[i];
+            if (shake_seq.ignore_if_dodge && this.target_dodged) {
+                continue;
+            }
+            const sprites = this.get_sprites(shake_seq);
+            if (!Array.isArray(shake_seq.start_delay) && typeof shake_seq.start_delay === "object") {
+                shake_seq.start_delay = this.get_expanded_values(
+                    shake_seq.start_delay as CompactValuesSpecifier,
+                    Object.keys(sprites).length
+                );
+            }
+            for (let key in sprites) {
+                const sprite_info = sprites[key];
+                const sprite = sprite_info.obj as PlayerSprite | Phaser.Sprite;
+                const start_delay = Array.isArray(shake_seq.start_delay)
+                    ? shake_seq.start_delay[sprite_info.index]
+                    : (shake_seq.start_delay as number) ?? 0;
+
+                let resolve_function;
+                const this_promise = new Promise(resolve => (resolve_function = resolve));
+                this.promises.push(this_promise);
+
+                const apply_shake = async () => {
+                    for (let i = 0; i < shake_seq.shake_count ?? 1; ++i) {
+                        let resolve_f;
+                        const this_prom = new Promise(resolve => (resolve_f = resolve));
+                        const direction = shake_seq.direction ?? "y";
+                        this.game.add
+                            .tween(sprite)
+                            .to(
+                                {
+                                    [direction]: sprite[direction] + shake_seq.intensity ?? 2,
+                                },
+                                shake_seq.interval ?? 70,
+                                Phaser.Easing.Linear.None,
+                                true,
+                                0,
+                                undefined,
+                                true
+                            )
+                            .onComplete.addOnce(resolve_f);
+                        await this_prom;
+                    }
+                    resolve_function();
+                };
+
+                if (start_delay < 30) {
+                    apply_shake();
+                } else {
+                    this.game.time.events.add(start_delay, apply_shake);
+                }
+            }
+        }
+    }
+
     play_blink_sequence() {
         for (let i = 0; i < this.blink_sequence.length; ++i) {
             const filter_seq = this.blink_sequence[i];
@@ -1524,6 +1610,10 @@ export class BattleAnimation {
     render() {
         this.trails_bmps.forEach(bmp => bmp.fill(0, 0, 0, bmp.trail_factor));
         this.sprites.forEach(sprite => {
+            if (sprite.data.follow_sprite) {
+                sprite.x = sprite.data.follow_sprite.x;
+                sprite.y = sprite.data.follow_sprite.y;
+            }
             if (!sprite.data.trail_image || !sprite.data.trail_enabled) return;
             const bm_data = sprite.data.trail_image.key as Phaser.BitmapData;
             if (sprite.data.keep_core_white) {

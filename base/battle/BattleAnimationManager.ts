@@ -67,6 +67,7 @@ export class BattleAnimationManager {
             animation_recipe.particles_sequence,
             animation_recipe.sfx_sequence,
             animation_recipe.blink_sequence,
+            animation_recipe.shake_sequence,
             animation_recipe.texture_displacement_sequence,
             animation_recipe.misc_sequence,
             animation_recipe.cast_type,
