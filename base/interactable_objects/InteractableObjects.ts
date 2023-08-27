@@ -174,7 +174,8 @@ export class InteractableObjects {
         animation,
         action,
         snapshot_info,
-        affected_by_reveal
+        affected_by_reveal,
+        active
     ) {
         this.game = game;
         this.data = data;
@@ -234,7 +235,10 @@ export class InteractableObjects {
         this.scale_y = scale_y;
         this._psynergy_casted = {};
         this.block_climb_collision_layer_shift = block_climb_collision_layer_shift;
-        this._active = true;
+        this._active = active ?? true;
+        if (this.snapshot_info) {
+            this._active = this.snapshot_info.active;
+        }
         this._pushable = false;
         this._is_rope_dock = false;
         this._rollable = false;
@@ -625,7 +629,9 @@ export class InteractableObjects {
         body.dynamic = false;
         body.static = true;
         body.debug = this.data.hero.sprite.body.debug;
-        body.collides(this.data.collision.hero_collision_group);
+        if (this.active) {
+            body.collides(this.data.collision.hero_collision_group);
+        }
         this._blocking_stair_block = body;
     }
 
@@ -715,6 +721,9 @@ export class InteractableObjects {
             }
             if (this.snapshot_info && this.snapshot_info.visible !== null) {
                 this.sprite.visible = this.snapshot_info.visible;
+            }
+            if (!this.active) {
+                this.sprite.visible = false;
             }
             if (this.snapshot_info?.active_filters) {
                 const active_filters = this.snapshot_info.active_filters;
@@ -1293,7 +1302,9 @@ export class InteractableObjects {
         if (this.block_climb_collision_layer_shift !== undefined) {
             this.creating_blocking_stair_block();
         }
-        this.sprite.body.collides(this.data.collision.hero_collision_group);
+        if (this.active) {
+            this.sprite.body.collides(this.data.collision.hero_collision_group);
+        }
         this._shapes_collision_active = this.snapshot_info?.shapes_collision_active ?? true;
         if (!this.shapes_collision_active) {
             this.toggle_collision(false);

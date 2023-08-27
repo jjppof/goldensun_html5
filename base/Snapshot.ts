@@ -178,6 +178,7 @@ export type SnapshotData = {
             send_to_back: boolean;
             send_to_front: boolean;
             visible: boolean;
+            active: boolean;
             enable: boolean;
             entangled_by_bush: boolean;
             psynergy_casted: InteractableObjects["psynergy_casted"];
@@ -427,6 +428,7 @@ export class Snapshot {
                         send_to_back: io.sprite?.send_to_back ?? null,
                         send_to_front: io.sprite?.send_to_front ?? null,
                         visible: io.sprite?.visible ?? null,
+                        active: io.active,
                         enable: io.enable,
                         entangled_by_bush: io.entangled_by_bush,
                         psynergy_casted: io.psynergy_casted,

@@ -277,7 +277,9 @@ export class ClimbEvent extends TileEvent {
             body.dynamic = false;
             body.static = true;
             body.debug = this.data.hero.sprite.body.debug;
-            body.collides(this.data.collision.hero_collision_group);
+            if (this.origin_interactable_object.active) {
+                body.collides(this.data.collision.hero_collision_group);
+            }
             this.origin_interactable_object.collision_tiles_bodies.push(body);
         }
     }

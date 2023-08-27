@@ -1175,7 +1175,8 @@ export class Map {
                 animation,
                 action,
                 snapshot_info,
-                property_info.affected_by_reveal
+                property_info.affected_by_reveal,
+                property_info.active
             );
             if (interactable_object.pushable) {
                 (interactable_object as Pushable).initialize_pushable(
