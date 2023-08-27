@@ -288,6 +288,10 @@ export class GoldenSun {
      * Changes canvas scale and fires appropriate events related to rescaling and window resizing.
      */
     private set_canvas_scale() {
+        if (this.scale_factor <= 0 || this.scale_factor > 7) {
+            this.scale_factor = 1;
+            this.logger.log_message("Invalid scale factor passed. Setting it back to 1.");
+        }
         let width = this.scale_factor * numbers.GAME_WIDTH;
         let height = this.scale_factor * numbers.GAME_HEIGHT;
         this.game.scale.setupScale(width, height);
