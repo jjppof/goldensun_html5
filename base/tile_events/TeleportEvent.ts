@@ -31,6 +31,8 @@ export class TeleportEvent extends TileEvent {
             to_tile_id: number;
             offset_x: number;
             offset_y: number;
+            origin_x: number;
+            origin_y: number;
         }[];
         door_open_sfx: string;
     };
@@ -152,8 +154,14 @@ export class TeleportEvent extends TileEvent {
         this.door_settings.replace_map.forEach(replace_info => {
             const from_tile_id = replace_info.from_tile_id + 1;
             const to_tile_id = replace_info.to_tile_id + 1;
-            const x = this.x + replace_info.offset_x;
-            const y = this.y + replace_info.offset_y;
+            const x =
+                (replace_info.origin_x ??
+                    Math.floor((this.x * this.data.map.tile_width) / this.data.map.sprite.tileWidth)) +
+                replace_info.offset_x;
+            const y =
+                (replace_info.origin_y ??
+                    Math.floor((this.y * this.data.map.tile_height) / this.data.map.sprite.tileHeight)) +
+                replace_info.offset_y;
             this.data.map.sprite.replace(from_tile_id, to_tile_id, x, y, 1, 1, replace_info.tile_layer);
         });
         this.game.physics.p2.pause();
