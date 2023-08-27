@@ -914,7 +914,7 @@ export class InteractableObjects {
             x_pos += event_info.x_shift ?? 0;
             y_pos += event_info.y_shift ?? 0;
             const collision_layer_shift = this.tile_events_info[i]?.collision_layer_shift ?? 0;
-            const active_event = event_info.active ?? true;
+            const active_event = this.active ? event_info.active ?? true : false;
             const target_layer = this.base_collision_layer + collision_layer_shift;
             switch (event_info.type) {
                 case interactable_object_event_types.JUMP:
@@ -992,7 +992,7 @@ export class InteractableObjects {
             [target_layer],
             undefined,
             this,
-            false,
+            this.affected_by_reveal,
             undefined,
             undefined
         );
@@ -1065,7 +1065,7 @@ export class InteractableObjects {
                 active_event ? undefined : activation_direction,
                 activation_collision_layer,
                 undefined,
-                false,
+                this.affected_by_reveal,
                 event_info.key_name,
                 this,
                 event_info.walk_over_rope,
@@ -1100,7 +1100,7 @@ export class InteractableObjects {
                 [target_layer],
                 undefined,
                 this,
-                false,
+                this.affected_by_reveal,
                 undefined,
                 undefined
             ) as JumpEvent;
@@ -1200,7 +1200,7 @@ export class InteractableObjects {
                 active_event ? undefined : event_data.activation_directions,
                 event_data.activation_collision_layers,
                 undefined,
-                false,
+                this.affected_by_reveal,
                 undefined,
                 event_data.change_to_collision_layer,
                 this,
