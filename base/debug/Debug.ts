@@ -396,6 +396,9 @@ export class Debug {
                                 activation_directions: Array.from(event.activation_directions).map(
                                     dir => reverse_directions[dir]
                                 ),
+                                initial_activation_directions: Array.from(event.initial_activation_directions).map(
+                                    dir => reverse_directions[dir]
+                                ),
                                 activation_collision_layers: Array.from(event.activation_collision_layers),
                                 ...(event.origin_interactable_object && {
                                     origin_interactable_object: `[${event.origin_interactable_object.key_name}${

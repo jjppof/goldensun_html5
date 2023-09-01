@@ -159,6 +159,10 @@ export abstract class TileEvent {
     get activation_collision_layers() {
         return this._activation_collision_layers;
     }
+    /** The set of directions that this event can be fired when it was created. */
+    get initial_activation_directions() {
+        return this._initial_activation_directions;
+    }
     /** The interactable object that created this event (in the case of it has been created from it). */
     get origin_interactable_object() {
         return this._origin_interactable_object;
@@ -244,9 +248,13 @@ export abstract class TileEvent {
 
     /**
      * Activates this event in all initial directions.
+     * @param include_affected_by_reveal if true, it will also make this event sensible to reveal.
      */
-    activate() {
+    activate(include_affected_by_reveal: boolean = false) {
         this._activation_directions = new Set(this._initial_activation_directions);
+        if (include_affected_by_reveal) {
+            this._affected_by_reveal = new Set(this._initial_activation_directions);
+        }
     }
 
     /**

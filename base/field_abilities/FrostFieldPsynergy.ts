@@ -114,7 +114,7 @@ export class FrostFieldPsynergy extends FieldAbilities {
             if (event.is_active_at_direction()) {
                 event.deactivate();
             } else {
-                event.activate();
+                event.activate(this.target_object.affected_by_reveal);
                 event.activation_collision_layers.forEach(collision_layer => {
                     this.data.map.set_collision_in_tile(event.x, event.y, false, collision_layer);
                 });

@@ -133,6 +133,7 @@
         },{
             "type": "jump",
             "active": false,
+            "dont_propagate_affected_by_reveal": true,
             "x_shift": 0,
             "y_shift": -2
         }],

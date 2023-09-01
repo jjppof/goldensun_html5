@@ -916,18 +916,51 @@ export class InteractableObjects {
             const collision_layer_shift = this.tile_events_info[i]?.collision_layer_shift ?? 0;
             const active_event = this.active ? event_info.active ?? true : false;
             const target_layer = this.base_collision_layer + collision_layer_shift;
+            const dont_propagate_affected_by_reveal = event_info.dont_propagate_affected_by_reveal ?? false;
             switch (event_info.type) {
                 case interactable_object_event_types.JUMP:
-                    this.set_jump_type_event(i, x_pos, y_pos, active_event, target_layer, map);
+                    this.set_jump_type_event(
+                        i,
+                        x_pos,
+                        y_pos,
+                        active_event,
+                        target_layer,
+                        map,
+                        dont_propagate_affected_by_reveal
+                    );
                     break;
                 case interactable_object_event_types.JUMP_AROUND:
-                    this.set_jump_around_event(x_pos, y_pos, active_event, target_layer, map);
+                    this.set_jump_around_event(
+                        x_pos,
+                        y_pos,
+                        active_event,
+                        target_layer,
+                        map,
+                        dont_propagate_affected_by_reveal
+                    );
                     break;
                 case interactable_object_event_types.CLIMB:
-                    this.set_stair_event(i, event_info, x_pos, y_pos, active_event, target_layer, map);
+                    this.set_stair_event(
+                        i,
+                        event_info,
+                        x_pos,
+                        y_pos,
+                        active_event,
+                        target_layer,
+                        map,
+                        dont_propagate_affected_by_reveal
+                    );
                     break;
                 case interactable_object_event_types.ROPE:
-                    this.set_rope_event(event_info, x_pos, y_pos, active_event, target_layer, map);
+                    this.set_rope_event(
+                        event_info,
+                        x_pos,
+                        y_pos,
+                        active_event,
+                        target_layer,
+                        map,
+                        dont_propagate_affected_by_reveal
+                    );
                     break;
             }
         }
@@ -973,7 +1006,8 @@ export class InteractableObjects {
         y_pos: number,
         active_event: boolean,
         target_layer: number,
-        map: Map
+        map: Map,
+        dont_propagate_affected_by_reveal: boolean
     ) {
         if (this.not_allowed_tile_test(x_pos, y_pos)) return;
         const activation_directions = [
@@ -992,7 +1026,7 @@ export class InteractableObjects {
             [target_layer],
             undefined,
             this,
-            this.affected_by_reveal,
+            dont_propagate_affected_by_reveal ? false : this.affected_by_reveal,
             undefined,
             undefined
         );
@@ -1023,7 +1057,8 @@ export class InteractableObjects {
         y_pos: number,
         active_event: boolean,
         target_layer: number,
-        map: Map
+        map: Map,
+        dont_propagate_affected_by_reveal: boolean
     ) {
         const activation_directions =
             event_info.activation_directions ?? get_directions(false).map(dir => reverse_directions[dir]);
@@ -1065,7 +1100,7 @@ export class InteractableObjects {
                 active_event ? undefined : activation_direction,
                 activation_collision_layer,
                 undefined,
-                this.affected_by_reveal,
+                dont_propagate_affected_by_reveal ? false : this.affected_by_reveal,
                 event_info.key_name,
                 this,
                 event_info.walk_over_rope,
@@ -1081,7 +1116,14 @@ export class InteractableObjects {
         });
     }
 
-    private set_jump_around_event(x_pos: number, y_pos: number, active_event: boolean, target_layer: number, map: Map) {
+    private set_jump_around_event(
+        x_pos: number,
+        y_pos: number,
+        active_event: boolean,
+        target_layer: number,
+        map: Map,
+        dont_propagate_affected_by_reveal: boolean
+    ) {
         get_surroundings(x_pos, y_pos).forEach((pos, index) => {
             if (this.not_allowed_tile_test(pos.x, pos.y)) return;
             const activation_direction = [
@@ -1100,7 +1142,7 @@ export class InteractableObjects {
                 [target_layer],
                 undefined,
                 this,
-                this.affected_by_reveal,
+                dont_propagate_affected_by_reveal ? false : this.affected_by_reveal,
                 undefined,
                 undefined
             ) as JumpEvent;
@@ -1123,7 +1165,8 @@ export class InteractableObjects {
         y_pos: number,
         active_event: boolean,
         target_layer: number,
-        map: Map
+        map: Map,
+        dont_propagate_affected_by_reveal: boolean
     ) {
         const collision_layer_shift = this.tile_events_info[event_index]?.collision_layer_shift ?? 0;
         const intermediate_collision_layer_shift =
@@ -1200,7 +1243,7 @@ export class InteractableObjects {
                 active_event ? undefined : event_data.activation_directions,
                 event_data.activation_collision_layers,
                 undefined,
-                this.affected_by_reveal,
+                dont_propagate_affected_by_reveal ? false : this.affected_by_reveal,
                 undefined,
                 event_data.change_to_collision_layer,
                 this,
