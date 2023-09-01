@@ -293,7 +293,7 @@ export class BuyArtifactsMenu {
                 }
 
                 if (!exists) {
-                    this.selected_character.add_item(item_to_add.key_name, 1, false);
+                    this.selected_character.add_item(item_to_add.key_name, quantity, false);
                 }
 
                 if (!game_ticket) {
@@ -506,12 +506,7 @@ export class BuyArtifactsMenu {
                     undefined,
                     undefined,
                     () => {
-                        this.selected_character = this.char_display.selected_index
-                            ? this.char_display.lines[this.char_display.current_line][this.char_display.selected_index]
-                            : null;
-                        let curr_char = this.selected_character
-                            ? this.selected_character
-                            : this.data.info.party_data.members[0];
+                        let curr_char = this.selected_character ?? this.data.info.party_data.members[0];
                         return this.data.info.items_list[this.selected_item.key_name].equipable_chars.includes(
                             curr_char.key_name
                         )
@@ -718,10 +713,7 @@ export class BuyArtifactsMenu {
 
     // todo: refactor so this logic doesn't have to be repeated twice when buying an item
     get_purchase_confirm_sfx(game_ticket: boolean = false, confirm_sfx?: string) {
-        this.selected_character = this.char_display.selected_index
-            ? this.char_display.lines[this.char_display.current_line][this.char_display.selected_index]
-            : null;
-        let curr_char = this.selected_character ? this.selected_character : this.data.info.party_data.members[0];
+        let curr_char = this.selected_character ?? this.data.info.party_data.members[0];
 
         let quantity = 1;
         let item_to_receive = game_ticket ? GAME_TICKET_KEY_NAME : this.selected_item.key_name;
