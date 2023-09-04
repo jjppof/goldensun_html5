@@ -50,7 +50,7 @@ export class InteractableObjects {
         y: number;
         collision_layer: number;
     }[];
-    private not_allowed_tiles: {x: number; y: number}[];
+    private not_allowed_tiles: {x: number; y: number; control_key?: string}[];
     private events_id: Set<TileEvent["id"]>;
     private collision_change_functions: Function[];
     private _shadow: Phaser.Sprite;
@@ -993,8 +993,10 @@ export class InteractableObjects {
     private not_allowed_tile_test(x: number, y: number) {
         for (let i = 0; i < this.not_allowed_tiles.length; ++i) {
             const not_allowed_tile = this.not_allowed_tiles[i];
-            if (not_allowed_tile.x === x && not_allowed_tile.y === y) {
-                return true;
+            if (!not_allowed_tile.control_key || this.data.storage.get(not_allowed_tile.control_key)) {
+                if (not_allowed_tile.x === x && not_allowed_tile.y === y) {
+                    return true;
+                }
             }
         }
         return false;
