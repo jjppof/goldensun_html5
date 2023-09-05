@@ -151,6 +151,7 @@ export class FrostFieldPsynergy extends FieldAbilities {
     /*Plays the pillar's growing animation*/
     grow_pillar() {
         this.data.audio.play_se("psynergy/7");
+        this.target_object.sprite.visible = true;
         this.target_object.play("pillar");
         this.target_object.sprite.animations.currentAnim.onComplete.addOnce(() => {
             FrostFieldPsynergy.set_permanent_blink(this.game, this.target_object);

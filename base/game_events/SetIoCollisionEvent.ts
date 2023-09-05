@@ -18,7 +18,10 @@ export class SetIoCollisionEvent extends GameEvent {
 
     _fire() {
         const interactable_object = this.data.map.interactable_objects_label_map[this.io_label];
-
+        if (!(this.io_label in this.data.map.interactable_objects_label_map)) {
+            this.data.logger.log_message(`Game Event [${this.type}]: IO with label "${this.io_label}" doesn't exist.`);
+            return;
+        }
         switch (this.control_type) {
             case control_types.REMOVE:
                 interactable_object.destroy_body(true);

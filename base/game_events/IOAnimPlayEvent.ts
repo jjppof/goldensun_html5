@@ -43,6 +43,10 @@ export class IOAnimPlayEvent extends GameEvent {
 
     async _fire() {
         const interactable_object = this.data.map.interactable_objects_label_map[this.io_label];
+        if (!(this.io_label in this.data.map.interactable_objects_label_map)) {
+            this.data.logger.log_message(`Game Event [${this.type}]: IO with label "${this.io_label}" doesn't exist.`);
+            return;
+        }
         if (this.stop_animation) {
             interactable_object.sprite.animations.currentAnim.stop(this.reset_frame_on_stop);
         } else {
