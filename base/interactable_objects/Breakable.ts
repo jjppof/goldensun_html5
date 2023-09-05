@@ -46,7 +46,8 @@ export class Breakable extends InteractableObjects {
         action,
         snapshot_info,
         affected_by_reveal,
-        active
+        active,
+        visible
     ) {
         super(
             game,
@@ -78,7 +79,8 @@ export class Breakable extends InteractableObjects {
             action,
             snapshot_info,
             affected_by_reveal,
-            active
+            active,
+            visible
         );
         this._breakable = true;
         this._one_level_broken = this.snapshot_info?.state_by_type.breakable.one_level_broken ?? false;

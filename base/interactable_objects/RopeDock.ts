@@ -85,7 +85,8 @@ export class RopeDock extends InteractableObjects {
         action,
         snapshot_info,
         affected_by_reveal,
-        active
+        active,
+        visible
     ) {
         super(
             game,
@@ -117,7 +118,8 @@ export class RopeDock extends InteractableObjects {
             action,
             snapshot_info,
             affected_by_reveal,
-            active
+            active,
+            visible
         );
         this._is_rope_dock = true;
         this._dest_rope_dock = null;

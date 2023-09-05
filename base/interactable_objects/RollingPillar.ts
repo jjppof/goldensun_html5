@@ -49,7 +49,8 @@ export class RollablePillar extends InteractableObjects {
         action,
         snapshot_info,
         affected_by_reveal,
-        active
+        active,
+        visible
     ) {
         super(
             game,
@@ -81,7 +82,8 @@ export class RollablePillar extends InteractableObjects {
             action,
             snapshot_info,
             affected_by_reveal,
-            active
+            active,
+            visible
         );
         this._rollable = true;
         this._pillar_is_stuck = this.snapshot_info?.state_by_type.rollable.pillar_is_stuck ?? false;

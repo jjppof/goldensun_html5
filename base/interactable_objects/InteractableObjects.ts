@@ -144,6 +144,7 @@ export class InteractableObjects {
     private _shapes_collision_active: boolean;
     private _active_filters: {[key in engine_filters]?: boolean};
     private _affected_by_reveal: boolean;
+    private _initially_visible: boolean;
 
     constructor(
         game,
@@ -175,7 +176,8 @@ export class InteractableObjects {
         action,
         snapshot_info,
         affected_by_reveal,
-        active
+        active,
+        initially_visible
     ) {
         this.game = game;
         this.data = data;
@@ -288,6 +290,7 @@ export class InteractableObjects {
             [engine_filters.FLAME]: false,
         };
         this._map_index = map_index;
+        this._initially_visible = initially_visible ?? true;
     }
 
     get key_name() {
@@ -721,6 +724,8 @@ export class InteractableObjects {
             }
             if (this.snapshot_info && this.snapshot_info.visible !== null) {
                 this.sprite.visible = this.snapshot_info.visible;
+            } else if (!this._initially_visible) {
+                this.sprite.visible = false;
             }
             if (!this.active) {
                 this.sprite.visible = false;

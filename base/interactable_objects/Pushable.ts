@@ -54,7 +54,8 @@ export class Pushable extends InteractableObjects {
         action,
         snapshot_info,
         affected_by_reveal,
-        active
+        active,
+        visible
     ) {
         super(
             game,
@@ -86,7 +87,8 @@ export class Pushable extends InteractableObjects {
             action,
             snapshot_info,
             affected_by_reveal,
-            active
+            active,
+            visible
         );
         this._pushable = true;
         this.dock_tile_position = null;
