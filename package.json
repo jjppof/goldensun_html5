@@ -40,7 +40,7 @@
   "devDependencies": {
     "@types/lodash": "~4.14",
     "@types/mathjs": "~6.0",
-    "electron": "4.2.12",
+    "electron": "22.3.21",
     "electron-packager": "~16.0.0",
     "husky": "^5",
     "pinst": "~2.1",
