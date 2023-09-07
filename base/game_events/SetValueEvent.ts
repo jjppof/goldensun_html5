@@ -156,7 +156,13 @@ export class SetValueEvent extends GameEvent {
                     npc_index: this.npc_index,
                     npc_label: this.npc_label,
                 }) ?? this.origin_npc;
-            (char as NPC).check_storage_keys();
+            if (char) {
+                (char as NPC).check_storage_keys();
+            } else {
+                this.data.logger.log_message(
+                    `NPC label not passed to "set_value" event when "check_npc_storage_values" was set true.`
+                );
+            }
         }
         if (this.check_collision_structures) {
             this.data.map.collision_sprite.body.data.shapes.forEach(shape => {
@@ -164,7 +170,11 @@ export class SetValueEvent extends GameEvent {
                     const is_sensor_by_controller = !(this.data.storage.get(
                         shape.properties.controller_variable
                     ) as boolean);
-                    shape.sensor = is_sensor_by_controller ? true : shape.sensor;
+                    if (is_sensor_by_controller) {
+                        shape.sensor = true;
+                    } else if (!shape.properties.affected_by_reveal) {
+                        shape.sensor = false;
+                    }
                 }
             });
         }

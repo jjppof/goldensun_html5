@@ -554,7 +554,8 @@ export class Map {
                 let sensor_active = false;
                 if (collision_object.properties) {
                     sensor_active =
-                        collision_object.properties.affected_by_reveal && collision_object.properties.collide_on_reveal;
+                        Boolean(collision_object.properties.affected_by_reveal) &&
+                        Boolean(collision_object.properties.collide_on_reveal);
                     if (collision_object.properties.controller_variable) {
                         const is_sensor_by_controller = !(this.data.storage.get(
                             collision_object.properties.controller_variable
@@ -629,7 +630,8 @@ export class Map {
                 let split_polygon = false;
                 if (collision_object.properties) {
                     sensor_active =
-                        collision_object.properties.affected_by_reveal && collision_object.properties.collide_on_reveal;
+                        Boolean(collision_object.properties.affected_by_reveal) &&
+                        Boolean(collision_object.properties.collide_on_reveal);
                     if (collision_object.properties.controller_variable) {
                         const is_sensor_by_controller = !(this.data.storage.get(
                             collision_object.properties.controller_variable
