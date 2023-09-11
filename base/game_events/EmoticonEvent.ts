@@ -109,7 +109,6 @@ export class EmoticonEvent extends GameEvent {
         if (this.face_hero && this.reset_direction && this.char !== this.data.hero) {
             await this.origin_npc.face_direction(this.previous_direction);
         }
-        this.is_npc = undefined;
         --this.data.game_event_manager.events_running_count;
         this.finish_events.forEach(event => event.fire(this.origin_npc));
     }
