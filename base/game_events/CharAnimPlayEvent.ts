@@ -10,6 +10,7 @@ export class CharAnimPlayEvent extends GameEvent {
     private loop: boolean;
     private stop_animation: boolean;
     private reset_frame_on_stop: boolean;
+    private reset_before_start: boolean;
 
     constructor(
         game,
@@ -25,6 +26,7 @@ export class CharAnimPlayEvent extends GameEvent {
         loop,
         stop_animation,
         reset_frame_on_stop,
+        reset_before_start,
         finish_events
     ) {
         super(game, data, event_types.CHAR_ANIMATION_PLAY, active, key_name, keep_reveal);
@@ -36,6 +38,7 @@ export class CharAnimPlayEvent extends GameEvent {
         this.loop = loop;
         this.stop_animation = stop_animation ?? false;
         this.reset_frame_on_stop = reset_frame_on_stop ?? false;
+        this.reset_before_start = reset_before_start ?? true;
         if (finish_events !== undefined) {
             finish_events.forEach(event_info => {
                 const event = this.data.game_event_manager.get_event_instance(event_info, this.type, this.origin_npc);
@@ -54,7 +57,12 @@ export class CharAnimPlayEvent extends GameEvent {
         if (this.stop_animation) {
             target_char.sprite.animations.currentAnim.stop(this.reset_frame_on_stop);
         } else {
-            const animation = target_char.play(this.action, this.animation, true, this.frame_rate, this.loop);
+            const anim_key = target_char.sprite_info.getAnimationKey(this.action, this.animation);
+            const animation = target_char.sprite.animations.getAnimation(anim_key);
+            if (this.reset_before_start) {
+                animation.stop(true);
+            }
+            animation.play(this.frame_rate, this.loop);
             if (!animation.loop) {
                 ++this.data.game_event_manager.events_running_count;
                 const previous_force_idle_action_in_event = target_char.force_idle_action_in_event;
