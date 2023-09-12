@@ -1,12 +1,12 @@
 import {GameEvent, event_types} from "./GameEvent";
 
-export class CharSetActivationEvent extends GameEvent {
+export class SetCharActivationEvent extends GameEvent {
     private is_npc: boolean;
     private npc_label: string;
     private activate: boolean;
 
     constructor(game, data, active, key_name, keep_reveal, is_npc, npc_label, activate) {
-        super(game, data, event_types.CHAR_SET_ACTIVATION, active, key_name, keep_reveal);
+        super(game, data, event_types.SET_CHAR_ACTIVATION, active, key_name, keep_reveal);
         this.npc_label = npc_label;
         this.is_npc = is_npc;
         this.activate = activate;

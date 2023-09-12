@@ -37,7 +37,7 @@ import {MapOpacityEvent} from "./MapOpacityEvent";
 import {MapBlendModeEvent} from "./MapBlendModeEvent";
 import {IOAnimPlayEvent} from "./IOAnimPlayEvent";
 import {CharAnimPlayEvent} from "./CharAnimPlayEvent";
-import {CharSetActivationEvent} from "./CharSetActivationEvent";
+import {SetCharActivationEvent} from "./SetCharActivationEvent";
 import {AudioPlayEvent} from "./AudioPlayEvent";
 import {ControlBgmEvent} from "./ControlBgmEvent";
 import {SetPartyCoinsEvent} from "./SetPartyCoinsEvent";
@@ -638,8 +638,8 @@ export class GameEventManager {
                     info.reset_before_start,
                     info.finish_events
                 );
-            case event_types.CHAR_SET_ACTIVATION:
-                return new CharSetActivationEvent(
+            case event_types.SET_CHAR_ACTIVATION:
+                return new SetCharActivationEvent(
                     this.game,
                     this.data,
                     info.active,
