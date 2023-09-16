@@ -967,11 +967,12 @@ export abstract class ControllableChar {
      * Shows an emoticon above this char.
      * @param emoticon_key The emoticon key name.
      * @param options Some custom options.
+     * @returns returns the emoticon sprite.
      */
     async show_emoticon(
         emoticon_key: string,
         options?: {
-            /** The duration that this emoticon is going to be shown. */
+            /** The duration that this emoticon is going to be shown in ms. -1 for forever. */
             duration?: number;
             /** A custom location for the emoticon. */
             location?: {
@@ -992,6 +993,9 @@ export abstract class ControllableChar {
 
         let promise_resolve;
         const promise = new Promise(resolve => (promise_resolve = resolve));
+        if (duration === -1) {
+            promise_resolve();
+        }
         this.game.add
             .tween(emoticon_sprite.scale)
             .to(
@@ -1006,12 +1010,15 @@ export abstract class ControllableChar {
                 if (options?.sound_effect) {
                     this.data.audio.play_se(options?.sound_effect);
                 }
-                this.game.time.events.add(duration, () => {
-                    emoticon_sprite.destroy();
-                    promise_resolve();
-                });
+                if (duration !== -1) {
+                    this.game.time.events.add(duration, () => {
+                        emoticon_sprite.destroy();
+                        promise_resolve();
+                    });
+                }
             });
         await promise;
+        return emoticon_sprite;
     }
 
     /**

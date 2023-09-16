@@ -11,6 +11,9 @@ type DialogInfo = {
     voice_key: string;
     consider_hero_direction: boolean;
     reference_npc: string;
+    sweat_drops: boolean;
+    emoticon: string;
+    sfx: string;
     custom_pos: {
         x: number;
         y: number;
@@ -39,6 +42,7 @@ export class DialogEvent extends GameEvent {
         no: GameEvent[];
     };
     private current_info: DialogInfo;
+    private emoticon_sprite: Phaser.Sprite;
 
     constructor(
         game,
@@ -70,6 +74,7 @@ export class DialogEvent extends GameEvent {
             no: [],
         };
         this.current_info = null;
+        this.emoticon_sprite = null;
 
         if (finish_events !== undefined && !this.end_with_yes_no) {
             finish_events.forEach(event_info => {
@@ -132,6 +137,10 @@ export class DialogEvent extends GameEvent {
         this.dialog_manager.next(
             async finished => {
                 if (finished) {
+                    if (this.emoticon_sprite) {
+                        this.emoticon_sprite.destroy(true);
+                        this.emoticon_sprite = null;
+                    }
                     if (this.dialog_index === this.dialog_info.length) {
                         await this.finish();
                         if (finish_callback) {
@@ -198,6 +207,17 @@ export class DialogEvent extends GameEvent {
                 this.current_info.voice_key ?? (reference_npc ? reference_npc.voice_key : this.origin_npc?.voice_key),
             hero_direction: this.current_info.consider_hero_direction ? this.data.hero.current_direction : null,
         });
+        if (reference_npc && this.current_info.sweat_drops) {
+            reference_npc.splash_sweat_drops();
+        }
+        if (reference_npc && this.current_info.emoticon) {
+            reference_npc.show_emoticon(this.current_info.emoticon, {duration: -1}).then(emoticon => {
+                this.emoticon_sprite = emoticon;
+            });
+        }
+        if (this.current_info.sfx) {
+            this.data.audio.play_se(this.current_info.sfx);
+        }
         this.next();
     }
 
@@ -223,6 +243,10 @@ export class DialogEvent extends GameEvent {
         this.current_info = null;
         this.dialog_manager?.destroy();
         this.dialog_manager = null;
+        if (this.emoticon_sprite) {
+            this.emoticon_sprite.destroy(true);
+            this.emoticon_sprite = null;
+        }
         this.reset_control();
     }
 }
