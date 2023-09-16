@@ -660,6 +660,7 @@ export abstract class ControllableChar {
      * @param start whether you want the animation to start. Otherwise it will be stopped.
      * @param frame_rate a custom frame rate value.
      * @param loop whether the animation will be looping.
+     * @param reset_before_start whether the animation will reset before start.
      * @returns Returns the resulting Phaser.Animation object.
      */
     play(
@@ -667,7 +668,8 @@ export abstract class ControllableChar {
         animation?: string | number,
         start: boolean = true,
         frame_rate?: number,
-        loop?: boolean
+        loop?: boolean,
+        reset_before_start?: boolean
     ) {
         action = action ?? this.current_action;
         if (!action) {
@@ -693,6 +695,9 @@ export abstract class ControllableChar {
             this.data.logger.log_message("Invalid animation key:" + animation_key);
         }
         if (start) {
+            if (reset_before_start) {
+                animation_obj.stop(true);
+            }
             this.sprite.animations.play(animation_key, frame_rate, loop);
         } else {
             animation_obj.stop(true);

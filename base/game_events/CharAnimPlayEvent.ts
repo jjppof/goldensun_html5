@@ -57,12 +57,20 @@ export class CharAnimPlayEvent extends GameEvent {
         if (this.stop_animation) {
             target_char.sprite.animations.currentAnim.stop(this.reset_frame_on_stop);
         } else {
-            const anim_key = target_char.sprite_info.getAnimationKey(this.action, this.animation);
-            const animation = target_char.sprite.animations.getAnimation(anim_key);
-            if (this.reset_before_start) {
-                animation.stop(true);
+            const animation = target_char.play(
+                this.action,
+                this.animation,
+                true,
+                this.frame_rate,
+                this.loop,
+                this.reset_before_start
+            );
+            if (!animation) {
+                this.data.logger.log_message(
+                    `'char_animation_play' event: Animation name '${animation.name}' is not valid or doesn't exist.`
+                );
+                return;
             }
-            animation.play(this.frame_rate, this.loop);
             if (!animation.loop) {
                 ++this.data.game_event_manager.events_running_count;
                 const previous_force_idle_action_in_event = target_char.force_idle_action_in_event;
