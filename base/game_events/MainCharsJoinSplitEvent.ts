@@ -96,33 +96,34 @@ export class MainCharsJoinSplitEvent extends GameEvent {
                 y: this.data.hero.y,
             });
             main_char.config_body();
+            let destination: MainCharsJoinSplitEvent["destination"] = {x: null, y: null};
             if (this.destination.x !== undefined) {
                 if (this.destination_type === "tile") {
-                    const destination = this.destination_incremental
+                    const not_centered_destination = this.destination_incremental
                         ? this.data.hero.tile_pos.x + this.destination.x
                         : this.destination.x;
-                    this.destination.x = get_centered_pos_in_px(destination, this.data.map.tile_width);
+                    destination.x = get_centered_pos_in_px(not_centered_destination, this.data.map.tile_width);
                 } else {
-                    this.destination.x = this.destination_incremental
+                    destination.x = this.destination_incremental
                         ? this.data.hero.x + this.destination.x
                         : this.destination.x;
                 }
             } else {
-                this.destination.x = this.data.hero.x;
+                destination.x = this.data.hero.x;
             }
             if (this.destination.y !== undefined) {
                 if (this.destination_type === "tile") {
-                    const destination = this.destination_incremental
+                    const not_centered_destination = this.destination_incremental
                         ? this.data.hero.tile_pos.y + this.destination.y
                         : this.destination.y;
-                    this.destination.y = get_centered_pos_in_px(destination, this.data.map.tile_height);
+                    destination.y = get_centered_pos_in_px(not_centered_destination, this.data.map.tile_height);
                 } else {
-                    this.destination.y = this.destination_incremental
+                    destination.y = this.destination_incremental
                         ? this.data.hero.y + this.destination.y
                         : this.destination.y;
                 }
             } else {
-                this.destination.y = this.data.hero.y;
+                destination.y = this.data.hero.y;
             }
             main_char.set_visible(true);
             const previous_force_char_stop_in_event = main_char.force_char_stop_in_event;
@@ -131,7 +132,7 @@ export class MainCharsJoinSplitEvent extends GameEvent {
             main_char.move_freely_in_event = false;
             const previous_dash_value = main_char.dashing;
             main_char.dashing = this.dash;
-            const udpate_callback = main_char.get_move_callback(this.destination, () => {
+            const udpate_callback = main_char.get_move_callback(destination, () => {
                 this.data.game_event_manager.remove_callback(udpate_callback);
                 main_char.force_char_stop_in_event = previous_force_char_stop_in_event;
                 main_char.move_freely_in_event = previous_move_freely_in_event;
@@ -159,7 +160,7 @@ export class MainCharsJoinSplitEvent extends GameEvent {
             this.data.logger.log_message(`NPC with '${this.main_char_label}' does not exists.`);
             return;
         }
-        this.destination = {
+        const destination = {
             x: this.data.hero.x,
             y: this.data.hero.y,
         };
@@ -168,7 +169,7 @@ export class MainCharsJoinSplitEvent extends GameEvent {
         main_char.move_freely_in_event = false;
         main_char.dashing = this.dash;
         const udpate_callback = main_char.get_move_callback(
-            this.destination,
+            destination,
             async () => {
                 this.data.game_event_manager.remove_callback(udpate_callback);
                 await promised_wait(this.game, 50);
