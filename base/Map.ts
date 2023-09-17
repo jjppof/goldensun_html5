@@ -84,6 +84,8 @@ export class Map {
     private polygons_processed: boolean;
     private bounding_boxes: Phaser.Rectangle[];
     private game_events: GameEvent[];
+    private before_config_game_events: GameEvent[];
+    private other_game_events: GameEvent[];
     private _retreat_data: {
         x: number;
         y: number;
@@ -161,6 +163,8 @@ export class Map {
         this.polygons_processed = false;
         this.bounding_boxes = [];
         this.game_events = [];
+        this.before_config_game_events = [];
+        this.other_game_events = [];
         this._retreat_data = null;
         this._paused = false;
         this.sprites_sort_paused = false;
@@ -1703,28 +1707,52 @@ export class Map {
     /**
      * Initializes game events of this map.
      * @param events list of input events before parse.
+     * @param event_type the type of game event that's being intialized.
+     * @param property_key the property key name in case of "options_list" game event type.
      */
-    init_game_events(events: string) {
+    init_game_events(
+        events: string,
+        event_type: "regular" | "before_config" | "options_list" = "regular",
+        property_key?: string
+    ) {
         try {
-            const events_arr = JSON.parse(events);
-            if (Array.isArray(events_arr)) {
-                events_arr.forEach(event_info => {
-                    const event = this.data.game_event_manager.get_event_instance(event_info, game_event_origin.MAP);
-                    this.game_events.push(event);
-                });
-            } else {
+            let events_arr = JSON.parse(events);
+            if (event_type !== "options_list" && !Array.isArray(events_arr)) {
                 this.data.logger.log_message("Map Game Events list is not an Array type.");
+                return;
             }
+            if (event_type === "options_list") {
+                events_arr = [events_arr];
+            }
+            events_arr.forEach(event_info => {
+                const event = this.data.game_event_manager.get_event_instance(event_info, game_event_origin.MAP);
+                if (event_type === "regular") {
+                    this.game_events.push(event);
+                } else if (event_type === "before_config") {
+                    this.before_config_game_events.push(event);
+                } else if (event_type === "options_list") {
+                    this.other_game_events.push(event);
+                }
+            });
         } catch {
-            this.data.logger.log_message("Map Game Events list is not a valid JSON.");
+            if (event_type !== "options_list") {
+                this.data.logger.log_message("Map Game Events list is not a valid JSON.");
+            } else if (property_key) {
+                this.data.logger.log_message(`Game event '${property_key}' is not a valid JSON.`);
+            }
         }
     }
 
     /**
      * Fires this map game events.
+     * @param before_config if true, it will fire before config events instead.
      */
-    fire_game_events() {
-        this.game_events.forEach(event => event.fire());
+    fire_game_events(before_config: boolean = false) {
+        if (before_config) {
+            this.before_config_game_events.forEach(event => event.fire());
+        } else {
+            this.game_events.forEach(event => event.fire());
+        }
     }
 
     /**
@@ -1893,6 +1921,10 @@ export class Map {
             this.init_game_events(this.sprite.properties.game_events);
         }
 
+        if (this.sprite.properties?.before_config_game_events) {
+            this.init_game_events(this.sprite.properties.game_events, "before_config");
+        }
+
         //read the map properties and creates tile events, npcs and interactable objects
         if (this.sprite.properties) {
             let map_index = 0;
@@ -1904,10 +1936,15 @@ export class Map {
                     this.create_npc(property_key, property, true, map_index);
                 } else if (property_key.startsWith("interactable_object/")) {
                     this.create_interactable_object(property_key, property, map_index);
+                } else if (property_key.startsWith("game_event/")) {
+                    this.init_game_events(property, "options_list", property_key);
                 }
                 ++map_index;
             }
         }
+
+        //call before config events list. Meant to be fired before npc, IO and layers config.
+        this.fire_game_events(true);
 
         this.config_layers();
         this.config_interactable_object();
@@ -2080,6 +2117,8 @@ export class Map {
             this.data.hero.footsteps.clean_all();
         }
         this.game_events.forEach(event => event?.destroy());
+        this.before_config_game_events.forEach(event => event?.destroy());
+        this.other_game_events.forEach(event => event?.destroy());
 
         this.data.collision.clear_custom_bodies();
 
@@ -2104,6 +2143,8 @@ export class Map {
         this.encounter_zones = [];
         this.bounding_boxes = [];
         this.game_events = [];
+        this.before_config_game_events = [];
+        this.other_game_events = [];
         this.data.middlelayer_group.add(this.data.hero.shadow);
         this.data.middlelayer_group.add(this.data.hero.sprite);
 
