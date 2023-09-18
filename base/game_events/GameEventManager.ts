@@ -78,6 +78,7 @@ import {LayerVisibilityEvent} from "./LayerVisibilityEvent";
 import {MainCharsJoinSplitEvent} from "./MainCharsJoinSplitEvent";
 import {SetIoVisibilityEvent} from "./SetIoVisibilityEvent";
 import {SetIoActivationEvent} from "./SetIoActivationEvent";
+import {TeleportEvent} from "./TeleportEvent";
 
 export enum interaction_patterns {
     NO_INTERACTION = "no_interaction",
@@ -1112,6 +1113,19 @@ export class GameEventManager {
                     info.keep_reveal,
                     info.io_label,
                     info.io_active
+                );
+            case event_types.TELEPORT:
+                return new TeleportEvent(
+                    this.game,
+                    this.data,
+                    info.active,
+                    info.key_name,
+                    info.keep_reveal,
+                    info.target_map_key,
+                    info.target_tile_position,
+                    info.target_collision_layer,
+                    info.target_direction,
+                    info.keep_encounter_cumulator
                 );
             default:
                 const origin = `Event origin: ${event_origin}. ${

@@ -104,6 +104,7 @@ export enum event_types {
     MAIN_CHARS_JOIN_SPLIT = "main_chars_join_split",
     SET_IO_VISIBILITY = "set_io_visibility",
     SET_IO_ACTIVATION = "set_io_activation",
+    TELEPORT = "teleport",
 }
 
 export enum game_event_misc_origin {
