@@ -79,6 +79,7 @@ import {MainCharsJoinSplitEvent} from "./MainCharsJoinSplitEvent";
 import {SetIoVisibilityEvent} from "./SetIoVisibilityEvent";
 import {SetIoActivationEvent} from "./SetIoActivationEvent";
 import {TeleportEvent} from "./TeleportEvent";
+import {SetNpcCollisionEvent} from "./SetNpcCollisionEvent";
 
 export enum interaction_patterns {
     NO_INTERACTION = "no_interaction",
@@ -1126,6 +1127,15 @@ export class GameEventManager {
                     info.target_collision_layer,
                     info.target_direction,
                     info.keep_encounter_cumulator
+                );
+            case event_types.SET_NPC_COLLISION:
+                return new SetNpcCollisionEvent(
+                    this.game,
+                    this.data,
+                    info.active,
+                    info.key_name,
+                    info.keep_reveal,
+                    info.collision_active
                 );
             default:
                 const origin = `Event origin: ${event_origin}. ${

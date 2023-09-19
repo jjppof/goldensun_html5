@@ -105,6 +105,7 @@ export enum event_types {
     SET_IO_VISIBILITY = "set_io_visibility",
     SET_IO_ACTIVATION = "set_io_activation",
     TELEPORT = "teleport",
+    SET_NPC_COLLISION = "set_npc_collision",
 }
 
 export enum game_event_misc_origin {
