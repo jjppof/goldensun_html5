@@ -158,6 +158,7 @@ export abstract class ControllableChar {
     private _sweat_drops: Phaser.Sprite;
     protected look_target: ControllableChar = null;
     protected _active: boolean;
+    protected _emoticon_sprite: Phaser.Sprite;
     /**
      * A mask that contains in which directions the hero is colliding. Example:
      *  - If the hero is colliding on left direction, which has 4 as value, then this variable will have this value: 00010000.
@@ -280,6 +281,7 @@ export abstract class ControllableChar {
         this.force_idle_action_in_event = true;
         this._sweat_drops = null;
         this.on_stair = false;
+        this._emoticon_sprite = null;
     }
 
     /** The char key. */
@@ -990,9 +992,9 @@ export abstract class ControllableChar {
     ) {
         const x = options?.location?.x ?? this.sprite.x;
         const y = options?.location?.y ?? this.sprite.y - this.sprite.height + 5;
-        const emoticon_sprite = this.game.add.sprite(x, y, "emoticons", emoticon_key);
-        emoticon_sprite.anchor.setTo(0.5, 1);
-        emoticon_sprite.scale.x = 0;
+        this._emoticon_sprite = this.game.add.sprite(x, y, "emoticons", emoticon_key);
+        this._emoticon_sprite.anchor.setTo(0.5, 1);
+        this._emoticon_sprite.scale.x = 0;
 
         const duration = options?.duration ?? 800;
 
@@ -1002,7 +1004,7 @@ export abstract class ControllableChar {
             promise_resolve();
         }
         this.game.add
-            .tween(emoticon_sprite.scale)
+            .tween(this._emoticon_sprite.scale)
             .to(
                 {
                     x: 1,
@@ -1017,13 +1019,23 @@ export abstract class ControllableChar {
                 }
                 if (duration !== -1) {
                     this.game.time.events.add(duration, () => {
-                        emoticon_sprite.destroy();
+                        this.destroy_emoticon();
                         promise_resolve();
                     });
                 }
             });
         await promise;
-        return emoticon_sprite;
+        return this._emoticon_sprite;
+    }
+
+    /**
+     * Destroys the emoticon of this char if there's one.
+     */
+    destroy_emoticon() {
+        if (this._emoticon_sprite) {
+            this._emoticon_sprite.destroy();
+            this._emoticon_sprite = null;
+        }
     }
 
     /**

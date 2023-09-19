@@ -28,6 +28,8 @@ export class EmoticonEvent extends GameEvent {
     private face_hero: boolean;
     /** INPUT. Reset direction on finish if "face_hero" was set to true. */
     private reset_direction: boolean;
+    /** INPUT. If true, it will destroy any currect active emoticon on the given char. 'finish_events' won't be called if this is prop is true. */
+    private destroy_emoticon: boolean;
     /** The target char that will show the emoticon. */
     private char: ControllableChar;
     /** The previous direction before facing hero. */
@@ -48,6 +50,7 @@ export class EmoticonEvent extends GameEvent {
         location,
         face_hero,
         reset_direction,
+        destroy_emoticon,
         finish_events
     ) {
         super(game, data, event_types.EMOTICON, active, key_name, keep_reveal);
@@ -61,6 +64,7 @@ export class EmoticonEvent extends GameEvent {
         this.face_hero = face_hero ?? false;
         this.reset_direction = reset_direction ?? true;
         this.previous_direction = null;
+        this.destroy_emoticon = destroy_emoticon ?? false;
         if (finish_events !== undefined) {
             finish_events.forEach(event_info => {
                 const event = this.data.game_event_manager.get_event_instance(event_info, this.type, this.origin_npc);
@@ -73,8 +77,6 @@ export class EmoticonEvent extends GameEvent {
      * Fires the EmoticonEvent.
      */
     async _fire() {
-        ++this.data.game_event_manager.events_running_count;
-
         this.char = GameEvent.get_char(this.data, {
             is_npc: this.is_npc,
             npc_index: this.npc_index,
@@ -84,6 +86,13 @@ export class EmoticonEvent extends GameEvent {
             this.char = this.origin_npc;
             this.is_npc = true;
         }
+
+        if (this.destroy_emoticon) {
+            this.char.destroy_emoticon();
+            return;
+        }
+
+        ++this.data.game_event_manager.events_running_count;
 
         if (this.face_hero && this.char !== this.data.hero) {
             this.previous_direction = this.char.current_direction;

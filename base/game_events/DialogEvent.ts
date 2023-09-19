@@ -4,6 +4,7 @@ import {Button} from "../XGamepad";
 import {YesNoMenu} from "../windows/YesNoMenu";
 import {GAME_HEIGHT} from "../magic_numbers";
 import {base_actions} from "../utils";
+import {NPC} from "../NPC";
 
 type DialogInfo = {
     text: string;
@@ -42,7 +43,7 @@ export class DialogEvent extends GameEvent {
         no: GameEvent[];
     };
     private current_info: DialogInfo;
-    private emoticon_sprite: Phaser.Sprite;
+    private reference_npc: NPC;
 
     constructor(
         game,
@@ -74,7 +75,7 @@ export class DialogEvent extends GameEvent {
             no: [],
         };
         this.current_info = null;
-        this.emoticon_sprite = null;
+        this.reference_npc = null;
 
         if (finish_events !== undefined && !this.end_with_yes_no) {
             finish_events.forEach(event_info => {
@@ -137,10 +138,8 @@ export class DialogEvent extends GameEvent {
         this.dialog_manager.next(
             async finished => {
                 if (finished) {
-                    if (this.emoticon_sprite) {
-                        this.emoticon_sprite.destroy(true);
-                        this.emoticon_sprite = null;
-                    }
+                    this.reference_npc?.destroy_emoticon();
+                    this.reference_npc = null;
                     if (this.dialog_index === this.dialog_info.length) {
                         await this.finish();
                         if (finish_callback) {
@@ -197,23 +196,23 @@ export class DialogEvent extends GameEvent {
         this.current_info = this.dialog_info[this.dialog_index];
         ++this.dialog_index;
         this.set_control();
-        const reference_npc = this.current_info.reference_npc
+        this.reference_npc = this.current_info.reference_npc
             ? this.data.map.npcs_label_map[this.current_info.reference_npc]
             : null;
         this.dialog_manager = new DialogManager(this.game, this.data);
         this.dialog_manager.set_dialog(this.current_info.text, {
-            avatar: this.current_info.avatar ?? (reference_npc ? reference_npc.avatar : this.origin_npc?.avatar),
+            avatar:
+                this.current_info.avatar ?? (this.reference_npc ? this.reference_npc.avatar : this.origin_npc?.avatar),
             voice_key:
-                this.current_info.voice_key ?? (reference_npc ? reference_npc.voice_key : this.origin_npc?.voice_key),
+                this.current_info.voice_key ??
+                (this.reference_npc ? this.reference_npc.voice_key : this.origin_npc?.voice_key),
             hero_direction: this.current_info.consider_hero_direction ? this.data.hero.current_direction : null,
         });
-        if (reference_npc && this.current_info.sweat_drops) {
-            reference_npc.splash_sweat_drops();
+        if (this.reference_npc && this.current_info.sweat_drops) {
+            this.reference_npc.splash_sweat_drops();
         }
-        if (reference_npc && this.current_info.emoticon) {
-            reference_npc.show_emoticon(this.current_info.emoticon, {duration: -1}).then(emoticon => {
-                this.emoticon_sprite = emoticon;
-            });
+        if (this.reference_npc && this.current_info.emoticon) {
+            this.reference_npc.show_emoticon(this.current_info.emoticon, {duration: -1});
         }
         if (this.current_info.sfx) {
             this.data.audio.play_se(this.current_info.sfx);
@@ -243,10 +242,7 @@ export class DialogEvent extends GameEvent {
         this.current_info = null;
         this.dialog_manager?.destroy();
         this.dialog_manager = null;
-        if (this.emoticon_sprite) {
-            this.emoticon_sprite.destroy(true);
-            this.emoticon_sprite = null;
-        }
+        this.reference_npc = null;
         this.reset_control();
     }
 }

@@ -551,6 +551,7 @@ export class GameEventManager {
                     info.location,
                     info.face_hero,
                     info.reset_direction,
+                    info.destroy_emoticon,
                     info.finish_events
                 );
             case event_types.TILE_EVENT_MANAGE:

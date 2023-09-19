@@ -867,6 +867,7 @@ export class NPC extends ControllableChar {
         if (this.footsteps) {
             this.footsteps.destroy();
         }
+        this.destroy_emoticon();
         this.unset_push_timer();
         this._events.forEach(event => event?.destroy());
         this.look_target = null;
