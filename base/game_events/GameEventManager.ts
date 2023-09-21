@@ -710,7 +710,9 @@ export class GameEventManager {
                     info.equip_slot,
                     info.slot_index,
                     info.broken,
-                    info.amount
+                    info.amount,
+                    info.manipulation_done_events,
+                    info.manipulation_fail_events
                 );
             case event_types.CAMERA_SHAKE:
                 return new CameraShakeEvent(

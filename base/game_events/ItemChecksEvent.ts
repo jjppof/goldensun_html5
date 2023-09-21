@@ -1,4 +1,4 @@
-import {ItemSlot} from "MainChar";
+import {ItemSlot, MainChar} from "MainChar";
 import {GameEvent, event_types} from "./GameEvent";
 
 enum control_types {
@@ -54,41 +54,61 @@ export class ItemChecksEvent extends GameEvent {
     }
 
     _fire() {
-        const char = this.data.info.main_char_list[this.char_key];
-        if (!char) {
-            this.data.logger.log_message(
-                `Could not manipulate items for "${this.char_key}" char. Check "char_key" property.`
-            );
+        if (!(this.item_key in this.data.info.items_list)) {
+            this.data.logger.log_message(`Item '${this.item_key}' is not registered.`);
             return;
+        }
+        let chars: MainChar[] = [];
+        if (this.char_key) {
+            const char = this.data.info.main_char_list[this.char_key];
+            if (!char) {
+                this.data.logger.log_message(
+                    `Could not manipulate items for "${this.char_key}" char. Check "char_key" property.`
+                );
+                return;
+            }
+            chars = [char];
+        } else {
+            chars = this.data.info.party_data.members;
         }
         let item_slot: ItemSlot = null;
-        if (this.slot_index !== undefined) {
-            item_slot = char.items.find(item_slot => item_slot.index === this.slot_index);
-        } else if (this.item_key) {
-            item_slot = char.items.find(item_slot => item_slot.key_name === this.item_key);
+        let check = false;
+        for (let char of chars) {
+            if (this.slot_index !== undefined) {
+                item_slot = char.items.find(item_slot => item_slot.index === this.slot_index);
+            } else if (this.item_key) {
+                item_slot = char.items.find(item_slot => item_slot.key_name === this.item_key);
+            }
+            if (this.control_type !== control_types.HAS_ITEM && !item_slot) {
+                continue;
+            }
+            switch (this.control_type) {
+                case control_types.HAS_ITEM:
+                    check = Boolean(item_slot);
+                    break;
+                case control_types.IS_BROKEN:
+                    check = item_slot.broken;
+                    break;
+                case control_types.EQUIPPED:
+                    check = item_slot.equipped;
+                    break;
+                case control_types.QUANTITY_CHECK:
+                    check = item_slot.quantity === this.quantity;
+                    break;
+            }
+            if (check) {
+                this.check_ok_events.forEach(event => event.fire(this.origin_npc));
+            } else if (this.control_type !== control_types.HAS_ITEM) {
+                this.check_fail_events.forEach(event => event.fire(this.origin_npc));
+            } else if (this.control_type === control_types.HAS_ITEM && !check) {
+                continue;
+            }
+            break;
         }
         if (this.control_type !== control_types.HAS_ITEM && !item_slot) {
-            this.data.logger.log_message(`Could not find an item slot with given info.`);
-            return;
+            this.data.logger.log_message("'item_checks' event error: could not find an item slot with given info.");
         }
-        let check = false;
-        switch (this.control_type) {
-            case control_types.HAS_ITEM:
-                check = Boolean(item_slot);
-                break;
-            case control_types.IS_BROKEN:
-                check = item_slot.broken;
-                break;
-            case control_types.EQUIPPED:
-                check = item_slot.equipped;
-                break;
-            case control_types.QUANTITY_CHECK:
-                check = item_slot.quantity === this.quantity;
-                break;
-        }
-        if (check) {
-            this.check_ok_events.forEach(event => event.fire(this.origin_npc));
-        } else {
+        if (this.control_type === control_types.HAS_ITEM && !check) {
             this.check_fail_events.forEach(event => event.fire(this.origin_npc));
         }
     }

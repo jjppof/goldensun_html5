@@ -975,6 +975,28 @@ export class MainChar extends Player {
     }
 
     /**
+     * Removes an item from the first item slot available among all party members.
+     * @param party_data the party data object.
+     * @param item_slot the item to be manipulated.
+     * @param quantity the amount of the given item to be removed.
+     * @returns returns true if the item was removed from a char.
+     */
+    static remove_item_from_party(party_data: PartyData, item: Item, quantity: number = 1) {
+        if (quantity <= 0) {
+            return false;
+        }
+        for (let i = 0; i < party_data.members.length; ++i) {
+            const char = party_data.members[i];
+            const item_slot = char.items.find(item_slot => item_slot.key_name === item.key_name);
+            if (item_slot) {
+                char.remove_item(item_slot, quantity, true);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Adds a djinni to the first available position among all party members.
      * @param party_data the party data object.
      * @param djinn the djinn to be added.
