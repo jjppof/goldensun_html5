@@ -1,4 +1,4 @@
-import {equip_slots, ItemSlot, MainChar} from "MainChar";
+import {equip_slots, ItemSlot, MainChar} from "../MainChar";
 import {GameEvent, event_types} from "./GameEvent";
 
 enum control_types {
