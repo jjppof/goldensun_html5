@@ -116,7 +116,11 @@ export class CharItemManipulationEvent extends GameEvent {
         }
         switch (this.control_type) {
             case control_types.ADD:
-                char.add_item(this.item_key, this.amount, this.equip);
+                if (char.add_item(this.item_key, this.amount, this.equip)) {
+                    this.manipulation_done_events.forEach(event => event.fire(this.origin_npc));
+                } else {
+                    this.manipulation_fail_events.forEach(event => event.fire(this.origin_npc));
+                }
                 break;
             case control_types.REMOVE:
                 char.remove_item(item_slot, this.amount, true);
