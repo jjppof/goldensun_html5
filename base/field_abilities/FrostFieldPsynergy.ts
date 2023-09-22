@@ -167,12 +167,14 @@ export class FrostFieldPsynergy extends FieldAbilities {
         blink_timer.loop(150, () => {
             target_object.hue_filter.angle = 5.3;
             const timer_event = game.time.events.add(20, () => {
-                target_object.hue_filter.angle = 0;
+                if (target_object?.hue_filter) {
+                    target_object.hue_filter.angle = 0;
+                }
             });
             timer_event.timer.start();
         });
         blink_timer.start();
-        target_object.sprite.events.onDestroy.add(() => {
+        target_object.add_unset_callback(() => {
             blink_timer.destroy();
         });
     }

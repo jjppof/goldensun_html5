@@ -343,7 +343,9 @@ export class LiftFieldPsynergy extends FieldAbilities {
         const target_hueshift_timer = game.time.create(false);
         target_object.manage_filter(target_object.hue_filter, true);
         target_hueshift_timer.loop(5, () => {
-            target_object.hue_filter.angle = Math.random() * degree360;
+            if (target_object?.hue_filter) {
+                target_object.hue_filter.angle = Math.random() * degree360;
+            }
         });
         target_hueshift_timer.start();
         target_object.add_unset_callback(() => {
