@@ -37,7 +37,7 @@ export class LashFieldPsynergy extends FieldAbilities {
     }
 
     init_hand() {
-        this.field_psynergy_window.close();
+        this.close_field_psynergy_window();
         const sprite_key = this._hand_sprite_base.getSpriteKey(LashFieldPsynergy.LASH_HAND_KEY_NAME);
         this._hand_sprite = this.game.add.sprite(0, 0, sprite_key);
         this.data.overlayer_group.add(this._hand_sprite);

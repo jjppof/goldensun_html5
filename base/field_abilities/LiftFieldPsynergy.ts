@@ -44,7 +44,7 @@ export class LiftFieldPsynergy extends FieldAbilities {
     }
 
     async init() {
-        this.field_psynergy_window.close();
+        this.close_field_psynergy_window();
 
         if (this.target_object) {
             if (this.target_object.psynergies_info?.lift?.destination_y_pos) {

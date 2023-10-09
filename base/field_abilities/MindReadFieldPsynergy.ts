@@ -91,7 +91,7 @@ export class MindReadFieldPsynergy extends FieldAbilities {
     }
 
     async init() {
-        this.field_psynergy_window.close();
+        this.close_field_psynergy_window();
         this.set_controls();
 
         this.cast_char_anim_promise = this.return_to_idle_anim();

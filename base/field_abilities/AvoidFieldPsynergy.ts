@@ -22,7 +22,7 @@ export class AvoidFieldPsynergy extends FieldAbilities {
         }
     }
     async init() {
-        this.field_psynergy_window.close();
+        this.close_field_psynergy_window();
 
         await this.stop_casting(false);
 

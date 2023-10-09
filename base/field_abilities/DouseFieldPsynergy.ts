@@ -28,7 +28,7 @@ export class DouseFieldPsynergy extends FieldAbilities {
     }
 
     async init() {
-        this.field_psynergy_window.close();
+        this.close_field_psynergy_window();
 
         this.init_cloud();
         await this.move_cloud_out();

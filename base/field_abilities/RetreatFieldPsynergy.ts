@@ -83,7 +83,7 @@ export class RetreatFieldPsynergy extends FieldAbilities {
     }
 
     async init() {
-        this.field_psynergy_window.close();
+        this.close_field_psynergy_window();
 
         await this.controllable_char.face_direction(directions.down);
         this.controllable_char.play(base_actions.GRANT);

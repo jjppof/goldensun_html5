@@ -48,7 +48,7 @@ export class PoundFieldPsynergy extends FieldAbilities {
     update() {}
 
     init_hand() {
-        this.field_psynergy_window.close();
+        this.close_field_psynergy_window();
         this.data.overlayer_group.add(this.hand_sprite);
         this.data.overlayer_group.bringToTop(this.hand_sprite);
         this.hand_sprite.visible = true;

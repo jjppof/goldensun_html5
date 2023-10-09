@@ -13,12 +13,33 @@ import {degree360} from "../magic_numbers";
 
 /**
  * Defines and manages the usage of field psynergy.
+ * Classes that inherit this one, are expected to at least:
+ *  - call FieldAbilities.set_bootstrap_method on construction;
+ *  - call FieldAbilities.close_field_psynergy_window in an appropriate time.
+ *  - call FieldAbilities.stop_casting and FieldAbilities.return_to_idle_anim possbily on cast finish.
+ *  - implement FieldAbilities.update abstract method, even if empty.
+ *
+ * This class already do initial checks, search for target, init casting aura and colorize the map automatically.
  */
 export abstract class FieldAbilities {
     private static readonly DEFAULT_RANGE = 12;
 
+    /** The Phaser.Game object. */
     protected game: Phaser.Game;
+    /** The GoldenSun object. */
     protected data: GoldenSun;
+    /** The controllable char that's casting this psynergy. */
+    protected controllable_char: ControllableChar;
+    /** The target object of this psynergy. Might not be necessary depending on the psynergy. */
+    protected target_object: InteractableObjects | NPC;
+    /** If called, the casting aura is destroyed. */
+    protected stop_casting: (reset_casting_psy_flag?: boolean, reset_map_tint?: boolean) => Promise<void>;
+    /** The direction that the controllable char is casting thie psynergy. */
+    protected cast_direction: number;
+    /** Resets the map to default colors. */
+    protected reset_map: () => void;
+
+    private field_psynergy_window: FieldPsynergyWindow;
     private ability_key_name: string;
     private target_max_range: number | ((target: FieldAbilities["target_object"]) => number);
     private action_key_name: string;
@@ -26,12 +47,6 @@ export abstract class FieldAbilities {
     private colorize_map: boolean;
     private bootstrap_method: Function;
     private cast_finisher: Function;
-    protected controllable_char: ControllableChar;
-    protected target_object: InteractableObjects | NPC;
-    protected stop_casting: (reset_casting_psy_flag?: boolean, reset_map_tint?: boolean) => Promise<void>;
-    protected field_psynergy_window: FieldPsynergyWindow;
-    protected cast_direction: number;
-    protected reset_map: () => void;
     private field_color: number;
     private field_intensity: number;
     private works_on_disabled_target: boolean;
@@ -268,6 +283,13 @@ export abstract class FieldAbilities {
                 }
             }
         }
+    }
+
+    /**
+     * Closes the field psynergy window that shows its name.
+     */
+    protected close_field_psynergy_window() {
+        this.field_psynergy_window.close();
     }
 
     /**

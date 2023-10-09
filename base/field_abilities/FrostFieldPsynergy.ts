@@ -40,7 +40,7 @@ export class FrostFieldPsynergy extends FieldAbilities {
     /*Begins the snowflake effects
     Upon finishing, triggers the pillar's growth*/
     init_snowflakes() {
-        this.field_psynergy_window.close();
+        this.close_field_psynergy_window();
         this.data.audio.play_se("misc/ice_hitting", () => {
             this.data.audio.play_se("misc/ice_hitting");
         });

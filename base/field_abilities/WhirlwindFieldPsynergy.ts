@@ -55,7 +55,7 @@ export class WhirlwindFieldPsynergy extends FieldAbilities {
     }
 
     init() {
-        this.field_psynergy_window.close();
+        this.close_field_psynergy_window();
         const sprite_key = this._whirlwind_sprite_base.getSpriteKey(WhirlwindFieldPsynergy.ABILITY_KEY_NAME);
         this._whirlwind_sprite = this.game.add.sprite(0, 0, sprite_key);
         this.data.overlayer_group.add(this._whirlwind_sprite);

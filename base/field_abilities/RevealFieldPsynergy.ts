@@ -127,7 +127,7 @@ export class RevealFieldPsynergy extends FieldAbilities {
     }
 
     show_wave() {
-        this.field_psynergy_window.close();
+        this.close_field_psynergy_window();
 
         if (this.controllable_char.on_reveal) {
             this.finish(true);

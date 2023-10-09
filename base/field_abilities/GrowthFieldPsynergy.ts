@@ -101,7 +101,7 @@ export class GrowthFieldPsynergy extends FieldAbilities {
     }
 
     init_bubbles() {
-        this.field_psynergy_window.close();
+        this.close_field_psynergy_window();
         const reproduce = (reproduction_counter: number) => {
             if (reproduction_counter === 0) return;
             this.data.audio.play_se("psynergy/6", undefined, 0.1);
