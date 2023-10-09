@@ -383,7 +383,6 @@ export class MoveFieldPsynergy extends FieldAbilities {
     init_move() {
         this.set_emitter();
         this.set_final_emitter();
-        this.search_for_target();
         this.set_hand();
         this.field_psynergy_window.close();
         this.translate_hand();

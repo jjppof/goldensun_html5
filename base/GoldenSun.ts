@@ -27,7 +27,8 @@ import {initialize_save_menu, SaveMenu} from "./main_menus/SaveMenu";
 import {ParticlesWrapper} from "./ParticlesWrapper";
 import {initialize_bgm_data} from "./initializers/bgm";
 import {Logger} from "./Logger";
-import {BattleAnimationTester} from "battle/BattleAnimationTester";
+import {BattleAnimationTester} from "./battle/BattleAnimationTester";
+import {FieldAbilities} from "./field_abilities/FieldAbilities";
 
 /**
  * The project has basically two important folders: assets and base. All the source code is located inside base folder.
@@ -658,3 +659,5 @@ var golden_sun = new GoldenSun();
 
 //debugging porpouses
 (window as any).data = golden_sun;
+//exposing FieldAbilities for custom psynergies creation.
+(window as any).data.FieldAbilities = FieldAbilities;

@@ -104,6 +104,9 @@ export abstract class FieldAbilities {
         this.map_colors_sequence = map_colors_sequence ?? false;
     }
 
+    /**
+     * Abstract method. This function is called on game main update funcion.
+     */
     abstract update(): void;
 
     /**
@@ -112,15 +115,22 @@ export abstract class FieldAbilities {
      * @param {number} direction - Current direction
      * @return {number} Non-diagonal cast direction
      */
-    get_cast_direction(direction: directions) {
+    private get_cast_direction(direction: directions) {
         return (direction % 2 ? direction + 1 : direction) % 8;
     }
 
-    set_hero_cast_anim() {
+    /**
+     * Plays hero cast animation.
+     */
+    private set_hero_cast_anim() {
         this.controllable_char.play(this.action_key_name, reverse_directions[this.cast_direction]);
     }
 
-    return_to_idle_anim() {
+    /**
+     * Returns the hero from cast animation to idle animation.
+     * @returns returns a promise for animation end.
+     */
+    protected return_to_idle_anim() {
         let promise_resolve;
         const promise = new Promise<void>(resolve => (promise_resolve = resolve));
         this.controllable_char.sprite.animations.currentAnim.reverseOnce();
@@ -132,19 +142,37 @@ export abstract class FieldAbilities {
         return promise;
     }
 
-    set_bootstrap_method(method) {
+    /**
+     * Sets the bootstrap method that will be called once psynergy cast is initialized.
+     * Each psynergy will have its own bootstrap function.
+     * @param method the bootstrap method.
+     */
+    protected set_bootstrap_method(method: Function) {
         this.bootstrap_method = method;
     }
 
-    set_extra_cast_check(method) {
+    /**
+     * Adds an extra check for this psynergy to be casted. The given function is tested
+     * on this psynergy cast initialization. If the given function call returns false,
+     * this psynergy won't be casted.
+     * @param method the method to be tested.
+     */
+    protected set_extra_cast_check(method: FieldAbilities["extra_cast_check"]) {
         this.extra_cast_check = method;
     }
 
-    set_cast_finisher_method(method) {
+    /**
+     * Pass a method to be called on psynergy cast end when the casting aura starts to be destructed.
+     * @param method the method to be called.
+     */
+    protected set_cast_finisher_method(method: Function) {
         this.cast_finisher = method;
     }
 
-    search_for_target() {
+    /**
+     * Searches for target, NPC or IO, if this psynergy requests a target.
+     */
+    private search_for_target() {
         this.target_object = null;
         let min_x, max_x, min_y, max_y;
         if (this.cast_direction === directions.up || this.cast_direction === directions.down) {
@@ -223,7 +251,10 @@ export abstract class FieldAbilities {
         }
     }
 
-    set_target_casted() {
+    /**
+     * If the target has a limit of psynergy interactions, flag this target as interacted with this psynergy.
+     */
+    private set_target_casted() {
         if (this.target_object && this.target_object.is_interactable_object) {
             const target_object = this.target_object as InteractableObjects;
             if (target_object.psynergies_info) {
@@ -239,7 +270,11 @@ export abstract class FieldAbilities {
         }
     }
 
-    init_cast(caster_key_name: string) {
+    /**
+     * Initializes the psynergy cast. This is called after initial checks.
+     * @param caster_key_name the key name of the main char caster.
+     */
+    private init_cast(caster_key_name: string) {
         if (this.controllable_char.casting_psynergy) {
             return;
         }
@@ -321,7 +356,10 @@ export abstract class FieldAbilities {
         );
     }
 
-    no_pp() {
+    /**
+     * Open the dialog to be shown in the case the caster has no PP to cast this psynergy.
+     */
+    private no_pp() {
         this.controllable_char.misc_busy = true;
         const dialog = new DialogManager(this.game, this.data);
         let next = false;
@@ -359,9 +397,13 @@ export abstract class FieldAbilities {
             },
             {show_crystal: true}
         );
-        return false;
     }
 
+    /**
+     * Casts this psynergy.
+     * @param controllable_char the controllable char that's casting this psynergy.
+     * @param caster_key_name the main char key name that's casting this psyerngy.
+     */
     cast(controllable_char: ControllableChar, caster_key_name: string) {
         this.controllable_char = controllable_char;
         const caster = this.data.info.main_char_list[caster_key_name];
@@ -400,6 +442,16 @@ export abstract class FieldAbilities {
         }
     }
 
+    /**
+     * Initializes a casting aura around the caster.
+     * @param game the Phase.Game object.
+     * @param data the GoldenSun object.
+     * @param char the caster controllable char.
+     * @param after_init after the aura is initialized callback.
+     * @param after_destroy after the aura is completely destroyed callback.
+     * @param before_destroy on aura destruction init callback.
+     * @returns returns a function that when called, will stop the casting aura.
+     */
     static init_cast_aura(
         game: Phaser.Game,
         data: GoldenSun,
@@ -550,14 +602,26 @@ export abstract class FieldAbilities {
         return casting_aura_stop_function;
     }
 
+    /**
+     * Colorizes the map for psynergy casting.
+     * @param game the Phaser.Game object.
+     * @param map the current map.
+     * @param options some options.
+     * @returns returns a function that if called, it will return the map colors to normal.
+     */
     static colorize_map_layers(
         game: Phaser.Game,
         map: Map,
         options?: {
+            /** the color to colorize the map. In the RGB spectre, values between 0 and 1. Default is random. */
             color?: number;
+            /** the colorize intensity. */
             intensity?: number;
+            /** after colorize filter destruction callback. */
             after_destroy?: () => void;
+            /** after the map gets colorized callback. */
             after_colorize?: () => void;
+            /** if true, it will keep changing colorization color over time. */
             map_colors_sequence?: boolean;
         }
     ) {
