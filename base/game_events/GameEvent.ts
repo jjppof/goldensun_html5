@@ -106,6 +106,8 @@ export enum event_types {
     SET_IO_ACTIVATION = "set_io_activation",
     TELEPORT = "teleport",
     SET_NPC_COLLISION = "set_npc_collision",
+    CHAR_ROTATION = "char_rotation",
+    CHAR_TWEEN_POSITION = "char_tween_position",
 }
 
 export enum game_event_misc_origin {

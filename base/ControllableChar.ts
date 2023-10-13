@@ -309,13 +309,29 @@ export abstract class ControllableChar {
         };
     }
 
-    /** The current x position in px. */
+    /** Gets the current x position in px. */
     get x(): number {
         return this.sprite.body ? this.sprite.body.x : this.sprite.x;
     }
-    /** The current y position in px. */
+    /** Gets the current y position in px. */
     get y(): number {
         return this.sprite.body ? this.sprite.body.y : this.sprite.y;
+    }
+    /** Sets the current x position in px. */
+    set x(x: number) {
+        if (this.sprite.body) {
+            this.sprite.body.x = x;
+        } else if (this.sprite) {
+            this.sprite.x = x;
+        }
+    }
+    /** Sets the current y position in px. */
+    set y(y: number) {
+        if (this.sprite.body) {
+            this.sprite.body.y = y;
+        } else if (this.sprite) {
+            this.sprite.y = y;
+        }
     }
 
     /** This char width. */
