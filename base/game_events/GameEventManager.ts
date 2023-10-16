@@ -82,6 +82,7 @@ import {TeleportEvent} from "./TeleportEvent";
 import {SetNpcCollisionEvent} from "./SetNpcCollisionEvent";
 import {CharRotationEvent} from "./CharRotationEvent";
 import {CharTweenPositionEvent} from "./CharTweenPositionEvent";
+import {CharShadowVisibilityEvent} from "./CharShadowVisibilityEvent";
 
 export enum interaction_patterns {
     NO_INTERACTION = "no_interaction",
@@ -1171,7 +1172,22 @@ export class GameEventManager {
                     info.position,
                     info.incremental,
                     info.is_px,
-                    info.finish_events
+                    info.finish_events,
+                    info.hide_shadow,
+                    info.keep_shadow_hidden,
+                    info.shadow_follow_char,
+                    info.keep_char_collision_disable
+                );
+            case event_types.CHAR_SHADOW_VISIBILITY:
+                return new CharShadowVisibilityEvent(
+                    this.game,
+                    this.data,
+                    info.active,
+                    info.key_name,
+                    info.keep_reveal,
+                    info.is_npc,
+                    info.npc_label,
+                    info.visible
                 );
             default:
                 const origin = `Event origin: ${event_origin}. ${

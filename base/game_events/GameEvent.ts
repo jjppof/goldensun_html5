@@ -108,6 +108,7 @@ export enum event_types {
     SET_NPC_COLLISION = "set_npc_collision",
     CHAR_ROTATION = "char_rotation",
     CHAR_TWEEN_POSITION = "char_tween_position",
+    CHAR_SHADOW_VISIBILITY = "char_shadow_visibility",
 }
 
 export enum game_event_misc_origin {
