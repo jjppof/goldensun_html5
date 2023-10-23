@@ -113,6 +113,7 @@ export class InteractableObjects {
     protected _is_rope_dock: boolean;
     protected _rollable: boolean;
     protected _breakable: boolean;
+    protected _whirlwind_source: boolean;
     protected _extra_sprites: (Phaser.Sprite | Phaser.Graphics | Phaser.Group)[];
     public allow_jumping_over_it: boolean;
     public allow_jumping_through_it: boolean;
@@ -245,6 +246,7 @@ export class InteractableObjects {
         this._is_rope_dock = false;
         this._rollable = false;
         this._breakable = false;
+        this._whirlwind_source = false;
         this.tile_events_info = {};
         for (let index in events_info) {
             this.tile_events_info[+index] = events_info[index];
@@ -390,6 +392,9 @@ export class InteractableObjects {
     }
     get breakable() {
         return this._breakable;
+    }
+    get whirlwind_source() {
+        return this._whirlwind_source;
     }
     /** When enable is false, the io is on the map, but a char can't interact with it. */
     get enable() {
@@ -1406,6 +1411,11 @@ export class InteractableObjects {
      * Method to be overriden.
      */
     custom_unset() {}
+
+    /**
+     * Method to be overriden.
+     */
+    update() {}
 
     add_unset_callback(callback: () => void) {
         this.on_unset_callbacks.push(callback);

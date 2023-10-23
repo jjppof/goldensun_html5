@@ -1,3 +1,4 @@
+import {GoldenSun} from "./GoldenSun";
 import {ControllableChar} from "./ControllableChar";
 import {InteractableObjects} from "./interactable_objects/InteractableObjects";
 
@@ -9,16 +10,19 @@ export class Camera {
     private static readonly SHAKE_INTENSITY = 3;
 
     private game: Phaser.Game;
+    private data: GoldenSun;
     private _target: ControllableChar | InteractableObjects;
     private _camera_shake_enable: boolean;
     private _following: boolean;
+    private _unfollow_hero_on_shake: boolean;
     private _shake_ref_pos: {
         x: number;
         y: number;
     };
 
-    constructor(game: Phaser.Game) {
+    constructor(game: Phaser.Game, data: GoldenSun) {
         this.game = game;
+        this.data = data;
         this._target = null;
         this._camera_shake_enable = false;
         this._following = false;
@@ -26,6 +30,7 @@ export class Camera {
             x: 0,
             y: 0,
         };
+        this._unfollow_hero_on_shake = false;
     }
 
     /** The target that the camera is following. */
@@ -109,11 +114,16 @@ export class Camera {
 
     /**
      * Enables camera shake.
+     * @param unfollow_hero_on_shake will unfollow the hero while shaking the camera.
      */
-    enable_shake() {
+    enable_shake(unfollow_hero_on_shake: boolean = false) {
         this._shake_ref_pos.x = this.game.camera.x;
         this._shake_ref_pos.y = this.game.camera.y;
         this._camera_shake_enable = true;
+        this._unfollow_hero_on_shake = unfollow_hero_on_shake;
+        if (this._unfollow_hero_on_shake) {
+            this.unfollow();
+        }
     }
 
     /**
@@ -121,6 +131,9 @@ export class Camera {
      */
     disable_shake() {
         this._camera_shake_enable = false;
+        if (this._unfollow_hero_on_shake) {
+            this.follow(this.data.hero);
+        }
     }
 
     /**

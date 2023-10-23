@@ -399,5 +399,26 @@
                 }
             }
         }
+    },{
+        "key_name": "whirlwind_source",
+        "anchor_x": 0.5,
+        "anchor_y": 0.75,
+        "body_radius": 7.0,
+        "collision_body_bevel": 3,
+        "initial_action": "whirlwind_source",
+        "whirlwind_source": true,
+        "actions": {
+            "whirlwind_source": {
+                "frame_rate": 1,
+                "animations": ["down", "left", "right"],
+                "frames_count": 1,
+                "loop": false,
+                "initial_animation": "down",
+                "spritesheet": {
+                    "image": "assets/images/interactable_objects/whirlwind_source.png",
+                    "json": "assets/images/interactable_objects/whirlwind_source.json"
+                }
+            }
+        }
     }
 ]

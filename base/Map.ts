@@ -26,6 +26,7 @@ import {DjinnGetEvent} from "./game_events/DjinnGetEvent";
 import {Breakable} from "./interactable_objects/Breakable";
 import {Window} from "./Window";
 import {GAME_HEIGHT, GAME_WIDTH} from "./magic_numbers";
+import {WhirlwindSource} from "./interactable_objects/WhirlwindSource";
 
 /** The class reponsible for the maps of the engine. */
 export class Map {
@@ -384,6 +385,7 @@ export class Map {
         }
         this.collision_sprite.body.velocity.y = this.collision_sprite.body.velocity.x = 0;
         this.npcs.forEach(npc => npc.update());
+        this.interactable_objects.forEach(io => io.update());
         for (let key in this.events) {
             this.events[key].forEach(event => event.update());
         }
@@ -1111,6 +1113,8 @@ export class Map {
                 io_class = RollablePillar;
             } else if (interactable_object_db.breakable) {
                 io_class = Breakable;
+            } else if (interactable_object_db.whirlwind_source) {
+                io_class = WhirlwindSource;
             }
             const allow_jumping_over_it =
                 snapshot_info?.allow_jumping_over_it ??
@@ -1205,6 +1209,12 @@ export class Map {
                     property_info.dest_pos_after_fall,
                     property_info.dest_collision_layer
                 );
+            } else if (interactable_object.whirlwind_source) {
+                (interactable_object as WhirlwindSource).intialize_whirlwind_source(
+                    property_info.dest_point,
+                    property_info.emission_interval,
+                    property_info.speed_factor
+                );
             }
             this.interactable_objects.push(interactable_object);
             if (interactable_object.label) {
@@ -1238,6 +1248,8 @@ export class Map {
                 (interactable_object as Breakable).intialize_breakable();
             } else if (interactable_object.rollable) {
                 (interactable_object as RollablePillar).config_rolling_pillar(this);
+            } else if (interactable_object.whirlwind_source) {
+                (interactable_object as WhirlwindSource).config_whirlwind_source();
             }
             if (
                 (!snapshot_info && interactable_object.base_collision_layer in this._bodies_positions) ||

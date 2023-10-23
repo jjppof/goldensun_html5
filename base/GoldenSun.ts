@@ -231,7 +231,7 @@ export class GoldenSun {
         await initialize_bgm_data(this.game, this, this.dbs.bgm_db);
 
         //init camera custom features
-        this.camera = new Camera(this.game);
+        this.camera = new Camera(this.game, this);
 
         //initialize managers
         this.gamepad = new XGamepad(this);
