@@ -4,7 +4,7 @@ import {InteractableObjects} from "./InteractableObjects";
 import * as numbers from "../magic_numbers";
 
 export class WhirlwindSource extends InteractableObjects {
-    private static readonly DEFAULT_EMISSION_INTERVAL = 4000;
+    private static readonly DEFAULT_EMISSION_INTERVAL = 4500;
     private static readonly WHIRLWIND_SPRITE_KEY = "whirlwind";
     private static readonly WHIRLWIND_INIT_DURATION = 250;
     private static readonly WHIRLWIND_SCALE_X = 1.0;
@@ -23,6 +23,7 @@ export class WhirlwindSource extends InteractableObjects {
     private _collided_whirlwind: Phaser.Sprite;
     private _tweens: Phaser.Tween[];
     private _speed_factor: number;
+    private _wind_blow_sound: Phaser.Sound;
 
     constructor(
         game,
@@ -95,6 +96,7 @@ export class WhirlwindSource extends InteractableObjects {
         this._tweens = [];
         this._whirlwind_sprite_base = this.data.info.misc_sprite_base_list[WhirlwindSource.WHIRLWIND_SPRITE_KEY];
         this._hero_collided = false;
+        this._wind_blow_sound = null;
     }
 
     intialize_whirlwind_source(
@@ -114,11 +116,28 @@ export class WhirlwindSource extends InteractableObjects {
     }
 
     private emit_whirlwind() {
-        if (this.stop_emit()) {
+        if (
+            !this.game.camera.bounds.contains(
+                get_centered_pos_in_px(this.tile_x_pos, this.data.map.tile_width),
+                get_centered_pos_in_px(this.tile_y_pos, this.data.map.tile_height)
+            )
+        ) {
+            this._emission_timer.stop();
+            return;
+        }
+        if (!this.enable || !this.active || this.stop_emit()) {
             return;
         }
         const whirlwind = this.get_whirlwind_sprite();
         this.config_whirlwind_body(whirlwind);
+        if (
+            this.game.camera.view.contains(
+                get_centered_pos_in_px(this.tile_x_pos, this.data.map.tile_width),
+                get_centered_pos_in_px(this.tile_y_pos, this.data.map.tile_height)
+            )
+        ) {
+            this.data.audio.play_se("misc/whirlwind_emit");
+        }
         this.game.add.tween(whirlwind.scale).to(
             {
                 x: WhirlwindSource.WHIRLWIND_SCALE_X,
@@ -158,10 +177,15 @@ export class WhirlwindSource extends InteractableObjects {
         });
         tween.onComplete.addOnce(() => {
             this._whirlwinds = this._whirlwinds.filter(w => w !== whirlwind);
-            whirlwind.destroy(true);
+            const end_key = this._whirlwind_sprite_base.getAnimationKey(WhirlwindSource.WHIRLWIND_SPRITE_KEY, "end");
+            whirlwind.play(end_key).onComplete.addOnce(() => {
+                whirlwind.destroy(true);
+            });
             this._tweens = this._tweens.filter(t => t !== tween);
             if (this._hero_collided && whirlwind === this._collided_whirlwind) {
                 this._hero_collided = false;
+                this._wind_blow_sound?.stop();
+                this._wind_blow_sound = null;
                 this._collided_whirlwind = null;
                 this.data.hero.set_rotation(false);
                 const sign = {
@@ -173,6 +197,7 @@ export class WhirlwindSource extends InteractableObjects {
                     y: get_centered_pos_in_px(this._dest_point.y - sign.y, this.data.map.tile_height),
                 };
                 this.data.camera.enable_shake(true);
+                this.data.audio.play_se("misc/rock_drop");
                 this.game.add
                     .tween(this.data.hero.body)
                     .to(
@@ -265,16 +290,25 @@ export class WhirlwindSource extends InteractableObjects {
         whirlwind.body.collides(this.data.collision.hero_collision_group);
         whirlwind.body.data.shapes[0].sensor = true;
         whirlwind.body.onBeginContact.addOnce(() => {
+            if (this._hero_collided) {
+                return;
+            }
             whirlwind.send_to_back = true;
             this._misc_busy_prev_state = this.data.hero.misc_busy;
             this.data.hero.shadow.visible = false;
             this.data.hero.misc_busy = true;
             this.data.hero.stop_char(true);
-            this.data.hero.set_rotation(true, 20);
+            this.data.hero.set_rotation(true, 25);
             this._collision_prev_state = this.data.hero.shapes_collision_active;
             this.data.hero.toggle_collision(false);
             this._collided_whirlwind = whirlwind;
             this._hero_collided = true;
+            const call_wind_blowing_se = () => {
+                if (this._hero_collided) {
+                    this._wind_blow_sound = this.data.audio.play_se("misc/wind_blowing", call_wind_blowing_se);
+                }
+            };
+            call_wind_blowing_se();
         });
     }
 
@@ -287,5 +321,7 @@ export class WhirlwindSource extends InteractableObjects {
         this._tweens = null;
         this._whirlwinds.forEach(whirlwind => whirlwind.destroy(true));
         this._whirlwinds = null;
+        this._wind_blow_sound?.stop();
+        this._wind_blow_sound = null;
     }
 }

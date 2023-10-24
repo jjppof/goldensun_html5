@@ -279,6 +279,14 @@
                 "mercury_djinn_get": {
                     "start": 61.906,
                     "end": 64.921
+                },
+                "whirlwind_emit": {
+                    "start": 64.921,
+                    "end": 67.035
+                },
+                "wind_blowing": {
+                    "start": 67.045,
+                    "end": 70.071
                 }
             }
         }
