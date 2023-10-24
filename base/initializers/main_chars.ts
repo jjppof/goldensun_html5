@@ -53,7 +53,7 @@ export function initialize_main_chars(
             continue;
         }
         const char_db = npc_db[char_data.key_name];
-        const sprite_base = new SpriteBase(data, char_data.key_name, Object.keys(char_db.actions));
+        const sprite_base = data.info.npcs_sprite_base_list[char_data.key_name];
         const char_snapshot_data = snapshot?.main_chars.find(
             member_info => member_info.key_name === char_data.key_name
         );
@@ -123,16 +123,6 @@ export function initialize_main_chars(
 
         main_char.current_hp = char_snapshot_data?.current_hp ?? main_char.current_hp;
         main_char.current_pp = char_snapshot_data?.current_pp ?? main_char.current_pp;
-
-        for (let action_key in char_db.actions) {
-            const action = char_db.actions[action_key];
-            sprite_base.setActionSpritesheet(action_key, action.spritesheet.image, action.spritesheet.json);
-            sprite_base.setActionAnimations(action_key, action.animations, action.frames_count);
-            sprite_base.setActionFrameRate(action_key, action.frame_rate);
-            sprite_base.setActionLoop(action_key, action.loop);
-        }
-        sprite_base.generateAllFrames();
-        sprite_base.loadSpritesheets(game, false);
 
         if (Object.keys(char_data.weapons_sprites).length && base_actions.BATTLE in char_db.actions) {
             const action = char_db.actions[base_actions.BATTLE];

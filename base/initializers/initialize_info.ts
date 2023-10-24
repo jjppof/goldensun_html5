@@ -133,6 +133,12 @@ export async function initialize_game_data(game: Phaser.Game, data: GoldenSun) {
         },
     };
 
+    // Initializes all NPCS data
+    let load_npcs_promise_resolve;
+    const load_npcs_promise = new Promise(resolve => (load_npcs_promise_resolve = resolve));
+    data.info.npcs_sprite_base_list = initialize_npcs_data(game, data, data.dbs.npc_db, load_npcs_promise_resolve);
+    await load_npcs_promise;
+
     // Initializes MAIN CHARS
     let load_chars_promise_resolve;
     const load_chars_promise = new Promise(resolve => (load_chars_promise_resolve = resolve));
@@ -167,12 +173,6 @@ export async function initialize_game_data(game: Phaser.Game, data: GoldenSun) {
         load_iter_objs_promise_resolve
     );
     await load_iter_objs_promise;
-
-    // Initializes all NPCS data
-    let load_npcs_promise_resolve;
-    const load_npcs_promise = new Promise(resolve => (load_npcs_promise_resolve = resolve));
-    data.info.npcs_sprite_base_list = initialize_npcs_data(game, data, data.dbs.npc_db, load_npcs_promise_resolve);
-    await load_npcs_promise;
 
     // Initializes SHOPS
     data.info.shops_list = initialize_shops(data, data.dbs.shops_db);

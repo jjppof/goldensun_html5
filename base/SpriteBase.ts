@@ -1,4 +1,5 @@
 import {GoldenSun} from "GoldenSun";
+import {msg_types} from "./Logger";
 
 /**
  * This class holds all the info related to spritesheet data, animations, actions
@@ -93,6 +94,12 @@ export class SpriteBase {
         for (let action in this.actions) {
             const spritesheet = this.actions[action].spritesheet;
             const action_key = this.getSpriteKey(action);
+            if (game.cache.checkImageKey(action_key)) {
+                this.data.logger.log_message(
+                    `Sprite key '<key_name>/<action>' '${action_key} is already registered in the engine. Please consider renaming it.'`,
+                    msg_types.ERROR
+                );
+            }
             const loader = game.load.atlasJSONHash(action_key, spritesheet.image, spritesheet.json);
             if (force_load) {
                 loader.onLoadComplete.addOnce(on_load_complete, this);
