@@ -775,9 +775,15 @@ export class Map {
      * @param tile_x_pos the x tile position.
      * @param tile_y_pos the y tile position.
      * @param collision_layer the collision layer of tile. If not passed, gets the current one.
+     * @param also_check_npc_io if true, will also check for NPCs and IOs.
      * @returns Returns whether the given position is blocked or not.
      */
-    is_tile_blocked(tile_x_pos: number, tile_y_pos: number, collision_layer?: number) {
+    is_tile_blocked(
+        tile_x_pos: number,
+        tile_y_pos: number,
+        collision_layer?: number,
+        also_check_npc_io: boolean = false
+    ) {
         const location_key = IntegerPairKey.get_key(tile_x_pos, tile_y_pos);
         collision_layer = collision_layer ?? this.collision_layer;
         if (location_key in this._shapes[collision_layer]) {
@@ -786,7 +792,16 @@ export class Map {
                 return true;
             }
         }
-        return this._big_shapes_tiles[collision_layer].has(location_key);
+        const tile_has_big_shape = this._big_shapes_tiles[collision_layer].has(location_key);
+        if (also_check_npc_io) {
+            if (collision_layer in this._bodies_positions && location_key in this._bodies_positions[collision_layer]) {
+                const bodies = this._bodies_positions[collision_layer][location_key];
+                if (bodies.some(b => b.shapes_collision_active)) {
+                    return true;
+                }
+            }
+        }
+        return tile_has_big_shape;
     }
 
     /**

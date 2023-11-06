@@ -128,6 +128,7 @@ export class GameEventManager {
                     on_down: () => {
                         if (
                             this.data.hero.in_action() ||
+                            this.data.hero.sand_mode ||
                             this.data.menu_open ||
                             this.data.save_open ||
                             this.data.in_battle ||

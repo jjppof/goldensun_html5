@@ -79,6 +79,16 @@ export class SandFieldPsynergy extends FieldAbilities {
     }
 
     async return_to_normal(finish_callback?: () => void) {
+        if (
+            this.data.map.is_tile_blocked(
+                this.controllable_char.tile_pos.x,
+                this.controllable_char.tile_pos.y,
+                this.prev_collision_index,
+                true
+            )
+        ) {
+            return;
+        }
         this.controllable_char.misc_busy = true;
         const camera_prev_target = this.data.camera.unfollow();
         const tween_shift = 8;
