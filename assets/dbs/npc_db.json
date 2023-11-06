@@ -548,6 +548,36 @@
                 "frame_rate": 10,
                 "loop": false
             },
+            "sand": {
+                "spritesheet": {
+                    "json": "assets/images/spritesheets/main_chars/isaac_sand.json",
+                    "image": "assets/images/spritesheets/main_chars/isaac_sand.png"
+                },
+                "animations": [
+                    "down",
+                    "up",
+                    "left",
+                    "right",
+                    "down_left",
+                    "down_right",
+                    "up_left",
+                    "up_right"
+                ],
+                "frames_count": 3,
+                "frame_rate": 11
+            },
+            "sanding": {
+                "spritesheet": {
+                    "json": "assets/images/spritesheets/main_chars/isaac_sanding.json",
+                    "image": "assets/images/spritesheets/main_chars/isaac_sanding.png"
+                },
+                "animations": [
+                    "down"
+                ],
+                "frames_count": 19,
+                "frame_rate": 20,
+                "loop": false
+            },
             "battle": {
                 "spritesheet": {
                     "json": "assets/images/spritesheets/battle/isaac_battle.json",

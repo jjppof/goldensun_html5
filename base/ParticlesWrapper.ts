@@ -9,33 +9,35 @@ export type AdvParticleValue =
     | {min: number; max: number}
     | {
           initial?: number | {min: number; max: number};
-          value: number | {min: number; max: number};
-          delta: number | {min: number; max: number};
-          radial: {arcStart: number; arcEnd: number};
-          control: {x: number; y: number}[] | "linear" | "reverse" | "yoyo";
+          value?: number | {min: number; max: number};
+          delta?: number | {min: number; max: number};
+          radial?: {arcStart: number; arcEnd: number};
+          control?: {x: number; y: number}[] | "linear" | "reverse" | "yoyo";
       };
 
 export type ParticleObject = {
-    lifespan: AdvParticleValue;
-    color: string;
-    red: AdvParticleValue;
-    green: AdvParticleValue;
-    blue: AdvParticleValue;
-    vx: AdvParticleValue;
-    vy: AdvParticleValue;
-    ax: AdvParticleValue;
-    ay: AdvParticleValue;
-    alpha: AdvParticleValue;
-    scale: AdvParticleValue;
-    rotation: AdvParticleValue;
-    image: string | string[];
-    frame: string | string[];
-    blendMode: string;
-    visible: boolean;
-    sendToBack: boolean;
-    bringToTop: boolean;
-    hsv: AdvParticleValue;
-    target: {
+    lifespan?: AdvParticleValue;
+    color?: string;
+    red?: AdvParticleValue;
+    green?: AdvParticleValue;
+    blue?: AdvParticleValue;
+    vx?: AdvParticleValue;
+    vy?: AdvParticleValue;
+    velocity?: AdvParticleValue;
+    ax?: AdvParticleValue;
+    ay?: AdvParticleValue;
+    alpha?: AdvParticleValue;
+    scale?: AdvParticleValue;
+    rotation?: AdvParticleValue;
+    image?: string | string[];
+    frame?: string | string[];
+    animations?: any;
+    blendMode?: string;
+    visible?: boolean;
+    sendToBack?: boolean;
+    bringToTop?: boolean;
+    hsv?: AdvParticleValue;
+    target?: {
         x: number;
         y: number;
         shift_x: number;
@@ -68,46 +70,46 @@ export type ParticlesZone = {
 };
 
 export type Emitter = {
-    emitter_data_key: string;
-    render_type: "pixel" | "sprite";
-    x: number | string;
-    y: number | string;
-    position: battle_positions;
-    shift_x: number;
-    shift_y: number;
-    total: number;
-    repeat: number;
-    frequency: number;
-    x_step: number;
-    y_step: number;
-    delay: {
+    emitter_data_key?: string;
+    render_type?: "pixel" | "sprite";
+    x?: number | string;
+    y?: number | string;
+    position?: battle_positions;
+    shift_x?: number;
+    shift_y?: number;
+    total?: number;
+    repeat?: number;
+    frequency?: number;
+    x_step?: number;
+    y_step?: number;
+    delay?: {
         start: number;
         step: number;
         visible: boolean;
     };
-    particles_display_blend_mode: string;
-    render_white_core: boolean;
-    core_custom_color: string;
-    zone_key: string;
-    random_in_zone: boolean;
-    spacing: number | number[];
-    force: {x: number; y: number};
-    radiate: {
+    particles_display_blend_mode?: string;
+    render_white_core?: boolean;
+    core_custom_color?: string;
+    zone_key?: string;
+    random_in_zone?: boolean;
+    spacing?: number | number[];
+    force?: {x: number; y: number};
+    radiate?: {
         velocity: number;
         from: number;
         to: number;
     };
-    radiateFrom: {
+    radiateFrom?: {
         x: number;
         y: number;
         velocity: number;
     };
-    show_trails: boolean;
-    trails_clear_factor: number;
-    pixel_size: number;
-    pixel_reducing_factor: number;
-    pixel_is_rect: boolean;
-    gravity_well: {
+    show_trails?: boolean;
+    trails_clear_factor?: number;
+    pixel_size?: number;
+    pixel_reducing_factor?: number;
+    pixel_is_rect?: boolean;
+    gravity_well?: {
         x: number | string;
         y: number | string;
         shift_x: number;
@@ -116,7 +118,7 @@ export type Emitter = {
         epsilon: number;
         gravity: number;
     };
-    animation: {
+    animation?: {
         animation_key: string;
         frame_rate: number;
         loop: boolean;
@@ -128,6 +130,7 @@ export type ParticlesInfo = {
     zones: {[zone_key: string]: ParticlesZone};
     emitters: Emitter[];
     emission_finish: number;
+    particles_callback?: (particle: Phaser.ParticleStorm.Particle) => void;
 }[];
 
 export class ParticlesWrapper {
@@ -327,6 +330,11 @@ export class ParticlesWrapper {
                     ...(emitter_info.radiate !== undefined && {radiate: emitter_info.radiate}),
                     ...(emitter_info.radiateFrom !== undefined && {radiateFrom: emitter_info.radiateFrom}),
                 });
+                if (adv_particles_seq.particles_callback) {
+                    emitter.forEach((particle: Phaser.ParticleStorm.Particle) => {
+                        adv_particles_seq.particles_callback(particle);
+                    }, this);
+                }
                 if (emitter_info.animation !== undefined) {
                     const particle_key = adv_particles_seq.data[emitter_info.emitter_data_key].image as string;
                     const particle_sprite_base = this.data.info.misc_sprite_base_list[particle_key];

@@ -16,7 +16,7 @@ import {degree360} from "../magic_numbers";
  * Classes that inherit this one, are expected to at least:
  *  - call FieldAbilities.set_bootstrap_method on construction;
  *  - call FieldAbilities.close_field_psynergy_window in an appropriate time.
- *  - call FieldAbilities.stop_casting and FieldAbilities.return_to_idle_anim possbily on cast finish.
+ *  - call FieldAbilities.stop_casting and FieldAbilities.return_to_idle_anim possibly on cast finish.
  *  - implement FieldAbilities.update abstract method, even if empty.
  *
  * This class already do initial checks, search for target, init casting aura and colorize the map automatically.
@@ -431,6 +431,7 @@ export abstract class FieldAbilities {
         const caster = this.data.info.main_char_list[caster_key_name];
         if (
             this.controllable_char.casting_psynergy ||
+            this.controllable_char.sand_mode ||
             caster_key_name === undefined ||
             !(caster_key_name in this.data.info.main_char_list) ||
             !caster.abilities.includes(this.ability_key_name)

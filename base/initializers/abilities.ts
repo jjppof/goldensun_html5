@@ -13,6 +13,7 @@ import {MindReadFieldPsynergy} from "../field_abilities/MindReadFieldPsynergy";
 import {LiftFieldPsynergy} from "../field_abilities/LiftFieldPsynergy";
 import {DouseFieldPsynergy} from "../field_abilities/DouseFieldPsynergy";
 import {AvoidFieldPsynergy} from "../field_abilities/AvoidFieldPsynergy";
+import {SandFieldPsynergy} from "../field_abilities/SandFieldPsynergy";
 
 export function initialize_abilities(
     game: Phaser.Game,
@@ -81,5 +82,6 @@ export function initialize_field_abilities(game, data) {
         lift: new LiftFieldPsynergy(game, data),
         douse: new DouseFieldPsynergy(game, data),
         avoid: new AvoidFieldPsynergy(game, data),
+        sand: new SandFieldPsynergy(game, data),
     };
 }

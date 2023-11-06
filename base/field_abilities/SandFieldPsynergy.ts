@@ -1,0 +1,180 @@
+import {FieldAbilities} from "./FieldAbilities";
+import {base_actions, directions, promised_wait, reverse_directions} from "../utils";
+import * as _ from "lodash";
+
+export class SandFieldPsynergy extends FieldAbilities {
+    private static readonly ABILITY_KEY_NAME = "sand";
+    private static readonly ACTION_KEY_NAME = base_actions.CAST;
+    private enable_update: boolean;
+    private prev_collision_index: number;
+
+    constructor(game, data) {
+        super(game, data, SandFieldPsynergy.ABILITY_KEY_NAME, SandFieldPsynergy.ACTION_KEY_NAME, false);
+        this.set_bootstrap_method(this.init.bind(this));
+        this.enable_update = false;
+        this.prev_collision_index = 0;
+    }
+
+    async init() {
+        this.close_field_psynergy_window();
+
+        const current_tile = _.last(this.data.map.get_current_tile(this.controllable_char) as Phaser.Tile[]);
+        const allow_sand = current_tile?.properties.allow_sand;
+        this.prev_collision_index = this.data.map.collision_layer;
+        this.melt_into_sand(allow_sand);
+    }
+
+    private melt_into_sand(allow_sand: boolean) {
+        this.enable_update = true;
+        this.stop_casting(false, false);
+        this.controllable_char.set_rotation(true);
+        if (this.controllable_char.shadow) {
+            this.controllable_char.shadow.visible = false;
+        }
+        const camera_prev_target = this.data.camera.unfollow();
+        const tween_shift = 8;
+        const prev_collision_state = this.controllable_char.toggle_collision(false);
+        this.game.add
+            .tween(this.controllable_char.body ?? this.controllable_char.sprite)
+            .to(
+                {
+                    y: this.controllable_char.y - tween_shift,
+                },
+                300,
+                Phaser.Easing.Linear.None,
+                true
+            )
+            .onComplete.addOnce(async () => {
+                this.controllable_char.set_rotation(false);
+                this.enable_update = false;
+                await this.controllable_char.face_direction(directions.down);
+                const animation = this.controllable_char.play(
+                    base_actions.SANDING,
+                    reverse_directions[directions.down],
+                    undefined,
+                    undefined,
+                    undefined,
+                    true,
+                    false
+                );
+                await promised_wait(this.game, 250);
+                this.dust_emitter();
+                this.data.map.sort_sprites();
+                animation.onComplete.addOnce(async () => {
+                    this.controllable_char.y += tween_shift;
+                    this.controllable_char.toggle_collision(prev_collision_state);
+                    if (allow_sand) {
+                        this.controllable_char.sand_mode = true;
+                        this.controllable_char.sprite.anchor.y = 0.6;
+                        this.data.camera.follow(camera_prev_target);
+                        this.data.collision.change_map_body(this.data.map.sand_collision_layer);
+                        this.finish();
+                    } else {
+                        this.return_to_normal(() => {
+                            this.finish();
+                        });
+                    }
+                });
+            });
+    }
+
+    async return_to_normal(finish_callback?: () => void) {
+        this.controllable_char.misc_busy = true;
+        const camera_prev_target = this.data.camera.unfollow();
+        const tween_shift = 8;
+        this.controllable_char.y -= tween_shift;
+        const prev_collision_state = this.controllable_char.toggle_collision(false);
+        const animation = this.controllable_char.play(
+            base_actions.SANDING,
+            reverse_directions[directions.down],
+            undefined,
+            undefined,
+            undefined,
+            true,
+            true
+        );
+        this.controllable_char.ignore_play = true;
+        await promised_wait(this.game, 250);
+        this.dust_emitter();
+        this.data.map.sort_sprites();
+        animation.onComplete.addOnce(async () => {
+            this.controllable_char.ignore_play = false;
+            this.controllable_char.stop_char(true);
+            this.controllable_char.set_direction(directions.down, true);
+            if (this.controllable_char.shadow) {
+                this.controllable_char.shadow.visible = true;
+            }
+            this.controllable_char.y += tween_shift;
+            this.controllable_char.toggle_collision(prev_collision_state);
+            this.data.camera.follow(camera_prev_target);
+            this.controllable_char.sand_mode = false;
+            this.controllable_char.reset_anchor();
+            if (this.data.map.collision_layer !== this.prev_collision_index) {
+                this.data.collision.change_map_body(this.prev_collision_index);
+            }
+            this.controllable_char.misc_busy = false;
+            if (finish_callback) {
+                finish_callback();
+            }
+        });
+    }
+
+    update() {
+        if (this.enable_update) {
+            this.controllable_char.update_on_event();
+        }
+    }
+
+    private async dust_emitter() {
+        await this.data.particle_wrapper.start_particles(
+            [
+                {
+                    data: {
+                        dust: {
+                            image: "dust/dust",
+                            animations: {
+                                leaf: {
+                                    frames: {start: 0, stop: 7, prefix: "dust/spread/", suffix: "", zeroPad: 2},
+                                    frameRate: 12,
+                                    loop: false,
+                                },
+                            },
+                            lifespan: 670,
+                            velocity: {
+                                initial: 0.4,
+                                radial: {arcStart: 0, arcEnd: 360},
+                                control: [
+                                    {x: 0, y: 1},
+                                    {x: 0.5, y: 1},
+                                    {x: 1, y: 0},
+                                ],
+                            },
+                        },
+                    },
+                    zones: {},
+                    emitters: [
+                        {
+                            x: this.controllable_char.sprite.centerX,
+                            y: this.controllable_char.body.y + 8,
+                            render_type: "sprite",
+                            total: 3,
+                            frequency: 100,
+                            repeat: 7,
+                            emitter_data_key: "dust",
+                        },
+                    ],
+                    emission_finish: 1000,
+                    particles_callback: particle => (particle.sprite.send_to_back = true),
+                },
+            ],
+            this.data.middlelayer_group
+        );
+    }
+
+    private finish() {
+        this.reset_map();
+        this.controllable_char.casting_psynergy = false;
+        this.enable_update = false;
+        this.return_to_idle_anim();
+    }
+}

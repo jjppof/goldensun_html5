@@ -1,3 +1,4 @@
+import {SandFieldPsynergy} from "field_abilities/SandFieldPsynergy";
 import {GoldenSun} from "../GoldenSun";
 import {Window} from "../Window";
 import {Button} from "../XGamepad";
@@ -89,6 +90,9 @@ export function initialize_save_menu(game: Phaser.Game, data: GoldenSun) {
             data.tile_event_manager.timers_running ||
             data.tile_event_manager.on_event
         ) {
+            return;
+        } else if (data.hero.sand_mode) {
+            (data.info.field_abilities_list.sand as SandFieldPsynergy).return_to_normal();
             return;
         }
         if (!data.save_open) {

@@ -21,6 +21,7 @@ import {StoragePosition} from "./Storage";
 import {FieldAbilities} from "field_abilities/FieldAbilities";
 import {climb_actions} from "./tile_events/ClimbEvent";
 import {NPC} from "NPC";
+import {SandFieldPsynergy} from "./field_abilities/SandFieldPsynergy";
 
 /**
  * All chars that can be controlled by human (Hero) or code/event procedures (NPC)
@@ -94,6 +95,10 @@ export abstract class ControllableChar {
     public walking_over_rope: boolean;
     /** Whether this char is climbing a rope. */
     public climbing_rope: boolean;
+    /** Whether this char is melted in sand. */
+    public sand_mode: boolean;
+    /** If true, animation play will be ignored. */
+    public ignore_play: boolean;
 
     protected storage_keys: {
         position?: string;
@@ -282,6 +287,8 @@ export abstract class ControllableChar {
         this._sweat_drops = null;
         this.on_stair = false;
         this._emoticon_sprite = null;
+        this.sand_mode = false;
+        this.ignore_play = false;
     }
 
     /** The char key. */
@@ -506,6 +513,7 @@ export abstract class ControllableChar {
         if (
             this._current_action === base_actions.WALK ||
             this._current_action === base_actions.DASH ||
+            this._current_action === base_actions.SAND ||
             (!walk_dash_only &&
                 ((this._current_action === base_actions.CLIMB && !this.idle_climbing) ||
                     (this._current_action === base_actions.ROPE && this.current_animation !== base_actions.IDLE)))
@@ -573,7 +581,7 @@ export abstract class ControllableChar {
      * Reset anchor values to default.
      * @param property define whether it is y or x anchor property.
      */
-    protected reset_anchor(property?: "x" | "y") {
+    reset_anchor(property?: "x" | "y") {
         if (property !== undefined && ["x", "y"].includes(property)) {
             this.sprite.anchor[property] = ControllableChar.default_anchor[property];
         } else {
@@ -679,16 +687,21 @@ export abstract class ControllableChar {
      * @param frame_rate a custom frame rate value.
      * @param loop whether the animation will be looping.
      * @param reset_before_start whether the animation will reset before start.
+     * @param reversed whether the animation will be played on reverse sense.
      * @returns Returns the resulting Phaser.Animation object.
      */
     play(
         action?: string | base_actions,
-        animation?: string | number,
+        animation?: string,
         start: boolean = true,
         frame_rate?: number,
         loop?: boolean,
-        reset_before_start?: boolean
+        reset_before_start?: boolean,
+        reversed?: boolean
     ) {
+        if (this.ignore_play) {
+            return null;
+        }
         action = action ?? this.current_action;
         if (!action) {
             return null;
@@ -711,6 +724,9 @@ export abstract class ControllableChar {
         const animation_obj = this.sprite.animations.getAnimation(animation_key);
         if (!animation_obj) {
             this.data.logger.log_message("Invalid animation key:" + animation_key);
+        }
+        if (reversed !== undefined) {
+            animation_obj.reversed = reversed;
         }
         if (start) {
             if (reset_before_start) {
@@ -1477,7 +1493,7 @@ export abstract class ControllableChar {
         }
         let action = this.current_action;
         let idle_climbing = this.idle_climbing;
-        if (this.stop_by_colliding && !this.pushing && !this.climbing && !this.climbing_rope) {
+        if (this.stop_by_colliding && !this.pushing && !this.climbing && !this.climbing_rope && !this.sand_mode) {
             action = base_actions.IDLE;
         } else if (this.stop_by_colliding && !this.pushing && this.climbing) {
             idle_climbing = true;
@@ -1530,7 +1546,9 @@ export abstract class ControllableChar {
      */
     protected choose_action_based_on_char_state(check_on_event: boolean = false) {
         if (check_on_event && this.data.tile_event_manager.on_event) return;
-        if (this.climbing_rope) {
+        if (this.sand_mode) {
+            this._current_action = base_actions.SAND;
+        } else if (this.climbing_rope) {
             this._current_action = base_actions.ROPE;
             if (this.required_direction !== null) {
                 this._current_animation = base_actions.CLIMB;
@@ -1707,7 +1725,7 @@ export abstract class ControllableChar {
                 this.extra_speed +
                 (this.data.map.is_world_map ? numbers.WORLD_MAP_SPEED_DASH_REDUCE : 0);
             apply_speed(speed_factor);
-        } else if (this.current_action === base_actions.WALK) {
+        } else if (this.current_action === base_actions.WALK || this.current_action === base_actions.SAND) {
             const speed_factor =
                 this.walk_speed +
                 this.extra_speed +
@@ -1736,7 +1754,9 @@ export abstract class ControllableChar {
      */
     protected apply_speed() {
         if (
-            [base_actions.WALK, base_actions.DASH, base_actions.CLIMB].includes(this.current_action as base_actions) ||
+            [base_actions.WALK, base_actions.DASH, base_actions.CLIMB, base_actions.SAND].includes(
+                this.current_action as base_actions
+            ) ||
             (this.sliding_on_ice && this.ice_sliding_active) ||
             this.walking_over_rope
         ) {
@@ -1778,10 +1798,12 @@ export abstract class ControllableChar {
      * @param enable if true, activates the collision.
      */
     toggle_collision(enable: boolean) {
+        const prev_collision_state = this._shapes_collision_active;
         if (this.sprite?.body) {
             this.sprite.body.data.shapes.forEach(shape => (shape.sensor = !enable));
             this._shapes_collision_active = enable;
         }
+        return prev_collision_state;
     }
 
     /**
@@ -1821,5 +1843,17 @@ export abstract class ControllableChar {
             }
             this.trying_to_push = false;
         }
+    }
+
+    check_sand_quit(contacts: p2.ContactEquation[]) {
+        if (this.data.hero.sand_mode && this.data.map.sand_collision_layer === this.data.map.collision_layer) {
+            for (let contact of contacts) {
+                if (contact.shapeB.properties?.quit_sand || contact.shapeA.properties?.quit_sand) {
+                    (this.data.info.field_abilities_list.sand as SandFieldPsynergy).return_to_normal();
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

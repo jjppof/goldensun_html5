@@ -90,6 +90,22 @@
         }
     },
     {
+        "key_name": "sand",
+        "initial_animation": "trail",
+        "actions": {
+            "sand": {
+                "frame_rate": 8,
+                "animations": ["trail"],
+                "frames_count": 3,
+                "loop": false,
+                "spritesheet": {
+                    "image": "assets/images/psynergies/sand_trail.png",
+                    "json": "assets/images/psynergies/sand_trail.json"
+                }
+            }
+        }
+    },
+    {
         "key_name": "whirlwind",
         "initial_animation": "blow",
         "actions": {

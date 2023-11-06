@@ -98,6 +98,8 @@ export enum base_actions {
     STAIR = "stair",
     YES = "yes",
     NO = "no",
+    SAND = "sand",
+    SANDING = "sanding",
 }
 
 /** The filters that this engine supports */

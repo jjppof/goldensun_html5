@@ -72,6 +72,7 @@ export class Map {
         rectangle: Phaser.Rectangle;
         background_key: string;
     }[];
+    private _sand_collision_layer: number;
     private processed_polygons: {
         [collision_layer: number]: Array<{
             polygon: Array<Array<number>>;
@@ -181,6 +182,7 @@ export class Map {
             npcs: {},
             interactable_objects: {},
         };
+        this._sand_collision_layer = -1;
     }
 
     /** The list of TileEvents of this map. */
@@ -305,6 +307,11 @@ export class Map {
     /** Gets Retreat psynergy info. Returns the x and y tile posoition to retreat and the destination collision index and direction. */
     get retreat_data() {
         return this._retreat_data;
+    }
+
+    /** Gets the collision layer index that sand psynergy will use. */
+    get sand_collision_layer() {
+        return this._sand_collision_layer;
     }
 
     /**
@@ -533,7 +540,8 @@ export class Map {
             if (this.processed_polygons[this.collision_layer]) {
                 for (let i = 0; i < this.processed_polygons[this.collision_layer].length; ++i) {
                     const polygon_data = this.processed_polygons[this.collision_layer][i];
-                    //add pollygon modifies the polygon input
+                    const prev_length = this.collision_sprite.body.data.shapes.length;
+                    //addPollygon modifies the polygon input
                     this.body.addPolygon(
                         {
                             optimalDecomp: false,
@@ -544,13 +552,14 @@ export class Map {
                         },
                         _.cloneDeep(polygon_data.polygon)
                     );
-                    const shape: p2.Convex =
-                        this.collision_sprite.body.data.shapes[this.collision_sprite.body.data.shapes.length - 1];
-                    if (polygon_data.split_polygon) {
-                        this._shapes[collision_layer][polygon_data.location_key][i] = shape;
-                    }
-                    shape.properties = polygon_data.properties;
-                    shape.sensor = polygon_data.sensor_active;
+                    const shapes: p2.Convex[] = this.collision_sprite.body.data.shapes.slice(prev_length);
+                    shapes.forEach(shape => {
+                        if (polygon_data.split_polygon) {
+                            this._shapes[collision_layer][polygon_data.location_key][i] = shape;
+                        }
+                        shape.properties = polygon_data.properties;
+                        shape.sensor = polygon_data.sensor_active;
+                    });
                 }
             }
 
@@ -1859,6 +1868,10 @@ export class Map {
 
         if (this.sprite.properties?.world_map) {
             this._is_world_map = true;
+        }
+
+        if (this.sprite.properties?.sand_collision_layer !== undefined) {
+            this._sand_collision_layer = this.sprite.properties.sand_collision_layer;
         }
 
         if (this.sprite.properties?.sanctum) {

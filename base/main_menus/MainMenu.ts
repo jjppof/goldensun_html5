@@ -7,6 +7,7 @@ import {GoldenSun} from "../GoldenSun";
 import {Button} from "../XGamepad";
 import {HorizontalMenu} from "../support_menus/HorizontalMenu";
 import * as _ from "lodash";
+import {SandFieldPsynergy} from "field_abilities/SandFieldPsynergy";
 
 export class MainMenu {
     private static readonly TITLE_WINDOW_WIDTH = 70;
@@ -144,6 +145,9 @@ export function initialize_menu(game: Phaser.Game, data: GoldenSun) {
             data.tile_event_manager.timers_running ||
             data.tile_event_manager.on_event
         ) {
+            return;
+        } else if (data.hero.sand_mode) {
+            (data.info.field_abilities_list.sand as SandFieldPsynergy).return_to_normal();
             return;
         }
         if (!data.menu_open) {
