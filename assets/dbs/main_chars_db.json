@@ -28,7 +28,7 @@
             "mars": 86,
             "jupiter": 87
         },
-        "innate_abilities": ["move", "retreat"],
+        "innate_abilities": ["move", "sand", "retreat"],
         "in_party": true,
         "battle_scale": 0.9,
         "battle_shadow_key": "00",
