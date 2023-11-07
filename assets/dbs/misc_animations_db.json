@@ -94,7 +94,7 @@
         "initial_animation": "trail",
         "actions": {
             "sand": {
-                "frame_rate": 8,
+                "frame_rate": 3,
                 "animations": ["trail"],
                 "frames_count": 3,
                 "loop": false,

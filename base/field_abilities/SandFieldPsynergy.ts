@@ -1,18 +1,28 @@
 import {FieldAbilities} from "./FieldAbilities";
 import {base_actions, directions, promised_wait, reverse_directions} from "../utils";
 import * as _ from "lodash";
+import {SpriteBase} from "../SpriteBase";
 
 export class SandFieldPsynergy extends FieldAbilities {
     private static readonly ABILITY_KEY_NAME = "sand";
     private static readonly ACTION_KEY_NAME = base_actions.CAST;
+    private static readonly TRAIL_PERIOD = 85;
     private enable_update: boolean;
     private prev_collision_index: number;
+    private elapsed_ms: number;
+    private trail_sprite_base: SpriteBase;
+    private trail_sprite_key: string;
+    private trail_animation_key: string;
 
     constructor(game, data) {
         super(game, data, SandFieldPsynergy.ABILITY_KEY_NAME, SandFieldPsynergy.ACTION_KEY_NAME, false);
         this.set_bootstrap_method(this.init.bind(this));
         this.enable_update = false;
         this.prev_collision_index = 0;
+        this.elapsed_ms = 0;
+        this.trail_sprite_base = this.data.info.misc_sprite_base_list[SandFieldPsynergy.ABILITY_KEY_NAME];
+        this.trail_sprite_key = this.trail_sprite_base.getSpriteKey(SandFieldPsynergy.ABILITY_KEY_NAME);
+        this.trail_animation_key = this.trail_sprite_base.getAnimationKey(SandFieldPsynergy.ABILITY_KEY_NAME, "trail");
     }
 
     async init() {
@@ -129,7 +139,32 @@ export class SandFieldPsynergy extends FieldAbilities {
         });
     }
 
+    private generate_trail() {
+        if (this.elapsed_ms >= SandFieldPsynergy.TRAIL_PERIOD) {
+            this.elapsed_ms = 0;
+            if (this.controllable_char.current_speed.x === 0 && this.controllable_char.current_speed.y === 0) {
+                return;
+            }
+            const trail_sprite: Phaser.Sprite = this.data.middlelayer_group.create(0, 0, this.trail_sprite_key);
+            trail_sprite.send_to_back = true;
+            trail_sprite.base_collision_layer = this.data.map.collision_layer;
+            trail_sprite.sendToBack();
+            trail_sprite.centerX = this.controllable_char.x;
+            trail_sprite.centerY = this.controllable_char.y;
+            this.trail_sprite_base.setAnimation(trail_sprite, SandFieldPsynergy.ABILITY_KEY_NAME);
+            trail_sprite.animations.getAnimation(this.trail_animation_key).onComplete.addOnce(() => {
+                trail_sprite.destroy(true);
+            });
+            trail_sprite.animations.play(this.trail_animation_key);
+        }
+        this.elapsed_ms += this.game.time.elapsedMS;
+    }
+
     update() {
+        if (this.controllable_char?.sand_mode) {
+            this.generate_trail();
+            return;
+        }
         if (this.enable_update) {
             this.controllable_char.update_on_event();
         }
