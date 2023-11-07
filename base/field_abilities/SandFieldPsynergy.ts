@@ -41,7 +41,6 @@ export class SandFieldPsynergy extends FieldAbilities {
         if (this.controllable_char.shadow) {
             this.controllable_char.shadow.visible = false;
         }
-        const camera_prev_target = this.data.camera.unfollow();
         const tween_shift = 8;
         const prev_collision_state = this.controllable_char.toggle_collision(false);
         this.game.add
@@ -76,7 +75,6 @@ export class SandFieldPsynergy extends FieldAbilities {
                     if (allow_sand) {
                         this.controllable_char.sand_mode = true;
                         this.controllable_char.sprite.anchor.y = 0.6;
-                        this.data.camera.follow(camera_prev_target);
                         this.data.collision.change_map_body(this.data.map.sand_collision_layer);
                         this.finish();
                     } else {
@@ -100,7 +98,6 @@ export class SandFieldPsynergy extends FieldAbilities {
             return;
         }
         this.controllable_char.misc_busy = true;
-        const camera_prev_target = this.data.camera.unfollow();
         const tween_shift = 8;
         this.controllable_char.y -= tween_shift;
         const prev_collision_state = this.controllable_char.toggle_collision(false);
@@ -126,7 +123,6 @@ export class SandFieldPsynergy extends FieldAbilities {
             }
             this.controllable_char.y += tween_shift;
             this.controllable_char.toggle_collision(prev_collision_state);
-            this.data.camera.follow(camera_prev_target);
             this.controllable_char.sand_mode = false;
             this.controllable_char.reset_anchor();
             if (this.data.map.collision_layer !== this.prev_collision_index) {
