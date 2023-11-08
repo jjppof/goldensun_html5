@@ -153,6 +153,22 @@
                 "revive": {
                     "start": 33.923,
                     "end": 37.392
+                },
+                "sand_in_1": {
+                    "start": 37.392,
+                    "end": 39.264
+                },
+                "sand_in_2": {
+                    "start": 39.264,
+                    "end": 40.788
+                },
+                "sand_out": {
+                    "start": 40.788,
+                    "end": 42.620
+                },
+                "sand_trail": {
+                    "start": 42.620,
+                    "end": 42.662
                 }
             }
         }

@@ -574,8 +574,8 @@
                 "animations": [
                     "down"
                 ],
-                "frames_count": 19,
-                "frame_rate": 20,
+                "frames_count": 37,
+                "frame_rate": 40,
                 "loop": false
             },
             "battle": {

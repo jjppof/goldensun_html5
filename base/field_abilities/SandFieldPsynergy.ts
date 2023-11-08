@@ -37,6 +37,7 @@ export class SandFieldPsynergy extends FieldAbilities {
     private melt_into_sand(allow_sand: boolean) {
         this.enable_update = true;
         this.stop_casting(false, false);
+        this.data.audio.play_se("psynergy/sand_in_1");
         this.controllable_char.set_rotation(true);
         if (this.controllable_char.shadow) {
             this.controllable_char.shadow.visible = false;
@@ -57,6 +58,8 @@ export class SandFieldPsynergy extends FieldAbilities {
                 this.controllable_char.set_rotation(false);
                 this.enable_update = false;
                 await this.controllable_char.face_direction(directions.down);
+                await promised_wait(this.game, 250);
+                this.data.audio.play_se("psynergy/sand_in_2");
                 const animation = this.controllable_char.play(
                     base_actions.SANDING,
                     reverse_directions[directions.down],
@@ -101,6 +104,7 @@ export class SandFieldPsynergy extends FieldAbilities {
         const tween_shift = 8;
         this.controllable_char.y -= tween_shift;
         const prev_collision_state = this.controllable_char.toggle_collision(false);
+        this.data.audio.play_se("psynergy/sand_out");
         const animation = this.controllable_char.play(
             base_actions.SANDING,
             reverse_directions[directions.down],
@@ -114,24 +118,35 @@ export class SandFieldPsynergy extends FieldAbilities {
         await promised_wait(this.game, 250);
         this.dust_emitter();
         this.data.map.sort_sprites();
-        animation.onComplete.addOnce(async () => {
+        animation.onComplete.addOnce(() => {
             this.controllable_char.ignore_play = false;
             this.controllable_char.stop_char(true);
             this.controllable_char.set_direction(directions.down, true);
-            if (this.controllable_char.shadow) {
-                this.controllable_char.shadow.visible = true;
-            }
-            this.controllable_char.y += tween_shift;
-            this.controllable_char.toggle_collision(prev_collision_state);
-            this.controllable_char.sand_mode = false;
-            this.controllable_char.reset_anchor();
-            if (this.data.map.collision_layer !== this.prev_collision_index) {
-                this.data.collision.change_map_body(this.prev_collision_index);
-            }
-            this.controllable_char.misc_busy = false;
-            if (finish_callback) {
-                finish_callback();
-            }
+            this.game.add
+                .tween(this.controllable_char.body ?? this.controllable_char.sprite)
+                .to(
+                    {
+                        y: this.controllable_char.y + tween_shift,
+                    },
+                    45,
+                    Phaser.Easing.Linear.None,
+                    true
+                )
+                .onComplete.addOnce(() => {
+                    if (this.controllable_char.shadow) {
+                        this.controllable_char.shadow.visible = true;
+                    }
+                    this.controllable_char.toggle_collision(prev_collision_state);
+                    this.controllable_char.sand_mode = false;
+                    this.controllable_char.reset_anchor();
+                    if (this.data.map.collision_layer !== this.prev_collision_index) {
+                        this.data.collision.change_map_body(this.prev_collision_index);
+                    }
+                    this.controllable_char.misc_busy = false;
+                    if (finish_callback) {
+                        finish_callback();
+                    }
+                });
         });
     }
 
@@ -152,6 +167,7 @@ export class SandFieldPsynergy extends FieldAbilities {
                 trail_sprite.destroy(true);
             });
             trail_sprite.animations.play(this.trail_animation_key);
+            this.data.audio.play_se("psynergy/sand_trail");
         }
         this.elapsed_ms += this.game.time.elapsedMS;
     }
