@@ -75,7 +75,7 @@ export class SandFieldPsynergy extends FieldAbilities {
                 animation.onComplete.addOnce(async () => {
                     this.controllable_char.y += tween_shift;
                     this.controllable_char.toggle_collision(prev_collision_state);
-                    if (allow_sand) {
+                    if (allow_sand && this.data.map.sand_collision_layer > -1) {
                         this.controllable_char.sand_mode = true;
                         this.controllable_char.sprite.anchor.y = 0.6;
                         this.data.collision.change_map_body(this.data.map.sand_collision_layer);
