@@ -914,14 +914,12 @@ export class Map {
      * @returns returns a tile object: Phaser.Tile or Phaser.Tile[] if multiple layers.
      */
     get_current_tile(controllable_char: ControllableChar, layer?: Map["layers"]) {
+        const x = Math.round(controllable_char.x / this.sprite.tileWidth);
+        const y = Math.round(controllable_char.y / this.sprite.tileHeight);
         if (layer !== undefined) {
-            return this.sprite.getTile(controllable_char.tile_x_pos, controllable_char.tile_y_pos, layer);
+            return this.sprite.getTile(x, y, layer);
         } else {
-            return this.layers
-                .map(layer =>
-                    this.sprite.getTile(controllable_char.tile_x_pos, controllable_char.tile_y_pos, layer.name)
-                )
-                .filter(tile => tile);
+            return this.layers.map(layer => this.sprite.getTile(x, y, layer.name)).filter(tile => tile);
         }
     }
 
