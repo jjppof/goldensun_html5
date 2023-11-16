@@ -24,6 +24,8 @@ export class WhirlwindSource extends InteractableObjects {
     private _tweens: Phaser.Tween[];
     private _speed_factor: number;
     private _wind_blow_sound: Phaser.Sound;
+    private _drop_collision_layer: number;
+    private _drop_dest_y: number;
 
     constructor(
         game,
@@ -102,11 +104,15 @@ export class WhirlwindSource extends InteractableObjects {
     intialize_whirlwind_source(
         dest_point: WhirlwindSource["_dest_point"],
         emission_interval: WhirlwindSource["_emission_interval"],
-        speed_factor: WhirlwindSource["_speed_factor"]
+        speed_factor: WhirlwindSource["_speed_factor"],
+        drop_collision_layer: WhirlwindSource["_drop_collision_layer"],
+        drop_dest_y: WhirlwindSource["_drop_dest_y"]
     ) {
         this._dest_point = dest_point;
         this._emission_interval = emission_interval ?? WhirlwindSource.DEFAULT_EMISSION_INTERVAL;
         this._speed_factor = speed_factor ?? WhirlwindSource.WHIRLWIND_SPEED;
+        this._drop_collision_layer = drop_collision_layer ?? this.base_collision_layer;
+        this._drop_dest_y = drop_dest_y;
     }
 
     config_whirlwind_source() {
@@ -192,12 +198,17 @@ export class WhirlwindSource extends InteractableObjects {
                     x: Math.sign(this._dest_point.x - this.tile_x_pos),
                     y: Math.sign(this._dest_point.y - this.tile_y_pos),
                 };
+                const reference_drop_dest_y = this._dest_point.y - sign.y;
+                let drop_dest_y = this._drop_dest_y ?? reference_drop_dest_y;
                 const final_hero_pos = {
                     x: get_centered_pos_in_px(this._dest_point.x - sign.x, this.data.map.tile_width),
-                    y: get_centered_pos_in_px(this._dest_point.y - sign.y, this.data.map.tile_height),
+                    y: get_centered_pos_in_px(drop_dest_y, this.data.map.tile_height),
                 };
                 this.data.camera.enable_shake(true);
                 this.data.audio.play_se("misc/rock_drop");
+                if (this._drop_collision_layer !== this.base_collision_layer) {
+                    this.data.collision.change_map_body(this._drop_collision_layer, true);
+                }
                 this.game.add
                     .tween(this.data.hero.body)
                     .to(
@@ -210,6 +221,14 @@ export class WhirlwindSource extends InteractableObjects {
                         true
                     )
                     .onComplete.addOnce(() => {
+                        const fall_base_time = 60;
+                        const timer = this.game.time.create(true);
+                        timer.add(fall_base_time, () => {
+                            this.data.camera.disable_shake();
+                            timer.destroy();
+                        });
+                        timer.start();
+                        const drop_time = fall_base_time * (Math.abs(drop_dest_y - reference_drop_dest_y) + 1);
                         this.game.add
                             .tween(this.data.hero.body)
                             .to(
@@ -217,12 +236,11 @@ export class WhirlwindSource extends InteractableObjects {
                                     x: final_hero_pos.x,
                                     y: final_hero_pos.y,
                                 },
-                                60,
+                                drop_time,
                                 Phaser.Easing.Linear.None,
                                 true
                             )
                             .onComplete.addOnce(() => {
-                                this.data.camera.disable_shake();
                                 this.data.hero.toggle_collision(this._collision_prev_state);
                                 this.data.hero.update_shadow();
                                 this.data.hero.shadow.visible = true;
@@ -293,7 +311,22 @@ export class WhirlwindSource extends InteractableObjects {
             if (this._hero_collided) {
                 return;
             }
-            whirlwind.send_to_back = true;
+            whirlwind.sort_function = () => {
+                if (
+                    this.data.middlelayer_group.getChildIndex(whirlwind) >
+                    this.data.middlelayer_group.getChildIndex(this.data.hero.sprite)
+                ) {
+                    this.data.middlelayer_group.setChildIndex(
+                        whirlwind,
+                        this.data.middlelayer_group.getChildIndex(this.data.hero.sprite)
+                    );
+                } else {
+                    this.data.middlelayer_group.setChildIndex(
+                        whirlwind,
+                        this.data.middlelayer_group.getChildIndex(this.data.hero.sprite) - 1
+                    );
+                }
+            };
             this._misc_busy_prev_state = this.data.hero.misc_busy;
             this.data.hero.shadow.visible = false;
             this.data.hero.misc_busy = true;

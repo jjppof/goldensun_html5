@@ -1235,7 +1235,9 @@ export class Map {
                 (interactable_object as WhirlwindSource).intialize_whirlwind_source(
                     property_info.dest_point,
                     property_info.emission_interval,
-                    property_info.speed_factor
+                    property_info.speed_factor,
+                    property_info.drop_collision_layer,
+                    property_info.drop_dest_y
                 );
             }
             this.interactable_objects.push(interactable_object);
