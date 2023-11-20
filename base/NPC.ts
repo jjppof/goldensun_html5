@@ -140,7 +140,9 @@ export class NPC extends ControllableChar {
         step_max_variation,
         move_freely_in_event,
         allow_interaction_when_inactive,
-        after_psynergy_cast_events
+        after_psynergy_cast_events,
+        force_char_stop_in_event,
+        force_idle_action_in_event
     ) {
         super(
             game,
@@ -156,7 +158,9 @@ export class NPC extends ControllableChar {
             initial_action,
             initial_animation,
             storage_keys,
-            active
+            active,
+            force_char_stop_in_event,
+            force_idle_action_in_event
         );
         this._npc_type = npc_type ?? npc_types.NORMAL;
         if (this.storage_keys.movement_type !== undefined) {

@@ -194,7 +194,9 @@ export abstract class ControllableChar {
         initial_action?: string | base_actions,
         initial_animation?: string,
         storage_keys?: ControllableChar["storage_keys"],
-        active?: boolean
+        active?: boolean,
+        force_char_stop_in_event?: boolean,
+        force_idle_action_in_event?: boolean
     ) {
         this.game = game;
         this.data = data;
@@ -282,8 +284,8 @@ export abstract class ControllableChar {
         this.crop_texture = false;
         this.shadow_following = true;
         this._shapes_collision_active = false;
-        this.force_char_stop_in_event = true;
-        this.force_idle_action_in_event = true;
+        this.force_char_stop_in_event = force_char_stop_in_event ?? true;
+        this.force_idle_action_in_event = force_idle_action_in_event ?? true;
         this._sweat_drops = null;
         this.on_stair = false;
         this._emoticon_sprite = null;
