@@ -352,6 +352,30 @@ export class NPC extends ControllableChar {
                 this._interaction_pattern = storage_value as interaction_patterns;
             }
         }
+        if (this.storage_keys.move_freely_in_event !== undefined) {
+            const storage_value = this.data.storage.get(this.storage_keys.move_freely_in_event);
+            if (this.move_freely_in_event !== storage_value) {
+                this.move_freely_in_event = storage_value as boolean;
+            }
+        }
+        let action_or_animation_changed = false;
+        if (this.storage_keys.action !== undefined) {
+            const storage_value = this.data.storage.get(this.storage_keys.action);
+            if (this.current_action !== storage_value) {
+                this._current_action = storage_value as string;
+                action_or_animation_changed = true;
+            }
+        }
+        if (this.storage_keys.animation !== undefined) {
+            const storage_value = this.data.storage.get(this.storage_keys.animation);
+            if (this.current_animation !== storage_value) {
+                this._current_animation = storage_value as string;
+                action_or_animation_changed = true;
+            }
+        }
+        if (action_or_animation_changed) {
+            this.play();
+        }
     }
 
     /**
