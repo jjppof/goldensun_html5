@@ -38,6 +38,7 @@ export class TeleportEvent extends TileEvent {
     };
     private spiral_stair: "up" | "down";
     private on_event_toggle_layers: string[];
+    private fade_color: number;
 
     constructor(
         game,
@@ -66,7 +67,8 @@ export class TeleportEvent extends TileEvent {
         fade_duration,
         door_settings,
         spiral_stair,
-        on_event_toggle_layers
+        on_event_toggle_layers,
+        fade_color
     ) {
         super(
             game,
@@ -100,6 +102,7 @@ export class TeleportEvent extends TileEvent {
         this.fadein_callback = null;
         this.door_settings = door_settings ?? null;
         this.spiral_stair = spiral_stair ?? null;
+        this.fade_color = fade_color ?? 0x0;
         this.on_event_toggle_layers = on_event_toggle_layers
             ? Array.isArray(on_event_toggle_layers)
                 ? on_event_toggle_layers
@@ -274,7 +277,7 @@ export class TeleportEvent extends TileEvent {
         if (this.fade_camera) {
             if (
                 this.game.camera.fxType === Phaser.Camera.FADE_OUT &&
-                this.game.camera.fx.graphicsData[0]?.fillColor === 0x0
+                this.game.camera.fx.graphicsData[0]?.fillColor === this.fade_color
             ) {
                 const timer = this.game.time.create(true);
                 timer.add(this.fade_duration, () => {
@@ -283,7 +286,7 @@ export class TeleportEvent extends TileEvent {
                 });
                 timer.start();
             } else {
-                this.game.camera.fade(undefined, this.fade_duration, true);
+                this.game.camera.fade(this.fade_color, this.fade_duration, true);
                 this.game.camera.onFadeComplete.addOnce(on_camera_fade_in);
             }
         } else {
