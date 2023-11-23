@@ -327,6 +327,22 @@ export class InteractableObjects {
         }
         return null;
     }
+    /** Sets the current x position in px. */
+    set x(x: number) {
+        if (this.sprite.body) {
+            this.sprite.body.x = x;
+        } else if (this.sprite) {
+            this.sprite.x = x;
+        }
+    }
+    /** Sets the current y position in px. */
+    set y(y: number) {
+        if (this.sprite.body) {
+            this.sprite.body.y = y;
+        } else if (this.sprite) {
+            this.sprite.y = y;
+        }
+    }
     /** The unique label that identifies this Interactable Object. */
     get label() {
         return this._label;
@@ -905,6 +921,20 @@ export class InteractableObjects {
         if (this.sprite?.body) {
             this.sprite.body.data.shapes.forEach(shape => (shape.sensor = !enable));
             this._shapes_collision_active = enable;
+        }
+    }
+
+    /**
+     * The update function for the shadow sprite.
+     */
+    update_shadow() {
+        if (!this.shadow || !this.active) return;
+        if (this.sprite.body) {
+            this.shadow.x = this.sprite.body.x;
+            this.shadow.y = this.sprite.body.y;
+        } else {
+            this.shadow.x = this.sprite.x;
+            this.shadow.y = this.sprite.y;
         }
     }
 

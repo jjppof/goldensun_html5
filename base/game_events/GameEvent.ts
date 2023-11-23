@@ -109,6 +109,7 @@ export enum event_types {
     CHAR_ROTATION = "char_rotation",
     CHAR_TWEEN_POSITION = "char_tween_position",
     CHAR_SHADOW_VISIBILITY = "char_shadow_visibility",
+    IO_TWEEN_POSITION = "io_tween_position",
 }
 
 export enum game_event_misc_origin {

@@ -83,6 +83,7 @@ import {SetNpcCollisionEvent} from "./SetNpcCollisionEvent";
 import {CharRotationEvent} from "./CharRotationEvent";
 import {CharTweenPositionEvent} from "./CharTweenPositionEvent";
 import {CharShadowVisibilityEvent} from "./CharShadowVisibilityEvent";
+import {IOTweenPositionEvent} from "./IOTweenPositionEvent";
 
 export enum interaction_patterns {
     NO_INTERACTION = "no_interaction",
@@ -1189,6 +1190,29 @@ export class GameEventManager {
                     info.is_npc,
                     info.npc_label,
                     info.visible
+                );
+            case event_types.IO_TWEEN_POSITION:
+                return new IOTweenPositionEvent(
+                    this.game,
+                    this.data,
+                    info.active,
+                    info.key_name,
+                    info.keep_reveal,
+                    info.io_label,
+                    info.duration,
+                    info.ease,
+                    info.repeat,
+                    info.yoyo,
+                    info.position,
+                    info.incremental,
+                    info.is_px,
+                    info.finish_events,
+                    info.hide_shadow,
+                    info.keep_shadow_hidden,
+                    info.shadow_follow_io,
+                    info.keep_io_collision_disable,
+                    info.dest_collision_layer,
+                    info.change_collision_layer_on_init
                 );
             default:
                 const origin = `Event origin: ${event_origin}. ${
