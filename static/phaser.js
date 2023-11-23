@@ -29141,6 +29141,9 @@ Phaser.Camera.FADE_OUT = 1;
 Phaser.Camera.FADE_IN = 2;
 
 Phaser.Camera.prototype = {
+    get fxType() {
+        return this._fxType;
+    },
 
     /**
      * Called automatically by Phaser.World.

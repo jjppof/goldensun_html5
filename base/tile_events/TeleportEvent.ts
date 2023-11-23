@@ -272,8 +272,20 @@ export class TeleportEvent extends TileEvent {
         };
 
         if (this.fade_camera) {
-            this.game.camera.fade(undefined, this.fade_duration, true);
-            this.game.camera.onFadeComplete.addOnce(on_camera_fade_in);
+            if (
+                this.game.camera.fxType === Phaser.Camera.FADE_OUT &&
+                this.game.camera.fx.graphicsData[0]?.fillColor === 0x0
+            ) {
+                const timer = this.game.time.create(true);
+                timer.add(this.fade_duration, () => {
+                    timer.destroy();
+                    on_camera_fade_in();
+                });
+                timer.start();
+            } else {
+                this.game.camera.fade(undefined, this.fade_duration, true);
+                this.game.camera.onFadeComplete.addOnce(on_camera_fade_in);
+            }
         } else {
             on_camera_fade_in();
         }

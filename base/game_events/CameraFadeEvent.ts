@@ -9,11 +9,13 @@ export class CameraFadeEvent extends GameEvent {
     private finish_events: GameEvent[];
     private fade_type: fade_types;
     private duration: number;
+    private color: string;
 
-    constructor(game, data, active, key_name, keep_reveal, fade_type, duration, finish_events) {
+    constructor(game, data, active, key_name, keep_reveal, fade_type, duration, color, finish_events) {
         super(game, data, event_types.CAMERA_FADE, active, key_name, keep_reveal);
         this.fade_type = fade_type;
         this.duration = duration ?? 500;
+        this.color = color;
 
         this.finish_events = [];
         if (finish_events !== undefined) {
@@ -29,11 +31,12 @@ export class CameraFadeEvent extends GameEvent {
 
         let promise_resolve;
         const promise = new Promise(resolve => (promise_resolve = resolve));
-        if (this.fade_type === fade_types.IN) {
-            this.game.camera.fade(undefined, this.duration, true);
+        let color = this.color ? parseInt(this.color, 16) : undefined;
+        if (this.fade_type === fade_types.OUT) {
+            this.game.camera.fade(color, this.duration, true);
             this.game.camera.onFadeComplete.addOnce(promise_resolve);
-        } else if (this.fade_type === fade_types.OUT) {
-            this.game.camera.flash(0x0, this.duration, true);
+        } else if (this.fade_type === fade_types.IN) {
+            this.game.camera.flash(color ?? 0x0, this.duration, true);
             this.game.camera.onFlashComplete.addOnce(promise_resolve);
         }
         await promise;

@@ -84,6 +84,7 @@ import {CharRotationEvent} from "./CharRotationEvent";
 import {CharTweenPositionEvent} from "./CharTweenPositionEvent";
 import {CharShadowVisibilityEvent} from "./CharShadowVisibilityEvent";
 import {IOTweenPositionEvent} from "./IOTweenPositionEvent";
+import {ExitSandModeEvent} from "./ExitSandModeEvent";
 
 export enum interaction_patterns {
     NO_INTERACTION = "no_interaction",
@@ -749,6 +750,7 @@ export class GameEventManager {
                     info.keep_reveal,
                     info.fade_type,
                     info.duration,
+                    info.color,
                     info.finish_events
                 );
             case event_types.COLORIZE_MAP:
@@ -1213,6 +1215,15 @@ export class GameEventManager {
                     info.keep_io_collision_disable,
                     info.dest_collision_layer,
                     info.change_collision_layer_on_init
+                );
+            case event_types.EXIT_SAND_MODE:
+                return new ExitSandModeEvent(
+                    this.game,
+                    this.data,
+                    info.active,
+                    info.key_name,
+                    info.key_name,
+                    info.finish_events
                 );
             default:
                 const origin = `Event origin: ${event_origin}. ${

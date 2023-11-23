@@ -681,6 +681,9 @@ declare module Phaser {
         static SHAKE_HORIZONTAL: number;
         static SHAKE_VERTICAL: number;
         static ENABLE_FX: number;
+        static FLASH: number;
+        static FADE_OUT: number;
+        static FADE_IN: number;
 
         atLimit: { x: boolean; y: boolean; };
         bounds: Phaser.Rectangle;
@@ -689,6 +692,7 @@ declare module Phaser {
         id: number;
         fixedView: Phaser.Rectangle;
         fx: Phaser.Graphics;
+        fxType: number;
         game: Phaser.Game;
         height: number;
         lerp: Phaser.Point;
@@ -1864,6 +1868,7 @@ declare module Phaser {
         fixedToCamera: boolean;
         fresh: boolean;
         game: Phaser.Game;
+        graphicsData: Phaser.GraphicsData[];
         height: number;
         inCamera: boolean;
         inWorld: boolean;
