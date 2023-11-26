@@ -1222,7 +1222,7 @@ export class GameEventManager {
                     this.data,
                     info.active,
                     info.key_name,
-                    info.key_name,
+                    info.keep_reveal,
                     info.finish_events
                 );
             default:
