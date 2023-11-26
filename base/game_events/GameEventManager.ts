@@ -1136,7 +1136,8 @@ export class GameEventManager {
                     info.target_tile_position,
                     info.target_collision_layer,
                     info.target_direction,
-                    info.keep_encounter_cumulator
+                    info.keep_encounter_cumulator,
+                    info.fade_color
                 );
             case event_types.SET_NPC_COLLISION:
                 return new SetNpcCollisionEvent(
