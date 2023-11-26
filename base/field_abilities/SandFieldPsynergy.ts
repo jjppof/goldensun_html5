@@ -134,6 +134,7 @@ export class SandFieldPsynergy extends FieldAbilities {
                 )
                 .onComplete.addOnce(() => {
                     if (this.controllable_char.shadow) {
+                        this.controllable_char.update_shadow();
                         this.controllable_char.shadow.visible = true;
                     }
                     this.controllable_char.toggle_collision(prev_collision_state);
