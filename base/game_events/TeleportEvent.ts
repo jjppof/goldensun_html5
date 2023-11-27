@@ -60,7 +60,9 @@ export class TeleportEvent extends GameEvent {
             undefined,
             undefined,
             undefined,
-            this.fade_color
+            this.fade_color,
+            undefined,
+            undefined
         );
         event.set_fadein_callback(() => {
             this.data.game_event_manager.events_running_count = 0;

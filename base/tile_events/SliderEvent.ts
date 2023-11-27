@@ -1,4 +1,3 @@
-import {degree30, degree60} from "../magic_numbers";
 import {base_actions, directions, get_centered_pos_in_px, reverse_directions} from "../utils";
 import {TeleportEvent} from "./TeleportEvent";
 import {event_types, TileEvent} from "./TileEvent";
@@ -7,9 +6,6 @@ export class SliderEvent extends TileEvent {
     private static readonly TIME_PER_TILE = 50;
     private static readonly DUST_COUNT = 6;
     private static readonly DUST_KEY = "dust";
-    private static readonly DUST_ANIM_KEY = "spread";
-    private static readonly DUST_COUNT_GROUND_HIT = 7;
-    private static readonly DUST_RADIUS_GROUND_HIT = 18;
 
     private x_target: number;
     private y_target: number;
@@ -219,6 +215,8 @@ export class SliderEvent extends TileEvent {
             undefined,
             undefined,
             undefined,
+            undefined,
+            undefined,
             undefined
         );
         event.set_fadein_callback(() => {
@@ -235,16 +233,7 @@ export class SliderEvent extends TileEvent {
                 .to({x: target_x, y: target_y}, slide_time, Phaser.Easing.Linear.None, true)
                 .onComplete.addOnce(() => {
                     if (this.ground_hit_animation) {
-                        this.data.hero.update_shadow();
-                        this.data.hero.shadow.visible = true;
-                        this.data.hero.play(base_actions.GROUND);
-                        this.data.audio.play_se("actions/ground_hit");
-                        this.data.camera.enable_shake();
-                        this.game.time.events.add(300, () => {
-                            this.data.hero.play(base_actions.IDLE);
-                            this.data.camera.disable_shake();
-                        });
-                        this.ground_hit_dust_animation(() => {
+                        this.data.hero.ground_hit_dust_animation(() => {
                             this.finish();
                         });
                     } else {
@@ -253,50 +242,6 @@ export class SliderEvent extends TileEvent {
                 });
         });
         event.fire();
-    }
-
-    private ground_hit_dust_animation(on_animation_end: () => void) {
-        const promises = new Array(SliderEvent.DUST_COUNT_GROUND_HIT);
-        const sprites = new Array(SliderEvent.DUST_COUNT_GROUND_HIT);
-        const origin_x = this.data.hero.x;
-        const origin_y = this.data.hero.y;
-        const dust_sprite_base = this.data.info.misc_sprite_base_list[SliderEvent.DUST_KEY];
-        const dust_key = dust_sprite_base.getSpriteKey(SliderEvent.DUST_KEY);
-        for (let i = 0; i < SliderEvent.DUST_COUNT_GROUND_HIT; ++i) {
-            const this_angle = ((Math.PI + degree60) * i) / (SliderEvent.DUST_COUNT_GROUND_HIT - 1) - degree30;
-            const x = origin_x + SliderEvent.DUST_RADIUS_GROUND_HIT * Math.cos(this_angle);
-            const y = origin_y + SliderEvent.DUST_RADIUS_GROUND_HIT * Math.sin(this_angle);
-            const dust_sprite = this.data.middlelayer_group.create(origin_x, origin_y, dust_key);
-            if (this_angle < 0 || this_angle > Math.PI) {
-                this.data.middlelayer_group.setChildIndex(
-                    dust_sprite,
-                    this.data.middlelayer_group.getChildIndex(this.data.hero.sprite)
-                );
-            }
-            dust_sprite.anchor.setTo(0.5, 0.5);
-            this.game.add.tween(dust_sprite).to(
-                {
-                    x: x,
-                    y: y,
-                },
-                400,
-                Phaser.Easing.Linear.None,
-                true
-            );
-            sprites[i] = dust_sprite;
-            dust_sprite_base.setAnimation(dust_sprite, SliderEvent.DUST_KEY);
-            const animation_key = dust_sprite_base.getAnimationKey(SliderEvent.DUST_KEY, SliderEvent.DUST_ANIM_KEY);
-            let resolve_func;
-            promises[i] = new Promise(resolve => (resolve_func = resolve));
-            dust_sprite.animations.getAnimation(animation_key).onComplete.addOnce(resolve_func);
-            dust_sprite.animations.play(animation_key);
-        }
-        Promise.all(promises).then(() => {
-            sprites.forEach(sprite => {
-                this.data.middlelayer_group.remove(sprite, true);
-            });
-            on_animation_end();
-        });
     }
 
     destroy() {

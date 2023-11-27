@@ -39,6 +39,8 @@ export class TeleportEvent extends TileEvent {
     private spiral_stair: "up" | "down";
     private on_event_toggle_layers: string[];
     private fade_color: string;
+    private dont_change_to_idle: boolean;
+    private play_sfx: boolean;
 
     constructor(
         game,
@@ -68,7 +70,9 @@ export class TeleportEvent extends TileEvent {
         door_settings,
         spiral_stair,
         on_event_toggle_layers,
-        fade_color
+        fade_color,
+        dont_change_to_idle,
+        play_sfx
     ) {
         super(
             game,
@@ -103,6 +107,8 @@ export class TeleportEvent extends TileEvent {
         this.door_settings = door_settings ?? null;
         this.spiral_stair = spiral_stair ?? null;
         this.fade_color = fade_color ?? "0x0";
+        this.dont_change_to_idle = dont_change_to_idle ?? false;
+        this.play_sfx = play_sfx ?? true;
         this.on_event_toggle_layers = on_event_toggle_layers
             ? Array.isArray(on_event_toggle_layers)
                 ? on_event_toggle_layers
@@ -141,7 +147,9 @@ export class TeleportEvent extends TileEvent {
         } else if (this.spiral_stair) {
             this.spiral_stair_teleport();
         } else {
-            this.data.audio.play_se("door/default");
+            if (this.play_sfx) {
+                this.data.audio.play_se("door/default");
+            }
             this.camera_fade_in();
         }
     }
@@ -152,7 +160,9 @@ export class TeleportEvent extends TileEvent {
             this.data.hero.teleporting = false;
             return;
         }
-        this.data.audio.play_se(this.door_settings.door_open_sfx ?? TeleportEvent.DEFAULT_DOOR_OPEN_SFX);
+        if (this.play_sfx) {
+            this.data.audio.play_se(this.door_settings.door_open_sfx ?? TeleportEvent.DEFAULT_DOOR_OPEN_SFX);
+        }
         this.data.hero.play(base_actions.WALK, reverse_directions[directions.up]);
         this.door_settings.replace_map.forEach(replace_info => {
             const from_tile_id = replace_info.from_tile_id + 1;
@@ -220,7 +230,9 @@ export class TeleportEvent extends TileEvent {
                 this.data.hero.climbing = true;
                 this.data.hero.change_action(base_actions.CLIMB);
                 this.data.hero.idle_climbing = true;
-                this.data.audio.play_se("door/default");
+                if (this.play_sfx) {
+                    this.data.audio.play_se("door/default");
+                }
                 this.camera_fade_in();
             });
         });
@@ -230,10 +242,14 @@ export class TeleportEvent extends TileEvent {
         let animation: string;
         if (this.spiral_stair === "down") {
             animation = "up_to_down_in";
-            this.data.audio.play_se("door/stair_down");
+            if (this.play_sfx) {
+                this.data.audio.play_se("door/stair_down");
+            }
         } else if (this.spiral_stair === "up") {
             animation = "down_to_up_in";
-            this.data.audio.play_se("door/stair_up");
+            if (this.play_sfx) {
+                this.data.audio.play_se("door/stair_up");
+            }
         }
         const get_in_animation = this.data.hero.play(base_actions.STAIR, animation);
         this.data.hero.shadow.visible = false;
@@ -244,7 +260,7 @@ export class TeleportEvent extends TileEvent {
     }
 
     private camera_fade_in() {
-        this.data.hero.stop_char(this.spiral_stair ? false : true);
+        this.data.hero.stop_char(this.spiral_stair ? false : !this.dont_change_to_idle);
 
         const on_camera_fade_in = () => {
             if (this.fadein_callback) {

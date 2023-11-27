@@ -10,6 +10,7 @@ import {
     get_tile_position,
     get_sqr_distance,
     engine_filters,
+    promised_wait,
 } from "./utils";
 import {Footsteps} from "./utils/Footsteps";
 import {GoldenSun} from "./GoldenSun";
@@ -22,6 +23,8 @@ import {FieldAbilities} from "field_abilities/FieldAbilities";
 import {climb_actions} from "./tile_events/ClimbEvent";
 import {NPC} from "NPC";
 import {SandFieldPsynergy} from "./field_abilities/SandFieldPsynergy";
+import {TeleportEvent} from "./tile_events/TeleportEvent";
+import * as _ from "lodash";
 
 /**
  * All chars that can be controlled by human (Hero) or code/event procedures (NPC)
@@ -30,7 +33,6 @@ import {SandFieldPsynergy} from "./field_abilities/SandFieldPsynergy";
  */
 export abstract class ControllableChar {
     private static readonly DEFAULT_SHADOW_KEYNAME = "shadow";
-
     private static readonly DEFAULT_SHADOW_ANCHOR_X = 0.45;
     private static readonly DEFAULT_SHADOW_ANCHOR_Y = 0.05;
     private static readonly DEFAULT_SPRITE_ANCHOR_X = 0.5;
@@ -40,7 +42,11 @@ export abstract class ControllableChar {
     private static readonly WALK_OVER_ROPE_SPEED = 30;
     private static readonly WALK_OVER_ROPE_FRAME_RATE = 5;
     private static readonly INTERACTION_RANGE_ANGLE = numbers.degree75;
-
+    private static readonly TIME_PER_TILE = 40;
+    private static readonly DUST_KEY = "dust";
+    private static readonly DUST_ANIM_KEY = "spread";
+    private static readonly DUST_COUNT_GROUND_HIT = 7;
+    private static readonly DUST_RADIUS_GROUND_HIT = 18;
     private static readonly default_anchor = {
         x: ControllableChar.DEFAULT_SPRITE_ANCHOR_X,
         y: ControllableChar.DEFAULT_SPRITE_ANCHOR_Y,
@@ -1793,6 +1799,265 @@ export abstract class ControllableChar {
     set_temporary_speed(x_speed?: number, y_speed?: number) {
         this.temp_speed.x = x_speed ?? this.temp_speed.x;
         this.temp_speed.y = y_speed ?? this.temp_speed.y;
+    }
+
+    /**
+     * Make the hero to fall to a given destination.
+     * @param options fall options object.
+     */
+    async fall(options: {
+        /** The final y-tile position that the hero will reach after falling. */
+        y_destination_position: number;
+        /** The destination collision layer index. */
+        dest_collision_layer?: number;
+        /** Whether an exclamation emoticon will appear over the hero before falling. */
+        show_exclamation_emoticon?: boolean;
+        /** The hero will splash sweat drops before falling. */
+        splash_sweat_drops?: boolean;
+        /** Whether the hero will performa a walking in the air animation before falling. */
+        walking_in_the_air?: boolean;
+        /** Whether the hero will perform a ground hit animation. */
+        ground_hit_animation?: boolean;
+        /** Teleport info. If passed, the hero will teleport to another map while falling. */
+        teleport?: {
+            /** The teleport map key name destination. */
+            destination: string;
+            /** The destination position. */
+            destination_position: {
+                /** The x tile position. */
+                x: number;
+                /** The y tile position. */
+                y: number;
+            };
+            /** The destination collision layer index in the dest map. */
+            dest_collision_layer: number;
+            /** If true, the char sprite will be brought to the top on z-index while falling. */
+            send_to_front_on_teleport: boolean;
+            /** If true, the char will diminish instead of fall before teleport. */
+            diminish_on_transition: boolean;
+        };
+        /** Callback to be called after hitting the ground. */
+        on_fall_finish_callback: () => void;
+    }) {
+        const prev_misc_busy = this.misc_busy;
+        this.misc_busy = true;
+        if (this.shadow) {
+            this.shadow.visible = false;
+        }
+        if (options.show_exclamation_emoticon) {
+            this.show_emoticon("exclamation", {duration: 400});
+        }
+        if (options.splash_sweat_drops) {
+            this.splash_sweat_drops();
+        }
+        if (options.walking_in_the_air) {
+            this.play(base_actions.WALK, undefined, true, 25);
+        }
+        await promised_wait(this.game, 600);
+        this.set_direction(directions.down, true);
+        this.play(base_actions.GRANT);
+        await promised_wait(this.game, 200);
+        this.data.audio.play_se("misc/fall");
+        const y_target = get_centered_pos_in_px(options.y_destination_position, this.data.map.tile_height);
+        let fall_time = Math.abs(options.y_destination_position - this.tile_pos.y) * ControllableChar.TIME_PER_TILE;
+        const finish = () => {
+            this.game.time.events.add(80, () => {
+                this.misc_busy = prev_misc_busy;
+                if (options.on_fall_finish_callback) {
+                    options.on_fall_finish_callback();
+                }
+            });
+        };
+        let fall_tween: Phaser.Tween = null;
+        let scale_tween: Phaser.Tween = null;
+        if (options.teleport?.diminish_on_transition) {
+            const transition_time = 700;
+            fall_time = 400;
+            fall_tween = this.game.add
+                .tween(this.body ?? this.sprite)
+                .to({y: this.y + 80}, transition_time, Phaser.Easing.Linear.None, true);
+            scale_tween = this.game.add
+                .tween(this.sprite.scale)
+                .to({x: 0, y: 0}, transition_time, Phaser.Easing.Linear.None, true);
+        } else {
+            fall_tween = this.game.add
+                .tween(this.body ?? this.sprite)
+                .to({y: y_target}, fall_time, Phaser.Easing.Linear.None, true);
+            fall_tween.onComplete.addOnce(() => {
+                if (!options.teleport) {
+                    if (options.ground_hit_animation) {
+                        this.ground_hit_dust_animation(() => {
+                            if (
+                                options.dest_collision_layer &&
+                                options.dest_collision_layer !== this.data.map.collision_layer
+                            ) {
+                                this.data.collision.change_map_body(options.dest_collision_layer, true);
+                            }
+                            finish();
+                        });
+                    } else {
+                        this.update_shadow();
+                        this.shadow.visible = true;
+                        if (
+                            options.dest_collision_layer &&
+                            options.dest_collision_layer !== this.data.map.collision_layer
+                        ) {
+                            this.data.collision.change_map_body(options.dest_collision_layer, true);
+                        }
+                        finish();
+                    }
+                }
+            });
+        }
+        if (options.teleport) {
+            const teleport_init = {
+                x: options.teleport.destination_position.x,
+                y: _.clamp(
+                    options.teleport.destination_position.y - ((numbers.GAME_HEIGHT / this.data.map.tile_height) >> 1),
+                    0,
+                    undefined
+                ),
+            };
+            let teleport_time = fall_time - ControllableChar.TIME_PER_TILE * 5;
+            if (teleport_time < 0) {
+                teleport_time = fall_time;
+            }
+            this.game.time.events.add(teleport_time, () => {
+                const event = new TeleportEvent(
+                    this.game,
+                    this.data,
+                    undefined,
+                    undefined,
+                    undefined,
+                    undefined,
+                    undefined,
+                    undefined,
+                    false,
+                    undefined,
+                    options.teleport.destination,
+                    teleport_init.x,
+                    teleport_init.y,
+                    false,
+                    false,
+                    false,
+                    options.teleport.dest_collision_layer,
+                    reverse_directions[directions.down],
+                    false,
+                    true,
+                    true,
+                    true,
+                    true,
+                    300,
+                    undefined,
+                    undefined,
+                    undefined,
+                    undefined,
+                    true,
+                    false
+                );
+                event.set_fadein_callback(() => {
+                    fall_tween.stop(false);
+                    scale_tween?.stop(false);
+                    this.reset_scale();
+                });
+                event.set_finish_callback(() => {
+                    event.destroy();
+                    this.data.tile_event_manager.on_event = true;
+                    const slide_time =
+                        Math.abs(options.teleport.destination_position.y - teleport_init.y) *
+                        ControllableChar.TIME_PER_TILE;
+                    const target_x = get_centered_pos_in_px(
+                        options.teleport.destination_position.x,
+                        this.data.map.tile_width
+                    );
+                    const target_y = get_centered_pos_in_px(
+                        options.teleport.destination_position.y,
+                        this.data.map.tile_height
+                    );
+                    const prev_send_to_front = this.sprite.send_to_front;
+                    if (options.teleport.send_to_front_on_teleport) {
+                        this.sprite.send_to_front = true;
+                    }
+                    this.game.add
+                        .tween(this.body ?? this.sprite)
+                        .to({x: target_x, y: target_y}, slide_time, Phaser.Easing.Linear.None, true)
+                        .onComplete.addOnce(() => {
+                            this.sprite.send_to_front = prev_send_to_front;
+                            if (options.ground_hit_animation) {
+                                this.ground_hit_dust_animation(() => {
+                                    this.data.tile_event_manager.on_event = false;
+                                    finish();
+                                });
+                            } else {
+                                this.data.tile_event_manager.on_event = false;
+                                finish();
+                            }
+                        });
+                });
+                event.fire();
+            });
+        }
+    }
+
+    /**
+     * Plays an animation for the char hitting the ground when falling.
+     * @param on_animation_end calback to be called on animation end.
+     */
+    ground_hit_dust_animation(on_animation_end: () => void) {
+        this.update_shadow();
+        this.shadow.visible = true;
+        this.play(base_actions.GROUND);
+        this.data.audio.play_se("actions/ground_hit");
+        this.data.camera.enable_shake();
+        this.game.time.events.add(300, () => {
+            this.play(base_actions.IDLE);
+            this.data.camera.disable_shake();
+        });
+        const promises = new Array(ControllableChar.DUST_COUNT_GROUND_HIT);
+        const sprites = new Array(ControllableChar.DUST_COUNT_GROUND_HIT);
+        const origin_x = this.x;
+        const origin_y = this.y;
+        const dust_sprite_base = this.data.info.misc_sprite_base_list[ControllableChar.DUST_KEY];
+        const dust_key = dust_sprite_base.getSpriteKey(ControllableChar.DUST_KEY);
+        for (let i = 0; i < ControllableChar.DUST_COUNT_GROUND_HIT; ++i) {
+            const this_angle =
+                ((Math.PI + numbers.degree60) * i) / (ControllableChar.DUST_COUNT_GROUND_HIT - 1) - numbers.degree30;
+            const x = origin_x + ControllableChar.DUST_RADIUS_GROUND_HIT * Math.cos(this_angle);
+            const y = origin_y + ControllableChar.DUST_RADIUS_GROUND_HIT * Math.sin(this_angle);
+            const dust_sprite = this.data.middlelayer_group.create(origin_x, origin_y, dust_key);
+            if (this_angle < 0 || this_angle > Math.PI) {
+                this.data.middlelayer_group.setChildIndex(
+                    dust_sprite,
+                    this.data.middlelayer_group.getChildIndex(this.sprite)
+                );
+            }
+            dust_sprite.anchor.setTo(0.5, 0.5);
+            this.game.add.tween(dust_sprite).to(
+                {
+                    x: x,
+                    y: y,
+                },
+                400,
+                Phaser.Easing.Linear.None,
+                true
+            );
+            sprites[i] = dust_sprite;
+            dust_sprite_base.setAnimation(dust_sprite, ControllableChar.DUST_KEY);
+            const animation_key = dust_sprite_base.getAnimationKey(
+                ControllableChar.DUST_KEY,
+                ControllableChar.DUST_ANIM_KEY
+            );
+            let resolve_func;
+            promises[i] = new Promise(resolve => (resolve_func = resolve));
+            dust_sprite.animations.getAnimation(animation_key).onComplete.addOnce(resolve_func);
+            dust_sprite.animations.play(animation_key);
+        }
+        Promise.all(promises).then(() => {
+            sprites.forEach(sprite => {
+                this.data.middlelayer_group.remove(sprite, true);
+            });
+            on_animation_end();
+        });
     }
 
     /**

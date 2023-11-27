@@ -337,7 +337,9 @@ export class TileEventManager {
                 info.door_settings,
                 info.spiral_stair,
                 info.on_event_toggle_layers,
-                info.fade_color
+                info.fade_color,
+                info.dont_change_to_idle,
+                info.play_sfx
             );
         } else if (info.type === event_types.SLIDER) {
             return new SliderEvent(
