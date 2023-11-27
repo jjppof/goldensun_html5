@@ -1832,12 +1832,14 @@ export abstract class ControllableChar {
             /** The destination collision layer index in the dest map. */
             dest_collision_layer: number;
             /** If true, the char sprite will be brought to the top on z-index while falling. */
-            send_to_front_on_teleport: boolean;
+            send_to_front_on_teleport?: boolean;
             /** If true, the char will diminish instead of fall before teleport. */
-            diminish_on_transition: boolean;
+            diminish_on_transition?: boolean;
+            /** Callback to be called before teleport begin. */
+            on_before_teleport?: () => void;
         };
         /** Callback to be called after hitting the ground. */
-        on_fall_finish_callback: () => void;
+        on_fall_finish_callback?: () => void;
     }) {
         const prev_misc_busy = this.misc_busy;
         this.misc_busy = true;
@@ -1959,6 +1961,9 @@ export abstract class ControllableChar {
                     fall_tween.stop(false);
                     scale_tween?.stop(false);
                     this.reset_scale();
+                    if (options.teleport.on_before_teleport) {
+                        options.teleport.on_before_teleport();
+                    }
                 });
                 event.set_finish_callback(() => {
                     event.destroy();

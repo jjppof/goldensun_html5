@@ -111,6 +111,7 @@ export enum event_types {
     CHAR_SHADOW_VISIBILITY = "char_shadow_visibility",
     IO_TWEEN_POSITION = "io_tween_position",
     EXIT_SAND_MODE = "exit_sand_mode",
+    CHAR_FALL = "char_fall",
 }
 
 export enum game_event_misc_origin {

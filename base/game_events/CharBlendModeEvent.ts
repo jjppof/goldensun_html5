@@ -19,7 +19,7 @@ export class CharBlendModeEvent extends GameEvent {
                 npc_label: this.npc_label,
             }) ?? this.origin_npc;
 
-        if (target_char.sprite) {
+        if (target_char?.sprite) {
             switch (this.blend_mode) {
                 case "normal":
                     target_char.sprite.blendMode = PIXI.blendModes.NORMAL;

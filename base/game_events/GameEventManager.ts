@@ -85,6 +85,7 @@ import {CharTweenPositionEvent} from "./CharTweenPositionEvent";
 import {CharShadowVisibilityEvent} from "./CharShadowVisibilityEvent";
 import {IOTweenPositionEvent} from "./IOTweenPositionEvent";
 import {ExitSandModeEvent} from "./ExitSandModeEvent";
+import {CharFallEvent} from "./CharFallEvent";
 
 export enum interaction_patterns {
     NO_INTERACTION = "no_interaction",
@@ -1224,6 +1225,24 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.finish_events
+                );
+            case event_types.CHAR_FALL:
+                return new CharFallEvent(
+                    this.game,
+                    this.data,
+                    info.active,
+                    info.key_name,
+                    info.keep_reveal,
+                    info.is_npc,
+                    info.npc_label,
+                    info.y_destination_position,
+                    info.dest_collision_layer,
+                    info.show_exclamation_emoticon,
+                    info.splash_sweat_drops,
+                    info.walking_in_the_air,
+                    info.ground_hit_animation,
+                    info.teleport,
                     info.finish_events
                 );
             default:

@@ -3,6 +3,7 @@ import {base_actions, directions} from "../utils";
 import {ClimbEvent} from "./ClimbEvent";
 import {CollisionEvent} from "./CollisionEvent";
 import {EventTriggerEvent} from "./EventTriggerEvent";
+import {FallEvent} from "./FallEvent";
 import {IceSlideEvent} from "./IceSlideEvent";
 import {JumpEvent} from "./JumpEvent";
 import {RopeEvent} from "./RopeEvent";
@@ -453,6 +454,26 @@ export class TileEventManager {
                 info.walk_over_rope,
                 info.dock_exit_collision_layer,
                 info.rope_collision_layer
+            );
+        } else if (info.type === event_types.FALL) {
+            return new FallEvent(
+                this.game,
+                this.data,
+                info.x,
+                info.y,
+                info.activation_directions,
+                info.initial_disabled_directions,
+                info.activation_collision_layers,
+                info.active_storage_key,
+                info.affected_by_reveal,
+                info.key_name,
+                info.y_destination_position,
+                info.dest_collision_layer,
+                info.show_exclamation_emoticon,
+                info.splash_sweat_drops,
+                info.walking_in_the_air,
+                info.ground_hit_animation,
+                info.teleport
             );
         } else {
             if (info.type) {

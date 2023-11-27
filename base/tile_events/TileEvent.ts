@@ -14,6 +14,7 @@ export enum event_types {
     EVENT_TRIGGER = "event_trigger",
     ICE_SLIDE = "ice_slide",
     ROPE = "rope",
+    FALL = "fall",
 }
 
 export abstract class IntegerPairKey {
