@@ -1802,26 +1802,33 @@ export abstract class ControllableChar {
     }
 
     /**
-     * Make the hero to fall to a given destination.
+     * Make the char to fall to a given destination.
      * @param options fall options object.
      */
     async fall(options: {
-        /** The final y-tile position that the hero will reach after falling. */
+        /** The final y-tile position that the char will reach after falling. */
         y_destination_position: number;
         /** The destination collision layer index. */
         dest_collision_layer?: number;
-        /** Whether an exclamation emoticon will appear over the hero before falling. */
+        /** Whether an exclamation emoticon will appear over the char before falling. */
         show_exclamation_emoticon?: boolean;
-        /** The hero will splash sweat drops before falling. */
+        /** The char will splash sweat drops before falling. */
         splash_sweat_drops?: boolean;
-        /** Whether the hero will performa a walking in the air animation before falling. */
+        /** Whether the char will performa a walking in the air animation before falling. */
         walking_in_the_air?: boolean;
-        /** Whether the hero will perform a ground hit animation. */
+        /** Whether the char will perform a ground hit animation. */
         ground_hit_animation?: boolean;
-        /** Teleport info. If passed, the hero will teleport to another map while falling. */
+        /** Teleport info. If passed, the char will teleport to another map while falling. */
         teleport?: {
             /** The teleport map key name destination. */
             destination: string;
+            /** The origin position that the char will be just after the teleport. */
+            origin_position?: {
+                /** The x tile position. */
+                x: number;
+                /** The y tile position. */
+                y: number;
+            };
             /** The destination position. */
             destination_position: {
                 /** The x tile position. */
@@ -1912,14 +1919,20 @@ export abstract class ControllableChar {
             });
         }
         if (options.teleport) {
-            const teleport_init = {
-                x: options.teleport.destination_position.x,
-                y: _.clamp(
-                    options.teleport.destination_position.y - ((numbers.GAME_HEIGHT / this.data.map.tile_height) >> 1),
-                    0,
-                    undefined
-                ),
-            };
+            let teleport_init: {x: number; y: number};
+            if (options.teleport.origin_position) {
+                teleport_init = options.teleport.origin_position;
+            } else {
+                teleport_init = {
+                    x: options.teleport.destination_position.x,
+                    y: _.clamp(
+                        options.teleport.destination_position.y -
+                            ((numbers.GAME_HEIGHT / this.data.map.tile_height) >> 1),
+                        0,
+                        undefined
+                    ),
+                };
+            }
             let teleport_time = fall_time - ControllableChar.TIME_PER_TILE * 5;
             if (teleport_time < 0) {
                 teleport_time = fall_time;
