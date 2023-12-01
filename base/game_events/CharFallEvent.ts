@@ -54,10 +54,13 @@ export class CharFallEvent extends GameEvent {
 
         if (target_char) {
             ++this.data.game_event_manager.events_running_count;
+            const prev_force_idle_action_in_event = target_char.force_idle_action_in_event;
+            target_char.force_idle_action_in_event = false;
             const target_obj = Object.assign({}, this.options, {
                 on_fall_finish_callback: () => {
                     if (!this.options.teleport) {
                         --this.data.game_event_manager.events_running_count;
+                        target_char.force_idle_action_in_event = prev_force_idle_action_in_event;
                         this.finish_events.forEach(event => event.fire(this.origin_npc));
                     }
                 },
@@ -65,6 +68,7 @@ export class CharFallEvent extends GameEvent {
             if (target_obj.teleport) {
                 target_obj.teleport.on_before_teleport = () => {
                     this.data.game_event_manager.events_running_count = 0;
+                    target_char.force_idle_action_in_event = prev_force_idle_action_in_event;
                 };
             }
             target_char.fall(target_obj);
