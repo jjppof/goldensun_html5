@@ -3,6 +3,7 @@ import {GoldenSun} from "GoldenSun";
 import {GAME_HEIGHT, GAME_WIDTH} from "./magic_numbers";
 import {elements, element_colors_in_battle, hex2rgb} from "./utils";
 import * as _ from "lodash";
+import {EventValue} from "game_events/GameEvent";
 
 export type AdvParticleValue =
     | number
@@ -87,6 +88,8 @@ export type Emitter = {
         step: number;
         visible: boolean;
     };
+    hue_angle?: number;
+    random_animation_start?: boolean;
     particles_display_blend_mode?: string;
     render_white_core?: boolean;
     core_custom_color?: string;
@@ -123,6 +126,13 @@ export type Emitter = {
         frame_rate: number;
         loop: boolean;
     };
+    tween_emitter?: {
+        duration: number;
+        x?: number | EventValue;
+        y?: number | EventValue;
+        easing?: string;
+        incremental?: boolean;
+    };
 };
 
 export type ParticlesInfo = {
@@ -154,10 +164,10 @@ export class ParticlesWrapper {
         },
         element?: elements,
         xy_pos_getter?: (
-            x: number | string,
-            y: number | string,
-            shift_x: number,
-            shift_y: number
+            x: number | string | EventValue,
+            y: number | string | EventValue,
+            shift_x: number | EventValue,
+            shift_y: number | EventValue
         ) => {x: number; y: number}
     ) {
         const promises: Promise<void>[] = [];
@@ -317,7 +327,59 @@ export class ParticlesWrapper {
                     emitter_info.shift_x,
                     emitter_info.shift_y
                 );
-                emitter.emit(emitter_info.emitter_data_key, x, y, {
+                if (
+                    emitter_info.hue_angle !== undefined ||
+                    emitter_info.random_animation_start ||
+                    adv_particles_seq.particles_callback ||
+                    emitter_info.animation !== undefined
+                ) {
+                    emitter.onEmit = new Phaser.Signal();
+                    emitter.onEmit.add(
+                        (emitter: Phaser.ParticleStorm.Emitter, particle: Phaser.ParticleStorm.Particle) => {
+                            if (emitter_info.hue_angle !== undefined) {
+                                if (!particle.sprite.filters) {
+                                    const hue_filter = this.game.add.filter("Hue") as Phaser.Filter.Hue;
+                                    particle.sprite.filters = [hue_filter];
+                                    hue_filter.angle = emitter_info.hue_angle;
+                                }
+                            }
+                            if (emitter_info.random_animation_start) {
+                                if (particle.sprite.animations.currentAnim) {
+                                    particle.sprite.frameName = _.sample(
+                                        Object.keys(particle.sprite.animations.currentAnim._frameData._frameNames)
+                                    );
+                                }
+                            }
+                            if (adv_particles_seq.particles_callback) {
+                                adv_particles_seq.particles_callback(particle);
+                            }
+                            if (emitter_info.animation !== undefined) {
+                                if (
+                                    !particle.sprite.animations.currentAnim ||
+                                    !particle.sprite.animations.currentAnim.isPlaying
+                                ) {
+                                    const particle_key = adv_particles_seq.data[emitter_info.emitter_data_key]
+                                        .image as string;
+                                    const particle_sprite_base = this.data.info.misc_sprite_base_list[particle_key];
+                                    const anim_key = particle_sprite_base.getAnimationKey(
+                                        particle_key,
+                                        emitter_info.animation.animation_key
+                                    );
+                                    particle_sprite_base.setAnimation(particle.sprite, particle_key);
+                                    particle.sprite.animations.play(
+                                        anim_key,
+                                        emitter_info.animation.frame_rate,
+                                        emitter_info.animation.loop
+                                    );
+                                }
+                            }
+                        }
+                    );
+                }
+                const pos = {x: x, y: y};
+                const get_x = () => pos.x;
+                const get_y = () => pos.y;
+                emitter.emit(emitter_info.emitter_data_key, get_x, get_y, {
                     ...(emitter_info.total !== undefined && {total: emitter_info.total}),
                     ...(emitter_info.repeat !== undefined && {repeat: emitter_info.repeat}),
                     ...(emitter_info.frequency !== undefined && {frequency: emitter_info.frequency}),
@@ -330,31 +392,32 @@ export class ParticlesWrapper {
                     ...(emitter_info.radiate !== undefined && {radiate: emitter_info.radiate}),
                     ...(emitter_info.radiateFrom !== undefined && {radiateFrom: emitter_info.radiateFrom}),
                 });
-                if (adv_particles_seq.particles_callback) {
-                    emitter.forEach((particle: Phaser.ParticleStorm.Particle) => {
-                        adv_particles_seq.particles_callback(particle);
-                    }, this);
-                }
-                if (emitter_info.animation !== undefined) {
-                    const particle_key = adv_particles_seq.data[emitter_info.emitter_data_key].image as string;
-                    const particle_sprite_base = this.data.info.misc_sprite_base_list[particle_key];
-                    const anim_key = particle_sprite_base.getAnimationKey(
-                        particle_key,
-                        emitter_info.animation.animation_key
-                    );
-                    emitter.forEach((particle: Phaser.ParticleStorm.Particle) => {
-                        particle_sprite_base.setAnimation(particle.sprite, particle_key);
-                    }, this);
-                    emitter.onEmit = new Phaser.Signal();
-                    emitter.onEmit.add(
-                        (emitter: Phaser.ParticleStorm.Emitter, particle: Phaser.ParticleStorm.Particle) => {
-                            particle.sprite.animations.play(
-                                anim_key,
-                                emitter_info.animation.frame_rate,
-                                emitter_info.animation.loop
-                            );
+                if (emitter_info.tween_emitter) {
+                    const dest: {x?: number; y?: number} = {};
+                    if (emitter_info.tween_emitter.x) {
+                        if (typeof emitter_info.tween_emitter.x !== "number") {
+                            dest.x = this.data.game_event_manager.get_value(emitter_info.tween_emitter.x);
+                        } else {
+                            dest.x = emitter_info.tween_emitter.x;
                         }
-                    );
+                        dest.x = (emitter_info.tween_emitter.incremental ? pos.x : 0) + dest.x;
+                    }
+                    if (emitter_info.tween_emitter.y) {
+                        if (typeof emitter_info.tween_emitter.y !== "number") {
+                            dest.y = this.data.game_event_manager.get_value(emitter_info.tween_emitter.y);
+                        } else {
+                            dest.y = emitter_info.tween_emitter.y;
+                        }
+                        dest.y = (emitter_info.tween_emitter.incremental ? pos.y : 0) + dest.y;
+                    }
+                    this.game.add
+                        .tween(pos)
+                        .to(
+                            dest,
+                            emitter_info.tween_emitter.duration,
+                            _.get(Phaser.Easing, emitter_info.tween_emitter.easing ?? "Linear.None"),
+                            true
+                        );
                 }
                 emitters.push(emitter);
             });

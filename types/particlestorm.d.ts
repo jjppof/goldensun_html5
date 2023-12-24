@@ -191,6 +191,7 @@ declare module Phaser {
             scrollSpeed: Phaser.Point;
             force: Phaser.Point;
             onEmit: Phaser.Signal;
+            newParticleCallbacks?: ((sprite: Phaser.Sprite) => void)[]
             onComplete: Phaser.Signal;
             onKill: Phaser.Signal;
             particleClass: Phaser.ParticleStorm.Particle;

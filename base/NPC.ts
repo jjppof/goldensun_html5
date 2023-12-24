@@ -38,6 +38,7 @@ export class NPC extends ControllableChar {
     private _message: string;
     private _thought_message: string;
     private _back_interaction_message: string;
+    private _allow_only_front_interaction: boolean;
     private _avatar: string;
     private _voice_key: string;
     private _base_collision_layer: number;
@@ -114,6 +115,7 @@ export class NPC extends ControllableChar {
         message,
         thought_message,
         back_interaction_message,
+        allow_only_front_interaction,
         avatar,
         shop_key,
         inn_key,
@@ -174,6 +176,7 @@ export class NPC extends ControllableChar {
         this._message = message ?? "";
         this._thought_message = thought_message ?? "";
         this._back_interaction_message = back_interaction_message ?? "";
+        this._allow_only_front_interaction = allow_only_front_interaction ?? false;
         this._avatar = avatar ?? null;
         this._voice_key = voice_key ?? "";
         this._shop_key = shop_key;
@@ -234,6 +237,10 @@ export class NPC extends ControllableChar {
     /** The message to be displayed if interacting from the back. */
     get back_interaction_message() {
         return this._back_interaction_message;
+    }
+    /** If true, the hero will only be able to interact with this NPC when he's on the front of it. */
+    get allow_only_front_interaction() {
+        return this._allow_only_front_interaction;
     }
     /** The avatar key of this NPC. */
     get avatar() {

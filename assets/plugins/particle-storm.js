@@ -194,6 +194,7 @@ Phaser.ParticleStorm.PI_180 = Math.PI / 180.0;
 Phaser.ParticleStorm.prototype.createEmitter = function (renderType, force, scrollSpeed, render_white_core = false, core_custom_color = null) {
 
     var emitter = new Phaser.ParticleStorm.Emitter(this, renderType, force, scrollSpeed, render_white_core, core_custom_color);
+    emitter.newParticleCallbacks = [];
 
     this.emitters.push(emitter);
 
@@ -2075,7 +2076,7 @@ Phaser.ParticleStorm.Particle.prototype = {
             this.color.step();
 
             //  Add a display system object for this particle
-            var sprite = this.renderer.add(this);
+            var sprite = this.renderer.add(this, this.emitter.newParticleCallbacks);
 
             if (sprite)
             {
@@ -5509,7 +5510,7 @@ Phaser.ParticleStorm.Renderer.Sprite.prototype.constructor = Phaser.ParticleStor
 * @param {Phaser.ParticleStorm.Particle} particle - The particle to be updated.
 * @return {Phaser.Sprite} This particles sprite property.
 */
-Phaser.ParticleStorm.Renderer.Sprite.prototype.add = function (particle) {
+Phaser.ParticleStorm.Renderer.Sprite.prototype.add = function (particle, newParticleCallbacks) {
 
     var spr = particle.sprite;
     var key = particle.texture.key;
@@ -5544,6 +5545,9 @@ Phaser.ParticleStorm.Renderer.Sprite.prototype.add = function (particle) {
     else
     {
         spr = this.display.create(particle.transform.x, particle.transform.y, key, frame);
+        if (newParticleCallbacks !== undefined) {
+            newParticleCallbacks.forEach(callback => callback(spr));
+        }
     }
 
     spr.anchor.set(particle.transform.anchor.x, particle.transform.anchor.y);

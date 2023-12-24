@@ -135,6 +135,7 @@ declare module Phaser {
         enableUpdate: boolean;
         frame: number;
         frameTotal: number;
+        _frameData: any;
         game: Phaser.Game;
         isFinished: boolean;
         isPaused: boolean;

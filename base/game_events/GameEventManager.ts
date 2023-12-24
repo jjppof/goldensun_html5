@@ -169,6 +169,12 @@ export class GameEventManager {
             }
             const is_close_check = this.data.hero.is_close(npc);
             if (is_close_check) {
+                if (
+                    npc.allow_only_front_interaction &&
+                    (npc.tile_pos.y + 1 !== this.data.hero.tile_pos.y || npc.tile_pos.x !== this.data.hero.tile_pos.x)
+                ) {
+                    continue;
+                }
                 this.data.hero.stop_char();
                 npc.stop_char();
                 this.control_enable = false;

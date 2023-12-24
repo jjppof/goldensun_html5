@@ -1065,6 +1065,7 @@ export class Map {
                 property_info.message,
                 property_info.thought_message,
                 property_info.back_interaction_message,
+                property_info.allow_only_front_interaction,
                 avatar,
                 property_info.shop_key,
                 property_info.inn_key,
@@ -1474,6 +1475,9 @@ export class Map {
                         : layer_obj.properties.hidden;
                 if (layer_obj.properties.reveal_layer || hidden) {
                     layer_sprite.visible = false;
+                }
+                if (layer_obj.properties.opacity !== undefined) {
+                    layer_sprite.alpha = layer_obj.properties.opacity;
                 }
             } else {
                 layer_sprite = layer_obj.sprite;
