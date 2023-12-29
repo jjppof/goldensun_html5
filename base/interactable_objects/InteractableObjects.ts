@@ -93,7 +93,7 @@ export class InteractableObjects {
     private _flame_filter: Phaser.Filter.Flame;
     private _enable: boolean;
     private _entangled_by_bush: boolean;
-    private _sprite: Phaser.Sprite;
+    public sprite: Phaser.Sprite;
     private _psynergy_casted: {[field_psynergy_key: string]: boolean};
     private _blocking_stair_block: Phaser.Physics.P2.Body;
     private _active: boolean;
@@ -353,9 +353,6 @@ export class InteractableObjects {
     }
     get base_collision_layer() {
         return this._base_collision_layer;
-    }
-    get sprite() {
-        return this._sprite;
     }
     get sprite_info() {
         return this._sprite_info;
@@ -701,7 +698,7 @@ export class InteractableObjects {
             const interactable_object_db = this.data.dbs.interactable_objects_db[this.key_name];
             const interactable_object_key = this.sprite_info.getSpriteKey(this.current_action);
             const interactable_object_sprite = this.data.middlelayer_group.create(0, 0, interactable_object_key);
-            this._sprite = interactable_object_sprite;
+            this.sprite = interactable_object_sprite;
             this.sprite.is_interactable_object = true;
             this.sprite.roundPx = true;
             this.sprite.base_collision_layer = this.base_collision_layer;

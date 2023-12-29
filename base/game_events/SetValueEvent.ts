@@ -12,6 +12,7 @@ export class SetValueEvent extends GameEvent {
     private npc_label: string;
     private npc_index: number;
     private increment: boolean;
+    private dismiss_checks: boolean;
 
     constructor(
         game,
@@ -25,7 +26,8 @@ export class SetValueEvent extends GameEvent {
         check_layers_visibility,
         npc_label,
         npc_index,
-        increment
+        increment,
+        dismiss_checks
     ) {
         super(game, data, event_types.SET_VALUE, active, key_name, keep_reveal);
         this.event_value = event_value;
@@ -35,6 +37,7 @@ export class SetValueEvent extends GameEvent {
         this.npc_label = npc_label;
         this.npc_index = npc_index;
         this.increment = increment ?? false;
+        this.dismiss_checks = dismiss_checks ?? false;
     }
 
     _fire() {
@@ -58,7 +61,7 @@ export class SetValueEvent extends GameEvent {
                             break;
                         }
                         const char = this.data.info.main_char_list[detailed_value.key_name];
-                        if (_.hasIn(char, detailed_value.property)) {
+                        if (_.hasIn(char, detailed_value.property) || this.dismiss_checks) {
                             if (this.increment) {
                                 value_to_be_set += _.get(char, detailed_value.property);
                             }
@@ -68,7 +71,7 @@ export class SetValueEvent extends GameEvent {
                         }
                         break;
                     case game_info_types.HERO:
-                        if (_.hasIn(this.data.hero, detailed_value.property)) {
+                        if (_.hasIn(this.data.hero, detailed_value.property) || this.dismiss_checks) {
                             if (this.increment) {
                                 value_to_be_set += _.get(this.data.hero, detailed_value.property);
                             }
@@ -83,7 +86,7 @@ export class SetValueEvent extends GameEvent {
                             npc_label: detailed_value.label,
                             npc_index: detailed_value.index,
                         });
-                        if (npc && _.hasIn(npc, detailed_value.property)) {
+                        if (npc && (_.hasIn(npc, detailed_value.property) || this.dismiss_checks)) {
                             if (this.increment) {
                                 value_to_be_set += _.get(npc, detailed_value.property);
                             }
@@ -108,7 +111,7 @@ export class SetValueEvent extends GameEvent {
                             }
                             break;
                         }
-                        if (_.hasIn(interactable_object, detailed_value.property)) {
+                        if (_.hasIn(interactable_object, detailed_value.property) || this.dismiss_checks) {
                             if (this.increment) {
                                 value_to_be_set += _.get(interactable_object, detailed_value.property);
                             }
@@ -135,7 +138,7 @@ export class SetValueEvent extends GameEvent {
                             }
                             break;
                         }
-                        if (_.hasIn(event, detailed_value.property)) {
+                        if (_.hasIn(event, detailed_value.property) || this.dismiss_checks) {
                             if (this.increment) {
                                 value_to_be_set += _.get(event, detailed_value.property);
                             }

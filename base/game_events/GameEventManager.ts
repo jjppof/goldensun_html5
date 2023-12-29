@@ -378,7 +378,8 @@ export class GameEventManager {
                     info.check_layers_visibility,
                     info.npc_label,
                     info.npc_index,
-                    info.increment
+                    info.increment,
+                    info.dismiss_checks
                 );
             case event_types.MOVE:
                 return new MoveEvent(
@@ -575,6 +576,7 @@ export class GameEventManager {
                     info.key_name,
                     info.keep_reveal,
                     info.tile_event_key,
+                    info.io_label,
                     info.activate_at,
                     info.pos,
                     info.collision_layers
