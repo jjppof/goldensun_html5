@@ -1968,7 +1968,9 @@ export abstract class ControllableChar {
                     undefined,
                     undefined,
                     true,
-                    false
+                    false,
+                    undefined,
+                    undefined
                 );
                 event.set_fadein_callback(() => {
                     fall_tween.stop(false);

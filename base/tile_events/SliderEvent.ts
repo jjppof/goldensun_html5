@@ -217,6 +217,8 @@ export class SliderEvent extends TileEvent {
             undefined,
             undefined,
             undefined,
+            undefined,
+            undefined,
             undefined
         );
         event.set_fadein_callback(() => {

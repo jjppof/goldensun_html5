@@ -70,6 +70,12 @@ export type ParticlesZone = {
     }[];
 };
 
+enum game_groups {
+    LOWER = "lower",
+    MIDDLE = "middle",
+    OVER = "over",
+}
+
 export type Emitter = {
     emitter_data_key?: string;
     render_type?: "pixel" | "sprite";
@@ -137,6 +143,7 @@ export type Emitter = {
 
 export type ParticlesInfo = {
     data: {[emitter_data_key: string]: ParticleObject};
+    group_type?: game_groups;
     zones: {[zone_key: string]: ParticlesZone};
     emitters: Emitter[];
     emission_finish: number;
@@ -154,9 +161,37 @@ export class ParticlesWrapper {
         this.render_callbacks = {};
     }
 
+    static expanded_xy_pos_getter(
+        data: GoldenSun,
+        x: number | EventValue,
+        y: number | EventValue,
+        shift_x: number | EventValue,
+        shift_y: number | EventValue
+    ) {
+        let this_x = x as number;
+        let this_y = y as number;
+        let this_shift_x = shift_x as number;
+        let this_shift_y = shift_y as number;
+        if (x !== undefined && typeof x !== "number") {
+            this_x = data.game_event_manager.get_value(x);
+        }
+        if (y !== undefined && typeof y !== "number") {
+            this_y = data.game_event_manager.get_value(y);
+        }
+        if (shift_x !== undefined && typeof shift_x !== "number") {
+            this_shift_x = data.game_event_manager.get_value(shift_x);
+        }
+        if (shift_y !== undefined && typeof shift_y !== "number") {
+            this_shift_y = data.game_event_manager.get_value(shift_y);
+        }
+        this_x += this_shift_x ?? 0;
+        this_y += this_shift_y ?? 0;
+        return {x: this_x, y: this_y};
+    }
+
     start_particles(
         particles_info: ParticlesInfo,
-        particles_group: Phaser.Group,
+        particles_group?: Phaser.Group,
         inner_groups?: {
             [battle_positions.BEHIND]: Phaser.Group;
             [battle_positions.BETWEEN]: Phaser.Group;
@@ -171,6 +206,7 @@ export class ParticlesWrapper {
         ) => {x: number; y: number}
     ) {
         const promises: Promise<void>[] = [];
+        const force_destroy_callbacks: (() => void)[] = [];
         xy_pos_getter =
             xy_pos_getter ??
             ((x: number, y: number, shift_x: number, shift_y: number) => {
@@ -299,6 +335,21 @@ export class ParticlesWrapper {
                     (emitter.renderer as Phaser.ParticleStorm.Renderer.Pixel).resize(GAME_WIDTH << 1, GAME_HEIGHT);
                 }
 
+                let group = particles_group;
+                if (!group) {
+                    switch (adv_particles_seq.group_type) {
+                        case game_groups.LOWER:
+                            group = this.data.underlayer_group;
+                            break;
+                        case game_groups.MIDDLE:
+                            group = this.data.middlelayer_group;
+                            break;
+                        case game_groups.OVER:
+                            group = this.data.overlayer_group;
+                            break;
+                    }
+                }
+
                 const displays = emitter.addToWorld(particles_group);
                 if (inner_groups) {
                     displays.forEach(display => {
@@ -422,7 +473,15 @@ export class ParticlesWrapper {
                 emitters.push(emitter);
             });
 
-            this.game.time.events.add(adv_particles_seq.emission_finish, () => {
+            const timer = this.game.time.create(true);
+            let destroyed = false;
+            const force_destroy = () => {
+                timer.stop(true);
+                timer.destroy();
+                if (destroyed) {
+                    return;
+                }
+                destroyed = true;
                 render_callbacks.forEach(key => {
                     delete this.render_callbacks[key];
                 });
@@ -437,10 +496,16 @@ export class ParticlesWrapper {
                     this.data.particle_manager.clearData(key);
                 }
                 resolve_function();
-            });
+            };
+            timer.add(adv_particles_seq.emission_finish, force_destroy);
+            timer.start();
+            force_destroy_callbacks.push(force_destroy);
         }
 
-        return promises;
+        return {
+            promises: promises,
+            force_destroy_callbacks: force_destroy_callbacks,
+        };
     }
 
     render() {

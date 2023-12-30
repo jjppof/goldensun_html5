@@ -1603,7 +1603,7 @@ export class BattleAnimation {
             this.ability_sprites_groups,
             this.element,
             this.get_sprite_xy_pos.bind(this)
-        );
+        ).promises;
         this.promises.push(...promises);
     }
 

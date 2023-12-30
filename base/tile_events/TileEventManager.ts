@@ -208,7 +208,7 @@ export class TileEventManager {
                 case event_types.ROPE:
                     if (
                         this_event.type === event_types.TELEPORT &&
-                        !(this_event as TeleportEvent).open_door &&
+                        !(this_event as TeleportEvent).need_stop_before_start &&
                         !(this_event as TeleportEvent).start_climbing
                     ) {
                         this.event_queue.add(
@@ -340,7 +340,9 @@ export class TileEventManager {
                 info.on_event_toggle_layers,
                 info.fade_color,
                 info.dont_change_to_idle,
-                info.play_sfx
+                info.play_sfx,
+                info.custom_sfx,
+                info.particles_info
             );
         } else if (info.type === event_types.SLIDER) {
             return new SliderEvent(
