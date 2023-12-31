@@ -3,6 +3,7 @@ import {event_types, TileEvent} from "./TileEvent";
 import * as _ from "lodash";
 import {RevealFieldPsynergy} from "../field_abilities/RevealFieldPsynergy";
 import {climb_actions} from "./ClimbEvent";
+import {ParticlesInfo, ParticlesWrapper} from "../ParticlesWrapper";
 
 export class TeleportEvent extends TileEvent {
     private static readonly DEFAULT_FADE_DURATION: number = 500;
@@ -11,7 +12,7 @@ export class TeleportEvent extends TileEvent {
     private target: string;
     private x_target: number;
     private y_target: number;
-    private _open_door: boolean;
+    private open_door: boolean;
     private _start_climbing: boolean;
     private _stop_climbing: boolean;
     private dest_collision_layer: number;
@@ -22,8 +23,8 @@ export class TeleportEvent extends TileEvent {
     private finish_before_fadeout: boolean;
     private skip_map_change_events: boolean;
     private fade_duration: number;
-    private finish_callback: () => void;
-    private fadein_callback: () => void;
+    private finish_callbacks: (() => void)[];
+    private fadein_callbacks: (() => void)[];
     private door_settings: {
         replace_map: {
             tile_layer: string;
@@ -41,6 +42,8 @@ export class TeleportEvent extends TileEvent {
     private fade_color: string;
     private dont_change_to_idle: boolean;
     private play_sfx: boolean;
+    private custom_sfx: string;
+    private particles_info: ParticlesInfo;
 
     constructor(
         game,
@@ -72,7 +75,9 @@ export class TeleportEvent extends TileEvent {
         on_event_toggle_layers,
         fade_color,
         dont_change_to_idle,
-        play_sfx
+        play_sfx,
+        custom_sfx,
+        particles_info
     ) {
         super(
             game,
@@ -91,7 +96,7 @@ export class TeleportEvent extends TileEvent {
         this.target = target;
         this.x_target = x_target;
         this.y_target = y_target;
-        this._open_door = open_door ?? false;
+        this.open_door = open_door ?? false;
         this._start_climbing = start_climbing ?? false;
         this._stop_climbing = stop_climbing ?? false;
         this.dest_collision_layer = dest_collision_layer ?? 0;
@@ -102,13 +107,15 @@ export class TeleportEvent extends TileEvent {
         this.finish_before_fadeout = finish_before_fadeout ?? false;
         this.skip_map_change_events = skip_map_change_events ?? false;
         this.fade_duration = fade_duration ?? TeleportEvent.DEFAULT_FADE_DURATION;
-        this.finish_callback = null;
-        this.fadein_callback = null;
+        this.finish_callbacks = [];
+        this.fadein_callbacks = [];
         this.door_settings = door_settings ?? null;
         this.spiral_stair = spiral_stair ?? null;
         this.fade_color = fade_color ?? "0x0";
         this.dont_change_to_idle = dont_change_to_idle ?? false;
         this.play_sfx = play_sfx ?? true;
+        this.custom_sfx = custom_sfx;
+        this.particles_info = particles_info;
         this.on_event_toggle_layers = on_event_toggle_layers
             ? Array.isArray(on_event_toggle_layers)
                 ? on_event_toggle_layers
@@ -116,8 +123,8 @@ export class TeleportEvent extends TileEvent {
             : [];
     }
 
-    get open_door() {
-        return this._open_door;
+    get need_stop_before_start() {
+        return this.open_door || this.particles_info;
     }
     get start_climbing() {
         return this._start_climbing;
@@ -133,25 +140,30 @@ export class TeleportEvent extends TileEvent {
         this.data.tile_event_manager.on_event = true;
         this.data.hero.teleporting = true;
 
-        this.on_event_toggle_layers.forEach(layer => {
-            const layer_obj = this.data.map.get_layer(layer);
-            if (layer_obj) {
-                layer_obj.sprite.visible = !layer_obj.sprite.visible;
-            }
-        });
-
         if (this.open_door && this.door_settings) {
             this.open_door_teleport();
         } else if (this.start_climbing) {
             this.climbing_teleport();
         } else if (this.spiral_stair) {
             this.spiral_stair_teleport();
+        } else if (this.particles_info) {
+            this.particles_teleport();
         } else {
+            this.toggle_layers();
             if (this.play_sfx) {
-                this.data.audio.play_se("door/default");
+                this.data.audio.play_se(this.custom_sfx ?? "door/default");
             }
             this.camera_fade_in();
         }
+    }
+
+    private toggle_layers() {
+        this.on_event_toggle_layers.forEach(layer => {
+            const layer_obj = this.data.map.get_layer(layer);
+            if (layer_obj) {
+                layer_obj.sprite.visible = !layer_obj.sprite.visible;
+            }
+        });
     }
 
     private open_door_teleport() {
@@ -160,6 +172,7 @@ export class TeleportEvent extends TileEvent {
             this.data.hero.teleporting = false;
             return;
         }
+        this.toggle_layers();
         if (this.play_sfx) {
             this.data.audio.play_se(this.door_settings.door_open_sfx ?? TeleportEvent.DEFAULT_DOOR_OPEN_SFX);
         }
@@ -206,12 +219,65 @@ export class TeleportEvent extends TileEvent {
             });
     }
 
+    private particles_teleport() {
+        if (!this.data.hero.stop_by_colliding) {
+            this.data.tile_event_manager.on_event = false;
+            this.data.hero.teleporting = false;
+            return;
+        }
+        this.toggle_layers();
+        if (this.play_sfx && this.custom_sfx) {
+            this.data.audio.play_se(this.custom_sfx);
+        }
+        this.data.hero.play(base_actions.WALK, reverse_directions[directions.up]);
+
+        const force_destroy_callbacks = this.data.particle_wrapper.start_particles(
+            this.particles_info,
+            undefined,
+            undefined,
+            undefined,
+            ParticlesWrapper.expanded_xy_pos_getter.bind(this, this.data)
+        ).force_destroy_callbacks;
+        this.game.physics.p2.pause();
+        const time = 400;
+        const tween_x = this.data.map.tile_width * (this.x + 0.5);
+        const tween_y = this.data.hero.sprite.y - 15;
+        this.game.add.tween(this.data.hero.shadow).to(
+            {
+                x: tween_x,
+                y: tween_y,
+            },
+            time,
+            Phaser.Easing.Linear.None,
+            true
+        );
+        const tween = this.game.add.tween(this.data.hero.sprite.body).to(
+            {
+                x: tween_x,
+                y: tween_y,
+            },
+            time,
+            Phaser.Easing.Linear.None,
+            true
+        );
+        tween.onUpdateCallback(() => {
+            this.data.particle_wrapper.render();
+        });
+        tween.onComplete.addOnce(() => {
+            this.set_fadein_callback(() => {
+                force_destroy_callbacks.forEach(callback => callback());
+            });
+            this.camera_fade_in();
+        });
+    }
+
     private climbing_teleport() {
         if (!this.data.hero.stop_by_colliding) {
             this.data.tile_event_manager.on_event = false;
             this.data.hero.teleporting = false;
             return;
         }
+        this.toggle_layers();
         this.data.map.sprites_sort_paused = true;
         const turn_animation = this.data.hero.play(base_actions.CLIMB, climb_actions.TURN);
         turn_animation.onComplete.addOnce(() => {
@@ -239,6 +305,7 @@ export class TeleportEvent extends TileEvent {
     }
 
     private spiral_stair_teleport() {
+        this.toggle_layers();
         let animation: string;
         if (this.spiral_stair === "down") {
             animation = "up_to_down_in";
@@ -263,9 +330,7 @@ export class TeleportEvent extends TileEvent {
         this.data.hero.stop_char(this.spiral_stair ? false : !this.dont_change_to_idle);
 
         const on_camera_fade_in = () => {
-            if (this.fadein_callback) {
-                this.fadein_callback();
-            }
+            this.fadein_callbacks.forEach(callback => callback());
 
             if (this.data.hero.on_reveal) {
                 (this.data.info.field_abilities_list.reveal as RevealFieldPsynergy).finish(true);
@@ -368,9 +433,8 @@ export class TeleportEvent extends TileEvent {
             this.data.camera.reset_lerp();
             this.data.tile_event_manager.on_event = false;
             this.data.hero.teleporting = false;
-            if (this.finish_callback) {
-                this.finish_callback();
-            }
+            this.finish_callbacks.forEach(callback => callback());
+            this.finish_callbacks = null;
             if (!this.skip_map_change_events) {
                 this.data.map.fire_game_events();
             }
@@ -404,14 +468,18 @@ export class TeleportEvent extends TileEvent {
     }
 
     set_fadein_callback(callback: () => void) {
-        this.fadein_callback = callback;
+        this.fadein_callbacks.push(callback);
     }
 
     set_finish_callback(callback: () => void) {
-        this.finish_callback = callback;
+        this.finish_callbacks.push(callback);
     }
 
     destroy() {
+        this.fadein_callbacks = null;
+        if (!this.data.hero.teleporting) {
+            this.finish_callbacks = null;
+        }
         this._origin_interactable_object = null;
         this.deactivate();
     }
