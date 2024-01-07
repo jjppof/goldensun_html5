@@ -98,6 +98,7 @@ function load_filters(game) {
     game.load.script("tint", "assets/filters/tint.js");
     game.load.script("gray", "assets/filters/gray.js");
     game.load.script("flame", "assets/filters/flame.js");
+    game.load.script("watery", "assets/filters/watery.js");
     game.load.script("outline", "assets/filters/outline.js");
     game.load.script("mode7", "assets/filters/mode7.js");
     game.load.script("reveal", "assets/filters/reveal.js");

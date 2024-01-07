@@ -342,7 +342,11 @@ export class TileEventManager {
                 info.dont_change_to_idle,
                 info.play_sfx,
                 info.custom_sfx,
-                info.particles_info
+                info.particles_info,
+                info.custom_advance_time,
+                info.custom_advance_shift,
+                info.fade_on_advance,
+                info.watery_filter_on_advance
             );
         } else if (info.type === event_types.SLIDER) {
             return new SliderEvent(

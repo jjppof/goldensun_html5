@@ -161,6 +161,7 @@ export abstract class ControllableChar {
     private _tint_filter: Phaser.Filter.Tint;
     private _gray_filter: Phaser.Filter.Gray;
     private _flame_filter: Phaser.Filter.Flame;
+    private _watery_filter: Phaser.Filter.Watery;
     private _outline_filter: Phaser.Filter.Outline;
     private _pixel_shift_filter: Phaser.Filter.PixelShift;
     private _active_filters: {[key in engine_filters]?: boolean};
@@ -270,6 +271,7 @@ export abstract class ControllableChar {
         this._tint_filter = this.game.add.filter("Tint") as Phaser.Filter.Tint;
         this._gray_filter = this.game.add.filter("Gray") as Phaser.Filter.Gray;
         this._flame_filter = this.game.add.filter("Flame") as Phaser.Filter.Flame;
+        this._watery_filter = this.game.add.filter("Watery") as Phaser.Filter.Watery;
         this._outline_filter = this.game.add.filter("Outline") as Phaser.Filter.Outline;
         this._pixel_shift_filter = this.game.add.filter("PixelShift") as Phaser.Filter.PixelShift;
         this._active_filters = {
@@ -281,6 +283,7 @@ export abstract class ControllableChar {
             [engine_filters.TINT]: false,
             [engine_filters.GRAY]: false,
             [engine_filters.FLAME]: false,
+            [engine_filters.WATERY]: false,
         };
         this.trying_to_push = false;
         this._trying_to_push_direction = null;
@@ -425,6 +428,10 @@ export abstract class ControllableChar {
     /** The Phaser.Filter that sets flame colors into char sprite. */
     get flame_filter() {
         return this._flame_filter;
+    }
+    /** The Phaser.Filter that sets water colors into char sprite. */
+    get watery_filter() {
+        return this._watery_filter;
     }
     /** An object containing which filters are active in this char. */
     get active_filters() {
@@ -1969,6 +1976,10 @@ export abstract class ControllableChar {
                     undefined,
                     true,
                     false,
+                    undefined,
+                    undefined,
+                    undefined,
+                    undefined,
                     undefined,
                     undefined
                 );

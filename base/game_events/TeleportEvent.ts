@@ -64,6 +64,10 @@ export class TeleportEvent extends GameEvent {
             undefined,
             undefined,
             undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
             undefined
         );
         event.set_fadein_callback(() => {

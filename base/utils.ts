@@ -112,6 +112,7 @@ export enum engine_filters {
     TINT = "tint",
     GRAY = "gray",
     FLAME = "flame",
+    WATERY = "watery",
     MODE7 = "mode7",
     PIXEL_SHIFT = "pixel_shift",
 }

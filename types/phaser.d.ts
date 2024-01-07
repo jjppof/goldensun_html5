@@ -1244,6 +1244,8 @@ declare module Phaser {
 
         class Flame extends Phaser.Filter { }
 
+        class Watery extends Phaser.Filter { }
+
         class Levels extends Phaser.Filter {
             min_input: number;
             max_input: number;

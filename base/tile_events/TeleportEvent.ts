@@ -44,6 +44,12 @@ export class TeleportEvent extends TileEvent {
     private play_sfx: boolean;
     private custom_sfx: string;
     private particles_info: ParticlesInfo;
+    private custom_advance_time: number;
+    private custom_advance_shift: number;
+    private fade_on_advance: boolean;
+    private watery_filter_on_advance: boolean;
+    private _prev_alpha_sprite: number;
+    private _prev_alpha_shadow: number;
 
     constructor(
         game,
@@ -77,7 +83,11 @@ export class TeleportEvent extends TileEvent {
         dont_change_to_idle,
         play_sfx,
         custom_sfx,
-        particles_info
+        particles_info,
+        custom_advance_time,
+        custom_advance_shift,
+        fade_on_advance,
+        watery_filter_on_advance
     ) {
         super(
             game,
@@ -116,6 +126,10 @@ export class TeleportEvent extends TileEvent {
         this.play_sfx = play_sfx ?? true;
         this.custom_sfx = custom_sfx;
         this.particles_info = particles_info;
+        this.custom_advance_time = custom_advance_time ?? 400;
+        this.custom_advance_shift = custom_advance_shift ?? 15;
+        this.fade_on_advance = fade_on_advance ?? false;
+        this.watery_filter_on_advance = watery_filter_on_advance ?? false;
         this.on_event_toggle_layers = on_event_toggle_layers
             ? Array.isArray(on_event_toggle_layers)
                 ? on_event_toggle_layers
@@ -166,6 +180,66 @@ export class TeleportEvent extends TileEvent {
         });
     }
 
+    private advance(callback: () => void) {
+        const tween_x = this.data.map.tile_width * (this.x + 0.5);
+        const tween_y = this.data.hero.sprite.y - this.custom_advance_shift;
+        this.game.add.tween(this.data.hero.shadow).to(
+            {
+                x: tween_x,
+                y: tween_y,
+            },
+            this.custom_advance_time,
+            Phaser.Easing.Linear.None,
+            true
+        );
+        if (this.fade_on_advance) {
+            this._prev_alpha_sprite = this.data.hero.sprite.alpha;
+            if (this.data.hero.shadow) {
+                this._prev_alpha_shadow = this.data.hero.shadow.alpha;
+            }
+            this.game.add.tween(this.data.hero.sprite).to(
+                {
+                    alpha: 0,
+                },
+                this.custom_advance_time,
+                Phaser.Easing.Quartic.In,
+                true
+            );
+            if (this.data.hero.shadow) {
+                this.game.add.tween(this.data.hero.shadow).to(
+                    {
+                        alpha: 0,
+                    },
+                    this.custom_advance_time,
+                    Phaser.Easing.Quartic.In,
+                    true
+                );
+            }
+        }
+        if (this.watery_filter_on_advance) {
+            const timer = this.game.time.create(true);
+            timer.add(this.custom_advance_time >> 1, () => {
+                timer.destroy();
+                this.data.hero.manage_filter(this.data.hero.watery_filter, true);
+            });
+            timer.start();
+        }
+        this.game.add
+            .tween(this.data.hero.sprite.body)
+            .to(
+                {
+                    x: tween_x,
+                    y: tween_y,
+                },
+                this.custom_advance_time,
+                Phaser.Easing.Linear.None,
+                true
+            )
+            .onComplete.addOnce(() => {
+                callback();
+            });
+    }
+
     private open_door_teleport() {
         if (!this.data.hero.stop_by_colliding) {
             this.data.tile_event_manager.on_event = false;
@@ -191,32 +265,7 @@ export class TeleportEvent extends TileEvent {
             this.data.map.sprite.replace(from_tile_id, to_tile_id, x, y, 1, 1, replace_info.tile_layer);
         });
         this.game.physics.p2.pause();
-        const time = 400;
-        const tween_x = this.data.map.tile_width * (this.x + 0.5);
-        const tween_y = this.data.hero.sprite.y - 15;
-        this.game.add.tween(this.data.hero.shadow).to(
-            {
-                x: tween_x,
-                y: tween_y,
-            },
-            time,
-            Phaser.Easing.Linear.None,
-            true
-        );
-        this.game.add
-            .tween(this.data.hero.sprite.body)
-            .to(
-                {
-                    x: tween_x,
-                    y: tween_y,
-                },
-                time,
-                Phaser.Easing.Linear.None,
-                true
-            )
-            .onComplete.addOnce(() => {
-                this.camera_fade_in();
-            });
+        this.advance(this.camera_fade_in.bind(this));
     }
 
     private particles_teleport() {
@@ -239,31 +288,7 @@ export class TeleportEvent extends TileEvent {
             ParticlesWrapper.expanded_xy_pos_getter.bind(this, this.data)
         ).force_destroy_callbacks;
         this.game.physics.p2.pause();
-        const time = 400;
-        const tween_x = this.data.map.tile_width * (this.x + 0.5);
-        const tween_y = this.data.hero.sprite.y - 15;
-        this.game.add.tween(this.data.hero.shadow).to(
-            {
-                x: tween_x,
-                y: tween_y,
-            },
-            time,
-            Phaser.Easing.Linear.None,
-            true
-        );
-        const tween = this.game.add.tween(this.data.hero.sprite.body).to(
-            {
-                x: tween_x,
-                y: tween_y,
-            },
-            time,
-            Phaser.Easing.Linear.None,
-            true
-        );
-        tween.onUpdateCallback(() => {
-            this.data.particle_wrapper.render();
-        });
-        tween.onComplete.addOnce(() => {
+        this.advance(() => {
             this.set_fadein_callback(() => {
                 force_destroy_callbacks.forEach(callback => callback());
             });
@@ -331,7 +356,15 @@ export class TeleportEvent extends TileEvent {
 
         const on_camera_fade_in = () => {
             this.fadein_callbacks.forEach(callback => callback());
-
+            if (this.fade_on_advance) {
+                this.data.hero.sprite.alpha = this._prev_alpha_sprite;
+                if (this.data.hero.shadow) {
+                    this.data.hero.shadow.alpha = this._prev_alpha_shadow;
+                }
+                if (this.watery_filter_on_advance) {
+                    this.data.hero.manage_filter(this.data.hero.watery_filter, false);
+                }
+            }
             if (this.data.hero.on_reveal) {
                 (this.data.info.field_abilities_list.reveal as RevealFieldPsynergy).finish(true);
             }
