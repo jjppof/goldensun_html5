@@ -110,7 +110,7 @@ export class RevealFieldPsynergy extends FieldAbilities {
         this.reveal_wave_filter.destroy();
         this.waving_tween.stop();
         if (stop_char && !this.controllable_char.jumping && !previous_psynergy_state) {
-            this.controllable_char.stop_char(true);
+            this.controllable_char.stop_char(!this.controllable_char.sand_mode);
         }
         this.data.audio.play_se("psynergy/11");
         const reset_states = () => {

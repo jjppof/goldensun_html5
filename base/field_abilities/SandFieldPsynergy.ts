@@ -219,6 +219,7 @@ export class SandFieldPsynergy extends FieldAbilities {
                             frequency: 100,
                             repeat: 7,
                             emitter_data_key: "dust",
+                            random_animation_start: true,
                         },
                     ],
                     emission_finish: 1000,
@@ -230,7 +231,9 @@ export class SandFieldPsynergy extends FieldAbilities {
     }
 
     private finish() {
-        this.reset_map();
+        if (!this.controllable_char.on_reveal) {
+            this.reset_map();
+        }
         this.controllable_char.casting_psynergy = false;
         this.enable_update = false;
         this.return_to_idle_anim();
