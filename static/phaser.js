@@ -75261,7 +75261,11 @@ Phaser.Cache.prototype = {
         {
             if (method)
             {
-                console.warn('Phaser.Cache.' + method + ': Key "' + key + '" not found in Cache.');
+                const msg = 'Phaser.Cache.' + method + ': Key "' + key + '" not found in Cache.';
+                console.warn(msg);
+                if (window.data.logger) {
+                    window.data.logger.log_message(msg);
+                }
             }
         }
         else
@@ -105398,10 +105402,11 @@ Phaser.Tileset.prototype = {
 
         if (rowCount % 1 !== 0 || colCount % 1 !== 0)
         {
-            console.warn(
-                'Phaser.Tileset - \'%s\' image tile area (%s x %s) is not a whole multiple of tile size (%s x %s + %s + %s)',
-                this.name, imageWidth, imageHeight, this.tileWidth, this.tileHeight, this.tileMargin, this.tileSpacing
-            );
+            const msg = `Phaser.Tileset - '${this.name}' image tile area (${imageWidth} x ${imageHeight}) is not a whole multiple of tile size (${this.tileWidth} x ${this.tileHeight} + ${this.tileMargin} + ${this.tileSpacing})`;
+            console.warn(msg);
+            if (window.data.logger) {
+                window.data.logger.log_message(msg);
+            }
         }
 
         /*
