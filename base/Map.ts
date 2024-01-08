@@ -1232,7 +1232,9 @@ export class Map {
                     property_info.contact_points,
                     property_info.pillar_direction,
                     property_info.dest_pos_after_fall,
-                    property_info.dest_collision_layer
+                    property_info.dest_collision_layer,
+                    property_info.after_rolling_events,
+                    property_info.on_rolling_start_events
                 );
             } else if (interactable_object.whirlwind_source) {
                 (interactable_object as WhirlwindSource).intialize_whirlwind_source(

@@ -3,6 +3,7 @@ import {Map} from "../Map";
 import {base_actions, directions, get_centered_pos_in_px, get_distance, get_sqr_distance} from "../utils";
 import {InteractableObjects} from "./InteractableObjects";
 import * as _ from "lodash";
+import {GameEvent, game_event_origin} from "../game_events/GameEvent";
 
 enum pillar_directions {
     HORIZONTAL = "horizontal",
@@ -18,6 +19,8 @@ export class RollablePillar extends InteractableObjects {
     private _contact_points: {x: number; y: number}[];
     private _pillar_direction: pillar_directions;
     private _pillar_is_stuck: boolean;
+    private _after_rolling_events: GameEvent[];
+    private _on_rolling_start_events: GameEvent[];
 
     constructor(
         game,
@@ -87,6 +90,8 @@ export class RollablePillar extends InteractableObjects {
         );
         this._rollable = true;
         this._pillar_is_stuck = this.snapshot_info?.state_by_type.rollable.pillar_is_stuck ?? false;
+        this._after_rolling_events = [];
+        this._on_rolling_start_events = [];
     }
 
     get pillar_is_stuck() {
@@ -98,13 +103,35 @@ export class RollablePillar extends InteractableObjects {
         contact_points: RollablePillar["_contact_points"],
         pillar_direction: pillar_directions,
         dest_pos_after_fall: RollablePillar["_dest_pos_after_fall"],
-        dest_collision_layer: number
+        dest_collision_layer: number,
+        after_rolling_events: any[],
+        on_rolling_start_events: any[]
     ) {
         this._falling_pos = falling_pos;
         this._contact_points = contact_points;
         this._pillar_direction = pillar_direction;
         this._dest_pos_after_fall = dest_pos_after_fall;
         this._dest_collision_layer = dest_collision_layer ?? this.base_collision_layer;
+        after_rolling_events = after_rolling_events ?? [];
+        after_rolling_events.forEach(event_info => {
+            this._after_rolling_events.push(
+                this.data.game_event_manager.get_event_instance(
+                    event_info,
+                    game_event_origin.INTERACTABLE_OBJECT_PUSH,
+                    this
+                )
+            );
+        });
+        on_rolling_start_events = on_rolling_start_events ?? [];
+        on_rolling_start_events.forEach(event_info => {
+            this._on_rolling_start_events.push(
+                this.data.game_event_manager.get_event_instance(
+                    event_info,
+                    game_event_origin.INTERACTABLE_OBJECT_PUSH,
+                    this
+                )
+            );
+        });
     }
 
     config_rolling_pillar(map: Map) {
@@ -273,6 +300,8 @@ export class RollablePillar extends InteractableObjects {
         next_contact: RollablePillar["_contact_points"][0],
         rolling_pillar_will_fall: boolean
     ) {
+        this._on_rolling_start_events.forEach(async e => e.fire());
+
         this.play("rolling");
 
         const rolling_sound = this.data.audio.play_se("misc/rolling");
@@ -357,6 +386,8 @@ export class RollablePillar extends InteractableObjects {
 
         char.toggle_collision(true);
         char.pushing = false;
+
+        this._after_rolling_events.forEach(async e => e.fire());
     }
 
     async fall_pillar(next_contact: RollablePillar["_contact_points"][0]) {
@@ -417,5 +448,12 @@ export class RollablePillar extends InteractableObjects {
         this.play("floating");
 
         this._pillar_is_stuck = true;
+    }
+
+    public custom_unset() {
+        this._after_rolling_events.forEach(e => e.destroy());
+        this._after_rolling_events = null;
+        this._on_rolling_start_events.forEach(e => e.destroy());
+        this._on_rolling_start_events = null;
     }
 }
