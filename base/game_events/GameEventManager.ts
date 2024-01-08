@@ -579,7 +579,8 @@ export class GameEventManager {
                     info.io_label,
                     info.activate_at,
                     info.pos,
-                    info.collision_layers
+                    info.collision_layers,
+                    info.remove_from_field
                 );
             case event_types.DESTROYER:
                 return new DestroyerEvent(

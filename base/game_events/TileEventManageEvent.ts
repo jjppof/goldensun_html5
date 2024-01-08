@@ -8,6 +8,7 @@ export class TileEventManageEvent extends GameEvent {
     private activate_at: {[direction: string]: boolean};
     private pos: {x: number; y: number};
     private collision_layers: number[];
+    private remove_from_field: boolean;
 
     constructor(
         game,
@@ -19,12 +20,14 @@ export class TileEventManageEvent extends GameEvent {
         io_label,
         activate_at,
         pos,
-        collision_layers
+        collision_layers,
+        remove_from_field
     ) {
         super(game, data, event_types.TILE_EVENT_MANAGE, active, key_name, keep_reveal);
         this.tile_event_key = tile_event_key;
         this.io_label = io_label;
         this.activate_at = activate_at;
+        this.remove_from_field = remove_from_field;
         this.pos = pos;
         if (collision_layers !== undefined) {
             this.collision_layers = Array.isArray(collision_layers) ? collision_layers : [collision_layers];
@@ -32,7 +35,7 @@ export class TileEventManageEvent extends GameEvent {
     }
 
     _fire() {
-        let events = [];
+        let events: TileEvent[] = [];
         if (this.tile_event_key) {
             const event = TileEvent.get_labeled_event(this.tile_event_key);
             if (event) {
@@ -86,6 +89,10 @@ export class TileEventManageEvent extends GameEvent {
 
             if (this.pos) {
                 event.set_position(this.pos.x, this.pos.y, true);
+            }
+
+            if (this.remove_from_field) {
+                this.data.map.remove_event(event.location_key, event.id);
             }
         }
     }
