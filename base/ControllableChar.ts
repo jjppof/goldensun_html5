@@ -1439,7 +1439,7 @@ export abstract class ControllableChar {
     set_direction(direction?: directions, force_change: boolean = false, transition_also: boolean = true) {
         this._current_direction = direction ?? this.required_direction;
         if (transition_also) {
-            this._transition_direction = direction;
+            this._transition_direction = this.current_direction;
         }
         this._current_animation = reverse_directions[this.current_direction];
         if (force_change) {
