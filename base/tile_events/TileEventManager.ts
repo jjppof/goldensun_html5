@@ -150,6 +150,11 @@ export class TileEventManager {
             current_event.fire();
         } else if (![event_types.SPEED, event_types.STEP, event_types.COLLISION].includes(current_event.type)) {
             current_event.fire();
+        } else if (
+            current_event.type === event_types.EVENT_TRIGGER &&
+            !(current_event as EventTriggerEvent).trigger_on_exit
+        ) {
+            current_event.fire();
         }
     }
 
@@ -200,13 +205,31 @@ export class TileEventManager {
                     }
                     break;
                 case event_types.ICE_SLIDE:
+                    this.event_queue.add(
+                        this_event,
+                        this.data.hero.current_direction,
+                        this.fire_event.bind(this, this_event, this.data.hero.current_direction)
+                    );
+                    break;
                 case event_types.EVENT_TRIGGER:
-                    if (!((this_event as EventTriggerEvent).trigger_once && location_key === this.prev_location_key)) {
-                        this.event_queue.add(
-                            this_event,
-                            this.data.hero.current_direction,
-                            this.fire_event.bind(this, this_event, this.data.hero.current_direction)
-                        );
+                    if ((this_event as EventTriggerEvent).trigger_on_exit) {
+                        if (!this.event_triggered(this_event)) {
+                            this.event_queue.add(
+                                this_event,
+                                this.data.hero.current_direction,
+                                (this_event as EventTriggerEvent).set.bind(this_event)
+                            );
+                        }
+                    } else {
+                        if (
+                            !((this_event as EventTriggerEvent).trigger_once && location_key === this.prev_location_key)
+                        ) {
+                            this.event_queue.add(
+                                this_event,
+                                this.data.hero.current_direction,
+                                this.fire_event.bind(this, this_event, this.data.hero.current_direction)
+                            );
+                        }
                     }
                     break;
                 case event_types.TELEPORT:
@@ -438,7 +461,8 @@ export class TileEventManager {
                 info.key_name,
                 info.events,
                 info.remove_from_field,
-                info.trigger_once
+                info.trigger_once,
+                info.trigger_on_exit
             );
         } else if (info.type === event_types.ICE_SLIDE) {
             return new IceSlideEvent(
