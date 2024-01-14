@@ -4,6 +4,7 @@ import {event_types, TileEvent} from "./TileEvent";
 export class EventTriggerEvent extends TileEvent {
     private events: GameEvent[] = [];
     private remove_from_field: boolean;
+    public trigger_once: boolean;
 
     constructor(
         game,
@@ -17,7 +18,8 @@ export class EventTriggerEvent extends TileEvent {
         affected_by_reveal,
         key_name: string,
         events,
-        remove_from_field
+        remove_from_field,
+        trigger_once
     ) {
         super(
             game,
@@ -34,6 +36,7 @@ export class EventTriggerEvent extends TileEvent {
             key_name
         );
         this.remove_from_field = remove_from_field;
+        this.trigger_once = trigger_once ?? false;
         events.forEach(event_info => {
             const event = this.data.game_event_manager.get_event_instance(event_info, game_event_origin.TILE_EVENT);
             this.events.push(event);

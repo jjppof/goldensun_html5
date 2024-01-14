@@ -108,6 +108,11 @@ export class Map {
 
     /** If true, sprites in middlelayer_group won't be sorted. */
     public sprites_sort_paused: boolean;
+    /** Generic tween object to be used to transition this map filters. */
+    public filter_tween: {
+        [engine_filters.COLORIZE]: Phaser.Tween;
+        [engine_filters.GRAY]: Phaser.Tween;
+    };
 
     constructor(
         game,
@@ -183,6 +188,10 @@ export class Map {
             interactable_objects: {},
         };
         this._sand_collision_layer = -1;
+        this.filter_tween = {
+            [engine_filters.COLORIZE]: null,
+            [engine_filters.GRAY]: null,
+        };
     }
 
     /** The list of TileEvents of this map. */
@@ -1866,6 +1875,8 @@ export class Map {
         this._events = {};
         TileEvent.reset();
         GameEvent.reset();
+
+        this.data.tile_event_manager.reset_prev_location_key();
 
         this.initialize_map_name_window();
 

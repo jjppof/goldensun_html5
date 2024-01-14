@@ -775,7 +775,8 @@ export class GameEventManager {
                     info.gray,
                     info.duration,
                     info.finish_events,
-                    info.layer
+                    info.layer,
+                    info.detach_transition
                 );
             case event_types.COLORIZE_CHAR:
                 return new ColorizeCharEvent(

@@ -80,6 +80,7 @@ export class TileEventManager {
     private _walking_on_pillars_tiles: Set<string>;
     private triggered_events: {[event_id: number]: TileEvent};
     private event_queue: EventQueue;
+    private prev_location_key: number;
 
     constructor(game, data) {
         this.game = game;
@@ -89,6 +90,7 @@ export class TileEventManager {
         this._walking_on_pillars_tiles = new Set();
         this.triggered_events = {};
         this.event_queue = new EventQueue();
+        this.prev_location_key = -1;
     }
 
     get walking_on_pillars_tiles() {
@@ -103,6 +105,10 @@ export class TileEventManager {
     /** Checks whether there are events that are up to happen. */
     get timers_running() {
         return Boolean(Object.keys(this.event_timers).length);
+    }
+
+    reset_prev_location_key() {
+        this.prev_location_key = -1;
     }
 
     set_triggered_event(event: TileEvent) {
@@ -195,11 +201,13 @@ export class TileEventManager {
                     break;
                 case event_types.ICE_SLIDE:
                 case event_types.EVENT_TRIGGER:
-                    this.event_queue.add(
-                        this_event,
-                        this.data.hero.current_direction,
-                        this.fire_event.bind(this, this_event, this.data.hero.current_direction)
-                    );
+                    if (!((this_event as EventTriggerEvent).trigger_once && location_key === this.prev_location_key)) {
+                        this.event_queue.add(
+                            this_event,
+                            this.data.hero.current_direction,
+                            this.fire_event.bind(this, this_event, this.data.hero.current_direction)
+                        );
+                    }
                     break;
                 case event_types.TELEPORT:
                 case event_types.JUMP:
@@ -271,6 +279,7 @@ export class TileEventManager {
             this.event_queue.process_queue();
         }
         this.event_queue.reset();
+        this.prev_location_key = location_key;
     }
 
     /**
@@ -428,7 +437,8 @@ export class TileEventManager {
                 info.affected_by_reveal,
                 info.key_name,
                 info.events,
-                info.remove_from_field
+                info.remove_from_field,
+                info.trigger_once
             );
         } else if (info.type === event_types.ICE_SLIDE) {
             return new IceSlideEvent(
