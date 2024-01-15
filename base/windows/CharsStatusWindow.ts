@@ -92,6 +92,7 @@ export class CharsStatusWindow {
         this.status_win_x =
             numbers.GAME_WIDTH - this.status_win_width - numbers.INSIDE_BORDER_WIDTH - numbers.OUTSIDE_BORDER_WIDTH;
         this.status_window = new Window(this.game, this.status_win_x, 0, this.status_win_width, this.status_win_height);
+        this.status_window.set_canvas_update();
         this.info_sprites = {};
 
         this.set_chars_info();
@@ -114,13 +115,6 @@ export class CharsStatusWindow {
             }
             this.status_window.add_sprite_to_window_group(this.stars_group);
         }
-    }
-
-    /*Updates the window's position
-
-    Input: force [boolean] = If true, forces an update*/
-    update_position() {
-        this.status_window.update();
     }
 
     /*Sets the characters' information and creates the graphics

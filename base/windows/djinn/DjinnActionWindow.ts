@@ -58,6 +58,7 @@ export class DjinnActionWindow {
         this.star_sprite = null;
 
         this.base_window = new Window(this.game, BASE_WIN_X, BASE_WIN_Y, BASE_WIN_WIDTH, BASE_WIN_HEIGHT);
+        this.base_window.set_canvas_update();
 
         this.action_description_text = this.base_window.set_text_in_position("", CHOOSE_A_DJ_X, CHOOSE_A_DJ_Y);
         this.char_name_text = this.base_window.set_text_in_position("", CHAR_NAME_X, CHAR_NAME_Y);

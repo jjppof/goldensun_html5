@@ -566,9 +566,7 @@ export class GoldenSun {
             } else {
                 this.hero.stop_char(false);
             }
-            if (this.menu_open && this.main_menu.is_active) {
-                this.main_menu.update_position();
-            } else if (this.shop_open && this.shop_menu.horizontal_menu.menu_active) {
+            if (this.shop_open && this.shop_menu.horizontal_menu.menu_active) {
                 this.shop_menu.update_position();
             } else if (this.healer_open && this.healer_menu.horizontal_menu.menu_active) {
                 this.healer_menu.update_position();

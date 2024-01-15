@@ -78,6 +78,7 @@ export class DjinnCharStatsWindow {
         this.stats_next_texts = {};
 
         this.base_window = new Window(this.game, win_x, BASE_WIN_Y, BASE_WIN_WIDTH, BASE_WIN_HEIGHT);
+        this.base_window.set_canvas_update();
 
         this.char_name_text = this.base_window.set_text_in_position("", CHAR_NAME_X, CHAR_NAME_Y);
         this.base_window.set_text_in_position("Lv", LV_X, LV_Y);

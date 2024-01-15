@@ -73,6 +73,7 @@ export class DjinnPsynergyWindow {
         this.icon_sprites_in_window = [];
 
         this.base_window = new Window(this.game, BASE_WIN_X, BASE_WIN_Y, BASE_WIN_WIDTH, BASE_WIN_HEIGHT);
+        this.base_window.set_canvas_update();
         this.base_window.set_text_in_position("PP", PSY_PP_COST_X, PSY_PP_COST_Y);
         this.psy_info_1_text = this.base_window.set_text_in_position("", PSY_INFO_X, PSY_INFO_1_Y);
         this.psy_info_2_text = this.base_window.set_text_in_position("", PSY_INFO_X, PSY_INFO_2_Y);

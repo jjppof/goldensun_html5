@@ -93,18 +93,12 @@ export class MainMenu {
         }, false);
     }
 
-    public update_position() {
-        this.chars_status_window.update_position();
-        this.horizontal_menu.update_position();
-    }
-
     public open_menu() {
         this._open = true;
         if (this.data.map.map_name_window.open) {
             this.data.map.map_name_window.close();
         }
         this.chars_status_window.update_chars_info();
-        this.chars_status_window.update_position();
         this.chars_status_window.show();
         this.horizontal_menu.open();
     }

@@ -224,7 +224,6 @@ export class HealerMenu {
 
     update_position() {
         this.coins_window.update();
-        this.horizontal_menu.update_position();
     }
 
     private set_dialog(options: {

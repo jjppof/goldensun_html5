@@ -53,7 +53,6 @@ export class YesNoMenu {
             this.menu.y = new_y;
             this.menu.title_window.update_position({y: new_y});
         }
-        this.menu.update_position();
         this.menu.title_window.send_to_front();
     }
 

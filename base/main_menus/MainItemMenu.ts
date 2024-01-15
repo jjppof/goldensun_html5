@@ -112,6 +112,7 @@ export class MainItemMenu {
             GUIDE_WINDOW_WIDTH,
             GUIDE_WINDOW_HEIGHT
         );
+        this.guide_window.set_canvas_update();
         this.guide_window_text = this.guide_window.set_text_in_position("");
         this.choosing_item = false;
         this.guide_window_msgs = {

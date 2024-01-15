@@ -399,7 +399,6 @@ export class ShopMenu {
 
     update_position() {
         this.npc_dialog.update_position();
-        this.horizontal_menu.update_position();
     }
 
     open_horizontal_menu(message_key = "cancel_option") {

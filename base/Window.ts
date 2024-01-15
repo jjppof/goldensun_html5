@@ -75,6 +75,7 @@ export class Window {
         right: Phaser.BitmapData;
     };
     private _text_tween: Phaser.Tween;
+    private canvas_update_set: boolean;
 
     constructor(
         game: Phaser.Game,
@@ -125,6 +126,8 @@ export class Window {
 
         this._open = false;
         this._page_indicator = new PageIndicator(this.game, this);
+
+        this.canvas_update_set = false;
     }
 
     /** The window background color. */
@@ -632,8 +635,10 @@ export class Window {
      */
     show(show_callback?: () => void, animate = true, close_callback?: () => void) {
         this.group.visible = true;
-        this.group.x = (this.game.camera.x | 0) + this.x;
-        this.group.y = (this.game.camera.y | 0) + this.y;
+        if (!this.canvas_update_set) {
+            this.group.x = (this.game.camera.x | 0) + this.x;
+            this.group.y = (this.game.camera.y | 0) + this.y;
+        }
 
         this.close_callback = close_callback;
 
@@ -658,6 +663,17 @@ export class Window {
     update() {
         this.group.x = (this.game.camera.x | 0) + this.x;
         this.group.y = (this.game.camera.y | 0) + this.y;
+    }
+
+    /** Will update this window position in respect to canvas instead of camera. */
+    set_canvas_update() {
+        this.canvas_update_set = true;
+        this.group.transformCallback = () => {
+            if (this.group.visible) {
+                this.group.x += this.x - this.group.worldPosition.x;
+                this.group.y += this.y - this.group.worldPosition.y;
+            }
+        };
     }
 
     /**
@@ -716,15 +732,20 @@ export class Window {
      * Removes a sprite from the main group of this window.
      * @param sprite The sprite to be removed.
      * @param destroy If true, the sprite is destroyed.
+     * @param exception_list list of sprites that won't be destroyed.
      */
     remove_from_this_window(
         sprite?: Phaser.Sprite | Phaser.Graphics | Phaser.BitmapText | Phaser.Group,
-        destroy = true
+        destroy = true,
+        exception_list?: (Phaser.Sprite | Phaser.Graphics | Phaser.BitmapText | Phaser.Group)[]
     ) {
         if (sprite !== undefined) {
             this.group.remove(sprite, destroy);
         } else {
             for (let i = 0; i < this.extra_sprites.length; ++i) {
+                if (exception_list && exception_list.includes(this.extra_sprites[i])) {
+                    continue;
+                }
                 this.group.remove(this.extra_sprites[i], destroy);
             }
         }

@@ -53,6 +53,7 @@ export class CharsQuickInfoDjinnWindow {
         this.y = BASE_WIN_Y;
 
         this.base_window = new Window(this.game, this.x, this.y, BASE_WIN_WIDTH, BASE_WIN_HEIGHT);
+        this.base_window.set_canvas_update();
         this.char_name = this.base_window.set_text_in_position("", NAME_X, NAME_Y);
         this.char_class = this.base_window.set_text_in_position("", NAME_X, CLASS_Y);
         this.level_label = this.base_window.set_text_in_position("Lv", LV_X, LV_Y);

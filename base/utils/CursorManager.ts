@@ -50,6 +50,10 @@ export class CursorManager {
     private game: Phaser.Game;
     private group: Phaser.Group;
     private cursor: Phaser.Sprite;
+    private position: {
+        x: number;
+        y: number;
+    };
 
     private active_tween: Phaser.Tween;
 
@@ -61,6 +65,12 @@ export class CursorManager {
 
         this.group = this.game.add.group();
         this.group.visible = false;
+        this.group.transformCallback = () => {
+            if (this.group.visible) {
+                this.group.x += this.position.x - this.group.worldPosition.x;
+                this.group.y += this.position.y - this.group.worldPosition.y;
+            }
+        };
 
         this.group.x = 0;
         this.group.y = 0;
@@ -72,6 +82,11 @@ export class CursorManager {
 
         this.cursor_default_pos = {x: 0, y: 0};
         this.cursor_flipped = false;
+
+        this.position = {
+            x: 0,
+            y: 0,
+        };
     }
 
     public init_tween(config: TweenConfig, callback?: Function) {
@@ -87,23 +102,23 @@ export class CursorManager {
                 let wiggle_time = config.time ? config.time : CursorManager.WIGGLE.DEFAULT_TIME;
 
                 this.active_tween = this.game.add
-                    .tween(this.cursor)
+                    .tween(this.position)
                     .to(
-                        {x: this.cursor.x + wiggle_x1, y: this.cursor.y + wiggle_y1},
+                        {x: this.position.x + wiggle_x1, y: this.position.y + wiggle_y1},
                         wiggle_time,
                         Phaser.Easing.Linear.None
                     )
                     .to(
-                        {x: this.cursor.x + wiggle_x2, y: this.cursor.y + wiggle_y2},
+                        {x: this.position.x + wiggle_x2, y: this.position.y + wiggle_y2},
                         wiggle_time,
                         Phaser.Easing.Linear.None
                     )
                     .to(
-                        {x: this.cursor.x + wiggle_x1, y: this.cursor.y + wiggle_y1},
+                        {x: this.position.x + wiggle_x1, y: this.position.y + wiggle_y1},
                         wiggle_time,
                         Phaser.Easing.Linear.None
                     )
-                    .to({x: this.cursor.x, y: this.cursor.y}, wiggle_time, Phaser.Easing.Linear.None)
+                    .to({x: this.position.x, y: this.position.y}, wiggle_time, Phaser.Easing.Linear.None)
                     .loop();
                 break;
             case CursorManager.POINT.KEY:
@@ -115,9 +130,13 @@ export class CursorManager {
                 if (this.cursor_flipped) point_x *= -1;
 
                 this.active_tween = this.game.add
-                    .tween(this.cursor)
-                    .to({x: this.cursor.x + point_x, y: this.cursor.y + point_y}, point_time, Phaser.Easing.Linear.None)
-                    .to({x: this.cursor.x, y: this.cursor.y}, point_time, Phaser.Easing.Linear.None)
+                    .tween(this.position)
+                    .to(
+                        {x: this.position.x + point_x, y: this.position.y + point_y},
+                        point_time,
+                        Phaser.Easing.Linear.None
+                    )
+                    .to({x: this.position.x, y: this.position.y}, point_time, Phaser.Easing.Linear.None)
                     .loop();
         }
 
@@ -147,26 +166,21 @@ export class CursorManager {
         if (!tween_config) this.clear_tweens();
 
         pos.x += CursorManager.X_SHIFT;
-        this.cursor_default_pos = {x: pos.x + this.game.camera.x, y: pos.y + this.game.camera.y};
+        this.cursor_default_pos = {x: pos.x, y: pos.y};
 
         if (animate) {
-            let t = this.game.add
-                .tween(this.cursor)
-                .to(
-                    {x: pos.x + this.game.camera.x, y: pos.y + this.game.camera.y},
-                    move_time,
-                    Phaser.Easing.Linear.None,
-                    true
-                );
-            t.onComplete.addOnce(() => {
+            let tween = this.game.add
+                .tween(this.position)
+                .to({x: pos.x, y: pos.y}, move_time, Phaser.Easing.Linear.None, true);
+            tween.onComplete.addOnce(() => {
                 if (tween_config) this.init_tween(tween_config, on_complete);
                 else {
                     if (on_complete) on_complete();
                 }
             }, this);
         } else {
-            this.cursor.x = pos.x + this.game.camera.x;
-            this.cursor.y = pos.y + this.game.camera.y;
+            this.position.x = pos.x;
+            this.position.y = pos.y;
 
             if (tween_config) this.init_tween(tween_config, on_complete);
             else if (on_complete) on_complete();
@@ -177,8 +191,8 @@ export class CursorManager {
         if (this.active_tween) this.game.tweens.remove(this.active_tween);
         this.active_tween = null;
 
-        this.cursor.x = this.cursor_default_pos.x;
-        this.cursor.y = this.cursor_default_pos.y;
+        this.position.x = this.cursor_default_pos.x;
+        this.position.y = this.cursor_default_pos.y;
     }
 
     public flip_cursor() {
@@ -198,6 +212,7 @@ export class CursorManager {
 
     public show() {
         this.group.visible = true;
+        this.group.updateTransform();
     }
 
     public destroy() {

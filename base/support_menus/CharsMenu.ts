@@ -96,14 +96,16 @@ export class CharsMenu {
         this.on_change = on_change;
 
         this.window = new Window(this.game, WIN_X, WIN_Y, WIN_WIDTH, WIN_HEIGHT);
+        this.window.set_canvas_update();
         this.char_group = this.game.add.group();
         this.char_group.x = CHAR_GROUP_X;
         this.char_group.y = CHAR_GROUP_Y;
-        this.char_group.visible = true;
+        this.window.add_sprite_to_window_group(this.char_group);
 
         this.arrow_group = this.game.add.group();
         this.arrow_group.x = ARROW_GROUP_X;
         this.arrow_group.y = ARROW_GROUP_Y;
+        this.window.add_sprite_to_window_group(this.arrow_group);
 
         this.up_arrow = this.arrow_group.create(UP_ARROW_X, UP_ARROW_Y, "menu", "green_arrow");
         this.up_arrow.rotation = Math.PI;
@@ -131,28 +133,28 @@ export class CharsMenu {
             this.window.update_size({width: WIN_WIDTH, height: WIN_HEIGHT});
             this.window.update_position({x: WIN_X, y: WIN_Y});
 
-            this.char_group.x = CHAR_GROUP_X + this.game.camera.x;
-            this.char_group.y = CHAR_GROUP_Y + this.game.camera.y;
-            this.arrow_group.x = ARROW_GROUP_X + this.game.camera.x;
-            this.arrow_group.y = ARROW_GROUP_Y + this.game.camera.y;
+            this.char_group.x = CHAR_GROUP_X;
+            this.char_group.y = CHAR_GROUP_Y;
+            this.arrow_group.x = ARROW_GROUP_X;
+            this.arrow_group.y = ARROW_GROUP_Y;
         } else if (this.mode === CharsMenuModes.MENU) {
             this.window.update_size({width: WIN_WIDTH2, height: WIN_HEIGHT2});
             this.window.update_position({x: WIN_X2, y: WIN_Y2});
 
-            this.char_group.x = CHAR_GROUP_X2 + this.game.camera.x;
-            this.char_group.y = CHAR_GROUP_Y2 + this.game.camera.y;
-            this.arrow_group.x = ARROW_GROUP_X2 + this.game.camera.x;
-            this.arrow_group.y = ARROW_GROUP_Y2 + this.game.camera.y;
+            this.char_group.x = CHAR_GROUP_X2;
+            this.char_group.y = CHAR_GROUP_Y2;
+            this.arrow_group.x = ARROW_GROUP_X2;
+            this.arrow_group.y = ARROW_GROUP_Y2;
 
             this.window.draw_separator(SEPARATOR_X, SEPARATOR_Y, SEPARATOR_X + SEPARATOR_LENGTH, SEPARATOR_Y, false);
         } else if (this.mode === CharsMenuModes.HEALER) {
             this.window.update_size({width: WIN_WIDTH, height: WIN_HEIGHT});
             this.window.update_position({x: WIN_X3, y: WIN_Y3});
 
-            this.char_group.x = CHAR_GROUP_X3 + this.game.camera.x;
-            this.char_group.y = CHAR_GROUP_Y3 + this.game.camera.y;
-            this.arrow_group.x = ARROW_GROUP_X3 + this.game.camera.x;
-            this.arrow_group.y = ARROW_GROUP_Y3 + this.game.camera.y;
+            this.char_group.x = CHAR_GROUP_X3;
+            this.char_group.y = CHAR_GROUP_Y3;
+            this.arrow_group.x = ARROW_GROUP_X3;
+            this.arrow_group.y = ARROW_GROUP_Y3;
         }
     }
 
@@ -492,7 +494,6 @@ export class CharsMenu {
         this.set_chars();
         this.select_char(select_index, undefined, silent);
 
-        this.char_group.visible = true;
         this.is_open = true;
 
         this.activate();
@@ -510,7 +511,6 @@ export class CharsMenu {
         this.selected_index = null;
         this.is_active = false;
         this.is_open = false;
-        this.char_group.visible = false;
         this.mode = null;
 
         this.set_arrows(false, false);

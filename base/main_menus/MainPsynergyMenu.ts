@@ -121,6 +121,10 @@ export class MainPsynergyMenu {
             SHORTCUTS_WINDOW_WIDTH,
             SHORTCUTS_WINDOW_HEIGHT
         );
+        this.guide_window.set_canvas_update();
+        this.description_window.set_canvas_update();
+        this.psynergy_overview_window.set_canvas_update();
+        this.shortcuts_window.set_canvas_update();
         this.init_shortcuts_window();
 
         this.guide_window_text = this.guide_window.set_text_in_position("");

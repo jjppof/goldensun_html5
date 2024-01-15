@@ -22,7 +22,6 @@ export class BasicInfoWindow {
     public x: number;
     public y: number;
     public base_window: Window;
-    public avatar_group: Phaser.Group;
     public x_avatar: number;
     public y_avatar: number;
     public avatar: Phaser.Sprite;
@@ -51,12 +50,10 @@ export class BasicInfoWindow {
         this.x = BASE_WIN_X;
         this.y = BASE_WIN_Y;
         this.base_window = new Window(this.game, this.x, this.y, BASE_WIN_WIDTH, BASE_WIN_HEIGHT);
+        this.base_window.set_canvas_update();
 
-        this.avatar_group = game.add.group();
-        this.avatar_group.visible = false;
-        this.x_avatar = this.x + 8;
-        this.y_avatar = this.y + 8;
-        this.avatar = this.avatar_group.create(0, 0, "avatars");
+        this.avatar = this.game.add.sprite(8, 8, "avatars");
+        this.base_window.add_sprite_to_window_group(this.avatar);
 
         this.basic_stats_group = this.base_window.define_internal_group(BasicInfoWindow.BASIC_STATS_GROUP_KEY);
         this.gear_stats_group = this.base_window.define_internal_group(BasicInfoWindow.GEAR_STATS_GROUP_KEY);
@@ -128,12 +125,6 @@ export class BasicInfoWindow {
             right_align: true,
             internal_group_key: BasicInfoWindow.GEAR_STATS_GROUP_KEY,
         });
-    }
-
-    /** Places the avatar group correctly on screen */
-    update_position() {
-        this.avatar_group.x = this.game.camera.x + this.x_avatar;
-        this.avatar_group.y = this.game.camera.y + this.y_avatar;
     }
 
     set_common_texts() {
@@ -213,8 +204,6 @@ export class BasicInfoWindow {
            callback [function] - Callback function (Optional)
            basic_stats [boolean] - Whether it's basic stats or gear stats*/
     open(char: MainChar, callback?, basic_stats: boolean = true) {
-        this.update_position();
-        this.avatar_group.visible = true;
         if (basic_stats) {
             this.set_char_basic_stats(char);
         } else {
@@ -232,7 +221,6 @@ export class BasicInfoWindow {
 
     Input: callback [function] - Callback function (Optional)*/
     close(callback?) {
-        this.avatar_group.visible = false;
         this.basic_stats_group.visible = false;
         this.gear_stats_group.visible = false;
         this.base_window.close(() => {

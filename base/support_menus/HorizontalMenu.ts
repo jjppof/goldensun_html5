@@ -106,10 +106,18 @@ export class HorizontalMenu {
             this.title_window_width,
             TITLE_WINDOW_HEIGHT
         );
+        this.title_window.set_canvas_update();
+
         this.group = game.add.group();
         this.group.visible = false;
         this.group.width = 0;
         this.group.height = 0;
+        this.group.transformCallback = () => {
+            if (this.group.visible) {
+                this.group.x += this.x - this.group.worldPosition.x;
+                this.group.y += this.y - this.group.worldPosition.y;
+            }
+        };
 
         this.title_text_obj = this.title_window.set_text_in_position("");
 
@@ -214,12 +222,6 @@ export class HorizontalMenu {
         }
     }
 
-    update_position() {
-        this.group.x = this.game.camera.x + this.x;
-        this.group.y = this.game.camera.y + this.y;
-        this.title_window.update();
-    }
-
     open(
         callback?: Function,
         select_index: number = 0,
@@ -235,7 +237,6 @@ export class HorizontalMenu {
         this.group.visible = true;
         this.selected_button_index = select_index;
 
-        this.update_position();
         this.title_window.update_text(this.buttons[this.selected_button_index].title, this.title_text_obj);
 
         let window_promise_resolve: () => void;

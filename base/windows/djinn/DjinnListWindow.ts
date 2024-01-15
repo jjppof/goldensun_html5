@@ -106,10 +106,14 @@ export class DjinnListWindow {
         this.close_callback = null;
 
         this.base_window = new Window(this.game, WIN_X, WIN_Y, WIN_WIDTH, WIN_HEIGHT);
+        this.base_window.set_canvas_update();
+
         this.group = this.game.add.group();
-        this.group.visible = false;
         this.chars_sprites_group = this.game.add.group();
         this.group.add(this.chars_sprites_group);
+        this.base_window.add_sprite_to_window_group(this.group);
+        this.group.x = 0;
+        this.group.y = 0;
 
         this.window_open = false;
         this.window_active = false;
@@ -148,11 +152,6 @@ export class DjinnListWindow {
         bar_highlight.endFill();
 
         return bar_highlight;
-    }
-
-    update_position() {
-        this.group.x = this.game.camera.x + WIN_X;
-        this.group.y = this.game.camera.y + WIN_Y;
     }
 
     next_character() {
@@ -411,7 +410,7 @@ export class DjinnListWindow {
             this.chars_sprites[key].animations.stop();
             this.chars_sprites[key].visible = false;
         }
-        this.base_window.remove_from_this_window();
+        this.base_window.remove_from_this_window(undefined, undefined, [this.group]);
         for (let i = 0; i < this.djinn_names.length; ++i) {
             const names = this.djinn_names[i];
             for (let j = 0; j < names.length; ++j) {
@@ -920,7 +919,6 @@ export class DjinnListWindow {
         this.selected_djinn_index = 0;
         this.page_index = 0;
 
-        this.group.visible = true;
         this.setting_djinn_status_char_index = -1;
         this.setting_djinn_status_djinn_index = -1;
         this.setting_djinn_status = false;
@@ -928,7 +926,6 @@ export class DjinnListWindow {
         this.djinn_action_window = djinn_action_window;
 
         this.load_page();
-        this.update_position();
         this.set_highlight_bar();
         this.set_action_text();
         this.update_djinn_description();
@@ -960,7 +957,6 @@ export class DjinnListWindow {
         this.data.cursor_manager.hide();
 
         this.unset_page();
-        this.group.visible = false;
 
         this.base_window.close(undefined, false);
         if (this.close_callback) {

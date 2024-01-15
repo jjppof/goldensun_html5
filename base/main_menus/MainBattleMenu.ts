@@ -361,10 +361,6 @@ export class MainBattleMenu {
     }
 
     update_position() {
-        this.chars_status_window.update_position();
-        this.start_horizontal_menu.update_position();
-        this.inner_horizontal_menu.update_position();
-
         this.group.x = this.game.camera.x;
         this.group.y = this.game.camera.y;
     }

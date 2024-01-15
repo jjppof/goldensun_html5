@@ -84,7 +84,9 @@ export class DjinnModeHeaderWindow {
         this.y = BASE_WIN_Y;
 
         this.base_window = new Window(this.game, this.x, this.y, BASE_WIN_WIDTH, BASE_WIN_HEIGHT);
+        this.base_window.set_canvas_update();
         this.group = game.add.group();
+        this.base_window.add_sprite_to_window_group(this.group);
 
         this.ok_msg_text = this.base_window.set_text_in_position("Is this OK?", OK_MSG_X, OK_MSG_Y);
         this.djinn_status_text = this.base_window.set_text_in_position("", DJINN_STATUS_X, DJINN_STATUS_Y);
@@ -115,11 +117,6 @@ export class DjinnModeHeaderWindow {
         this.init_arrow_blinks();
     }
 
-    update_position() {
-        this.group.x = this.game.camera.x + BASE_WIN_X;
-        this.group.y = this.game.camera.y + BASE_WIN_Y;
-    }
-
     init_arrow_blinks() {
         this.djinn_status_arrow_blink_timer = this.game.time.create(false);
         this.djinn_status_arrow_blink_timer.loop(90, () => {
@@ -134,7 +131,6 @@ export class DjinnModeHeaderWindow {
     }
 
     mount_window() {
-        this.update_position();
         if (this.chars.length === 1) {
             const status_text = _.capitalize(this.next_djinni_status[0]);
 
@@ -250,7 +246,11 @@ export class DjinnModeHeaderWindow {
             if (this.action === djinn_actions.GIVE && i === 1) break;
 
             const djinn_sprite_base = this.data.info.npcs_sprite_base_list[Djinn.sprite_base_key(this_djinn.element)];
-            const djinn_sprite = this.group.create(djinn_x, djinn_y, djinn_sprite_base.getSpriteKey(this_djinn.status));
+            const djinn_sprite: Phaser.Sprite = this.group.create(
+                djinn_x,
+                djinn_y,
+                djinn_sprite_base.getSpriteKey(this_djinn.status)
+            );
             djinn_sprite.anchor.setTo(0.5, 1.0);
             djinn_sprite.scale.x = -0.8;
             djinn_sprite.scale.y = 0.8;
@@ -316,6 +316,7 @@ export class DjinnModeHeaderWindow {
         this.next_djinni_status = next_djinni_status;
         this.action = action;
         this.mount_window();
+        (this.group.parent as Phaser.Group).bringToTop(this.group);
         this.base_window.show(() => {
             this.window_open = true;
             if (callback !== undefined) {

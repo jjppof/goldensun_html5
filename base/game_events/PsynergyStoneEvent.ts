@@ -100,7 +100,6 @@ export class PsynergyStoneEvent extends GameEvent {
         this.data.main_menu.chars_status_window.show();
         this.stone_pp_recovery();
         this.data.main_menu.chars_status_window.update_chars_info();
-        this.data.main_menu.chars_status_window.update_position();
         this.data.audio.play_se("battle/heal_1");
         await this.set_text(RECOVERY_TEXT(hero_name));
 
