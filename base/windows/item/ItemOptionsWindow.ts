@@ -63,7 +63,6 @@ export class ItemOptionsWindow {
     public x: number;
     public y: number;
     public base_window: Window;
-    public group: Phaser.Group;
 
     public text_sprites: {
         use: TextObj;
@@ -114,7 +113,7 @@ export class ItemOptionsWindow {
         this.x = WIN_X;
         this.y = WIN_Y;
         this.base_window = new Window(this.game, this.x, this.y, WIN_WIDTH, WIN_HEIGHT);
-        this.group = this.game.add.group();
+        this.base_window.set_canvas_update();
         this.base_window.draw_separator(SEPARATOR_X0, SEPARATOR_Y0, SEPARATOR_X1, SEPARATOR_Y1, false);
 
         this.text_sprites = {
@@ -168,6 +167,7 @@ export class ItemOptionsWindow {
             ACTION_WINDOW_MSG_WIDTH,
             ACTION_WINDOW_MSG_HEIGHT
         );
+        this.action_message_window.set_canvas_update();
 
         this.action_msg = this.action_message_window.set_text_in_position("", undefined, undefined, {italic: true});
     }
@@ -307,11 +307,6 @@ export class ItemOptionsWindow {
         this.base_window.destroy_text_obj(this.char_name);
         this.base_window.destroy_text_obj(this.item_name);
         this.base_window.destroy_internal_group(ItemOptionsWindow.ICON_GROUP_KEY);
-    }
-
-    update_position() {
-        this.group.x = this.game.camera.x + this.x;
-        this.group.y = this.game.camera.y + this.y;
     }
 
     open_action_message_window(text: string, close_callback: Function) {
@@ -486,7 +481,6 @@ export class ItemOptionsWindow {
 
         this.close_callback = close_callback;
         this.stats_update_callback = stats_update_callback;
-        this.update_position();
         this.set_available_options();
         this.on_change();
 

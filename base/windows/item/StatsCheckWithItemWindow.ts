@@ -51,10 +51,13 @@ export class StatsCheckWithItemWindow {
         this.x = BASE_WIN_X;
         this.y = BASE_WIN_Y;
         this.base_window = new Window(this.game, this.x, this.y, BASE_WIN_WIDTH, BASE_WIN_HEIGHT);
+        this.base_window.set_canvas_update();
         this.avatar_group = game.add.group();
-        this.avatar_group.visible = false;
-        this.x_avatar = this.x + 8;
-        this.y_avatar = this.y + 8;
+        this.base_window.add_sprite_to_window_group(this.avatar_group);
+        this.x_avatar = 8;
+        this.y_avatar = 8;
+        this.avatar_group.x = this.x_avatar;
+        this.avatar_group.y = this.y_avatar;
         this.avatar = null;
 
         this.up_arrows = {
@@ -98,20 +101,13 @@ export class StatsCheckWithItemWindow {
         this.agility_text = this.base_window.set_text_in_position("0", 40, 80, {right_align: true});
     }
 
-    update_position() {
-        this.avatar_group.x = this.game.camera.x + this.x_avatar;
-        this.avatar_group.y = this.game.camera.y + this.y_avatar;
-    }
-
     hide() {
         this.base_window.group.visible = false;
-        this.avatar_group.visible = false;
     }
 
     show() {
         if (!this.window_open) return;
         this.base_window.group.visible = true;
-        this.avatar_group.visible = true;
     }
 
     update_info(set_compare_arrows = true) {
@@ -213,8 +209,6 @@ export class StatsCheckWithItemWindow {
     }
 
     open(char, item, item_obj, callback?) {
-        this.update_position();
-        this.avatar_group.visible = true;
         this.char = char;
         this.item = item;
         this.item_obj = item_obj;
@@ -228,7 +222,6 @@ export class StatsCheckWithItemWindow {
     }
 
     close(callback?) {
-        this.avatar_group.visible = false;
         this.base_window.close(() => {
             this.window_open = false;
             if (callback !== undefined) {

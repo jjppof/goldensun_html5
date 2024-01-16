@@ -73,8 +73,9 @@ export class ItemQuantityManagerWindow {
         this.x = WIN_X;
         this.y = WIN_Y;
         this.base_window = new Window(this.game, this.x, this.y, WIN_WIDTH, WIN_HEIGHT);
+        this.base_window.set_canvas_update();
         this.group = this.game.add.group();
-        this.group.visible = false;
+        this.base_window.add_sprite_to_window_group(this.group);
         this.base_window.set_text_in_position("How many?", QUESTION_TEXT_X, QUESTION_TEXT_Y);
         this.choosen_quantity = 1;
         this.item_counter = new ItemCounter(
@@ -191,11 +192,6 @@ export class ItemQuantityManagerWindow {
         }
     }
 
-    update_position() {
-        this.group.x = this.game.camera.x + this.x;
-        this.group.y = this.game.camera.y + this.y;
-    }
-
     open(
         item_obj: ItemSlot,
         item: Item,
@@ -229,14 +225,12 @@ export class ItemQuantityManagerWindow {
                 this.choosen_quantity = 1;
                 this.close_callback = close_callback;
 
-                this.update_position();
                 this.set_header();
                 this.item_counter.config(
                     custom_quantity ? custom_quantity : this.item_obj.quantity,
                     this.choosen_quantity
                 );
 
-                this.group.visible = true;
                 this.on_change(this.choosen_quantity);
 
                 this.base_window.show(() => {
@@ -255,7 +249,6 @@ export class ItemQuantityManagerWindow {
         this.unset_header();
         this.item_counter.deactivate();
 
-        this.group.visible = false;
         this.choosen_quantity = 0;
         this.base_window.close(() => {
             this.window_open = false;

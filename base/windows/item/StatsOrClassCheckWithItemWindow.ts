@@ -32,12 +32,6 @@ export class StatsOrClassCheckWithItemWindow {
         );
     }
 
-    update_position() {
-        if (this.item_change_stats_window.window_open) this.item_change_stats_window.update_position();
-        if (this.item_change_class_window.window_open) this.item_change_class_window.update_position();
-        if (this.item_grant_ability_window.window_open) this.item_grant_ability_window.update_position();
-    }
-
     hide() {
         if (this.item_change_stats_window.window_open) this.item_change_stats_window.hide();
         if (this.item_change_class_window.window_open) this.item_change_class_window.hide();

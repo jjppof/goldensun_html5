@@ -44,10 +44,13 @@ export class ClassChangeWithItemWindow {
         this.x = BASE_WIN_X;
         this.y = BASE_WIN_Y;
         this.base_window = new Window(this.game, this.x, this.y, BASE_WIN_WIDTH, BASE_WIN_HEIGHT);
+        this.base_window.set_canvas_update();
         this.avatar_group = game.add.group();
-        this.avatar_group.visible = false;
-        this.x_avatar = this.x + 8;
-        this.y_avatar = this.y + 8;
+        this.base_window.add_sprite_to_window_group(this.avatar_group);
+        this.x_avatar = 8;
+        this.y_avatar = 8;
+        this.avatar_group.x = this.x_avatar;
+        this.avatar_group.y = this.y_avatar;
         this.avatar = null;
 
         this.base_window.set_text_in_position("Lv", 48, 24);
@@ -72,21 +75,14 @@ export class ClassChangeWithItemWindow {
         this.class_name_arrow.visible = false;
     }
 
-    update_position() {
-        this.avatar_group.x = this.game.camera.x + this.x_avatar;
-        this.avatar_group.y = this.game.camera.y + this.y_avatar;
-    }
-
     hide() {
         this.base_window.group.visible = false;
-        this.avatar_group.visible = false;
     }
 
     show() {
         if (!this.window_open) return;
         this.class_name_arrow_blink_timer.resume();
         this.base_window.group.visible = true;
-        this.avatar_group.visible = true;
     }
 
     update_info() {
@@ -118,8 +114,6 @@ export class ClassChangeWithItemWindow {
     }
 
     open(char, item, item_obj, callback?) {
-        this.update_position();
-        this.avatar_group.visible = true;
         this.char = char;
         this.item = item;
         this.item_obj = item_obj;
@@ -135,7 +129,6 @@ export class ClassChangeWithItemWindow {
 
     close(callback?) {
         this.unmount_window();
-        this.avatar_group.visible = false;
         this.base_window.close(() => {
             this.window_open = false;
             if (callback !== undefined) {

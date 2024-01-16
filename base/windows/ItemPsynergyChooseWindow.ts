@@ -62,7 +62,6 @@ export class ItemPsynergyChooseWindow {
     public element_sprite_key: string;
 
     public window: Window;
-    public group: Phaser.Group;
 
     public window_open: boolean;
     public window_activated: boolean;
@@ -99,8 +98,7 @@ export class ItemPsynergyChooseWindow {
             PSY_OVERVIEW_WIN_WIDTH,
             PSY_OVERVIEW_WIN_HEIGHT
         );
-        this.group = game.add.group();
-        this.group.visible = false;
+        this.window.set_canvas_update();
 
         this.window_open = false;
         this.window_activated = false;
@@ -204,12 +202,6 @@ export class ItemPsynergyChooseWindow {
         }
 
         this.window.page_indicator.initialize(this.page_number, this.page_index);
-    }
-
-    /*Updates this window's position*/
-    update_position() {
-        this.group.x = this.game.camera.x + PSY_OVERVIEW_WIN_X;
-        this.group.y = this.game.camera.y + PSY_OVERVIEW_WIN_Y;
     }
 
     /*Adds the items/psynergies to the window*/
@@ -650,14 +642,12 @@ export class ItemPsynergyChooseWindow {
         pos?: {page: number; index: number},
         setting_shortcut?: boolean
     ) {
-        this.update_position();
         this.char_index = char_index;
         this.char = this.data.info.party_data.members[char_index];
         this.setting_shortcut = setting_shortcut;
 
         this.page_index = pos ? pos.page : 0;
         this.set_page_number();
-        this.group.visible = true;
         this.char_select_controls_sprites.forEach(sprite => {
             sprite.visible = true;
         });
@@ -683,7 +673,6 @@ export class ItemPsynergyChooseWindow {
     /*Closes this window*/
     close() {
         this.window.close(this.close_callback, false);
-        this.group.visible = true;
         this.clear_sprites();
         this.window.page_indicator.terminante();
         this.data.cursor_manager.hide();

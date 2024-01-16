@@ -3,16 +3,12 @@ import {Item} from "../../Item";
 import {GoldenSun} from "../../GoldenSun";
 import {ItemSlot, MainChar} from "../../MainChar";
 import * as _ from "lodash";
-import {Classes} from "../../Classes";
-import {elemental_stats} from "../../Player";
 import {Ability} from "Ability";
 
 const BASE_WIN_WIDTH = 100;
 const BASE_WIN_HEIGHT = 92;
 const BASE_WIN_X = 0;
 const BASE_WIN_Y = 40;
-const ARROW_X = 32;
-const ARROW_Y = 49;
 
 export class AbilityGetWithItemWindow {
     public game: Phaser.Game;
@@ -43,10 +39,13 @@ export class AbilityGetWithItemWindow {
         this.x = BASE_WIN_X;
         this.y = BASE_WIN_Y;
         this.base_window = new Window(this.game, this.x, this.y, BASE_WIN_WIDTH, BASE_WIN_HEIGHT);
+        this.base_window.set_canvas_update();
         this.avatar_group = game.add.group();
-        this.avatar_group.visible = false;
-        this.x_avatar = this.x + 8;
-        this.y_avatar = this.y + 8;
+        this.base_window.add_sprite_to_window_group(this.avatar_group);
+        this.x_avatar = 8;
+        this.y_avatar = 8;
+        this.avatar_group.x = this.x_avatar;
+        this.avatar_group.y = this.y_avatar;
         this.avatar = null;
 
         this.base_window.set_text_in_position("Lv", 48, 24);
@@ -58,20 +57,13 @@ export class AbilityGetWithItemWindow {
         this.ability_status = this.base_window.set_text_in_position("0", 8, 64);
     }
 
-    update_position() {
-        this.avatar_group.x = this.game.camera.x + this.x_avatar;
-        this.avatar_group.y = this.game.camera.y + this.y_avatar;
-    }
-
     hide() {
         this.base_window.group.visible = false;
-        this.avatar_group.visible = false;
     }
 
     show() {
         if (!this.window_open) return;
         this.base_window.group.visible = true;
-        this.avatar_group.visible = true;
     }
 
     update_info() {
@@ -91,8 +83,6 @@ export class AbilityGetWithItemWindow {
     }
 
     open(char, item, item_obj, callback?) {
-        this.update_position();
-        this.avatar_group.visible = true;
         this.char = char;
         this.item = item;
         this.item_obj = item_obj;
@@ -106,7 +96,6 @@ export class AbilityGetWithItemWindow {
     }
 
     close(callback?) {
-        this.avatar_group.visible = false;
         this.base_window.close(() => {
             this.window_open = false;
             if (callback !== undefined) {
