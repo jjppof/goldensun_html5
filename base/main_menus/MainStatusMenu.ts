@@ -169,13 +169,6 @@ export class MainStatusMenu {
         this.data = data;
 
         this.chars_menu = new CharsMenu(this.game, this.data, this.on_character_change.bind(this));
-        this.main_window = new Window(
-            this.game,
-            MainStatusMenu.MAIN_WIN.X,
-            MainStatusMenu.MAIN_WIN.Y,
-            MainStatusMenu.MAIN_WIN.WIDTH,
-            MainStatusMenu.MAIN_WIN.HEIGHT
-        );
 
         this.guide_window = new Window(
             this.game,
@@ -184,6 +177,7 @@ export class MainStatusMenu {
             MainStatusMenu.GUIDE_WIN.WIDTH,
             MainStatusMenu.GUIDE_WIN.HEIGHT
         );
+        this.guide_window.set_canvas_update();
         this.desc_window = new Window(
             this.game,
             MainStatusMenu.DESC_WIN.X,
@@ -191,6 +185,7 @@ export class MainStatusMenu {
             MainStatusMenu.DESC_WIN.WIDTH,
             MainStatusMenu.DESC_WIN.HEIGHT
         );
+        this.desc_window.set_canvas_update();
         this.equip_window = new Window(
             this.game,
             MainStatusMenu.EQUIP_WIN.X,
@@ -198,6 +193,15 @@ export class MainStatusMenu {
             MainStatusMenu.EQUIP_WIN.WIDTH,
             MainStatusMenu.EQUIP_WIN.HEIGHT
         );
+        this.equip_window.set_canvas_update();
+        this.main_window = new Window(
+            this.game,
+            MainStatusMenu.MAIN_WIN.X,
+            MainStatusMenu.MAIN_WIN.Y,
+            MainStatusMenu.MAIN_WIN.WIDTH,
+            MainStatusMenu.MAIN_WIN.HEIGHT
+        );
+        this.main_window.set_canvas_update();
 
         this.desc_window.define_internal_group(MainStatusMenu.DESC_GUIDE_KEY);
         this.main_window.define_internal_group(MainStatusMenu.GROUP_KEY);

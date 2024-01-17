@@ -148,7 +148,6 @@ export class MainStatusStatistics extends StatusComponent {
     };
 
     private static readonly LINES = 8;
-    private static readonly DJINN_GROUP_Y_OFFSET = 40;
 
     private state: MainStatusStates;
     private djinn_group: Phaser.Group;
@@ -163,6 +162,8 @@ export class MainStatusStatistics extends StatusComponent {
         super(game, data, window, manager, pos);
 
         this.djinn_group = this.game.add.group();
+        this.window.add_sprite_to_window_group(this.djinn_group);
+        this.djinn_group.x = this.djinn_group.y = 0;
     }
 
     public select_option() {
@@ -267,9 +268,6 @@ export class MainStatusStatistics extends StatusComponent {
     }
 
     public initialize() {
-        this.djinn_group.x = this.game.camera.x;
-        this.djinn_group.y = this.game.camera.y + MainStatusStatistics.DJINN_GROUP_Y_OFFSET;
-
         this.state = (this.manager as MainStatusMenu).state;
 
         for (let i = 0; i < ordered_elements.length; i++) {

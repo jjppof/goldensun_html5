@@ -24,7 +24,7 @@ export class MainStatusDjinn extends StatusComponent {
     };
     private static readonly SPRITES = {
         CENTER_X: 32,
-        Y: 57,
+        Y: 16,
         SHIFT: 56,
     };
     private static readonly SEPARATOR = {
@@ -53,6 +53,8 @@ export class MainStatusDjinn extends StatusComponent {
         super(game, data, window, manager, pos);
 
         this.djinn_group = this.game.add.group();
+        this.window.add_sprite_to_window_group(this.djinn_group);
+        this.djinn_group.x = this.djinn_group.y = 0;
     }
 
     public select_option() {
@@ -86,9 +88,6 @@ export class MainStatusDjinn extends StatusComponent {
     }
 
     public initialize() {
-        this.djinn_group.x = this.game.camera.x;
-        this.djinn_group.y = this.game.camera.y;
-
         this.make_pages();
         this.window.page_indicator.initialize(this.djinn_pages.length, this.current_page);
 
