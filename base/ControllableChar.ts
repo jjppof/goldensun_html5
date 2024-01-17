@@ -2143,6 +2143,11 @@ export abstract class ControllableChar {
         }
     }
 
+    /**
+     * Checks if this char will quit sand mode by colliding with a tile that has `quit_sand` property true.
+     * @param contacts p2 contact equation array.
+     * @returns returns true if it exited sand mode.
+     */
     check_sand_quit(contacts: p2.ContactEquation[]) {
         if (this.data.hero.sand_mode && this.data.map.sand_collision_layer === this.data.map.collision_layer) {
             for (let contact of contacts) {

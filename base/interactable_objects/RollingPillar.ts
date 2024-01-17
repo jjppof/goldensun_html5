@@ -153,7 +153,9 @@ export class RollablePillar extends InteractableObjects {
             if (char.push_timer === null) {
                 char.set_trying_to_push_direction(char.current_direction);
                 char.set_push_timer(() => {
-                    this.define_pillar_direction(char);
+                    if (!this.data.main_menu.open && !this.data.save_menu.open) {
+                        this.define_pillar_direction(char);
+                    }
                     char.trying_to_push = false;
                     char.unset_push_timer();
                 });
