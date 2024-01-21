@@ -38,13 +38,13 @@ export class SetCharHPPPEvent extends GameEvent {
                 if (this.value === "full") {
                     char.current_hp = char.max_hp;
                 } else if (_.isNumber(this.value) && (this.value as number) >= 0) {
-                    char.current_hp = _.clamp(this.value as number, 0, char.max_hp);
+                    char.current_hp = _.clamp(this.value as number, 0, char.max_hp) | 0;
                 }
             } else if (this.points_type === points_types.PP) {
                 if (this.value === "full") {
                     char.current_pp = char.max_pp;
                 } else if (_.isNumber(this.value) && (this.value as number) >= 0) {
-                    char.current_pp = _.clamp(this.value as number, 0, char.max_pp);
+                    char.current_pp = _.clamp(this.value as number, 0, char.max_pp) | 0;
                 }
             }
         });
