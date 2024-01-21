@@ -33,6 +33,7 @@ export class GenericSpriteEvent extends GameEvent {
     private action: string;
     private animation: string;
     private collision_layer: number;
+    private send_to_back: boolean;
 
     constructor(
         game,
@@ -58,7 +59,8 @@ export class GenericSpriteEvent extends GameEvent {
         loop,
         action,
         animation,
-        collision_layer
+        collision_layer,
+        send_to_back
     ) {
         super(game, data, event_types.GENERIC_SPRITE, active, key_name, keep_reveal);
         this.control_type = control_type;
@@ -90,6 +92,7 @@ export class GenericSpriteEvent extends GameEvent {
         this.action = action;
         this.animation = animation;
         this.collision_layer = collision_layer;
+        this.send_to_back = send_to_back;
     }
 
     _fire() {
@@ -115,6 +118,7 @@ export class GenericSpriteEvent extends GameEvent {
                         action: this.action,
                         animation: this.animation,
                         collision_layer: this.collision_layer,
+                        send_to_back: this.send_to_back,
                     }
                 );
                 this.data.map.sort_sprites();

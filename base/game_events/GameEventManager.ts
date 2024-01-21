@@ -982,7 +982,8 @@ export class GameEventManager {
                     info.loop,
                     info.action,
                     info.animation,
-                    info.collision_layer
+                    info.collision_layer,
+                    info.send_to_back
                 );
             case event_types.PARTICLES:
                 return new ParticlesEvent(

@@ -1716,6 +1716,8 @@ export class Map {
             animation?: string;
             /** The collision layer that the sprite will be. Important when sorting sprites. */
             collision_layer?: number;
+            /** If true, the sprite will be sorted under NPC layers. */
+            send_to_back?: boolean;
         }
     ) {
         if (key_name in this.generic_sprites) {
@@ -1735,8 +1737,10 @@ export class Map {
         generic_sprite.scale.y = options?.scale_y ?? generic_sprite.scale.y;
         generic_sprite.rotation = options?.rotation ?? generic_sprite.rotation;
         generic_sprite.base_collision_layer = options?.collision_layer ?? this.collision_layer;
+        generic_sprite.send_to_back = options?.send_to_back ?? false;
         if (options?.play) {
             const anim_key = sprite_base.getAnimationKey(action, options.animation);
+            sprite_base.setAnimation(generic_sprite, action);
             const anim = generic_sprite.animations.getAnimation(anim_key);
             anim.play(options?.frame_rate, options?.loop);
         }
