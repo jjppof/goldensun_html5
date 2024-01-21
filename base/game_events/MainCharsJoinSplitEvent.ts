@@ -11,6 +11,8 @@ export class MainCharsJoinSplitEvent extends GameEvent {
     private destination: {x: number; y: number};
     private finish_events: GameEvent[];
     private final_direction: directions;
+    private final_hero_direction: directions;
+    private initial_hero_direction: directions;
     private wait_after: number;
     private keep_npc_collision_disable: boolean;
     private dash: boolean;
@@ -28,6 +30,8 @@ export class MainCharsJoinSplitEvent extends GameEvent {
         destination,
         wait_after,
         final_direction,
+        final_hero_direction,
+        initial_hero_direction,
         finish_events,
         keep_npc_collision_disable,
         dash
@@ -41,6 +45,10 @@ export class MainCharsJoinSplitEvent extends GameEvent {
         this.destination = destination ?? {};
         this.wait_after = wait_after;
         this.final_direction = final_direction !== undefined ? directions[final_direction as string] : null;
+        this.final_hero_direction =
+            final_hero_direction !== undefined ? directions[final_hero_direction as string] : null;
+        this.initial_hero_direction =
+            initial_hero_direction !== undefined ? directions[initial_hero_direction as string] : null;
         this.keep_npc_collision_disable = keep_npc_collision_disable ?? false;
         this.dash = dash ?? false;
         this.finish_events = [];
@@ -55,6 +63,10 @@ export class MainCharsJoinSplitEvent extends GameEvent {
     async _fire() {
         ++this.data.game_event_manager.events_running_count;
         this.data.collision.disable_npc_collision();
+
+        if (this.initial_hero_direction !== null) {
+            await this.data.hero.face_direction(this.initial_hero_direction);
+        }
 
         if (this.mode === "split") {
             await this.split();
@@ -146,9 +158,10 @@ export class MainCharsJoinSplitEvent extends GameEvent {
     }
 
     async on_position_reach(char: NPC) {
-        if (this.final_direction !== null) {
-            await char.face_direction(this.final_direction);
-        }
+        await Promise.all([
+            ...(this.final_direction !== null ? [char.face_direction(this.final_direction)] : []),
+            ...(this.final_hero_direction !== null ? [this.data.hero.face_direction(this.final_hero_direction)] : []),
+        ]);
         if (this.wait_after) {
             await promised_wait(this.game, this.wait_after);
         }

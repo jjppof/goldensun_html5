@@ -1114,6 +1114,8 @@ export class GameEventManager {
                     info.destination,
                     info.wait_after,
                     info.final_direction,
+                    info.final_hero_direction,
+                    info.initial_hero_direction,
                     info.finish_events,
                     info.keep_npc_collision_disable,
                     info.dash
