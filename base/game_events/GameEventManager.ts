@@ -86,6 +86,7 @@ import {CharShadowVisibilityEvent} from "./CharShadowVisibilityEvent";
 import {IOTweenPositionEvent} from "./IOTweenPositionEvent";
 import {ExitSandModeEvent} from "./ExitSandModeEvent";
 import {CharFallEvent} from "./CharFallEvent";
+import {SetCharHPPPEvent} from "./SetCharHPPPEvent";
 
 export enum interaction_patterns {
     NO_INTERACTION = "no_interaction",
@@ -1258,6 +1259,17 @@ export class GameEventManager {
                     info.ground_hit_animation,
                     info.teleport,
                     info.finish_events
+                );
+            case event_types.SET_CHAR_HP_PP:
+                return new SetCharHPPPEvent(
+                    this.game,
+                    this.data,
+                    info.active,
+                    info.key_name,
+                    info.keep_reveal,
+                    info.char_key,
+                    info.points_type,
+                    info.value
                 );
             default:
                 const origin = `Event origin: ${event_origin}. ${

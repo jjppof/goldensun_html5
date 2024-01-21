@@ -112,6 +112,7 @@ export enum event_types {
     IO_TWEEN_POSITION = "io_tween_position",
     EXIT_SAND_MODE = "exit_sand_mode",
     CHAR_FALL = "char_fall",
+    SET_CHAR_HP_PP = "set_char_hp_pp",
 }
 
 export enum game_event_misc_origin {
