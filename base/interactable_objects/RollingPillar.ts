@@ -89,7 +89,7 @@ export class RollablePillar extends InteractableObjects {
             visible
         );
         this._rollable = true;
-        this._pillar_is_stuck = this.snapshot_info?.state_by_type.rollable.pillar_is_stuck ?? false;
+        this._pillar_is_stuck = this.snapshot_info?.state_by_type.rollable?.pillar_is_stuck ?? false;
         this._after_rolling_events = [];
         this._on_rolling_start_events = [];
     }

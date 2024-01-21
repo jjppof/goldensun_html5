@@ -23,6 +23,7 @@ export class Pushable extends InteractableObjects {
         collision_layer: number;
     };
     private _after_push_events: GameEvent[];
+    private _docked: boolean;
 
     constructor(
         game,
@@ -93,8 +94,19 @@ export class Pushable extends InteractableObjects {
         this._pushable = true;
         this.dock_tile_position = null;
         this._after_push_events = [];
+        this._docked = this.snapshot_info?.state_by_type.pushable?.docked ?? false;
     }
 
+    /** Whether this pushable is docked or not. */
+    get docked() {
+        return this._docked;
+    }
+
+    /**
+     * Initializes the pushable. Must be called just after instantiation.
+     * @param dock_tile_position object containing docking info.
+     * @param after_push_events array of game events to be fired after push.
+     */
     initialize_pushable(dock_tile_position: Pushable["dock_tile_position"], after_push_events: any[]) {
         this.dock_tile_position = dock_tile_position ?? null;
         after_push_events = after_push_events ?? [];
@@ -184,7 +196,8 @@ export class Pushable extends InteractableObjects {
             (char.trying_to_push_direction & 1) === 0 &&
             char.trying_to_push_direction === char.current_direction &&
             !char.in_action() &&
-            char.stop_by_colliding
+            char.stop_by_colliding &&
+            !this.docked
         ) {
             this.fire_push_movement(char, () => {
                 this._after_push_events.forEach(e => e.fire());
@@ -410,6 +423,7 @@ export class Pushable extends InteractableObjects {
                             y: this.tile_y_pos,
                         });
                         this.data.storage.set(this.storage_keys.base_collision_layer, this.base_collision_layer);
+                        this._docked = true;
                         if (pillar_into_the_water) {
                             let storage_key_anchor = this.storage_keys?.anchor;
                             const value_anchor = {

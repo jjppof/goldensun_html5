@@ -259,7 +259,7 @@ export class MoveFieldPsynergy extends FieldAbilities {
                     reverse_directions[this.cast_direction]
                 );
                 this.hand_sprite.animations.play(anim_key);
-                if (this.target_object) {
+                if (this.target_object && !(this.target_object as Pushable).docked) {
                     this.target_object.manage_filter(this.target_object.hue_filter, true);
                     this.target_hueshift_timer = this.game.time.create(false);
                     this.target_hueshift_timer.loop(5, () => {

@@ -15,6 +15,7 @@ import {RollablePillar} from "./interactable_objects/RollingPillar";
 import {RevealFieldPsynergy} from "./field_abilities/RevealFieldPsynergy";
 import {RopeDock} from "./interactable_objects/RopeDock";
 import {Map} from "Map";
+import {Pushable} from "interactable_objects/Pushable";
 
 type FilterSettings = {
     [engine_filters.COLORIZE]?: {
@@ -165,6 +166,9 @@ export type SnapshotData = {
                 };
                 rollable?: {
                     pillar_is_stuck: boolean;
+                };
+                pushable?: {
+                    docked: boolean;
                 };
                 rope_dock?: {
                     tied: boolean;
@@ -412,6 +416,11 @@ export class Snapshot {
                             ...(io.rollable && {
                                 rollable: {
                                     pillar_is_stuck: (io as RollablePillar).pillar_is_stuck,
+                                },
+                            }),
+                            ...(io.pushable && {
+                                pushable: {
+                                    docked: (io as Pushable).docked,
                                 },
                             }),
                             ...(io.is_rope_dock && {
