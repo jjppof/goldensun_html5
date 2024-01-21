@@ -374,9 +374,6 @@ export class DialogManager {
      * @returns Returns the text formetted.
      */
     private format_text(text: string) {
-        text = text.replace(/\${HERO}/g, this.data.info.main_char_list[this.data.hero.key_name].name);
-        text = text.replace(/( )?\${BREAK}( )?/g, " ${BREAK} ");
-        text = text.replace(/( )?\${BREAK_LINE}( )?/g, " ${BREAK_LINE} ");
         let storage_match = /(?: )?\${STORAGE:(\w+)}(?: )?/g.exec(text);
         while (storage_match !== null) {
             const storage_key = storage_match[1];
@@ -384,6 +381,9 @@ export class DialogManager {
             text = text.replace(re, `$1${this.data.storage.get(storage_key)}$2`);
             storage_match = /(?: )?\${STORAGE:(\w+)}(?: )?/g.exec(text);
         }
+        text = text.replace(/\${HERO}/g, this.data.info.main_char_list[this.data.hero.key_name].name);
+        text = text.replace(/( )?\${BREAK}( )?/g, " ${BREAK} ");
+        text = text.replace(/( )?\${BREAK_LINE}( )?/g, " ${BREAK_LINE} ");
         return text;
     }
 
