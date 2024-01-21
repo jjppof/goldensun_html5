@@ -417,7 +417,9 @@ export class GameEventManager {
                     info.reset_reciprocal_look,
                     info.end_with_yes_no,
                     info.yes_no_events,
-                    info.finish_events
+                    info.finish_events,
+                    info.mind_read_window,
+                    info.pos_relative_to_canvas
                 );
             case event_types.LOOK:
                 return new LookEvent(

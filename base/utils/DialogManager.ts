@@ -48,9 +48,16 @@ export class DialogManager {
     private show_crystal: boolean;
     private avatar_inside_window: boolean;
     private mind_read_window: boolean;
+    private pos_relative_to_canvas: boolean;
     private font_color: number;
 
-    constructor(game: Phaser.Game, data: GoldenSun, italic_font: boolean = true, mind_read_window: boolean = false) {
+    constructor(
+        game: Phaser.Game,
+        data: GoldenSun,
+        italic_font: boolean = true,
+        mind_read_window: boolean = false,
+        pos_relative_to_canvas: boolean = false
+    ) {
         this.game = game;
         this.data = data;
         this.italic_font = italic_font;
@@ -67,7 +74,8 @@ export class DialogManager {
 
         this.dialog_crystal_sprite_base = this.data.info.misc_sprite_base_list[DialogManager.DIALOG_CRYSTAL_KEY];
         this.show_crystal = false;
-        this.mind_read_window = mind_read_window;
+        this.mind_read_window = mind_read_window ?? false;
+        this.pos_relative_to_canvas = pos_relative_to_canvas ?? false;
         this.font_color = this.mind_read_window ? Window.MIND_READ_FONT_COLOR : numbers.DEFAULT_FONT_COLOR;
     }
 
@@ -263,6 +271,9 @@ export class DialogManager {
             undefined,
             this.mind_read_window
         );
+        if (this.pos_relative_to_canvas) {
+            this.window.set_canvas_update();
+        }
         this.window.show(
             ((step, italic_font, next_callback) => {
                 if (this.avatar_inside_window) {
@@ -342,6 +353,9 @@ export class DialogManager {
                 undefined,
                 this.mind_read_window
             );
+            if (this.pos_relative_to_canvas) {
+                this.avatar_window.set_canvas_update();
+            }
             const base_pos = this.mind_read_window ? 8 : 4;
             this.avatar_window.create_at_group(base_pos, base_pos, "avatars", {frame: this.avatar});
             this.avatar_window.show();

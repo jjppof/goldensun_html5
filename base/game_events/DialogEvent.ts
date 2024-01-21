@@ -44,6 +44,8 @@ export class DialogEvent extends GameEvent {
     };
     private current_info: DialogInfo;
     private reference_npc: NPC;
+    private mind_read_window: boolean;
+    private pos_relative_to_canvas: boolean;
 
     constructor(
         game,
@@ -56,7 +58,9 @@ export class DialogEvent extends GameEvent {
         reset_reciprocal_look,
         end_with_yes_no,
         yes_no_events,
-        finish_events
+        finish_events,
+        mind_read_window,
+        pos_relative_to_canvas
     ) {
         super(game, data, event_types.DIALOG, active, key_name, keep_reveal);
         this.dialog_info = Array.isArray(dialog_info) ? dialog_info : [dialog_info];
@@ -76,6 +80,8 @@ export class DialogEvent extends GameEvent {
         };
         this.current_info = null;
         this.reference_npc = null;
+        this.mind_read_window = mind_read_window ?? false;
+        this.pos_relative_to_canvas = pos_relative_to_canvas ?? false;
 
         if (finish_events !== undefined && !this.end_with_yes_no) {
             finish_events.forEach(event_info => {
@@ -199,7 +205,13 @@ export class DialogEvent extends GameEvent {
         this.reference_npc = this.current_info.reference_npc
             ? this.data.map.npcs_label_map[this.current_info.reference_npc]
             : null;
-        this.dialog_manager = new DialogManager(this.game, this.data);
+        this.dialog_manager = new DialogManager(
+            this.game,
+            this.data,
+            undefined,
+            this.mind_read_window,
+            this.pos_relative_to_canvas
+        );
         this.dialog_manager.set_dialog(this.current_info.text, {
             avatar:
                 this.current_info.avatar ?? (this.reference_npc ? this.reference_npc.avatar : this.origin_npc?.avatar),
