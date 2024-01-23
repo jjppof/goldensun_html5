@@ -10,6 +10,7 @@ import * as _ from "lodash";
 import {Button} from "../XGamepad";
 import {DialogManager} from "../utils/DialogManager";
 import {degree360} from "../magic_numbers";
+import {Pushable} from "../interactable_objects/Pushable";
 
 /**
  * Defines and manages the usage of field psynergy.
@@ -213,6 +214,9 @@ export abstract class FieldAbilities {
             const target_object = targets_list[i];
             if (target_object.is_interactable_object) {
                 if (!(target_object as InteractableObjects).enable && !this.works_on_disabled_target) {
+                    continue;
+                }
+                if ((target_object as Pushable).docked) {
                     continue;
                 }
             }
