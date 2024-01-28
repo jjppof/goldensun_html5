@@ -87,6 +87,7 @@ import {IOTweenPositionEvent} from "./IOTweenPositionEvent";
 import {ExitSandModeEvent} from "./ExitSandModeEvent";
 import {CharFallEvent} from "./CharFallEvent";
 import {SetCharHPPPEvent} from "./SetCharHPPPEvent";
+import {AudioStopEvent} from "./AudioStopEvent";
 
 export enum interaction_patterns {
     NO_INTERACTION = "no_interaction",
@@ -682,6 +683,9 @@ export class GameEventManager {
                     info.audio_key,
                     info.volume,
                     info.loop,
+                    info.fade_in,
+                    info.in_parallel,
+                    info.bgm_identifier,
                     info.finish_events
                 );
             case event_types.CONTROL_BGM:
@@ -1271,6 +1275,17 @@ export class GameEventManager {
                     info.char_key,
                     info.points_type,
                     info.value
+                );
+            case event_types.AUDIO_STOP:
+                return new AudioStopEvent(
+                    this.game,
+                    this.data,
+                    info.active,
+                    info.key_name,
+                    info.keep_reveal,
+                    info.pause_only,
+                    info.fade_out,
+                    info.bgm_identifier
                 );
             default:
                 const origin = `Event origin: ${event_origin}. ${

@@ -27,6 +27,7 @@ export class Audio {
     private se_data: {[se_key: string]: Phaser.AudioSprite} = {};
     private _current_bgm: Phaser.Sound = null;
     private bgm_volume: number;
+    private playing_bgms: {[id_key: string]: Phaser.Sound} = {};
 
     constructor(game: Phaser.Game, data: GoldenSun) {
         this.game = game;
@@ -151,14 +152,81 @@ export class Audio {
      * @param loop Whether the bgm should loop or not.
      * @param volume The volume to be applied. [0,1].
      * @param on_complete On bgm complete callback.
+     * @param fade_in if true, the bgm will fade in on start.
+     * @param fade_duration The fade in duration in ms.
      */
-    play_bgm(loop: boolean = true, volume?: number, on_complete?: () => void) {
+    play_bgm(
+        loop: boolean = true,
+        volume?: number,
+        on_complete?: () => void,
+        fade_in: boolean = false,
+        fade_duration: number = 750
+    ) {
         this.current_bgm.loop = loop;
         this.current_bgm.volume = volume ?? Audio.DEFAULT_BGM_VOLUME;
         this.bgm_volume = this.current_bgm.volume;
-        this.current_bgm.play();
+        if (fade_in) {
+            this.current_bgm.fadeIn(fade_duration);
+        } else {
+            this.current_bgm.play();
+        }
         if (on_complete) {
             this.current_bgm.onMarkerComplete.addOnce(on_complete);
+        }
+    }
+
+    /**
+     * Adds a new BGM audio to Phaser sound manager and plays it. You can give an unique name for this BGM by passing 'bgm_identifier' argument.
+     * @param bgm_key The bgm key name registered in the json db.
+     * @param loop Whether the bgm should loop or not.
+     * @param volume The volume to be applied. [0,1].
+     * @param on_complete On bgm complete callback.
+     * @param fade_in if true, the bgm will fade in on start.
+     * @param fade_duration The fade in duration in ms.
+     * @param bgm_identifier an unique name for this bgm.
+     * @returns returns the Phaser.Sound object.
+     */
+    play_parallel_bgm(
+        bgm_key: string,
+        loop: boolean = true,
+        volume?: number,
+        on_complete?: () => void,
+        fade_in: boolean = false,
+        fade_duration: number = 750,
+        bgm_identifier?: string
+    ) {
+        let bgm: Phaser.Sound;
+        if (bgm_identifier && bgm_identifier in this.playing_bgms) {
+            bgm = this.playing_bgms[bgm_identifier];
+        } else {
+            bgm = this.game.add.audio(bgm_key);
+            if (bgm_identifier) {
+                this.playing_bgms[bgm_identifier] = bgm;
+            }
+        }
+        bgm.loop = loop;
+        bgm.volume = volume ?? Audio.DEFAULT_BGM_VOLUME;
+        if (fade_in) {
+            bgm.fadeIn(fade_duration);
+        } else {
+            bgm.play();
+        }
+        if (on_complete) {
+            bgm.onMarkerComplete.addOnce(on_complete);
+        }
+        return bgm;
+    }
+
+    /**
+     * Gets the Phaser.Sound object of a bgm.
+     * @param bgm_identifier the bgm identifier.
+     * @returns the bgm Phaser.Sound object.
+     */
+    get_bgm_object(bgm_identifier: string) {
+        if (bgm_identifier in this.playing_bgms) {
+            return this.playing_bgms[bgm_identifier];
+        } else {
+            return null;
         }
     }
 
@@ -200,16 +268,54 @@ export class Audio {
     }
 
     /**
-     * Pauses the current bgm sound.
+     * Pauses a bgm.
+     * @param bgm_identifier the bgm identifier to be paused. If not passed, it will pause current bgm.
+     * @param fade_out if true, the bgm will fade out before pausing.
+     * @param fade_duration the fadeout duration in ms.
      */
-    pause_bgm() {
-        this.current_bgm?.pause();
+    pause_bgm(bgm_identifier?: string, fade_out: boolean = false, fade_duration: number = 750) {
+        let bgm: Phaser.Sound;
+        if (bgm_identifier && bgm_identifier in this.playing_bgms) {
+            bgm = this.playing_bgms[bgm_identifier];
+        } else {
+            bgm = this.current_bgm;
+        }
+        if (fade_out) {
+            bgm.fadeOut(fade_duration);
+            bgm.onFadeComplete.addOnce(() => {
+                bgm?.pause();
+            });
+        } else {
+            bgm?.pause();
+        }
     }
 
     /**
-     * Stops the current bgm sound.
+     * Stops a bgm. If 'bgm_identifier', the bgm entry is removed on stop finish.
+     * @param bgm_identifier the bgm identifier to be stopped. If not passed, it will stop current bgm.
+     * @param fade_out if true, the bgm will fade out before stopping.
+     * @param fade_duration the fadeout duration in ms.
      */
-    stop_bgm() {
-        this.current_bgm?.stop();
+    stop_bgm(bgm_identifier?: string, fade_out: boolean = false, fade_duration: number = 750) {
+        let from_identifier = false;
+        let bgm: Phaser.Sound;
+        if (bgm_identifier && bgm_identifier in this.playing_bgms) {
+            bgm = this.playing_bgms[bgm_identifier];
+            from_identifier = true;
+        } else {
+            bgm = this.current_bgm;
+        }
+        if (fade_out) {
+            bgm.fadeOut(fade_duration);
+            bgm.onFadeComplete.addOnce(() => {
+                bgm?.stop();
+                if (from_identifier) {
+                    bgm?.destroy();
+                    delete this.playing_bgms[bgm_identifier];
+                }
+            });
+        } else {
+            bgm?.stop();
+        }
     }
 }
