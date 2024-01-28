@@ -72,6 +72,11 @@ export class Map {
         rectangle: Phaser.Rectangle;
         background_key: string;
     }[];
+    private bgm_regions: {
+        rectangle: Phaser.Rectangle;
+        bgm_keys: string[];
+        sound_objects: Phaser.Sound[];
+    }[];
     private _sand_collision_layer: number;
     private processed_polygons: {
         [collision_layer: number]: Array<{
@@ -166,6 +171,7 @@ export class Map {
         this.expected_party_level = expected_party_level;
         this._encounter_cumulator = 0;
         this.encounter_zones = [];
+        this.bgm_regions = [];
         this._background_key = background_key;
         this.polygons_processed = false;
         this.bounding_boxes = [];
@@ -408,6 +414,7 @@ export class Map {
         this.sort_sprites();
         this.update_map_rotation();
         this.zone_check();
+        this.bgm_region_check();
     }
 
     /**
@@ -1423,6 +1430,29 @@ export class Map {
                     this.bounding_boxes.push(bounding_box);
                 });
                 return layer_name;
+            } else if (objs.properties?.bgm_regions) {
+                //check for bgm regions. When the hero is inside these regions, a list of bgms are executed.
+                objs.objectsData.forEach(this_obj => {
+                    const bgm_rectangle = new Phaser.Rectangle(
+                        this_obj.x | 0,
+                        this_obj.y | 0,
+                        this_obj.width | 0,
+                        this_obj.height | 0
+                    );
+                    try {
+                        const bgms_list = JSON.parse(this_obj.properties?.bgms_list) as string[];
+                        if (bgms_list && bgms_list.length) {
+                            this.bgm_regions.push({
+                                rectangle: bgm_rectangle,
+                                bgm_keys: bgms_list,
+                                sound_objects: bgms_list.map(key => this.game.add.audio(key, 1.0, true)),
+                            });
+                        }
+                    } catch {
+                        this.data.logger.log_message(`BGMs list is not a valid JSON in ${layer_name} layer.`);
+                    }
+                });
+                return layer_name;
             } else {
                 //the default behavior is to treat the layer name as a collision index.
                 ++collision_layers_counter;
@@ -1524,6 +1554,27 @@ export class Map {
         } else {
             return null;
         }
+    }
+
+    /**
+     * Update function to check whether BGMs should be played if the hero is inside the specified regions.
+     */
+    private bgm_region_check() {
+        this.bgm_regions.forEach(region => {
+            if (region.rectangle.contains(this.data.hero.x, this.data.hero.y)) {
+                region.sound_objects.forEach(sound_obj => {
+                    if (!sound_obj.isPlaying) {
+                        sound_obj.fadeIn(750, true);
+                    }
+                });
+            } else {
+                region.sound_objects.forEach(sound_obj => {
+                    if (sound_obj.isPlaying) {
+                        sound_obj.fadeOut(750);
+                    }
+                });
+            }
+        });
     }
 
     /**
@@ -2189,6 +2240,9 @@ export class Map {
             this.generic_sprites[key].destroy();
         }
         this._generic_sprites = {};
+
+        this.bgm_regions.forEach(region => region.sound_objects.forEach(obj => obj?.destroy()));
+        this.bgm_regions = [];
 
         TileEvent.reset();
         GameEvent.reset();
