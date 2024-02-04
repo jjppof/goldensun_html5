@@ -349,6 +349,7 @@ export class LiftFieldPsynergy extends FieldAbilities {
         });
         target_hueshift_timer.start();
         target_object.add_unset_callback(() => {
+            target_hueshift_timer?.stop(true);
             target_hueshift_timer?.destroy();
         });
     }

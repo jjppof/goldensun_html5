@@ -1460,6 +1460,8 @@ export class InteractableObjects {
     }
 
     unset(remove_from_middlelayer_group: boolean = true) {
+        this.on_unset_callbacks.forEach(c => c());
+        this.on_unset_callbacks = [];
         if (this.sprite) {
             this.sprite.filters = undefined;
             this.sprite.destroy();
@@ -1488,7 +1490,6 @@ export class InteractableObjects {
         if (remove_from_middlelayer_group) {
             this.data.middlelayer_group.removeChild(this.sprite);
         }
-        this.on_unset_callbacks.forEach(c => c());
         for (let psynergy_key in this.after_psynergy_cast_events) {
             this.after_psynergy_cast_events[psynergy_key].forEach(e => e.destroy());
         }

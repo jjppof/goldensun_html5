@@ -175,6 +175,7 @@ export class FrostFieldPsynergy extends FieldAbilities {
         });
         blink_timer.start();
         target_object.add_unset_callback(() => {
+            blink_timer.stop(true);
             blink_timer.destroy();
         });
     }
