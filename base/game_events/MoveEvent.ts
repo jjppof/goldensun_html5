@@ -120,8 +120,6 @@ export class MoveEvent extends GameEvent {
                 is_npc: this.is_npc,
                 npc_label: this.npc_label,
             }) ?? this.origin_npc;
-        const previous_force_char_stop_in_event = char.force_char_stop_in_event;
-        char.force_char_stop_in_event = false;
         let previous_move_freely_in_event: boolean;
         if (char.is_npc) {
             previous_move_freely_in_event = (char as NPC).move_freely_in_event;
@@ -163,6 +161,8 @@ export class MoveEvent extends GameEvent {
             await this.data.camera.follow(char, this.camera_follow_duration);
         }
 
+        const previous_force_char_stop_in_event = char.force_char_stop_in_event;
+        char.force_char_stop_in_event = false;
         const udpate_callback = char.get_move_callback(
             dest,
             () => {
