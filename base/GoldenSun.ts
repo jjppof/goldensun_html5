@@ -361,7 +361,6 @@ export class GoldenSun {
             x: hero_initial_x,
             y: hero_initial_y,
         });
-        this.map.set_map_bounds(hero_initial_x, hero_initial_y);
 
         //initializes the controllable hero
         const hero_key_name = this.dbs.init_db.hero_key_name;

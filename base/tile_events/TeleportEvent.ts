@@ -428,7 +428,6 @@ export class TeleportEvent extends TileEvent {
             },
             previous_map_name === next_map_name ? this.data.map.retreat_data : null
         );
-        this.data.map.set_map_bounds(this.x_target, this.y_target);
         this.data.collision.config_collision_groups(this.data.map);
         this.data.map.config_all_bodies(this.data.map.collision_layer);
         this.data.collision.config_collisions(this.data.map.collision_layer);

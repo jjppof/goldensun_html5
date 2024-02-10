@@ -43,13 +43,25 @@ export class Map {
     private physics_jsons_url: string;
     private _sprite: Phaser.Tilemap;
     private _events: {[location_key: number]: TileEvent[]};
-    private _shapes: {[collision_index: number]: {[location_key: number]: p2.Convex[]}};
-    private _big_shapes_tiles: {[collision_index: number]: Set<number>};
+    private _shapes: {
+        [bounding_box_id: number]: {
+            [collision_index: number]: {[location_key: number]: p2.Convex[]};
+        };
+    };
+    private _big_shapes_tiles: {
+        [bounding_box_id: number]: {
+            [collision_index: number]: Set<number>;
+        };
+    };
     private _npcs: NPC[];
     private _npcs_label_map: {[label: string]: NPC};
     private _interactable_objects: InteractableObjects[];
     private _interactable_objects_label_map: {[label: string]: InteractableObjects};
-    private _bodies_positions: {[collision_index: number]: {[location_key: number]: (NPC | InteractableObjects)[]}};
+    private _bodies_positions: {
+        [bounding_box_id: number]: {
+            [collision_index: number]: {[location_key: number]: (NPC | InteractableObjects)[]};
+        };
+    };
     private _collision_layers_number: number;
     private _collision_sprite: Phaser.Sprite;
     private _colorize_filter: Phaser.Filter.Colorize;
@@ -78,18 +90,24 @@ export class Map {
         sound_objects: Phaser.Sound[];
     }[];
     private _sand_collision_layer: number;
-    private processed_polygons: {
-        [collision_layer: number]: Array<{
-            polygon: Array<Array<number>>;
-            sensor_active: boolean;
-            readonly sensor_active_original: boolean;
-            location_key?: number;
-            split_polygon: boolean;
-            properties: any;
-        }>;
+    private _processed_polygons: {
+        [bounding_box_id: number]: {
+            [collision_layer: number]: Array<{
+                polygon: Array<Array<number>>;
+                sensor_active: boolean;
+                readonly sensor_active_original: boolean;
+                location_key?: number;
+                split_polygon: boolean;
+                properties: any;
+            }>;
+        };
     };
-    private polygons_processed: boolean;
-    private bounding_boxes: Phaser.Rectangle[];
+    private polygons_processed: Set<number>;
+    private bounding_boxes: {
+        id: number;
+        rect: Phaser.Rectangle;
+    }[];
+    private current_bounding_box_id: number;
     private game_events: GameEvent[];
     private before_config_game_events: GameEvent[];
     private other_game_events: GameEvent[];
@@ -148,7 +166,7 @@ export class Map {
         this._events = {};
         this._shapes = {};
         this._big_shapes_tiles = {};
-        this.processed_polygons = {};
+        this._processed_polygons = {};
         this._npcs = [];
         this._npcs_label_map = {};
         this._interactable_objects = [];
@@ -173,8 +191,9 @@ export class Map {
         this.encounter_zones = [];
         this.bgm_regions = [];
         this._background_key = background_key;
-        this.polygons_processed = false;
+        this.polygons_processed = new Set();
         this.bounding_boxes = [];
+        this.current_bounding_box_id = null;
         this.game_events = [];
         this.before_config_game_events = [];
         this.other_game_events = [];
@@ -553,9 +572,14 @@ export class Map {
             this.collision_sprite.height = this.sprite.heightInPixels;
             this.collision_sprite.anchor.setTo(0, 0);
 
-            if (this.processed_polygons[this.collision_layer]) {
-                for (let i = 0; i < this.processed_polygons[this.collision_layer].length; ++i) {
-                    const polygon_data = this.processed_polygons[this.collision_layer][i];
+            if (this._processed_polygons[this.current_bounding_box_id][this.collision_layer]) {
+                for (
+                    let i = 0;
+                    i < this._processed_polygons[this.current_bounding_box_id][this.collision_layer].length;
+                    ++i
+                ) {
+                    const polygon_data =
+                        this._processed_polygons[this.current_bounding_box_id][this.collision_layer][i];
                     const prev_length = this.collision_sprite.body.data.shapes.length;
                     //addPollygon modifies the polygon input
                     this.body.addPolygon(
@@ -571,7 +595,8 @@ export class Map {
                     const shapes: p2.Convex[] = this.collision_sprite.body.data.shapes.slice(prev_length);
                     shapes.forEach(shape => {
                         if (polygon_data.split_polygon) {
-                            this._shapes[collision_layer][polygon_data.location_key][i] = shape;
+                            this._shapes[this.current_bounding_box_id][collision_layer][polygon_data.location_key][i] =
+                                shape;
                         }
                         shape.properties = polygon_data.properties;
                         shape.sensor = polygon_data.sensor_active;
@@ -579,9 +604,15 @@ export class Map {
                 }
             }
 
+            const bounding_box_id = this.current_bounding_box_id ?? -1;
+            const current_bounding_box =
+                bounding_box_id !== -1 ? this.bounding_boxes.find(bb => bb.id === bounding_box_id).rect : null;
             const collision_layer_objects = this.sprite.objects[this.collision_layer]?.objectsData ?? [];
             for (let i = 0; i < collision_layer_objects.length; ++i) {
                 const collision_object = collision_layer_objects[i];
+                if (current_bounding_box && !current_bounding_box.contains(collision_object.x, collision_object.y)) {
+                    continue;
+                }
                 let sensor_active = false;
                 if (collision_object.properties) {
                     sensor_active =
@@ -638,25 +669,38 @@ export class Map {
      * size to a tile size.
      */
     private pre_processor_polygons() {
-        if (this.polygons_processed) {
-            for (let collision_layer in this.processed_polygons) {
-                for (let i = 0; i < this.processed_polygons[collision_layer].length; ++i) {
-                    const polygon_data = this.processed_polygons[collision_layer][i];
+        const bounding_box_id = this.current_bounding_box_id ?? -1;
+        if (this.polygons_processed.has(bounding_box_id)) {
+            for (let collision_layer in this._processed_polygons[this.current_bounding_box_id]) {
+                for (
+                    let i = 0;
+                    i < this._processed_polygons[this.current_bounding_box_id][collision_layer].length;
+                    ++i
+                ) {
+                    const polygon_data = this._processed_polygons[this.current_bounding_box_id][collision_layer][i];
                     polygon_data.sensor_active = polygon_data.sensor_active_original;
                 }
             }
             return;
         }
+        const current_bounding_box =
+            bounding_box_id !== -1 ? this.bounding_boxes.find(bb => bb.id === bounding_box_id).rect : null;
+        this._shapes[this.current_bounding_box_id] = {};
+        this._big_shapes_tiles[this.current_bounding_box_id] = {};
+        this._bodies_positions[this.current_bounding_box_id] = {};
+        this._processed_polygons[this.current_bounding_box_id] = {};
         for (let j = 0; j < this.collision_layers_number; ++j) {
             const collision_layer = j;
-            this._shapes[collision_layer] = {};
-            this._big_shapes_tiles[collision_layer] = new Set<number>();
-            this._bodies_positions[collision_layer] = {};
+            this._shapes[this.current_bounding_box_id][collision_layer] = {};
+            this._big_shapes_tiles[this.current_bounding_box_id][collision_layer] = new Set<number>();
+            this._bodies_positions[this.current_bounding_box_id][collision_layer] = {};
+            this._processed_polygons[this.current_bounding_box_id][collision_layer] = [];
             const collision_layer_objects = this.sprite.objects[collision_layer]?.objectsData ?? [];
-            this.processed_polygons[collision_layer] = [];
-            collision_layer_objects.processed_polygons = [];
             for (let i = 0; i < collision_layer_objects.length; ++i) {
                 const collision_object = collision_layer_objects[i];
+                if (current_bounding_box && !current_bounding_box.contains(collision_object.x, collision_object.y)) {
+                    continue;
+                }
                 let sensor_active = false;
                 let split_polygon = false;
                 if (collision_object.properties) {
@@ -688,7 +732,7 @@ export class Map {
                         return new_point;
                     });
                     if (!split_polygon) {
-                        this.processed_polygons[collision_layer].push({
+                        this._processed_polygons[this.current_bounding_box_id][collision_layer].push({
                             polygon: parsed_polygon as number[][],
                             sensor_active: sensor_active,
                             sensor_active_original: sensor_active,
@@ -737,12 +781,14 @@ export class Map {
                     );
                     for (const [location_key, polygons] of intersections) {
                         if (!split_polygon) {
-                            this._big_shapes_tiles[collision_layer].add(location_key);
+                            this._big_shapes_tiles[this.current_bounding_box_id][collision_layer].add(location_key);
                         } else {
-                            this._shapes[collision_layer][location_key] = new Array(polygons.length);
+                            this._shapes[this.current_bounding_box_id][collision_layer][location_key] = new Array(
+                                polygons.length
+                            );
                             for (let k = 0; k < polygons.length; ++k) {
                                 const polygon_section = polygons[k];
-                                this.processed_polygons[collision_layer].push({
+                                this._processed_polygons[this.current_bounding_box_id][collision_layer].push({
                                     polygon: polygon_section,
                                     sensor_active: sensor_active,
                                     sensor_active_original: sensor_active,
@@ -756,7 +802,7 @@ export class Map {
                 }
             }
         }
-        this.polygons_processed = true;
+        this.polygons_processed.add(bounding_box_id);
     }
 
     /**
@@ -770,15 +816,18 @@ export class Map {
     set_collision_in_tile(tile_x_pos: number, tile_y_pos: number, collide: boolean, collision_layer?: number) {
         const location_key = IntegerPairKey.get_key(tile_x_pos, tile_y_pos);
         collision_layer = collision_layer ?? this.collision_layer;
-        if (collision_layer in this.processed_polygons) {
-            this.processed_polygons[collision_layer].forEach(polygon_data => {
+        if (collision_layer in this._processed_polygons[this.current_bounding_box_id]) {
+            this._processed_polygons[this.current_bounding_box_id][collision_layer].forEach(polygon_data => {
                 if (polygon_data.location_key === location_key) {
                     polygon_data.sensor_active = !collide;
                 }
             });
             if (this.collision_layer === collision_layer) {
-                if (this.collision_layer in this._shapes && location_key in this._shapes[this.collision_layer]) {
-                    this._shapes[this.collision_layer][location_key].forEach(shape => {
+                if (
+                    this.collision_layer in this._shapes[this.current_bounding_box_id] &&
+                    location_key in this._shapes[this.current_bounding_box_id][this.collision_layer]
+                ) {
+                    this._shapes[this.current_bounding_box_id][this.collision_layer][location_key].forEach(shape => {
                         shape.sensor = !collide;
                     });
                 }
@@ -802,16 +851,20 @@ export class Map {
     ) {
         const location_key = IntegerPairKey.get_key(tile_x_pos, tile_y_pos);
         collision_layer = collision_layer ?? this.collision_layer;
-        if (location_key in this._shapes[collision_layer]) {
-            const shapes = this._shapes[collision_layer][location_key];
+        if (location_key in this._shapes[this.current_bounding_box_id][collision_layer]) {
+            const shapes = this._shapes[this.current_bounding_box_id][collision_layer][location_key];
             if (shapes.some(s => !s.sensor)) {
                 return true;
             }
         }
-        const tile_has_big_shape = this._big_shapes_tiles[collision_layer].has(location_key);
+        const tile_has_big_shape =
+            this._big_shapes_tiles[this.current_bounding_box_id][collision_layer].has(location_key);
         if (also_check_npc_io) {
-            if (collision_layer in this._bodies_positions && location_key in this._bodies_positions[collision_layer]) {
-                const bodies = this._bodies_positions[collision_layer][location_key];
+            if (
+                collision_layer in this._bodies_positions[this.current_bounding_box_id] &&
+                location_key in this._bodies_positions[this.current_bounding_box_id][collision_layer]
+            ) {
+                const bodies = this._bodies_positions[this.current_bounding_box_id][collision_layer][location_key];
                 if (bodies.some(b => b.shapes_collision_active)) {
                     return true;
                 }
@@ -831,9 +884,9 @@ export class Map {
         const location_key = IntegerPairKey.get_key(tile_x_pos, tile_y_pos);
         collision_layer = collision_layer ?? this.collision_layer;
         let objects: (NPC | InteractableObjects)[] = [];
-        if (collision_layer in this._bodies_positions) {
-            if (location_key in this._bodies_positions[collision_layer]) {
-                objects = this._bodies_positions[collision_layer][location_key];
+        if (collision_layer in this._bodies_positions[this.current_bounding_box_id]) {
+            if (location_key in this._bodies_positions[this.current_bounding_box_id][collision_layer]) {
+                objects = this._bodies_positions[this.current_bounding_box_id][collision_layer][location_key];
             }
         }
         return objects;
@@ -850,7 +903,8 @@ export class Map {
         }
         const location_key = IntegerPairKey.get_key(instance.tile_x_pos, instance.tile_y_pos);
         if (instance.base_collision_layer >= 0) {
-            const instances = this._bodies_positions[instance.base_collision_layer][location_key];
+            const instances =
+                this._bodies_positions[this.current_bounding_box_id][instance.base_collision_layer][location_key];
             return instances.includes(instance);
         }
         return false;
@@ -876,12 +930,12 @@ export class Map {
         instance: NPC | InteractableObjects
     ) {
         this.remove_body_tile(instance, old_x, old_y, old_col_index);
-        if (new_col_index >= 0 && new_col_index in this._bodies_positions) {
+        if (new_col_index >= 0 && new_col_index in this._bodies_positions[this.current_bounding_box_id]) {
             const new_location_key = IntegerPairKey.get_key(new_x, new_y);
-            if (new_location_key in this._bodies_positions[new_col_index]) {
-                this._bodies_positions[new_col_index][new_location_key].push(instance);
+            if (new_location_key in this._bodies_positions[this.current_bounding_box_id][new_col_index]) {
+                this._bodies_positions[this.current_bounding_box_id][new_col_index][new_location_key].push(instance);
             } else {
-                this._bodies_positions[new_col_index][new_location_key] = [instance];
+                this._bodies_positions[this.current_bounding_box_id][new_col_index][new_location_key] = [instance];
             }
         }
     }
@@ -897,13 +951,14 @@ export class Map {
         x_tile = x_tile ?? instance.tile_x_pos;
         y_tile = y_tile ?? instance.tile_y_pos;
         collision_layer = collision_layer ?? instance.base_collision_layer;
-        if (collision_layer in this._bodies_positions) {
+        if (collision_layer in this._bodies_positions[this.current_bounding_box_id]) {
             const location_key = IntegerPairKey.get_key(x_tile, y_tile);
-            this._bodies_positions[collision_layer][location_key] = this._bodies_positions[collision_layer][
-                location_key
-            ].filter(inst => inst !== instance);
-            if (!this._bodies_positions[collision_layer][location_key].length) {
-                delete this._bodies_positions[collision_layer][location_key];
+            this._bodies_positions[this.current_bounding_box_id][collision_layer][location_key] =
+                this._bodies_positions[this.current_bounding_box_id][collision_layer][location_key].filter(
+                    inst => inst !== instance
+                );
+            if (!this._bodies_positions[this.current_bounding_box_id][collision_layer][location_key].length) {
+                delete this._bodies_positions[this.current_bounding_box_id][collision_layer][location_key];
             }
         }
     }
@@ -1297,10 +1352,12 @@ export class Map {
                 (interactable_object as WhirlwindSource).config_whirlwind_source();
             }
             if (
-                (!snapshot_info && interactable_object.base_collision_layer in this._bodies_positions) ||
+                (!snapshot_info &&
+                    interactable_object.base_collision_layer in this._bodies_positions[this.current_bounding_box_id]) ||
                 snapshot_info?.body_in_map
             ) {
-                const bodies_positions = this._bodies_positions[interactable_object.base_collision_layer];
+                const bodies_positions =
+                    this._bodies_positions[this.current_bounding_box_id][interactable_object.base_collision_layer];
                 const location_key = IntegerPairKey.get_key(
                     interactable_object.tile_x_pos,
                     interactable_object.tile_y_pos
@@ -1334,8 +1391,11 @@ export class Map {
     config_single_npc(npc: NPC, map_index: number, custom_pos?: {x?: number; y?: number}) {
         const snapshot_info = this.data.snapshot_manager.snapshot?.map_data.npcs[map_index];
         npc.init_npc(this, snapshot_info, custom_pos);
-        if ((!snapshot_info && npc.base_collision_layer in this._bodies_positions) || snapshot_info?.body_in_map) {
-            const bodies_positions = this._bodies_positions[npc.base_collision_layer];
+        if (
+            (!snapshot_info && npc.base_collision_layer in this._bodies_positions[this.current_bounding_box_id]) ||
+            snapshot_info?.body_in_map
+        ) {
+            const bodies_positions = this._bodies_positions[this.current_bounding_box_id][npc.base_collision_layer];
             const location_key = IntegerPairKey.get_key(npc.tile_x_pos, npc.tile_y_pos);
             if (location_key in bodies_positions) {
                 bodies_positions[location_key].push(npc);
@@ -1356,9 +1416,10 @@ export class Map {
         const y = get_px_position(tile_y_pos, this.tile_height);
         let bound_set = false;
         for (let i = 0; i < this.bounding_boxes.length; ++i) {
-            const bounding_box = this.bounding_boxes[i];
+            const bounding_box = this.bounding_boxes[i].rect;
             if (bounding_box.contains(x, y)) {
                 this.game.camera.bounds.setTo(bounding_box.x, bounding_box.y, bounding_box.width, bounding_box.height);
+                this.current_bounding_box_id = this.bounding_boxes[i].id;
                 bound_set = true;
                 break;
             }
@@ -1427,7 +1488,10 @@ export class Map {
                         this_obj.width | 0,
                         this_obj.height | 0
                     );
-                    this.bounding_boxes.push(bounding_box);
+                    this.bounding_boxes.push({
+                        id: this_obj.id,
+                        rect: bounding_box,
+                    });
                 });
                 return layer_name;
             } else if (objs.properties?.bgm_regions) {
@@ -1913,9 +1977,9 @@ export class Map {
      * @returns returns the mounted map.
      */
     async mount_map(
-        collision_layer: number = 0,
-        encounter_cumulator?: number,
-        hero_dest?: {x: number; y: number},
+        collision_layer: number,
+        encounter_cumulator: number,
+        hero_dest: {x: number; y: number},
         retreat_data?: Map["retreat_data"]
     ) {
         if (!this.assets_loaded) {
@@ -1983,6 +2047,9 @@ export class Map {
         this.sprite.addTilesetImage(tileset_name, this.key_name);
 
         this.process_tiled_layers();
+
+        this.set_map_bounds(hero_dest.x, hero_dest.y);
+
         this.pre_processor_polygons();
 
         for (let i = 0; i < this.sprite.tilesets.length; ++i) {
@@ -2247,8 +2314,8 @@ export class Map {
         TileEvent.reset();
         GameEvent.reset();
 
-        for (let collision_layer in this._bodies_positions) {
-            this._bodies_positions[collision_layer] = {};
+        for (let collision_layer in this._bodies_positions[this.current_bounding_box_id]) {
+            this._bodies_positions[this.current_bounding_box_id][collision_layer] = {};
         }
 
         this._npcs = [];
@@ -2259,6 +2326,7 @@ export class Map {
         this.data.middlelayer_group.removeAll();
         this.encounter_zones = [];
         this.bounding_boxes = [];
+        this.current_bounding_box_id = null;
         this.game_events = [];
         this.before_config_game_events = [];
         this.other_game_events = [];
