@@ -1414,17 +1414,24 @@ export class Map {
     set_map_bounds(tile_x_pos: number, tile_y_pos: number) {
         const x = get_px_position(tile_x_pos, this.tile_width);
         const y = get_px_position(tile_y_pos, this.tile_height);
-        let bound_set = false;
         for (let i = 0; i < this.bounding_boxes.length; ++i) {
             const bounding_box = this.bounding_boxes[i].rect;
             if (bounding_box.contains(x, y)) {
-                this.game.camera.bounds.setTo(bounding_box.x, bounding_box.y, bounding_box.width, bounding_box.height);
                 this.current_bounding_box_id = this.bounding_boxes[i].id;
-                bound_set = true;
                 break;
             }
         }
-        if (!bound_set) {
+        this.change_camera_bounds();
+    }
+
+    /**
+     * Updates camera bounds to fit current portion of the map.
+     */
+    change_camera_bounds() {
+        if (this.current_bounding_box_id !== null && this.current_bounding_box_id >= 0) {
+            const bounding_box = this.bounding_boxes.find(bb => bb.id === this.current_bounding_box_id).rect;
+            this.game.camera.bounds.setTo(bounding_box.x, bounding_box.y, bounding_box.width, bounding_box.height);
+        } else {
             this.game.camera.setBoundsToWorld();
         }
         if (this.game.camera.bounds?.width < numbers.GAME_WIDTH) {

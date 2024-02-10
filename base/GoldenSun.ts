@@ -361,6 +361,7 @@ export class GoldenSun {
             x: hero_initial_x,
             y: hero_initial_y,
         });
+        this.map.change_camera_bounds();
 
         //initializes the controllable hero
         const hero_key_name = this.dbs.init_db.hero_key_name;
