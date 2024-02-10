@@ -52,18 +52,24 @@ export class CameraMoveEvent extends GameEvent {
             const easing = point.easing ? _.get(Phaser.Easing, point.easing) : Phaser.Easing.Linear.None;
             let promise_resolve;
             const promise = new Promise(resolve => (promise_resolve = resolve));
-            this.game.add
-                .tween(this.game.camera)
-                .to(
-                    {
-                        x: x,
-                        y: y,
-                    },
-                    duration,
-                    easing,
-                    true
-                )
-                .onComplete.addOnce(promise_resolve);
+            if (duration >= 30) {
+                this.game.add
+                    .tween(this.game.camera)
+                    .to(
+                        {
+                            x: x,
+                            y: y,
+                        },
+                        duration,
+                        easing,
+                        true
+                    )
+                    .onComplete.addOnce(promise_resolve);
+            } else {
+                this.game.camera.x = x;
+                this.game.camera.y = y;
+                promise_resolve();
+            }
             await promise;
         }
         if (this.reset_follow && camera_was_following) {
