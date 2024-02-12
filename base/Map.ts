@@ -28,6 +28,13 @@ import {Window} from "./Window";
 import {GAME_HEIGHT, GAME_WIDTH} from "./magic_numbers";
 import {WhirlwindSource} from "./interactable_objects/WhirlwindSource";
 
+export enum map_game_event_types {
+    REGULAR = "regular",
+    OPTIONS_LIST = "options_list",
+    BEFORE_CONFIG = "before_config",
+    BEFORE_CAMERA_FADE = "before_camera_fade",
+}
+
 /** The class reponsible for the maps of the engine. */
 export class Map {
     private static readonly MAX_CAMERA_ROTATION = 0.035;
@@ -110,6 +117,7 @@ export class Map {
     private current_bounding_box_id: number;
     private game_events: GameEvent[];
     private before_config_game_events: GameEvent[];
+    private before_camera_fade_game_events: GameEvent[];
     private other_game_events: GameEvent[];
     private _retreat_data: {
         x: number;
@@ -196,6 +204,7 @@ export class Map {
         this.current_bounding_box_id = null;
         this.game_events = [];
         this.before_config_game_events = [];
+        this.before_camera_fade_game_events = [];
         this.other_game_events = [];
         this._retreat_data = null;
         this._paused = false;
@@ -1891,30 +1900,32 @@ export class Map {
      */
     init_game_events(
         events: string,
-        event_type: "regular" | "before_config" | "options_list" = "regular",
+        event_type: map_game_event_types = map_game_event_types.REGULAR,
         property_key?: string
     ) {
         try {
             let events_arr = JSON.parse(events);
-            if (event_type !== "options_list" && !Array.isArray(events_arr)) {
+            if (event_type !== map_game_event_types.OPTIONS_LIST && !Array.isArray(events_arr)) {
                 this.data.logger.log_message("Map Game Events list is not an Array type.");
                 return;
             }
-            if (event_type === "options_list") {
+            if (event_type === map_game_event_types.OPTIONS_LIST) {
                 events_arr = [events_arr];
             }
             events_arr.forEach(event_info => {
                 const event = this.data.game_event_manager.get_event_instance(event_info, game_event_origin.MAP);
-                if (event_type === "regular") {
+                if (event_type === map_game_event_types.REGULAR) {
                     this.game_events.push(event);
-                } else if (event_type === "before_config") {
+                } else if (event_type === map_game_event_types.BEFORE_CONFIG) {
                     this.before_config_game_events.push(event);
-                } else if (event_type === "options_list") {
+                } else if (event_type === map_game_event_types.BEFORE_CAMERA_FADE) {
+                    this.before_camera_fade_game_events.push(event);
+                } else if (event_type === map_game_event_types.OPTIONS_LIST) {
                     this.other_game_events.push(event);
                 }
             });
         } catch {
-            if (event_type !== "options_list") {
+            if (event_type !== map_game_event_types.OPTIONS_LIST) {
                 this.data.logger.log_message("Map Game Events list is not a valid JSON.");
             } else if (property_key) {
                 this.data.logger.log_message(`Game event '${property_key}' is not a valid JSON.`);
@@ -1924,11 +1935,13 @@ export class Map {
 
     /**
      * Fires this map game events.
-     * @param before_config if true, it will fire before config events instead.
+     * @param map_event_type the set type of map events that will be fired.
      */
-    fire_game_events(before_config: boolean = false) {
-        if (before_config) {
+    fire_game_events(map_event_type: map_game_event_types = map_game_event_types.REGULAR) {
+        if (map_event_type === map_game_event_types.BEFORE_CONFIG) {
             this.before_config_game_events.forEach(event => event.fire());
+        } else if (map_event_type === map_game_event_types.BEFORE_CAMERA_FADE) {
+            this.before_camera_fade_game_events.forEach(event => event.fire());
         } else {
             this.game_events.forEach(event => event.fire());
         }
@@ -2108,9 +2121,14 @@ export class Map {
         if (this.sprite.properties?.game_events) {
             this.init_game_events(this.sprite.properties.game_events);
         }
-
         if (this.sprite.properties?.before_config_game_events) {
-            this.init_game_events(this.sprite.properties.game_events, "before_config");
+            this.init_game_events(this.sprite.properties.before_config_game_events, map_game_event_types.BEFORE_CONFIG);
+        }
+        if (this.sprite.properties?.before_camera_fade_game_events) {
+            this.init_game_events(
+                this.sprite.properties.before_camera_fade_game_events,
+                map_game_event_types.BEFORE_CAMERA_FADE
+            );
         }
 
         //read the map properties and creates tile events, npcs and interactable objects
@@ -2125,14 +2143,14 @@ export class Map {
                 } else if (property_key.startsWith("interactable_object/")) {
                     this.create_interactable_object(property_key, property, map_index);
                 } else if (property_key.startsWith("game_event/")) {
-                    this.init_game_events(property, "options_list", property_key);
+                    this.init_game_events(property, map_game_event_types.OPTIONS_LIST, property_key);
                 }
                 ++map_index;
             }
         }
 
         //call before config events list. Meant to be fired before npc, IO and layers config.
-        this.fire_game_events(true);
+        this.fire_game_events(map_game_event_types.BEFORE_CONFIG);
 
         this.config_layers();
         this.config_interactable_object();
@@ -2306,6 +2324,7 @@ export class Map {
         }
         this.game_events.forEach(event => event?.destroy());
         this.before_config_game_events.forEach(event => event?.destroy());
+        this.before_camera_fade_game_events.forEach(event => event?.destroy());
         this.other_game_events.forEach(event => event?.destroy());
 
         this.data.collision.clear_custom_bodies();
@@ -2336,6 +2355,7 @@ export class Map {
         this.current_bounding_box_id = null;
         this.game_events = [];
         this.before_config_game_events = [];
+        this.before_camera_fade_game_events = [];
         this.other_game_events = [];
         this.data.middlelayer_group.add(this.data.hero.shadow);
         this.data.middlelayer_group.add(this.data.hero.sprite);

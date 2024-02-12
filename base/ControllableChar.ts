@@ -1166,7 +1166,7 @@ export abstract class ControllableChar {
      * The update function for the shadow sprite.
      */
     update_shadow() {
-        if (!this.shadow || !this.shadow_following || !this.active) return;
+        if (!this.shadow || !this.shadow_following || !this.active || !this.sprite) return;
         if (this.sprite.body) {
             this.shadow.x = this.sprite.body.x;
             this.shadow.y = this.sprite.body.y;

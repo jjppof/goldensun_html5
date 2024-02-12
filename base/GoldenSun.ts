@@ -8,7 +8,7 @@ import {TileEventManager} from "./tile_events/TileEventManager";
 import {GameEventManager} from "./game_events/GameEventManager";
 import {load_databases} from "./initializers/databases_loader";
 import {GameInfo, initialize_game_data} from "./initializers/initialize_info";
-import {Map} from "./Map";
+import {Map, map_game_event_types} from "./Map";
 import {Battle} from "./battle/Battle";
 import {MainMenu, initialize_menu} from "./main_menus/MainMenu";
 import {ShopMenu} from "./main_menus/ShopMenu";
@@ -406,6 +406,7 @@ export class GoldenSun {
 
         this.assets_loaded = true;
 
+        this.map.fire_game_events(map_game_event_types.BEFORE_CAMERA_FADE);
         this.game.camera.resetFX();
 
         this.initialize_psynergy_controls();

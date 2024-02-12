@@ -795,6 +795,7 @@ export class NPC extends ControllableChar {
                 this.outline_filter.keep_transparent = this.snapshot_info.filter_settings.outline.keep_transparent;
             }
         }
+        this.update_shadow();
     }
 
     /**
