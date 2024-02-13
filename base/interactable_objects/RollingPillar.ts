@@ -1,12 +1,6 @@
 import {ControllableChar} from "../ControllableChar";
 import {Map} from "../Map";
-import {
-    base_actions,
-    directions,
-    get_centered_pos_in_px,
-    get_distance,
-    get_tile_position,
-} from "../utils";
+import {base_actions, directions, get_centered_pos_in_px, get_distance, get_tile_position} from "../utils";
 import {InteractableObjects} from "./InteractableObjects";
 import * as _ from "lodash";
 import {GameEvent, game_event_origin} from "../game_events/GameEvent";

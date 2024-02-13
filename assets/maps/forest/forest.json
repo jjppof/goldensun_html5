@@ -1339,7 +1339,7 @@
              "layer_index":"int"
             },
          "type":"objectgroup",
-         "visible":false,
+         "visible":true,
          "x":0,
          "y":0
         }, 
@@ -2237,36 +2237,36 @@
          "objects":[
                 {
                  "class":"",
-                 "height":360,
+                 "height":376,
                  "id":33,
                  "name":"",
                  "rotation":0,
                  "visible":true,
-                 "width":512,
-                 "x":0,
-                 "y":0
+                 "width":528,
+                 "x":-8,
+                 "y":-8
                 }, 
                 {
                  "class":"",
-                 "height":256,
+                 "height":272,
                  "id":34,
                  "name":"",
                  "rotation":0,
                  "visible":true,
-                 "width":160,
-                 "x":720,
-                 "y":0
+                 "width":176,
+                 "x":712,
+                 "y":-8
                 }, 
                 {
                  "class":"",
-                 "height":120,
+                 "height":136,
                  "id":35,
                  "name":"",
                  "rotation":0,
                  "visible":true,
-                 "width":120,
-                 "x":960,
-                 "y":0
+                 "width":136,
+                 "x":952,
+                 "y":-8
                 }],
          "opacity":1,
          "properties":
@@ -2278,7 +2278,7 @@
              "bounding_box":"bool"
             },
          "type":"objectgroup",
-         "visible":false,
+         "visible":true,
          "x":0,
          "y":0
         }],
