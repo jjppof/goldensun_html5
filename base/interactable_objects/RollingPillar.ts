@@ -1,6 +1,12 @@
 import {ControllableChar} from "../ControllableChar";
 import {Map} from "../Map";
-import {base_actions, directions, get_centered_pos_in_px, get_distance, get_sqr_distance} from "../utils";
+import {
+    base_actions,
+    directions,
+    get_centered_pos_in_px,
+    get_distance,
+    get_tile_position,
+} from "../utils";
 import {InteractableObjects} from "./InteractableObjects";
 import * as _ from "lodash";
 import {GameEvent, game_event_origin} from "../game_events/GameEvent";
@@ -152,6 +158,18 @@ export class RollablePillar extends InteractableObjects {
             char.trying_to_push = true;
             if (char.push_timer === null) {
                 char.set_trying_to_push_direction(char.current_direction);
+                if (
+                    [directions.down, directions.up].includes(char.trying_to_push_direction) &&
+                    this._pillar_direction === pillar_directions.VERTICAL
+                ) {
+                    return false;
+                }
+                if (
+                    [directions.left, directions.right].includes(char.trying_to_push_direction) &&
+                    this._pillar_direction === pillar_directions.HORIZONTAL
+                ) {
+                    return false;
+                }
                 char.set_push_timer(() => {
                     if (!this.data.main_menu.open && !this.data.save_menu.open) {
                         this.define_pillar_direction(char);
@@ -186,10 +204,16 @@ export class RollablePillar extends InteractableObjects {
                 return;
             }
 
-            const get_extreme = (index: number, init: number, func: "max" | "min", axis: "x" | "y") => {
+            const get_extreme = (
+                io: InteractableObjects,
+                index: number,
+                init: number,
+                func: "max" | "min",
+                axis: "x" | "y"
+            ) => {
                 return (
-                    this.body.world.mpx(
-                        this.body.data.shapes.reduce((acc, cur) => {
+                    io.body.world.mpx(
+                        io.body.data.shapes.reduce((acc, cur) => {
                             return Math[func](
                                 acc,
                                 cur.vertices.reduce((acc, cur) => {
@@ -197,13 +221,15 @@ export class RollablePillar extends InteractableObjects {
                                 }, init)
                             );
                         }, init)
-                    ) + this[axis]
+                    ) + io[axis]
                 );
             };
-            const min_x = get_extreme(0, Infinity, "min", "x");
-            const max_x = get_extreme(0, -Infinity, "max", "x");
-            const min_y = get_extreme(1, Infinity, "min", "y");
-            const max_y = get_extreme(1, -Infinity, "max", "y");
+            const min_x = get_extreme(this, 0, Infinity, "min", "x");
+            const max_x = get_extreme(this, 0, -Infinity, "max", "x");
+            const min_y = get_extreme(this, 1, Infinity, "min", "y");
+            const max_y = get_extreme(this, 1, -Infinity, "max", "y");
+
+            const cartesian = (...a) => a.reduce((a, b) => a.flatMap(d => b.map(e => [d, e].flat())));
 
             let next_contact: RollablePillar["_contact_points"][0] = null;
             let last_distance = Infinity;
@@ -216,11 +242,38 @@ export class RollablePillar extends InteractableObjects {
                         !io.allow_jumping_over_it &&
                         !io.allow_jumping_through_it &&
                         io.shapes_collision_active &&
-                        io.base_collision_layer === this.base_collision_layer &&
-                        ((this._pillar_direction === pillar_directions.VERTICAL && io.y >= min_y && io.y <= max_y) ||
-                            (this._pillar_direction === pillar_directions.HORIZONTAL && io.x >= min_x && io.x <= max_x))
+                        io.base_collision_layer === this.base_collision_layer
                     ) {
-                        return [io.tile_pos];
+                        const bounds = {
+                            min_x: get_extreme(io, 0, Infinity, "min", "x"),
+                            max_x: get_extreme(io, 0, -Infinity, "max", "x"),
+                            min_y: get_extreme(io, 1, Infinity, "min", "y"),
+                            max_y: get_extreme(io, 1, -Infinity, "max", "y"),
+                        };
+                        if (
+                            (this._pillar_direction === pillar_directions.VERTICAL &&
+                                bounds.max_y >= min_y &&
+                                bounds.min_y <= max_y) ||
+                            (this._pillar_direction === pillar_directions.HORIZONTAL &&
+                                bounds.max_x >= min_x &&
+                                bounds.min_x <= max_x)
+                        ) {
+                            bounds.min_x = get_tile_position(bounds.min_x | 0, this.data.map.tile_width);
+                            bounds.max_x = get_tile_position(bounds.max_x | 0, this.data.map.tile_width);
+                            bounds.min_y = get_tile_position(bounds.min_y | 0, this.data.map.tile_height);
+                            bounds.max_y = get_tile_position(bounds.max_y | 0, this.data.map.tile_height);
+                            return cartesian(
+                                _.range(bounds.min_x, bounds.max_x + 1),
+                                _.range(bounds.min_y, bounds.max_y + 1)
+                            ).map(pos => {
+                                return {
+                                    x: pos[0],
+                                    y: pos[1],
+                                };
+                            });
+                        } else {
+                            return [];
+                        }
                     } else {
                         return [];
                     }

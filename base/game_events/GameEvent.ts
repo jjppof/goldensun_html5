@@ -210,7 +210,7 @@ export abstract class GameEvent {
 
     /** Check if "Reveal" is currently active. If yes, then cancel it. */
     check_reveal() {
-        if (this.data.hero.on_reveal && !this.keep_reveal) {
+        if (this.data.hero?.on_reveal && !this.keep_reveal) {
             (this.data.info.field_abilities_list.reveal as RevealFieldPsynergy).finish(false, false);
         }
     }

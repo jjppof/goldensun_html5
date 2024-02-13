@@ -1419,8 +1419,9 @@ export class Map {
      * If no bounding box found, will fit map bounds to world size.
      * @param tile_x_pos the x tile position.
      * @param tile_y_pos the y tile position.
+     * @param apply_on_camera_view if true, will apply the bounds to camera.
      */
-    set_map_bounds(tile_x_pos: number, tile_y_pos: number) {
+    set_map_bounds(tile_x_pos: number, tile_y_pos: number, apply_on_camera_view: boolean = true) {
         const x = get_px_position(tile_x_pos, this.tile_width);
         const y = get_px_position(tile_y_pos, this.tile_height);
         for (let i = 0; i < this.bounding_boxes.length; ++i) {
@@ -1430,7 +1431,9 @@ export class Map {
                 break;
             }
         }
-        this.change_camera_bounds();
+        if (apply_on_camera_view) {
+            this.change_camera_bounds();
+        }
     }
 
     /**
@@ -2068,7 +2071,7 @@ export class Map {
 
         this.process_tiled_layers();
 
-        this.set_map_bounds(hero_dest.x, hero_dest.y);
+        this.set_map_bounds(hero_dest.x, hero_dest.y, false);
 
         this.pre_processor_polygons();
 
