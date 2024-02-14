@@ -1,6 +1,7 @@
 import {SpriteBase} from "../SpriteBase";
 import {IntegerPairKey, TileEvent} from "../tile_events/TileEvent";
 import * as numbers from "../magic_numbers";
+import * as _ from "lodash";
 import {
     directions,
     get_centered_pos_in_px,
@@ -1424,6 +1425,17 @@ export class InteractableObjects {
         }
         if (this.storage_keys.active !== undefined) {
             this.data.storage.set(this.storage_keys.active, this._active);
+        }
+    }
+
+    /**
+     * Gets this IO body radius or similar number.
+     */
+    get_body_radius() {
+        if (this.sprite?.body) {
+            return _.mean(this.body.data.shapes.map(s => this.body.world.mpx(s.boundingRadius)));
+        } else {
+            return -1;
         }
     }
 
