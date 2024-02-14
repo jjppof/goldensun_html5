@@ -16,9 +16,7 @@ export class SetIoVisibilityEvent extends GameEvent {
             return;
         }
         const interactable_object = this.data.map.interactable_objects_label_map[this.io_label];
-        if (interactable_object.sprite) {
-            interactable_object.sprite.visible = this.visible;
-        }
+        interactable_object.set_visible(this.visible);
     }
 
     _destroy() {}

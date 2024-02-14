@@ -19,7 +19,7 @@ export class SetCharActivationEvent extends GameEvent {
                 npc_label: this.npc_label,
             }) ?? this.origin_npc;
 
-        target_char.toggle_active(this.activate);
+        target_char?.toggle_active(this.activate);
     }
 
     _destroy() {}

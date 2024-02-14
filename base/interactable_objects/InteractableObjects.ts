@@ -66,7 +66,10 @@ export class InteractableObjects {
         scale?: string;
         base_collision_layer?: string;
         enable?: string;
+        active?: string;
+        visible?: string;
         entangled_by_bush?: string;
+        action?: string;
         animation?: string;
         affected_by_reveal?: string;
     };
@@ -238,6 +241,9 @@ export class InteractableObjects {
         this.scale_y = scale_y;
         this._psynergy_casted = {};
         this.block_climb_collision_layer_shift = block_climb_collision_layer_shift;
+        if (this.storage_keys.active !== undefined) {
+            active = this.data.storage.get(this.storage_keys.active);
+        }
         this._active = active ?? true;
         if (this.snapshot_info) {
             this._active = this.snapshot_info.active;
@@ -279,6 +285,9 @@ export class InteractableObjects {
             animation = this.data.storage.get(this.storage_keys.animation);
         }
         this._current_animation = animation;
+        if (this.storage_keys.action !== undefined) {
+            action = this.data.storage.get(this.storage_keys.action);
+        }
         this._current_action = action;
         this._shapes_collision_active = false;
         this._active_filters = {
@@ -292,6 +301,9 @@ export class InteractableObjects {
             [engine_filters.FLAME]: false,
         };
         this._map_index = map_index;
+        if (this.storage_keys.visible !== undefined) {
+            initially_visible = this.data.storage.get(this.storage_keys.visible);
+        }
         this._initially_visible = initially_visible ?? true;
     }
 
@@ -566,6 +578,22 @@ export class InteractableObjects {
                 event_info.event.fire();
             }
         });
+    }
+
+    /**
+     * Sets this IO visibility.
+     * @param visible whether to be visible or not.
+     */
+    set_visible(visible: boolean) {
+        if (this.sprite) {
+            this.sprite.visible = visible;
+            if (this.shadow) {
+                this.shadow.visible = this.sprite.visible;
+            }
+        }
+        if (this.storage_keys.visible !== undefined) {
+            this.data.storage.set(this.storage_keys.visible, visible);
+        }
     }
 
     set_entangled_by_bush(entangled_by_bush: boolean) {
@@ -1003,8 +1031,8 @@ export class InteractableObjects {
         }
     }
 
-    play(animation: string, action?: string, start: boolean = true, frame_rate?: number, loop?: boolean) {
-        this._current_animation = animation;
+    play(animation?: string, action?: string, start: boolean = true, frame_rate?: number, loop?: boolean) {
+        this._current_animation = animation ?? this._current_animation;
         this._current_action = action ?? this._current_action;
 
         if (SpriteBase.getSpriteAction(this.sprite) !== this.current_action) {
@@ -1300,6 +1328,64 @@ export class InteractableObjects {
         });
     }
 
+    /**
+     * Updates this IO properties according to current storage values.
+     */
+    check_storage_keys() {
+        if (this.storage_keys.active !== undefined) {
+            const storage_value = this.data.storage.get(this.storage_keys.active);
+            if (this.active !== storage_value) {
+                this.toggle_active(storage_value as boolean);
+            }
+        }
+        if (this.storage_keys.base_collision_layer !== undefined) {
+            const storage_value = this.data.storage.get(this.storage_keys.base_collision_layer);
+            if (this.base_collision_layer !== storage_value) {
+                this._base_collision_layer = storage_value as number;
+            }
+        }
+        if (this.storage_keys.affected_by_reveal !== undefined) {
+            const storage_value = this.data.storage.get(this.storage_keys.affected_by_reveal);
+            if (this.affected_by_reveal !== storage_value) {
+                this._affected_by_reveal = storage_value as boolean;
+            }
+        }
+        if (this.storage_keys.visible !== undefined) {
+            const storage_value = this.data.storage.get(this.storage_keys.visible);
+            if (this.sprite?.visible !== storage_value) {
+                this.set_visible(storage_value as boolean);
+            }
+        }
+        if (this.storage_keys.enable !== undefined) {
+            const storage_value = this.data.storage.get(this.storage_keys.enable);
+            if (this.enable !== storage_value) {
+                this.set_enable(storage_value as boolean);
+            }
+        }
+        let action_or_animation_changed = false;
+        if (this.storage_keys.action !== undefined) {
+            const storage_value = this.data.storage.get(this.storage_keys.action);
+            if (this.current_action !== storage_value) {
+                this._current_action = storage_value as string;
+                action_or_animation_changed = true;
+            }
+        }
+        if (this.storage_keys.animation !== undefined) {
+            const storage_value = this.data.storage.get(this.storage_keys.animation);
+            if (this.current_animation !== storage_value) {
+                this._current_animation = storage_value as string;
+                action_or_animation_changed = true;
+            }
+        }
+        if (action_or_animation_changed) {
+            this.play();
+        }
+    }
+
+    /**
+     * Activates or deactivates this IO.
+     * @param active true, if you want to activate it.
+     */
     toggle_active(active: boolean) {
         if (active) {
             this.sprite?.body?.collides(this.data.collision.hero_collision_group);
@@ -1310,10 +1396,14 @@ export class InteractableObjects {
                 this._blocking_stair_block.collides(this.data.collision.hero_collision_group);
             }
             if (this.sprite) {
-                this.sprite.visible = true;
-            }
-            if (this.shadow) {
-                this.shadow.visible = true;
+                if (this.storage_keys.visible !== undefined) {
+                    this.sprite.visible = this.data.storage.get(this.storage_keys.visible) as boolean;
+                } else {
+                    this.sprite.visible = true;
+                }
+                if (this.shadow) {
+                    this.shadow.visible = this.sprite.visible;
+                }
             }
             this._active = true;
         } else {
@@ -1328,9 +1418,12 @@ export class InteractableObjects {
                 this.sprite.visible = false;
             }
             if (this.shadow) {
-                this.shadow.visible = false;
+                this.shadow.visible = this.sprite.visible;
             }
             this._active = false;
+        }
+        if (this.storage_keys.active !== undefined) {
+            this.data.storage.set(this.storage_keys.active, this._active);
         }
     }
 

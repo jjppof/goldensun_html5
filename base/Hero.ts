@@ -265,6 +265,19 @@ export class Hero extends ControllableChar {
     }
 
     /**
+     * Sets the hero visibility.
+     * @param visible whether to be visible or not.
+     */
+    set_visible(visible: boolean) {
+        if (this.sprite) {
+            this.sprite.visible = visible;
+            if (this.shadow) {
+                this.shadow.visible = this.sprite.visible;
+            }
+        }
+    }
+
+    /**
      * Gets the hero battle encounter factor that depends on the type of the map (if
      * it's world map or not) and whether it's dashing or not.
      * @returns the encounter factor.

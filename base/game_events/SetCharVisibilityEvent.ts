@@ -18,11 +18,7 @@ export class SetCharVisibilityEvent extends GameEvent {
                 is_npc: this.is_npc,
                 npc_label: this.npc_label,
             }) ?? this.origin_npc;
-
-        target_char.sprite.visible = this.visible;
-        if (target_char.shadow) {
-            target_char.shadow.visible = this.visible;
-        }
+        target_char.set_visible(this.visible);
     }
 
     _destroy() {}

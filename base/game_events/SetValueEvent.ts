@@ -7,8 +7,10 @@ import {storage_types} from "../Storage";
 export class SetValueEvent extends GameEvent {
     private event_value: EventValue;
     private check_npc_storage_values: boolean;
+    private check_io_storage_values: boolean;
     private check_collision_structures: boolean;
     private check_layers_visibility: boolean;
+    private io_label: string;
     private npc_label: string;
     private npc_index: number;
     private increment: boolean;
@@ -22,8 +24,10 @@ export class SetValueEvent extends GameEvent {
         keep_reveal,
         event_value,
         check_npc_storage_values,
+        check_io_storage_values,
         check_collision_structures,
         check_layers_visibility,
+        io_label,
         npc_label,
         npc_index,
         increment,
@@ -32,8 +36,10 @@ export class SetValueEvent extends GameEvent {
         super(game, data, event_types.SET_VALUE, active, key_name, keep_reveal);
         this.event_value = event_value;
         this.check_npc_storage_values = check_npc_storage_values ?? false;
+        this.check_io_storage_values = check_io_storage_values ?? false;
         this.check_collision_structures = check_collision_structures ?? false;
         this.check_layers_visibility = check_layers_visibility ?? false;
+        this.io_label = io_label;
         this.npc_label = npc_label;
         this.npc_index = npc_index;
         this.increment = increment ?? false;
@@ -165,6 +171,17 @@ export class SetValueEvent extends GameEvent {
                 this.data.logger.log_message(
                     `NPC label not passed to "set_value" event when "check_npc_storage_values" was set true.`
                 );
+            }
+        }
+        if (this.check_io_storage_values) {
+            if (!(this.io_label in this.data.map.interactable_objects_label_map)) {
+                this.data.logger.log_message(
+                    `IO label not passed to "set_value" event when "check_io_storage_values" was set true.`
+                );
+                return;
+            } else {
+                const interactable_object = this.data.map.interactable_objects_label_map[this.io_label];
+                interactable_object.check_storage_keys();
             }
         }
         if (this.check_collision_structures) {

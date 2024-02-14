@@ -341,10 +341,7 @@ export class NPC extends ControllableChar {
         if (this.storage_keys.visible !== undefined) {
             const storage_value = this.data.storage.get(this.storage_keys.visible);
             if (this.sprite?.visible !== storage_value) {
-                this.sprite.visible = storage_value as boolean;
-                if (this.shadow) {
-                    this.shadow.visible = storage_value as boolean;
-                }
+                this.set_visible(storage_value as boolean);
             }
         }
         if (this.storage_keys.movement_type !== undefined) {
@@ -654,9 +651,9 @@ export class NPC extends ControllableChar {
                 } else {
                     this.sprite.visible = true;
                 }
-            }
-            if (this.shadow) {
-                this.shadow.visible = this.sprite.visible;
+                if (this.shadow) {
+                    this.shadow.visible = this.sprite.visible;
+                }
             }
             this._active = true;
         } else {
@@ -669,6 +666,9 @@ export class NPC extends ControllableChar {
             }
             this._active = false;
         }
+        if (this.storage_keys.active !== undefined) {
+            this.data.storage.set(this.storage_keys.active, this._active);
+        }
     }
 
     /**
@@ -678,9 +678,12 @@ export class NPC extends ControllableChar {
     set_visible(visible: boolean) {
         if (this.sprite) {
             this.sprite.visible = visible;
+            if (this.shadow) {
+                this.shadow.visible = this.sprite.visible;
+            }
         }
-        if (this.shadow) {
-            this.shadow.visible = visible;
+        if (this.storage_keys.visible !== undefined) {
+            this.data.storage.set(this.storage_keys.visible, visible);
         }
     }
 

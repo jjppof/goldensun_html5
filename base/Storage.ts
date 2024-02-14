@@ -168,7 +168,18 @@ export class Storage {
             this.data.logger.log_message(`There's no storage value with key '${key_name}'.`);
             return;
         }
+        const prev_value = storage[key_name].value;
         storage[key_name].value = value;
+        if (storage[key_name].type === storage_types.POSITION) {
+            if (
+                (prev_value as StoragePosition).x === (value as StoragePosition).x &&
+                (prev_value as StoragePosition).y === (value as StoragePosition).y
+            ) {
+                return;
+            }
+        } else if (prev_value === value) {
+            return;
+        }
         for (let id in storage[key_name].callbacks) {
             const callback_obj = storage[key_name].callbacks[id];
             callback_obj.callback();
