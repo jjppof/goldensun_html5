@@ -3697,6 +3697,19 @@ Phaser.ParticleStorm.Zones.Spline.prototype.emit = function (emitter, key, x, y,
         y = this.game.rnd.between(y[0], y[1]);
     }
 
+    //  ------------------------------------------------
+    //  If the coordinates are functions, call them to retrieve the value
+    //  ------------------------------------------------
+    if (x instanceof Function)
+    {
+        x = x();
+    }
+
+    if (y instanceof Function)
+    {
+        y = y();
+    }
+
     var rnd = null;
     var particle = null;
 
@@ -3741,6 +3754,19 @@ Phaser.ParticleStorm.Zones.Spline.prototype.emitPercent = function (emitter, key
     if (Array.isArray(y))
     {
         y = this.game.rnd.between(y[0], y[1]);
+    }
+
+    //  ------------------------------------------------
+    //  If the coordinates are functions, call them to retrieve the value
+    //  ------------------------------------------------
+    if (x instanceof Function)
+    {
+        x = x();
+    }
+
+    if (y instanceof Function)
+    {
+        y = y();
     }
 
     var particle = null;
@@ -3944,6 +3970,19 @@ Phaser.ParticleStorm.Zones.Text.prototype.emit = function (emitter, key, x, y, q
         y = this.game.rnd.between(y[0], y[1]);
     }
 
+    //  ------------------------------------------------
+    //  If the coordinates are functions, call them to retrieve the value
+    //  ------------------------------------------------
+    if (x instanceof Function)
+    {
+        x = x();
+    }
+
+    if (y instanceof Function)
+    {
+        y = y();
+    }
+
     var rnd = null;
     var particle = null;
 
@@ -4015,6 +4054,19 @@ Phaser.ParticleStorm.Zones.Text.prototype.emitFull = function (emitter, key, x, 
     if (Array.isArray(y))
     {
         y = this.game.rnd.between(y[0], y[1]);
+    }
+
+    //  ------------------------------------------------
+    //  If the coordinates are functions, call them to retrieve the value
+    //  ------------------------------------------------
+    if (x instanceof Function)
+    {
+        x = x();
+    }
+
+    if (y instanceof Function)
+    {
+        y = y();
     }
 
     var point = null;
@@ -4197,6 +4249,19 @@ Phaser.ParticleStorm.Zones.Image.prototype.emit = function (emitter, key, x, y, 
         y = this.game.rnd.between(y[0], y[1]);
     }
 
+    //  ------------------------------------------------
+    //  If the coordinates are functions, call them to retrieve the value
+    //  ------------------------------------------------
+    if (x instanceof Function)
+    {
+        x = x();
+    }
+
+    if (y instanceof Function)
+    {
+        y = y();
+    }
+
     var rnd = null;
     var particle = null;
 
@@ -4268,6 +4333,19 @@ Phaser.ParticleStorm.Zones.Image.prototype.emitFull = function (emitter, key, x,
     if (Array.isArray(y))
     {
         y = this.game.rnd.between(y[0], y[1]);
+    }
+
+    //  ------------------------------------------------
+    //  If the coordinates are functions, call them to retrieve the value
+    //  ------------------------------------------------
+    if (x instanceof Function)
+    {
+        x = x();
+    }
+
+    if (y instanceof Function)
+    {
+        y = y();
     }
 
     var point = null;
