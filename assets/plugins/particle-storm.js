@@ -3325,6 +3325,19 @@ Phaser.ParticleStorm.Zones.Base.prototype = {
             y = this.game.rnd.between(y[0], y[1]);
         }
 
+        //  ------------------------------------------------
+        //  If the coordinates are functions, call them to retrieve the value
+        //  ------------------------------------------------
+        if (x instanceof Function)
+        {
+            x = x();
+        }
+
+        if (y instanceof Function)
+        {
+            y = y();
+        }
+
         var particle = null;
 
         for (var i = 0; i < qty; i++)
