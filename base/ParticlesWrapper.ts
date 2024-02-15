@@ -350,7 +350,7 @@ export class ParticlesWrapper {
                     }
                 }
 
-                const displays = emitter.addToWorld(particles_group);
+                const displays = emitter.addToWorld(group);
                 if (inner_groups) {
                     displays.forEach(display => {
                         if (!display) return;
