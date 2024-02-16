@@ -188,7 +188,8 @@ export class ItemPsynergyChooseWindow {
             list_length = this.char.abilities.filter(elem_key_name => {
                 const ability = this.element_list[elem_key_name] as Ability;
                 return (
-                    elem_key_name in this.element_list && (ability.is_field_psynergy || ability.effects_outside_battle)
+                    elem_key_name in this.element_list &&
+                    (ability.is_field_psynergy || (!this.setting_shortcut && ability.effects_outside_battle))
                 );
             }).length;
         } else {
