@@ -725,7 +725,9 @@ export class Battle {
 
         //check whether all targets are downed and change ability to "defend" in the case it's true
         if (!ability.affects_downed) {
-            this.check_if_all_targets_are_downed(action);
+            if (this.check_if_all_targets_are_downed(action)) {
+                ability = this.data.info.abilities_list["defend"];
+            }
         }
 
         //gets item's name in the case this ability is related to an item
@@ -1195,7 +1197,9 @@ export class Battle {
             action.djinn_key_name = "";
             action.item_slot = undefined;
             action.battle_animation_key = "no_animation";
+            return true;
         }
+        return false;
     }
 
     async get_phase_ability(action: PlayerAbility) {
