@@ -321,6 +321,14 @@ export abstract class TileEvent {
     }
 
     /**
+     * Checks if this event is active in a given collision layer.
+     * @param collision_layer the collision layer index to be checked.
+     */
+    is_active_at_collision_layer(collision_layer: number) {
+        return this.activation_collision_layers.has(collision_layer);
+    }
+
+    /**
      * This method will be called on map update. If necessary, overrides it.
      */
     update() {}

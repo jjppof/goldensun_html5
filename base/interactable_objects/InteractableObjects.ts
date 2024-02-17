@@ -1,5 +1,5 @@
 import {SpriteBase} from "../SpriteBase";
-import {IntegerPairKey, TileEvent} from "../tile_events/TileEvent";
+import {IntegerPairKey, TileEvent, event_types} from "../tile_events/TileEvent";
 import * as numbers from "../magic_numbers";
 import * as _ from "lodash";
 import {
@@ -947,6 +947,16 @@ export class InteractableObjects {
         if (this.sprite?.body) {
             this.sprite.body.data.shapes.forEach(shape => (shape.sensor = !enable));
             this._shapes_collision_active = enable;
+            if (this.allow_jumping_over_it) {
+                this.get_events().forEach(event => {
+                    if (
+                        event.type === event_types.JUMP &&
+                        event.is_active_at_collision_layer(this.base_collision_layer)
+                    ) {
+                        this.data.map.set_collision_in_tile(event.x, event.y, enable, this.base_collision_layer);
+                    }
+                });
+            }
         }
     }
 
