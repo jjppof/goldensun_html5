@@ -69,7 +69,7 @@ export function initialize_abilities(
 }
 
 export function initialize_field_abilities(game, data) {
-    return {
+    const field_abilities = {
         move: new MoveFieldPsynergy(game, data),
         frost: new FrostFieldPsynergy(game, data),
         growth: new GrowthFieldPsynergy(game, data),
@@ -84,4 +84,21 @@ export function initialize_field_abilities(game, data) {
         avoid: new AvoidFieldPsynergy(game, data),
         sand: new SandFieldPsynergy(game, data),
     };
+    for (let i = 0; i < data.dbs.custom_field_psynergies_db.length; ++i) {
+        const db = data.dbs.custom_field_psynergies_db[i];
+        field_abilities[db.key_name] = new (window as any).GoldenSun[db.class_name](game, data);
+    }
+    return field_abilities;
+}
+
+export async function load_custom_field_psynergies(game, data) {
+    for (let i = 0; i < data.dbs.custom_field_psynergies_db.length; ++i) {
+        const db = data.dbs.custom_field_psynergies_db[i];
+        game.load.script(db.key_name, db.script);
+    }
+    let promise_resolve;
+    const promise = new Promise(resolve => (promise_resolve = resolve));
+    game.load.onLoadComplete.addOnce(promise_resolve);
+    game.load.start();
+    await promise;
 }

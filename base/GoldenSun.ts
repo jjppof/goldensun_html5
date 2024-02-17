@@ -29,6 +29,7 @@ import {initialize_bgm_data} from "./initializers/bgm";
 import {Logger} from "./Logger";
 import {BattleAnimationTester} from "./battle/BattleAnimationTester";
 import {FieldAbilities} from "./field_abilities/FieldAbilities";
+import {load_custom_field_psynergies} from "./initializers/abilities";
 
 /**
  * The project has basically two important folders: assets and base. All the source code is located inside base folder.
@@ -224,6 +225,9 @@ export class GoldenSun {
     private async create() {
         //load some json files from assets folder
         load_databases(this.game, this.dbs);
+
+        //load user custom field psynergies scripts
+        await load_custom_field_psynergies(this.game, this);
 
         //init audio engine
         this.audio = new Audio(this.game, this);
@@ -657,6 +661,6 @@ export class GoldenSun {
 var golden_sun = new GoldenSun();
 
 //debugging porpouses
-(window as any).data = golden_sun;
+(window as any).GoldenSun = golden_sun;
 //exposing FieldAbilities for custom psynergies creation.
-(window as any).data.FieldAbilities = FieldAbilities;
+(window as any).GoldenSun.FieldAbilities = FieldAbilities;

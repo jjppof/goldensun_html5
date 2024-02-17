@@ -32,6 +32,7 @@ function load_db_files(game) {
     );
     game.load.json("bgm_db", "assets/dbs/bgm_db.json");
     game.load.json("se_db", "assets/dbs/se_db.json");
+    game.load.json("custom_field_psynergies_db", "assets/dbs/custom_field_psynergies_db.json");
 }
 
 function load_misc(game) {
