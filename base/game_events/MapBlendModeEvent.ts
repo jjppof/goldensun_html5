@@ -19,6 +19,7 @@ export class MapBlendModeEvent extends GameEvent {
         }
 
         map_layer.sprite.blendMode = this.blend_mode;
+        this.data.map.layer_changes[this.map_layer_name].layer_blend = this.blend_mode;
     }
 
     _destroy() {}

@@ -18,6 +18,7 @@ export class LayerVisibilityEvent extends GameEvent {
         }
 
         map_layer.sprite.visible = this.visible;
+        this.data.map.layer_changes[this.map_layer_name].visibility = this.visible;
     }
 
     _destroy() {}

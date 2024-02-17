@@ -145,6 +145,18 @@ export class Map {
         [engine_filters.GRAY]: Phaser.Tween;
     };
 
+    public layer_changes: {
+        [layer_name: string]: {
+            layer_offset?: {
+                x: number;
+                y: number;
+            };
+            layer_blend?: PIXI.blendModes;
+            visibility?: boolean;
+            opacity?: number;
+        };
+    };
+
     constructor(
         game,
         data,
@@ -226,6 +238,7 @@ export class Map {
             [engine_filters.COLORIZE]: null,
             [engine_filters.GRAY]: null,
         };
+        this.layer_changes = {};
     }
 
     /** The list of TileEvents of this map. */
@@ -1576,6 +1589,7 @@ export class Map {
      * @param reorganize if true, it will only reorganize the layers. It's expected that the layers were already created.
      */
     config_layers(reorganize: boolean = false) {
+        const snapshot_info = this.data.snapshot_manager.snapshot;
         this.data.underlayer_group.removeAll(false, true, false);
         this.data.overlayer_group.removeAll(false, true, false);
         for (let i = 0; i < this.layers.length; ++i) {
@@ -1605,6 +1619,33 @@ export class Map {
                 }
             } else {
                 layer_sprite = layer_obj.sprite;
+            }
+
+            this.layer_changes[layer_obj.name] = {};
+            if (snapshot_info?.map_data.layer_changes[layer_obj.name].layer_offset !== undefined) {
+                this.layer_changes[layer_obj.name].layer_offset = _.cloneDeep(
+                    snapshot_info.map_data.layer_changes[layer_obj.name].layer_offset
+                );
+                layer_obj.sprite.tileOffset.x = this.layer_changes[layer_obj.name].layer_offset.x;
+                layer_obj.sprite.tileOffset.y = this.layer_changes[layer_obj.name].layer_offset.y;
+            }
+            if (snapshot_info?.map_data.layer_changes[layer_obj.name].layer_blend !== undefined) {
+                this.layer_changes[layer_obj.name].layer_blend = _.cloneDeep(
+                    snapshot_info.map_data.layer_changes[layer_obj.name].layer_blend
+                );
+                layer_obj.sprite.blendMode = this.layer_changes[layer_obj.name].layer_blend;
+            }
+            if (snapshot_info?.map_data.layer_changes[layer_obj.name].visibility !== undefined) {
+                this.layer_changes[layer_obj.name].visibility = _.cloneDeep(
+                    snapshot_info.map_data.layer_changes[layer_obj.name].visibility
+                );
+                layer_obj.sprite.visible = this.layer_changes[layer_obj.name].visibility;
+            }
+            if (snapshot_info?.map_data.layer_changes[layer_obj.name].opacity !== undefined) {
+                this.layer_changes[layer_obj.name].opacity = _.cloneDeep(
+                    snapshot_info.map_data.layer_changes[layer_obj.name].opacity
+                );
+                layer_obj.sprite.alpha = this.layer_changes[layer_obj.name].opacity;
             }
 
             let target_collision_layer = -1;
@@ -2352,6 +2393,7 @@ export class Map {
         this._interactable_objects = [];
         this._interactable_objects_label_map = {};
         this._events = {};
+        this.layer_changes = {};
         this.data.middlelayer_group.removeAll();
         this.encounter_zones = [];
         this.bounding_boxes = [];

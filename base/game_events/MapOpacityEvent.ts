@@ -48,6 +48,8 @@ export class MapOpacityEvent extends GameEvent {
     }
 
     finish() {
+        this.data.map.layer_changes[this.map_layer_name].opacity = this.map_layer.sprite.alpha;
+        this.data.map.layer_changes[this.map_layer_name].visibility = this.map_layer.visible;
         --this.data.game_event_manager.events_running_count;
         this.map_layer = null;
         this.finish_events.forEach(event => event.fire(this.origin_npc));

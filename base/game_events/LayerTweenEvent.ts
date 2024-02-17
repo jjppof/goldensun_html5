@@ -47,6 +47,10 @@ export class LayerTweenEvent extends GameEvent {
         ++this.data.game_event_manager.events_running_count;
 
         const finish = () => {
+            this.data.map.layer_changes[this.map_layer_name].layer_offset = {
+                x: map_layer.sprite.tileOffset.x,
+                y: map_layer.sprite.tileOffset.y,
+            };
             --this.data.game_event_manager.events_running_count;
             this.finish_events.forEach(event => event.fire(this.origin_npc));
         };
