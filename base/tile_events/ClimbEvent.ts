@@ -2,8 +2,8 @@ import {base_actions, directions, reverse_directions} from "../utils";
 import {TileEvent, event_types} from "./TileEvent";
 import * as numbers from "../magic_numbers";
 import {InteractableObjects, interactable_object_event_types} from "../interactable_objects/InteractableObjects";
-import {RevealFieldPsynergy} from "../field_abilities/RevealFieldPsynergy";
 import {GoldenSun} from "../GoldenSun";
+import * as _ from "lodash";
 
 export enum climb_actions {
     IDLE = "idle",
@@ -66,7 +66,14 @@ export class ClimbEvent extends TileEvent {
             return;
         }
         if (this.data.hero.on_reveal) {
-            (this.data.info.field_abilities_list.reveal as RevealFieldPsynergy).finish(false, false);
+            this.data.info.field_abilities_list.reveal.finish_psynergy(false, false);
+        }
+        if (this.data.hero.on_custom_psynergy_effect) {
+            _.forEach(this.data.info.field_abilities_list, ability => {
+                if (ability.is_custom_psynergy) {
+                    ability.finish_psynergy(false, false);
+                }
+            });
         }
         if (
             this.current_activation_direction !== directions.up &&

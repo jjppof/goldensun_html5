@@ -114,7 +114,7 @@ export class Map {
         id: number;
         rect: Phaser.Rectangle;
     }[];
-    private current_bounding_box_id: number;
+    private _current_bounding_box_id: number;
     private game_events: GameEvent[];
     private before_config_game_events: GameEvent[];
     private before_camera_fade_game_events: GameEvent[];
@@ -213,7 +213,7 @@ export class Map {
         this._background_key = background_key;
         this.polygons_processed = new Set();
         this.bounding_boxes = [];
-        this.current_bounding_box_id = null;
+        this._current_bounding_box_id = null;
         this.game_events = [];
         this.before_config_game_events = [];
         this.before_camera_fade_game_events = [];
@@ -345,7 +345,6 @@ export class Map {
     get active_filters() {
         return this._active_filters;
     }
-
     /** Gets the window object that shows this map's name. */
     get map_name_window() {
         return this._map_name_window;
@@ -354,20 +353,21 @@ export class Map {
     get show_map_name() {
         return this._show_map_name;
     }
-
     /** The internal storage keys created for objects of this map. */
     get internal_map_objs_storage_keys() {
         return this._internal_map_objs_storage_keys;
     }
-
     /** Gets Retreat psynergy info. Returns the x and y tile posoition to retreat and the destination collision index and direction. */
     get retreat_data() {
         return this._retreat_data;
     }
-
     /** Gets the collision layer index that sand psynergy will use. */
     get sand_collision_layer() {
         return this._sand_collision_layer;
+    }
+    /** Gets the current bounding box object ID. */
+    get current_bounding_box_id() {
+        return this._current_bounding_box_id;
     }
 
     /**
@@ -1440,7 +1440,7 @@ export class Map {
         for (let i = 0; i < this.bounding_boxes.length; ++i) {
             const bounding_box = this.bounding_boxes[i].rect;
             if (bounding_box.contains(x, y)) {
-                this.current_bounding_box_id = this.bounding_boxes[i].id;
+                this._current_bounding_box_id = this.bounding_boxes[i].id;
                 break;
             }
         }
@@ -2397,7 +2397,7 @@ export class Map {
         this.data.middlelayer_group.removeAll();
         this.encounter_zones = [];
         this.bounding_boxes = [];
-        this.current_bounding_box_id = null;
+        this._current_bounding_box_id = null;
         this.game_events = [];
         this.before_config_game_events = [];
         this.before_camera_fade_game_events = [];

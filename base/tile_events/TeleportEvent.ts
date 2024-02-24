@@ -1,7 +1,6 @@
 import {base_actions, directions, get_centered_pos_in_px, reverse_directions} from "../utils";
 import {event_types, TileEvent} from "./TileEvent";
 import * as _ from "lodash";
-import {RevealFieldPsynergy} from "../field_abilities/RevealFieldPsynergy";
 import {climb_actions} from "./ClimbEvent";
 import {ParticlesInfo, ParticlesWrapper} from "../ParticlesWrapper";
 
@@ -366,7 +365,14 @@ export class TeleportEvent extends TileEvent {
                 }
             }
             if (this.data.hero.on_reveal) {
-                (this.data.info.field_abilities_list.reveal as RevealFieldPsynergy).finish(true);
+                this.data.info.field_abilities_list.reveal.finish_psynergy(true);
+            }
+            if (this.data.hero.on_custom_psynergy_effect) {
+                _.forEach(this.data.info.field_abilities_list, ability => {
+                    if (ability.is_custom_psynergy) {
+                        ability.finish_psynergy(true);
+                    }
+                });
             }
             const destination_direction =
                 directions[this.destination_direction] !== undefined

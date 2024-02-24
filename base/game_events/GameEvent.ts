@@ -1,7 +1,7 @@
 import {StoragePosition} from "Storage";
-import {RevealFieldPsynergy} from "../field_abilities/RevealFieldPsynergy";
 import {GoldenSun} from "../GoldenSun";
 import {NPC} from "../NPC";
+import * as _ from "lodash";
 
 type BasicValues = string | number | boolean;
 
@@ -209,9 +209,20 @@ export abstract class GameEvent {
     }
 
     /** Check if "Reveal" is currently active. If yes, then cancel it. */
-    check_reveal() {
+    private check_reveal() {
         if (this.data.hero?.on_reveal && !this.keep_reveal) {
-            (this.data.info.field_abilities_list.reveal as RevealFieldPsynergy).finish(false, false);
+            this.data.info.field_abilities_list.reveal.finish_psynergy(false, false);
+        }
+    }
+
+    /** Check if a custom psynergy is currently active. If yes, then cancel it. */
+    private check_custom_psynergy() {
+        if (this.data?.hero.on_custom_psynergy_effect) {
+            _.forEach(this.data.info.field_abilities_list, ability => {
+                if (ability.is_custom_psynergy) {
+                    ability.finish_psynergy(false, false);
+                }
+            });
         }
     }
 
@@ -228,6 +239,7 @@ export abstract class GameEvent {
             return;
         }
         this.check_reveal();
+        this.check_custom_psynergy();
         this._origin_npc = origin_npc;
         this._fire();
     }

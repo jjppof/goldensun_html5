@@ -47,12 +47,12 @@ export class RevealFieldPsynergy extends FieldAbilities {
     update() {
         if (this.controllable_char?.on_reveal) {
             if (this.should_finish_reveal(this.controllable_char.x, this.controllable_char.y)) {
-                this.finish();
+                this.finish_psynergy();
             }
         }
     }
 
-    toggle_reveal() {
+    private toggle_reveal() {
         this.data.map.layers.forEach(layer => {
             if (layer.properties?.reveal_layer) {
                 layer.sprite.visible = !layer.sprite.visible;
@@ -93,7 +93,7 @@ export class RevealFieldPsynergy extends FieldAbilities {
         }
     }
 
-    finish(force: boolean = false, stop_char: boolean = true, finish_callback?: () => void) {
+    finish_psynergy(force: boolean = false, stop_char: boolean = true, finish_callback?: () => void) {
         this.controllable_char.on_reveal = false;
         const previous_psynergy_state = this.controllable_char.casting_psynergy;
         this.controllable_char.casting_psynergy = true;
@@ -126,11 +126,11 @@ export class RevealFieldPsynergy extends FieldAbilities {
         }
     }
 
-    show_wave() {
+    private show_wave() {
         this.close_field_psynergy_window();
 
         if (this.controllable_char.on_reveal) {
-            this.finish(true);
+            this.finish_psynergy(true);
             this.controllable_char.casting_psynergy = true;
         }
         this.casting_point = {
@@ -216,7 +216,7 @@ export class RevealFieldPsynergy extends FieldAbilities {
                         }
                     }
                 }
-                this.finish();
+                this.finish_psynergy();
             });
             this.end_timer.start();
         };

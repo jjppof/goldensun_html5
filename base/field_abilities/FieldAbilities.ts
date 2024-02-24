@@ -11,6 +11,7 @@ import {Button} from "../XGamepad";
 import {DialogManager} from "../utils/DialogManager";
 import {degree360} from "../magic_numbers";
 import {Pushable} from "../interactable_objects/Pushable";
+import {MainChar} from "../MainChar";
 
 /**
  * Defines and manages the usage of field psynergy.
@@ -31,6 +32,8 @@ export abstract class FieldAbilities {
     protected data: GoldenSun;
     /** The controllable char that's casting this psynergy. */
     protected controllable_char: ControllableChar;
+    /** The main char that it casting the psynergy. */
+    protected caster: MainChar;
     /** The target object of this psynergy. Might not be necessary depending on the psynergy. */
     protected target_object: InteractableObjects | NPC;
     /** If called, the casting aura is destroyed. */
@@ -57,6 +60,7 @@ export abstract class FieldAbilities {
     private extra_cast_check: () => boolean;
     private target_is_npc: boolean;
     private map_colors_sequence: boolean;
+    public is_custom_psynergy: boolean;
     private previous_collision_status: {
         char: boolean;
         target?: boolean;
@@ -80,6 +84,7 @@ export abstract class FieldAbilities {
      * @param ask_before_cast If true, it opens an YesNo menu asking if the char really wants to cast this ability.
      * @param target_is_npc If true, the target is a NPC instead of an IO.
      * @param map_colors_sequence If true, the map will be tinted sequentially with random colors.
+     * @param is_custom_psynergy Set this to true, if it's a custom psynergy.
      */
     constructor(
         game: Phaser.Game,
@@ -95,7 +100,8 @@ export abstract class FieldAbilities {
         target_found_extra_check?: (target: FieldAbilities["target_object"]) => boolean,
         ask_before_cast?: boolean,
         target_is_npc?: boolean,
-        map_colors_sequence?: boolean
+        map_colors_sequence?: boolean,
+        is_custom_psynergy?: boolean
     ) {
         this.game = game;
         this.ability_key_name = ability_key_name;
@@ -118,6 +124,7 @@ export abstract class FieldAbilities {
         this.ask_before_cast_yes_no_menu = new YesNoMenu(this.game, this.data);
         this.target_is_npc = target_is_npc ?? false;
         this.map_colors_sequence = map_colors_sequence ?? false;
+        this.is_custom_psynergy = is_custom_psynergy ?? false;
     }
 
     /**
@@ -184,6 +191,14 @@ export abstract class FieldAbilities {
     protected set_cast_finisher_method(method: Function) {
         this.cast_finisher = method;
     }
+
+    /**
+     * Generic funcion that can be overriden. When calling this, the psynergy effect should be finished.
+     * @param force for the psynergy to finish.
+     * @param stop_char stops the char current animation.
+     * @param finish_callback the callback method to be called on psynergy end finish.
+     */
+    finish_psynergy(force: boolean = false, stop_char: boolean = true, finish_callback?: () => void) {}
 
     /**
      * Searches for target, NPC or IO, if this psynergy requests a target.
@@ -433,6 +448,7 @@ export abstract class FieldAbilities {
     cast(controllable_char: ControllableChar, caster_key_name: string) {
         this.controllable_char = controllable_char;
         const caster = this.data.info.main_char_list[caster_key_name];
+        this.caster = caster;
         if (
             this.controllable_char.casting_psynergy ||
             this.controllable_char.sand_mode ||

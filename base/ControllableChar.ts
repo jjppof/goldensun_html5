@@ -87,6 +87,8 @@ export abstract class ControllableChar {
     public casting_psynergy: boolean;
     /** Whether this char is under Reveal psynergy effect. */
     public on_reveal: boolean;
+    /** Whether this char is under custom psynergy effect. */
+    public on_custom_psynergy_effect: boolean;
     /** Whether this char is teleporting by the teleport TileEvent. */
     public teleporting: boolean;
     /** Whether this char is idle during climbing state. */
@@ -227,6 +229,7 @@ export abstract class ControllableChar {
         this.misc_busy = false;
         this.casting_psynergy = false;
         this.on_reveal = false;
+        this.on_custom_psynergy_effect = false;
         this.teleporting = false;
         this.idle_climbing = false;
         this.ice_sliding_active = false;

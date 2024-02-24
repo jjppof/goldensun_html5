@@ -12,7 +12,6 @@ import {Button} from "./XGamepad";
 import {reverse_directions, engine_filters} from "./utils";
 import {Breakable} from "./interactable_objects/Breakable";
 import {RollablePillar} from "./interactable_objects/RollingPillar";
-import {RevealFieldPsynergy} from "./field_abilities/RevealFieldPsynergy";
 import {RopeDock} from "./interactable_objects/RopeDock";
 import {Map} from "Map";
 import {Pushable} from "interactable_objects/Pushable";
@@ -507,7 +506,14 @@ export class Snapshot {
             mute: this.game.sound.mute,
         };
         if (this.data.hero.on_reveal) {
-            (this.data.info.field_abilities_list.reveal as RevealFieldPsynergy).finish(false, false);
+            this.data.info.field_abilities_list.reveal.finish_psynergy(false, false);
+        }
+        if (this.data.hero.on_custom_psynergy_effect) {
+            _.forEach(this.data.info.field_abilities_list, ability => {
+                if (ability.is_custom_psynergy) {
+                    ability.finish_psynergy(false, false);
+                }
+            });
         }
         Snapshot.download_json(snapshot, Snapshot.SNAPSHOT_FILENAME);
     }
