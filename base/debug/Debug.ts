@@ -409,7 +409,7 @@ export class Debug {
                                 }),
                             }),
                             (value, key) => {
-                                return key.startsWith("_");
+                                return key.startsWith("_") || key === "events";
                             }
                         );
                     });

@@ -182,6 +182,11 @@ export class TileEventManager {
                 continue;
             }
 
+            //ignore events disabled by storage value.
+            if (this_event.check_if_disabled_by_storage()) {
+                return;
+            }
+
             //activates different types of tile events.
             switch (this_event.type) {
                 case event_types.SPEED:

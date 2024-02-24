@@ -164,9 +164,10 @@ export class FrostFieldPsynergy extends FieldAbilities {
     static set_permanent_blink(game: Phaser.Game, target_object: FrostFieldPsynergy["target_object"]) {
         const blink_timer = game.time.create(false);
         target_object.manage_filter(target_object.hue_filter, true);
+        let timer_event: Phaser.TimerEvent;
         blink_timer.loop(150, () => {
             target_object.hue_filter.angle = 5.3;
-            const timer_event = game.time.events.add(20, () => {
+            timer_event = game.time.events.add(20, () => {
                 if (target_object?.hue_filter) {
                     target_object.hue_filter.angle = 0;
                 }
@@ -175,6 +176,10 @@ export class FrostFieldPsynergy extends FieldAbilities {
         });
         blink_timer.start();
         target_object.add_unset_callback(() => {
+            if (timer_event) {
+                timer_event.timer.stop(true);
+                timer_event.timer.destroy();
+            }
             blink_timer.stop(true);
             blink_timer.destroy();
         });
