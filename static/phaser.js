@@ -104690,6 +104690,26 @@ Phaser.TilemapParser = {
         //  Tile Layers
         var layers = [];
 
+        var layersWithAnimatedTile = {};
+        var tilelayerIndex = 0;
+
+        for (let i_ = 0; i_ < json.tilesets.length; ++i_)
+        {
+            const set = json.tilesets[i_];
+            if (set.hasOwnProperty('tiles'))
+            {
+                const tileIndices = Object.keys(set.tiles);
+                for (let k_ in tileIndices)
+                {
+                    if (set.tiles[tileIndices[k_]].hasOwnProperty('animation'))
+                    {
+                        const gid_ = (+tileIndices[k_]) + set.firstgid;
+                        layersWithAnimatedTile[gid_] = new Set();
+                    }
+                }
+            }
+        }
+
         for (var i = 0; i < json.layers.length; i++)
         {
             if (json.layers[i].type !== 'tilelayer')
@@ -104874,11 +104894,17 @@ Phaser.TilemapParser = {
                     x = 0;
                     row = [];
                 }
+
+                if (layersWithAnimatedTile[gid]) {
+                    layersWithAnimatedTile[gid].add(tilelayerIndex);
+                }
             }
 
             layer.data = output;
 
             layers.push(layer);
+
+            ++tilelayerIndex;
         }
 
         map.layers = layers;
@@ -104950,26 +104976,8 @@ Phaser.TilemapParser = {
                             map.animatedTiles[gid].frames[i2].gid = set.tiles[tileIndices[k]].animation[i2].tileid + set.firstgid;
                             map.animatedTiles[gid].frames[i2].duration = set.tiles[tileIndices[k]].animation[i2].duration;
                         }
-                        // Keep track of layers with this particular animated tile
-                        const layersWithAnimatedTile = [];
-                        let tilelayerIndex = 0;
-                        for (let i2 = 0; i2 < json.layers.length; ++i2)
-                        {
-                            if (json.layers[i2].type === 'tilelayer')
-                            {
-                                for (let t = 0, len = json.layers[i2].data.length; t < len; ++t)
-                                {
-                                    if (json.layers[i2].data[t] === gid)
-                                    {
-                                        layersWithAnimatedTile.push(tilelayerIndex);
-                                        break;
-                                    }
-                                }
-                                ++tilelayerIndex;
-                            }
-                        }
                         map.animatedTiles[gid].currentGid = map.animatedTiles[gid].frames[0].gid;
-                        map.animatedTiles[gid].layers = layersWithAnimatedTile;
+                        map.animatedTiles[gid].layers = Array.from(layersWithAnimatedTile[gid]);
                     }
                 }
             }
