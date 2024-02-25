@@ -2005,13 +2005,18 @@ export class Map {
      * Removes a tile event in a custom location.
      * @param location_key the LocationKey of the event.
      * @param event_id the id of the event.
+     * @returns returns true if the event was removed.
      */
     remove_event(location_key: number, event_id: number) {
-        this.events[location_key] = this.events[location_key].filter(event => event.id !== event_id);
-        if (!this.events[location_key].length) {
-            delete this.events[location_key];
+        if (location_key in this.events) {
+            this.events[location_key] = this.events[location_key].filter(event => event.id !== event_id);
+            if (!this.events[location_key].length) {
+                delete this.events[location_key];
+            }
+            TileEvent.get_event(event_id).in_map = false;
+            return true;
         }
-        TileEvent.get_event(event_id).in_map = false;
+        return false;
     }
 
     /**
