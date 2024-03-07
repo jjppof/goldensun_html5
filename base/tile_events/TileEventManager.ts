@@ -184,7 +184,7 @@ export class TileEventManager {
 
             //ignore events disabled by storage value.
             if (this_event.check_if_disabled_by_storage()) {
-                return;
+                continue;
             }
 
             //activates different types of tile events.
