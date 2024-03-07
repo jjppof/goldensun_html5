@@ -344,6 +344,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.background_key,
                     info.enemy_party_key,
                     info.return_to_sanctum,
@@ -362,6 +363,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.combination,
                     info.comparator_pairs,
                     info.events,
@@ -374,6 +376,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.event_value,
                     info.check_npc_storage_values,
                     info.check_io_storage_values,
@@ -392,6 +395,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.is_npc,
                     info.dash,
                     info.dest_unit_in_tile,
@@ -416,6 +420,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.dialog_info,
                     info.npc_hero_reciprocal_look,
                     info.reset_reciprocal_look,
@@ -432,6 +437,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.look,
                     info.looker_is_npc,
                     info.looker_npc_label,
@@ -445,6 +451,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.item,
                     info.quantity,
                     info.finish_events,
@@ -460,7 +467,8 @@ export class GameEventManager {
                     this.data,
                     info.active,
                     info.key_name,
-                    info.key_name,
+                    info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.finish_events
                 );
             case event_types.TIMER:
@@ -470,6 +478,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.duration,
                     info.finish_events
                 );
@@ -480,6 +489,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.char_key_name,
                     info.join,
                     info.show_dialog,
@@ -492,6 +502,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.summon_key,
                     info.animate,
                     info.finish_events
@@ -503,6 +514,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.djinn_key,
                     info.has_fight,
                     info.enemy_party_key,
@@ -519,6 +531,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.djinn_key,
                     info.status_key
                 );
@@ -529,6 +542,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.is_npc,
                     info.npc_index,
                     info.npc_label,
@@ -547,6 +561,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.direction,
                     info.is_npc,
                     info.npc_index,
@@ -562,6 +577,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.emoticon,
                     info.duration,
                     info.sound_effect,
@@ -581,6 +597,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.tile_event_key,
                     info.io_label,
                     info.activate_at,
@@ -594,7 +611,8 @@ export class GameEventManager {
                     this.data,
                     info.active,
                     info.key_name,
-                    info.key_name,
+                    info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.target_event_key
                 );
             case event_types.CHAR_LEVEL_CHANGE:
@@ -604,6 +622,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.target_char_key,
                     info.target_level_value
                 );
@@ -614,6 +633,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.map_layer_name,
                     info.finish_events,
                     info.opacity,
@@ -626,6 +646,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.map_layer_name,
                     info.blend_mode
                 );
@@ -636,6 +657,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.io_label,
                     info.action,
                     info.animation,
@@ -652,6 +674,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.is_npc,
                     info.npc_label,
                     info.action,
@@ -670,6 +693,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.is_npc,
                     info.npc_label,
                     info.active
@@ -681,6 +705,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.audio_type,
                     info.audio_key,
                     info.volume,
@@ -697,6 +722,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.control_type,
                     info.volume
                 );
@@ -707,6 +733,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.control_type,
                     info.amount
                 );
@@ -717,6 +744,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.char_key,
                     info.control_type,
                     info.amount
@@ -728,6 +756,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.char_key,
                     info.control_type,
                     info.item_key,
@@ -745,7 +774,8 @@ export class GameEventManager {
                     this.data,
                     info.active,
                     info.key_name,
-                    info.key_name,
+                    info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.enable
                 );
             case event_types.CAMERA_MOVE:
@@ -755,6 +785,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.positions,
                     info.reset_follow,
                     info.return_to_target_duration,
@@ -767,6 +798,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.fade_type,
                     info.duration,
                     info.color,
@@ -779,6 +811,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.color_key,
                     info.intensity,
                     info.gray,
@@ -794,6 +827,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.is_npc,
                     info.npc_label,
                     info.color_key,
@@ -807,6 +841,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.is_npc,
                     info.npc_label,
                     info.enable,
@@ -819,6 +854,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.is_npc,
                     info.npc_label,
                     info.enable,
@@ -832,6 +868,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.is_npc,
                     info.npc_label,
                     info.enable
@@ -843,6 +880,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.label,
                     info.create,
                     info.x,
@@ -857,6 +895,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.is_npc,
                     info.npc_label,
                     info.control_type
@@ -868,6 +907,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.io_label,
                     info.control_type
                 );
@@ -878,6 +918,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.char_key,
                     info.ability
                 );
@@ -888,6 +929,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.keys,
                     info.change_events,
                     info.callback_call_type
@@ -899,6 +941,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.follow,
                     info.is_hero,
                     info.npc_label,
@@ -913,6 +956,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.target_char_key,
                     info.permanent_status,
                     info.add,
@@ -925,6 +969,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.target_collision_layer
                 );
             case event_types.CREATE_STORAGE_VAR:
@@ -934,6 +979,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.var_name,
                     info.initial_value,
                     info.add
@@ -945,6 +991,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.char_key,
                     info.control_type,
                     info.item_key,
@@ -960,6 +1007,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.item_key,
                     info.quantity
                 );
@@ -970,6 +1018,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.control_type,
                     info.generic_sprite_key_name,
                     info.misc_sprite_key,
@@ -998,6 +1047,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.particles_info,
                     info.group
                 );
@@ -1008,6 +1058,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.is_npc,
                     info.npc_label,
                     info.enable,
@@ -1020,6 +1071,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.is_npc,
                     info.npc_label,
                     info.enable
@@ -1031,6 +1083,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.is_npc,
                     info.npc_label,
                     info.blend_mode
@@ -1042,6 +1095,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.event_label,
                     info.activate_event_before
                 );
@@ -1052,6 +1106,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.event_label,
                     info.activate
                 );
@@ -1062,6 +1117,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.is_npc,
                     info.npc_label,
                     info.visible
@@ -1073,6 +1129,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.events
                 );
             case event_types.EVENTS_LOOP:
@@ -1082,6 +1139,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.interval,
                     info.events
                 );
@@ -1092,6 +1150,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.map_layer_name,
                     info.finish_events,
                     info.destination_offset,
@@ -1105,6 +1164,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.map_layer_name,
                     info.visible
                 );
@@ -1115,6 +1175,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.mode,
                     info.main_char_key_name,
                     info.destination_incremental,
@@ -1135,6 +1196,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.io_label,
                     info.visible
                 );
@@ -1145,6 +1207,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.io_label,
                     info.io_active
                 );
@@ -1155,6 +1218,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.target_map_key,
                     info.target_tile_position,
                     info.target_collision_layer,
@@ -1169,6 +1233,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.collision_active
                 );
             case event_types.CHAR_ROTATION:
@@ -1178,6 +1243,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.is_npc,
                     info.npc_label,
                     info.rotate,
@@ -1191,6 +1257,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.is_npc,
                     info.npc_label,
                     info.duration,
@@ -1213,6 +1280,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.is_npc,
                     info.npc_label,
                     info.visible
@@ -1224,6 +1292,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.io_label,
                     info.duration,
                     info.ease,
@@ -1247,6 +1316,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.finish_events
                 );
             case event_types.CHAR_FALL:
@@ -1256,6 +1326,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.is_npc,
                     info.npc_label,
                     info.y_destination_position,
@@ -1274,6 +1345,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.char_key,
                     info.points_type,
                     info.value
@@ -1285,6 +1357,7 @@ export class GameEventManager {
                     info.active,
                     info.key_name,
                     info.keep_reveal,
+                    info.keep_custom_psynergy,
                     info.pause_only,
                     info.fade_out,
                     info.bgm_identifier

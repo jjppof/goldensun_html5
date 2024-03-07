@@ -11,8 +11,8 @@ export class ControlBgmEvent extends GameEvent {
     private control_type: control_types;
     private volume: number;
 
-    constructor(game, data, active, key_name, keep_reveal, control_type, volume) {
-        super(game, data, event_types.CONTROL_BGM, active, key_name, keep_reveal);
+    constructor(game, data, active, key_name, keep_reveal, keep_custom_psynergy, control_type, volume) {
+        super(game, data, event_types.CONTROL_BGM, active, key_name, keep_reveal, keep_custom_psynergy);
         this.control_type = control_type;
         this.volume = volume;
     }

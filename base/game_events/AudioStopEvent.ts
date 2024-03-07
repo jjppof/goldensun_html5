@@ -5,8 +5,8 @@ export class AudioStopEvent extends GameEvent {
     private fade_out: boolean;
     private bgm_identifier: string;
 
-    constructor(game, data, active, key_name, keep_reveal, pause_only, fade_out, bgm_identifier) {
-        super(game, data, event_types.AUDIO_STOP, active, key_name, keep_reveal);
+    constructor(game, data, active, key_name, keep_reveal, keep_custom_psynergy, pause_only, fade_out, bgm_identifier) {
+        super(game, data, event_types.AUDIO_STOP, active, key_name, keep_reveal, keep_custom_psynergy);
         this.pause_only = pause_only;
         this.fade_out = fade_out;
         this.bgm_identifier = bgm_identifier;

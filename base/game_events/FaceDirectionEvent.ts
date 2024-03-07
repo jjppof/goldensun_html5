@@ -16,6 +16,7 @@ export class FaceDirectionEvent extends GameEvent {
         active,
         key_name,
         keep_reveal,
+        keep_custom_psynergy,
         direction,
         is_npc,
         npc_index,
@@ -24,7 +25,7 @@ export class FaceDirectionEvent extends GameEvent {
         finish_events,
         wait_after
     ) {
-        super(game, data, event_types.FACE_DIRECTION, active, key_name, keep_reveal);
+        super(game, data, event_types.FACE_DIRECTION, active, key_name, keep_reveal, keep_custom_psynergy);
         this.direction = directions[direction as string];
         this.time_between_frames = time_between_frames;
         this.is_npc = is_npc;

@@ -6,8 +6,8 @@ export class CharHueEvent extends GameEvent {
     private enable: boolean;
     private angle: number;
 
-    constructor(game, data, active, key_name, keep_reveal, is_npc, npc_label, enable, angle) {
-        super(game, data, event_types.CHAR_HUE, active, key_name, keep_reveal);
+    constructor(game, data, active, key_name, keep_reveal, keep_custom_psynergy, is_npc, npc_label, enable, angle) {
+        super(game, data, event_types.CHAR_HUE, active, key_name, keep_reveal, keep_custom_psynergy);
         this.enable = enable ?? true;
         this.angle = angle ?? -1.0;
         this.is_npc = is_npc;

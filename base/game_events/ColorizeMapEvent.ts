@@ -16,6 +16,7 @@ export class ColorizeMapEvent extends GameEvent {
         active,
         key_name,
         keep_reveal,
+        keep_custom_psynergy,
         color_key,
         intensity,
         gray,
@@ -24,7 +25,7 @@ export class ColorizeMapEvent extends GameEvent {
         layer,
         detach_transition
     ) {
-        super(game, data, event_types.COLORIZE_MAP, active, key_name, keep_reveal);
+        super(game, data, event_types.COLORIZE_MAP, active, key_name, keep_reveal, keep_custom_psynergy);
         this.color_key = color_key;
         this.intensity = intensity;
         this.gray = gray;

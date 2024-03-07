@@ -3,8 +3,8 @@ import {GameEvent, event_types} from "./GameEvent";
 export class EventsHolderEvent extends GameEvent {
     private events: GameEvent[];
 
-    constructor(game, data, active, key_name, keep_reveal, events) {
-        super(game, data, event_types.EVENTS_HOLDER, active, key_name, keep_reveal);
+    constructor(game, data, active, key_name, keep_reveal, keep_custom_psynergy, events) {
+        super(game, data, event_types.EVENTS_HOLDER, active, key_name, keep_reveal, keep_custom_psynergy);
         this.events = [];
         if (events !== undefined) {
             events.forEach(event_info => {

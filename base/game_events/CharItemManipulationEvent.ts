@@ -26,6 +26,7 @@ export class CharItemManipulationEvent extends GameEvent {
         active,
         key_name,
         keep_reveal,
+        keep_custom_psynergy,
         char_key,
         control_type,
         item_key,
@@ -37,7 +38,7 @@ export class CharItemManipulationEvent extends GameEvent {
         manipulation_done_events,
         manipulation_fail_events
     ) {
-        super(game, data, event_types.CHAR_ITEM_MANIPULATION, active, key_name, keep_reveal);
+        super(game, data, event_types.CHAR_ITEM_MANIPULATION, active, key_name, keep_reveal, keep_custom_psynergy);
         this.char_key = char_key;
         this.control_type = control_type;
         this.item_key = item_key;

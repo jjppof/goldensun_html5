@@ -16,6 +16,7 @@ export class TileEventManageEvent extends GameEvent {
         active,
         key_name,
         keep_reveal,
+        keep_custom_psynergy,
         tile_event_key,
         io_label,
         activate_at,
@@ -23,7 +24,7 @@ export class TileEventManageEvent extends GameEvent {
         collision_layers,
         remove_from_field
     ) {
-        super(game, data, event_types.TILE_EVENT_MANAGE, active, key_name, keep_reveal);
+        super(game, data, event_types.TILE_EVENT_MANAGE, active, key_name, keep_reveal, keep_custom_psynergy);
         this.tile_event_key = tile_event_key;
         this.io_label = io_label;
         this.activate_at = activate_at;

@@ -26,6 +26,7 @@ export class JumpEvent extends GameEvent {
         active,
         key_name,
         keep_reveal,
+        keep_custom_psynergy,
         is_npc,
         npc_index,
         npc_label,
@@ -37,7 +38,7 @@ export class JumpEvent extends GameEvent {
         sfx_key,
         wait_after
     ) {
-        super(game, data, event_types.JUMP, active, key_name, keep_reveal);
+        super(game, data, event_types.JUMP, active, key_name, keep_reveal, keep_custom_psynergy);
         this.is_npc = is_npc;
         this.npc_index = npc_index;
         this.npc_label = npc_label;

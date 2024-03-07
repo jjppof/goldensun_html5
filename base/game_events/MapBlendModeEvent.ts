@@ -5,8 +5,8 @@ export class MapBlendModeEvent extends GameEvent {
     private map_layer_name: string;
     private blend_mode: PIXI.blendModes;
 
-    constructor(game, data, active, key_name, keep_reveal, map_layer_name, blend_mode) {
-        super(game, data, event_types.MAP_BLEND_MODE, active, key_name, keep_reveal);
+    constructor(game, data, active, key_name, keep_reveal, keep_custom_psynergy, map_layer_name, blend_mode) {
+        super(game, data, event_types.MAP_BLEND_MODE, active, key_name, keep_reveal, keep_custom_psynergy);
         this.map_layer_name = map_layer_name;
         this.blend_mode = parse_blend_mode(blend_mode);
     }

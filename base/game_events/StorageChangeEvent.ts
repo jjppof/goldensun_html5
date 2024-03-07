@@ -7,8 +7,18 @@ export class StorageChangeEvent extends GameEvent {
     private callback_call_type: callback_call_types;
     private callback_ids: {[state_key: string]: number[]};
 
-    constructor(game, data, active, key_name, keep_reveal, keys, callback_call_type, change_events) {
-        super(game, data, event_types.STORAGE_CHANGE, active, key_name, keep_reveal);
+    constructor(
+        game,
+        data,
+        active,
+        key_name,
+        keep_reveal,
+        keep_custom_psynergy,
+        keys,
+        callback_call_type,
+        change_events
+    ) {
+        super(game, data, event_types.STORAGE_CHANGE, active, key_name, keep_reveal, keep_custom_psynergy);
         this.keys = Array.isArray(keys) ? keys : [keys];
         this.callback_call_type = callback_call_type ?? callback_call_types.ONCE;
         this.change_events = [];

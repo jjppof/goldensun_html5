@@ -10,8 +10,8 @@ export class SetCharExpEvent extends GameEvent {
     private amount: number;
     private char_key: string;
 
-    constructor(game, data, active, key_name, keep_reveal, char_key, control_type, amount) {
-        super(game, data, event_types.CHAR_EXP, active, key_name, keep_reveal);
+    constructor(game, data, active, key_name, keep_reveal, keep_custom_psynergy, char_key, control_type, amount) {
+        super(game, data, event_types.CHAR_EXP, active, key_name, keep_reveal, keep_custom_psynergy);
         this.char_key = char_key;
         this.control_type = control_type;
         this.amount = amount;

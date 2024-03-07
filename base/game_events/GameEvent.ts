@@ -154,6 +154,9 @@ export abstract class GameEvent {
     private _keep_reveal: boolean;
     private _origin_npc: NPC;
 
+    /** If true, custom psynergies won't be stopped on this event fire. */
+    private keep_custom_psynergy: boolean;
+
     /** The GameEvents id incrementer. */
     public static id_incrementer: number;
     /** The events object where the keys are the ids. */
@@ -167,7 +170,8 @@ export abstract class GameEvent {
         type: event_types,
         active: boolean,
         key_name: string,
-        keep_reveal: boolean
+        keep_reveal: boolean,
+        keep_custom_psynergy: boolean
     ) {
         this.game = game;
         this.data = data;
@@ -180,6 +184,7 @@ export abstract class GameEvent {
             GameEvent.labeled_events[this.key_name] = this;
         }
         this._keep_reveal = keep_reveal ?? false;
+        this.keep_custom_psynergy = keep_custom_psynergy ?? false;
         this._origin_npc = null;
     }
 
@@ -217,7 +222,7 @@ export abstract class GameEvent {
 
     /** Check if a custom psynergy is currently active. If yes, then cancel it. */
     private check_custom_psynergy() {
-        if (this.data?.hero.on_custom_psynergy_effect) {
+        if (this.data?.hero.on_custom_psynergy_effect && !this.keep_custom_psynergy) {
             _.forEach(this.data.info.field_abilities_list, ability => {
                 if (ability.is_custom_psynergy) {
                     ability.finish_psynergy(false, false);

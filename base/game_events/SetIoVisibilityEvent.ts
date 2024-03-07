@@ -4,8 +4,8 @@ export class SetIoVisibilityEvent extends GameEvent {
     private io_label: string;
     private visible: boolean;
 
-    constructor(game, data, active, key_name, keep_reveal, io_label, visible) {
-        super(game, data, event_types.SET_IO_VISIBILITY, active, key_name, keep_reveal);
+    constructor(game, data, active, key_name, keep_reveal, keep_custom_psynergy, io_label, visible) {
+        super(game, data, event_types.SET_IO_VISIBILITY, active, key_name, keep_reveal, keep_custom_psynergy);
         this.io_label = io_label;
         this.visible = visible ?? true;
     }

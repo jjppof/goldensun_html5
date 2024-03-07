@@ -5,8 +5,8 @@ export class FlameCharEvent extends GameEvent {
     private npc_label: string;
     private enable: boolean;
 
-    constructor(game, data, active, key_name, keep_reveal, is_npc, npc_label, enable) {
-        super(game, data, event_types.FLAME_CHAR, active, key_name, keep_reveal);
+    constructor(game, data, active, key_name, keep_reveal, keep_custom_psynergy, is_npc, npc_label, enable) {
+        super(game, data, event_types.FLAME_CHAR, active, key_name, keep_reveal, keep_custom_psynergy);
         this.enable = enable ?? true;
         this.is_npc = is_npc;
         this.npc_label = npc_label;

@@ -18,6 +18,7 @@ export class CharAnimPlayEvent extends GameEvent {
         active,
         key_name,
         keep_reveal,
+        keep_custom_psynergy,
         is_npc,
         npc_label,
         action,
@@ -29,7 +30,7 @@ export class CharAnimPlayEvent extends GameEvent {
         reset_before_start,
         finish_events
     ) {
-        super(game, data, event_types.CHAR_ANIMATION_PLAY, active, key_name, keep_reveal);
+        super(game, data, event_types.CHAR_ANIMATION_PLAY, active, key_name, keep_reveal, keep_custom_psynergy);
         this.npc_label = npc_label;
         this.is_npc = is_npc;
         this.action = action;

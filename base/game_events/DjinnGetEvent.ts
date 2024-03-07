@@ -49,6 +49,7 @@ export class DjinnGetEvent extends GameEvent {
         active,
         key_name,
         keep_reveal,
+        keep_custom_psynergy,
         djinn_key,
         has_fight,
         enemy_party_key,
@@ -58,7 +59,7 @@ export class DjinnGetEvent extends GameEvent {
         no_animation,
         add_djinn
     ) {
-        super(game, data, event_types.DJINN_GET, active, key_name, keep_reveal);
+        super(game, data, event_types.DJINN_GET, active, key_name, keep_reveal, keep_custom_psynergy);
         this.djinn = this.data.info.djinni_list[djinn_key];
         this.has_fight = has_fight ?? false;
         this.enemy_party_key = enemy_party_key;

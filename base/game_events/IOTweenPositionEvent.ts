@@ -27,6 +27,7 @@ export class IOTweenPositionEvent extends GameEvent {
         active,
         key_name,
         keep_reveal,
+        keep_custom_psynergy,
         io_label,
         duration,
         ease,
@@ -43,7 +44,7 @@ export class IOTweenPositionEvent extends GameEvent {
         dest_collision_layer,
         change_collision_layer_on_init
     ) {
-        super(game, data, event_types.IO_TWEEN_POSITION, active, key_name, keep_reveal);
+        super(game, data, event_types.IO_TWEEN_POSITION, active, key_name, keep_reveal, keep_custom_psynergy);
         this.io_label = io_label;
         this.duration = duration;
         this.ease = ease ? _.get(Phaser.Easing, ease) : Phaser.Easing.Linear.None;

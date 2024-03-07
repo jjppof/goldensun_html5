@@ -6,8 +6,8 @@ export class CreateStorageVarEvent extends GameEvent {
     private initial_value: RawStorageRecord["value"];
     private add: boolean;
 
-    constructor(game, data, active, key_name, keep_reveal, var_name, initial_value, add) {
-        super(game, data, event_types.CREATE_STORAGE_VAR, active, key_name, keep_reveal);
+    constructor(game, data, active, key_name, keep_reveal, keep_custom_psynergy, var_name, initial_value, add) {
+        super(game, data, event_types.CREATE_STORAGE_VAR, active, key_name, keep_reveal, keep_custom_psynergy);
         this.var_name = var_name;
         this.initial_value = initial_value;
         this.add = add ?? true;

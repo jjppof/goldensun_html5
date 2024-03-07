@@ -34,6 +34,7 @@ export class MoveEvent extends GameEvent {
         active,
         key_name,
         keep_reveal,
+        keep_custom_psynergy,
         is_npc,
         dash,
         dest_unit_in_tile,
@@ -51,7 +52,7 @@ export class MoveEvent extends GameEvent {
         wait_after,
         reset_previous_camera_target
     ) {
-        super(game, data, event_types.MOVE, active, key_name, keep_reveal);
+        super(game, data, event_types.MOVE, active, key_name, keep_reveal, keep_custom_psynergy);
         this.dash = dash ?? false;
         this.dest = dest;
         this.dest_unit_in_tile = dest_unit_in_tile ?? true;

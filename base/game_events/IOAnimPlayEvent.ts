@@ -16,6 +16,7 @@ export class IOAnimPlayEvent extends GameEvent {
         active,
         key_name,
         keep_reveal,
+        keep_custom_psynergy,
         io_label,
         action,
         animation,
@@ -25,7 +26,7 @@ export class IOAnimPlayEvent extends GameEvent {
         reset_frame_on_stop,
         finish_events
     ) {
-        super(game, data, event_types.IO_ANIM_PLAY, active, key_name, keep_reveal);
+        super(game, data, event_types.IO_ANIM_PLAY, active, key_name, keep_reveal, keep_custom_psynergy);
         this.io_label = io_label;
         this.action = action;
         this.animation = animation;

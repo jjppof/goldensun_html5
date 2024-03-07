@@ -24,6 +24,7 @@ export class BattleEvent extends GameEvent {
         active,
         key_name,
         keep_reveal,
+        keep_custom_psynergy,
         background_key,
         enemy_party_key,
         return_to_sanctum,
@@ -35,7 +36,7 @@ export class BattleEvent extends GameEvent {
         before_fade_victory_events,
         before_fade_defeat_events
     ) {
-        super(game, data, event_types.BATTLE, active, key_name, keep_reveal);
+        super(game, data, event_types.BATTLE, active, key_name, keep_reveal, keep_custom_psynergy);
         this.background_key = background_key;
         this.enemy_party_key = enemy_party_key;
         this.return_to_sanctum = return_to_sanctum ?? true;

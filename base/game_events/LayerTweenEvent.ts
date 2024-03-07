@@ -17,13 +17,14 @@ export class LayerTweenEvent extends GameEvent {
         active,
         key_name,
         keep_reveal,
+        keep_custom_psynergy,
         map_layer_name,
         finish_events,
         destination_offset,
         duration,
         easing
     ) {
-        super(game, data, event_types.LAYER_TWEEN, active, key_name, keep_reveal);
+        super(game, data, event_types.LAYER_TWEEN, active, key_name, keep_reveal, keep_custom_psynergy);
         this.map_layer_name = map_layer_name;
         this.finish_events = [];
         if (finish_events !== undefined) {

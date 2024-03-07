@@ -15,6 +15,7 @@ export class CameraFollowEvent extends GameEvent {
         active,
         key_name,
         keep_reveal,
+        keep_custom_psynergy,
         follow,
         is_hero,
         npc_label,
@@ -22,7 +23,7 @@ export class CameraFollowEvent extends GameEvent {
         transition_duration,
         transition_end_events
     ) {
-        super(game, data, event_types.CAMERA_FOLLOW, active, key_name, keep_reveal);
+        super(game, data, event_types.CAMERA_FOLLOW, active, key_name, keep_reveal, keep_custom_psynergy);
         this.follow = follow ?? true;
         this.is_hero = is_hero ?? true;
         this.npc_label = npc_label;

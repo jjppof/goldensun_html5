@@ -41,6 +41,7 @@ export class EmoticonEvent extends GameEvent {
         active,
         key_name,
         keep_reveal,
+        keep_custom_psynergy,
         emoticon,
         duration,
         sound_effect,
@@ -53,7 +54,7 @@ export class EmoticonEvent extends GameEvent {
         destroy_emoticon,
         finish_events
     ) {
-        super(game, data, event_types.EMOTICON, active, key_name, keep_reveal);
+        super(game, data, event_types.EMOTICON, active, key_name, keep_reveal, keep_custom_psynergy);
         this.emoticon = emoticon;
         this.duration = duration ?? EmoticonEvent.DEFAULT_DURATION;
         this.sound_effect = sound_effect;
