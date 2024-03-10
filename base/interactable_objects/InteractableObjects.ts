@@ -1513,7 +1513,13 @@ export class InteractableObjects {
      * @param event_shift_x the x shift amount.
      * @param event_shift_y the y shift amount.
      */
-    shift_events(event_shift_x: number, event_shift_y: number) {
+    shift_events(
+        event_shift_x: number,
+        event_shift_y: number,
+        manipulate_collision?: {
+            prev_collision_layer: number;
+        }
+    ) {
         if (event_shift_x === 0 && event_shift_y === 0) {
             return;
         }
@@ -1532,6 +1538,16 @@ export class InteractableObjects {
                 let new_x = old_x + event_shift_x;
                 let new_y = old_y + event_shift_y;
                 event.set_position(new_x, new_y, true);
+                if (manipulate_collision && event.type === event_types.JUMP) {
+                    if (this.rollable || this.pushable) {
+                        this.data.map.set_collision_in_tile(
+                            old_x,
+                            old_y,
+                            true,
+                            manipulate_collision.prev_collision_layer
+                        );
+                    }
+                }
             }
         }
     }

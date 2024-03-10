@@ -1307,7 +1307,8 @@ export class GameEventManager {
                     info.shadow_follow_io,
                     info.keep_io_collision_disable,
                     info.dest_collision_layer,
-                    info.change_collision_layer_on_init
+                    info.change_collision_layer_on_init,
+                    info.enable_collision_on_previous_pos
                 );
             case event_types.EXIT_SAND_MODE:
                 return new ExitSandModeEvent(
