@@ -50,6 +50,7 @@ export class GoldenSun {
     public fps_reduction_active: boolean = false;
     public showing_fps_banner: boolean = false;
     public ignore_system_scaling: boolean = false;
+    public verbose_game_event_fire: boolean = false;
 
     public electron_app: boolean;
     public ipcRenderer: any;
@@ -252,6 +253,8 @@ export class GoldenSun {
 
         this.audio.initialize_controls();
         this.initialize_utils_controls();
+
+        this.verbose_game_event_fire = this.dbs.init_db.verbose_game_event_fire;
 
         this.scale_factor = this.dbs.init_db.initial_scale_factor;
         this.ignore_system_scaling = this.dbs.init_db.ignore_system_scaling;

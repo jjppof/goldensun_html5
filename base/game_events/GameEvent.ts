@@ -2,6 +2,7 @@ import {StoragePosition} from "Storage";
 import {GoldenSun} from "../GoldenSun";
 import {NPC} from "../NPC";
 import * as _ from "lodash";
+import {msg_types} from "../Logger";
 
 type BasicValues = string | number | boolean;
 
@@ -245,6 +246,12 @@ export abstract class GameEvent {
         }
         this.check_reveal();
         this.check_custom_psynergy();
+        if (this.data.verbose_game_event_fire) {
+            this.data.logger.log_message(
+                `Game event of type '${this.type}' fired.${this.key_name ? ` Key name: '${this.key_name}'.` : ""}`,
+                msg_types.INFO
+            );
+        }
         this._origin_npc = origin_npc;
         this._fire();
     }

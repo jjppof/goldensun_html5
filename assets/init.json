@@ -11,6 +11,7 @@
     "skip_start_menu": false,
     "ignore_system_scaling": true,
     "start_battle_tester_on_init": false,
+    "verbose_game_event_fire": false,
     "artifacts_global_list": [
         {
             "key_name":"apollos_axe",
