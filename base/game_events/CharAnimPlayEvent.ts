@@ -81,6 +81,15 @@ export class CharAnimPlayEvent extends GameEvent {
                     --this.data.game_event_manager.events_running_count;
                     this.finish_events.forEach(event => event.fire(this.origin_npc));
                 });
+            } else {
+                const previous_force_idle_action_in_event = target_char.force_idle_action_in_event;
+                target_char.force_idle_action_in_event = false;
+                let callback_key;
+                const anim_change_callback = () => {
+                    target_char.remove_animation_callback(callback_key);
+                    target_char.force_idle_action_in_event = previous_force_idle_action_in_event;
+                };
+                callback_key = target_char.add_animation_callback(anim_change_callback);
             }
         }
     }

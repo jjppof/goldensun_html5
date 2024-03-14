@@ -188,6 +188,7 @@ export abstract class ControllableChar {
     protected _shapes_collision_active: boolean;
     /** The function used to stop this char casting aura. */
     public casting_aura_stop_function: ReturnType<typeof FieldAbilities.init_cast_aura>;
+    private animation_change_callbacks: {[key: number]: () => void};
 
     constructor(
         game: Phaser.Game,
@@ -303,6 +304,7 @@ export abstract class ControllableChar {
         this._emoticon_sprite = null;
         this.sand_mode = false;
         this.ignore_play = false;
+        this.animation_change_callbacks = {};
     }
 
     /** The char key. */
@@ -698,6 +700,31 @@ export abstract class ControllableChar {
     }
 
     /**
+     * Adds a callback for this char that will be called when this char animation changes.
+     * @param callback the callback that will be called.
+     * @returns returns the key to track this callback, so you can identify it later to remove.
+     */
+    add_animation_callback(callback: () => void) {
+        const keys = Object.keys(this.animation_change_callbacks);
+        const new_key = keys.length ? Math.max(...keys.map(k => +k)) + 1 : 0;
+        this.animation_change_callbacks[new_key] = callback;
+        return new_key;
+    }
+
+    /**
+     * Removes a callback added by `add_animation_callback` method.
+     * @param key the callback unique key.
+     * @returns returns true if the callback was removed successfully.
+     */
+    remove_animation_callback(key: number) {
+        if (key in this.animation_change_callbacks) {
+            delete this.animation_change_callbacks[key];
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Plays an animation of this char.
      * @param action the action that this char is going to doing.
      * @param animation an specific animation of the given action that this char is going to be executing.
@@ -729,6 +756,15 @@ export abstract class ControllableChar {
                 animation = reverse_directions[this.current_direction];
             } else {
                 animation = this.current_animation;
+            }
+        }
+        if (
+            this.current_action !== action &&
+            this.current_animation !== animation &&
+            Object.keys(this.animation_change_callbacks).length
+        ) {
+            for (let callback of Object.values(this.animation_change_callbacks)) {
+                callback();
             }
         }
         if (SpriteBase.getSpriteAction(this.sprite) !== action) {
