@@ -88,6 +88,7 @@ import {ExitSandModeEvent} from "./ExitSandModeEvent";
 import {CharFallEvent} from "./CharFallEvent";
 import {SetCharHPPPEvent} from "./SetCharHPPPEvent";
 import {AudioStopEvent} from "./AudioStopEvent";
+import {CharSplashSweatDropsEvent} from "./CharSplashSweatDropsEvent";
 
 export enum interaction_patterns {
     NO_INTERACTION = "no_interaction",
@@ -1362,6 +1363,19 @@ export class GameEventManager {
                     info.pause_only,
                     info.fade_out,
                     info.bgm_identifier
+                );
+            case event_types.SPLASH_SWEAT_DROPS:
+                return new CharSplashSweatDropsEvent(
+                    this.game,
+                    this.data,
+                    info.active,
+                    info.key_name,
+                    info.keep_reveal,
+                    info.keep_custom_psynergy,
+                    info.is_npc,
+                    info.npc_label,
+                    info.times,
+                    info.finish_events
                 );
             default:
                 const origin = `Event origin: ${event_origin}. ${
