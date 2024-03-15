@@ -1,0 +1,68 @@
+{"frames": {
+
+"leaves/blowing/00":
+{
+	"frame": {"x":11,"y":1,"w":8,"h":7},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":0,"w":8,"h":7},
+	"sourceSize": {"w":8,"h":8}
+},
+"leaves/blowing/01":
+{
+	"frame": {"x":21,"y":1,"w":7,"h":8},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":1,"y":0,"w":7,"h":8},
+	"sourceSize": {"w":8,"h":8}
+},
+"leaves/blowing/02":
+{
+	"frame": {"x":1,"y":9,"w":8,"h":8},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":8,"h":8},
+	"sourceSize": {"w":8,"h":8}
+},
+"leaves/blowing/03":
+{
+	"frame": {"x":1,"y":1,"w":8,"h":6},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":1,"w":8,"h":6},
+	"sourceSize": {"w":8,"h":8}
+},
+"leaves/blowing/04":
+{
+	"frame": {"x":11,"y":10,"w":8,"h":8},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":8,"h":8},
+	"sourceSize": {"w":8,"h":8}
+},
+"leaves/blowing/05":
+{
+	"frame": {"x":21,"y":11,"w":7,"h":8},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":1,"y":0,"w":7,"h":8},
+	"sourceSize": {"w":8,"h":8}
+},
+"leaves/bush/00":
+{
+	"frame": {"x":1,"y":21,"w":26,"h":25},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":3,"y":3,"w":26,"h":25},
+	"sourceSize": {"w":32,"h":32}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "whirlwind_leaves.png",
+	"format": "RGBA8888",
+	"size": {"w":29,"h":47},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:92ea09073a29d7f864edc50c9ca071e4:a8f8ff2004fb98795d44d335783f24d4:d50760826f3f20ff34201ca2c13f3ad0$"
+}
+}
