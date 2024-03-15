@@ -115,7 +115,7 @@ export enum event_types {
     CHAR_FALL = "char_fall",
     SET_CHAR_HP_PP = "set_char_hp_pp",
     AUDIO_STOP = "audio_stop",
-    SPLASH_SWEAT_DROPS = "splash_sweat_drops",
+    CHAR_SPLASH_SWEAT_DROPS = "char_splash_sweat_drops",
 }
 
 export enum game_event_misc_origin {

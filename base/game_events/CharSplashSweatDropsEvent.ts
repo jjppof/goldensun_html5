@@ -18,7 +18,7 @@ export class CharSplashSweatDropsEvent extends GameEvent {
         times,
         finish_events
     ) {
-        super(game, data, event_types.SPLASH_SWEAT_DROPS, active, key_name, keep_reveal, keep_custom_psynergy);
+        super(game, data, event_types.CHAR_SPLASH_SWEAT_DROPS, active, key_name, keep_reveal, keep_custom_psynergy);
         this.times = times;
         this.is_npc = is_npc;
         this.npc_label = npc_label;

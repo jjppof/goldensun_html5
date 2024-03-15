@@ -1364,7 +1364,7 @@ export class GameEventManager {
                     info.fade_out,
                     info.bgm_identifier
                 );
-            case event_types.SPLASH_SWEAT_DROPS:
+            case event_types.CHAR_SPLASH_SWEAT_DROPS:
                 return new CharSplashSweatDropsEvent(
                     this.game,
                     this.data,
