@@ -913,6 +913,8 @@ export abstract class ControllableChar {
         bounce?: boolean;
         /** Whether the char shadow will remain hidden after jump. */
         keep_shadow_hidden?: boolean;
+        /** If true, char jump animation won't be played. */
+        dont_play_jump_animation?: boolean;
     }) {
         const duration = options?.duration ?? 65;
         const jump_height = options?.jump_height ?? 12;
@@ -952,7 +954,7 @@ export abstract class ControllableChar {
             }
             this.toggle_collision(false);
             this.jumping = true;
-            if (this.sprite_info.hasAction(base_actions.JUMP)) {
+            if (this.sprite_info.hasAction(base_actions.JUMP) && !options.dont_play_jump_animation) {
                 let jump_init_resolve;
                 const jump_init_promise = new Promise(resolve => (jump_init_resolve = resolve));
                 this.play(base_actions.JUMP, reverse_directions[jump_direction]);

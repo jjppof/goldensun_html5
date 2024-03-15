@@ -553,7 +553,8 @@ export class GameEventManager {
                     info.dest,
                     info.jump_direction,
                     info.sfx_key,
-                    info.wait_after
+                    info.wait_after,
+                    info.dont_play_jump_animation
                 );
             case event_types.FACE_DIRECTION:
                 return new FaceDirectionEvent(
