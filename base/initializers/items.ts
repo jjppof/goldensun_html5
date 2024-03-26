@@ -20,6 +20,7 @@ export function initialize_items(game: Phaser.Game, data: GoldenSun, items_db: a
                 item_data.carry_up_to_30,
                 item_data.effects,
                 item_data.element,
+                item_data.attack_ability,
                 item_data.unleash_ability,
                 item_data.unleash_rate,
                 item_data.use_ability,
