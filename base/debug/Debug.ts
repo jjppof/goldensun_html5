@@ -323,6 +323,7 @@ export class Debug {
 
     set_debug_info() {
         this.game.debug.text("", 0, 0);
+        const inspector = document.getElementById("object_inspector");
 
         if (this.show_fps) {
             this.game.debug.text("RPS: " + this.game.time.rps || "RPS: --", 5, 15, "#00ff00");
@@ -413,14 +414,16 @@ export class Debug {
                             }
                         );
                     });
-                    document.getElementById("object_inspector").innerText = JSON.stringify(events, null, 4);
+                    if (inspector) {
+                        inspector.innerText = JSON.stringify(events, null, 4);
+                    }
                 }
             } else {
                 this.game.debug.text(`x: --, y: --`, 60, 15, "#00ff00");
             }
         } else {
-            if (!this.data.electron_app) {
-                document.getElementById("object_inspector").innerText = "";
+            if (!this.data.electron_app && inspector) {
+                inspector.innerText = "";
             }
         }
     }
