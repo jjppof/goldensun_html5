@@ -115,3 +115,10 @@ canvas {
     margin: 1rem 20%;
     display: none;
 }
+.CodeMirror {
+    position: fixed !important;
+    right: 0;
+    height: 100% !important;
+    top: 0;
+    width: 30%;
+}

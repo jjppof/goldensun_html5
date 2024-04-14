@@ -9,8 +9,19 @@ export class SetPermanentStatusEvent extends GameEvent {
     /** When removing DOWNED status, the target hp to be recovered in percentage [0-1]. Default is 1. */
     private revive_target_hp: number;
 
-    constructor(game, data, active, key_name, keep_reveal, target_char_key, permanent_status, add, revive_target_hp) {
-        super(game, data, event_types.PERMANENT_STATUS, active, key_name, keep_reveal);
+    constructor(
+        game,
+        data,
+        active,
+        key_name,
+        keep_reveal,
+        keep_custom_psynergy,
+        target_char_key,
+        permanent_status,
+        add,
+        revive_target_hp
+    ) {
+        super(game, data, event_types.PERMANENT_STATUS, active, key_name, keep_reveal, keep_custom_psynergy);
         this.target_char_key = target_char_key;
         this.permanent_status = permanent_status;
         this.add = add ?? true;

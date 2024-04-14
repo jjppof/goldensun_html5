@@ -13,6 +13,7 @@ export class CharFallEvent extends GameEvent {
         active,
         key_name,
         keep_reveal,
+        keep_custom_psynergy,
         is_npc,
         npc_label,
         y_destination_position,
@@ -24,7 +25,7 @@ export class CharFallEvent extends GameEvent {
         teleport,
         finish_events
     ) {
-        super(game, data, event_types.CHAR_FALL, active, key_name, keep_reveal);
+        super(game, data, event_types.CHAR_FALL, active, key_name, keep_reveal, keep_custom_psynergy);
         this.is_npc = is_npc;
         this.npc_label = npc_label;
         this.options = {

@@ -23,6 +23,7 @@ export class MainCharsJoinSplitEvent extends GameEvent {
         active,
         key_name,
         keep_reveal,
+        keep_custom_psynergy,
         mode,
         main_char_key_name,
         destination_incremental,
@@ -36,7 +37,7 @@ export class MainCharsJoinSplitEvent extends GameEvent {
         keep_npc_collision_disable,
         dash
     ) {
-        super(game, data, event_types.MAIN_CHARS_JOIN_SPLIT, active, key_name, keep_reveal);
+        super(game, data, event_types.MAIN_CHARS_JOIN_SPLIT, active, key_name, keep_reveal, keep_custom_psynergy);
         this.mode = mode ?? "split";
         this.main_char_key_name = main_char_key_name;
         this.main_char_label = `${main_char_key_name}/join_split_event`;
@@ -75,8 +76,9 @@ export class MainCharsJoinSplitEvent extends GameEvent {
         }
     }
 
-    finish() {
+    async finish() {
         if (!this.keep_npc_collision_disable) {
+            await promised_wait(this.game, 100);
             this.data.collision.enable_npc_collision(this.data.map.collision_layer);
         }
         --this.data.game_event_manager.events_running_count;
@@ -165,7 +167,7 @@ export class MainCharsJoinSplitEvent extends GameEvent {
         if (this.wait_after) {
             await promised_wait(this.game, this.wait_after);
         }
-        this.finish();
+        await this.finish();
     }
 
     async join() {
@@ -190,7 +192,7 @@ export class MainCharsJoinSplitEvent extends GameEvent {
                 if (this.wait_after) {
                     await promised_wait(this.game, this.wait_after);
                 }
-                this.finish();
+                await this.finish();
             },
             2
         );

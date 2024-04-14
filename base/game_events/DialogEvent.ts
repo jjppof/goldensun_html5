@@ -53,6 +53,7 @@ export class DialogEvent extends GameEvent {
         active,
         key_name,
         keep_reveal,
+        keep_custom_psynergy,
         dialog_info,
         npc_hero_reciprocal_look,
         reset_reciprocal_look,
@@ -62,7 +63,7 @@ export class DialogEvent extends GameEvent {
         mind_read_window,
         pos_relative_to_canvas
     ) {
-        super(game, data, event_types.DIALOG, active, key_name, keep_reveal);
+        super(game, data, event_types.DIALOG, active, key_name, keep_reveal, keep_custom_psynergy);
         this.dialog_info = Array.isArray(dialog_info) ? dialog_info : [dialog_info];
         this.npc_hero_reciprocal_look = npc_hero_reciprocal_look ?? false;
         this.reset_reciprocal_look = reset_reciprocal_look ?? true;

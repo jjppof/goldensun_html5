@@ -15,6 +15,7 @@ export class TeleportEvent extends GameEvent {
         active,
         key_name,
         keep_reveal,
+        keep_custom_psynergy,
         target_map_key,
         target_tile_position,
         target_collision_layer,
@@ -22,7 +23,7 @@ export class TeleportEvent extends GameEvent {
         keep_encounter_cumulator,
         fade_color
     ) {
-        super(game, data, event_types.TELEPORT, active, key_name, keep_reveal);
+        super(game, data, event_types.TELEPORT, active, key_name, keep_reveal, keep_custom_psynergy);
         this.target_map_key = target_map_key;
         this.target_tile_position = target_tile_position;
         this.target_collision_layer = target_collision_layer;

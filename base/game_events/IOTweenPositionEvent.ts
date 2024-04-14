@@ -18,8 +18,10 @@ export class IOTweenPositionEvent extends GameEvent {
     private shadow_follow_io: boolean;
     private keep_io_collision_disable: boolean;
     private prev_collision_status: boolean;
+    private prev_collision_layer: number;
     private dest_collision_layer: number;
     private change_collision_layer_on_init: boolean;
+    private enable_collision_on_previous_pos: boolean;
 
     constructor(
         game,
@@ -27,6 +29,7 @@ export class IOTweenPositionEvent extends GameEvent {
         active,
         key_name,
         keep_reveal,
+        keep_custom_psynergy,
         io_label,
         duration,
         ease,
@@ -41,9 +44,10 @@ export class IOTweenPositionEvent extends GameEvent {
         shadow_follow_io,
         keep_io_collision_disable,
         dest_collision_layer,
-        change_collision_layer_on_init
+        change_collision_layer_on_init,
+        enable_collision_on_previous_pos
     ) {
-        super(game, data, event_types.IO_TWEEN_POSITION, active, key_name, keep_reveal);
+        super(game, data, event_types.IO_TWEEN_POSITION, active, key_name, keep_reveal, keep_custom_psynergy);
         this.io_label = io_label;
         this.duration = duration;
         this.ease = ease ? _.get(Phaser.Easing, ease) : Phaser.Easing.Linear.None;
@@ -58,6 +62,7 @@ export class IOTweenPositionEvent extends GameEvent {
         this.keep_io_collision_disable = keep_io_collision_disable ?? false;
         this.dest_collision_layer = dest_collision_layer;
         this.change_collision_layer_on_init = change_collision_layer_on_init ?? false;
+        this.enable_collision_on_previous_pos = enable_collision_on_previous_pos ?? false;
         this.finish_events = [];
         if (finish_events !== undefined) {
             finish_events.forEach(event_info => {
@@ -88,6 +93,7 @@ export class IOTweenPositionEvent extends GameEvent {
             tween_pos.y = this.incremental ? interactable_object.y + tween_pos.y : tween_pos.y;
         }
         this.prev_collision_status = interactable_object.shapes_collision_active;
+        this.prev_collision_layer = interactable_object.base_collision_layer;
         const target = interactable_object.body ?? interactable_object.sprite;
         if (this.change_collision_layer_on_init && this.dest_collision_layer !== undefined) {
             interactable_object.change_collision_layer(this.dest_collision_layer);
@@ -130,7 +136,12 @@ export class IOTweenPositionEvent extends GameEvent {
         };
         interactable_object.shift_events(
             dest_tile_pos.x - interactable_object.tile_x_pos,
-            dest_tile_pos.y - interactable_object.tile_y_pos
+            dest_tile_pos.y - interactable_object.tile_y_pos,
+            this.enable_collision_on_previous_pos
+                ? {
+                      prev_collision_layer: this.prev_collision_layer,
+                  }
+                : undefined
         );
         interactable_object.set_tile_position({
             x: dest_tile_pos.x,

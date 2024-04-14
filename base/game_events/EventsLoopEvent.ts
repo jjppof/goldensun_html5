@@ -5,8 +5,8 @@ export class EventsLoopEvent extends GameEvent {
     private events: GameEvent[];
     private loop_timer: Phaser.Timer;
 
-    constructor(game, data, active, key_name, keep_reveal, interval, events) {
-        super(game, data, event_types.EVENTS_LOOP, active, key_name, keep_reveal);
+    constructor(game, data, active, key_name, keep_reveal, keep_custom_psynergy, interval, events) {
+        super(game, data, event_types.EVENTS_LOOP, active, key_name, keep_reveal, keep_custom_psynergy);
         this.interval = interval;
         this.loop_timer = this.game.time.create(false);
         this.events = [];

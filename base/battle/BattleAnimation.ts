@@ -1,3 +1,46 @@
+/*
+Extract graphics from MFT:
+
+1. Load ROM up in a hex editor of your choice.
+2. Locate your file(s) in the MFT, which for a recap begins at $08680000, and find the
+   pointer(s) for the files you want to extract. Pointer = hex(MFT ID * 4) + 0x08680000.
+3. If your file has a palette, you will want to extract the palette separately. The easy way of
+   doing this is to just copy+paste the raw HEX into a new binary file, since palettes are
+   uncompressed and TiledGGD can make use of it pretty easily for viewing purposes (and I imagine
+   you'll want the palette for yourself as well). The palette's length varied depending on the
+   bit-format of the graphic file, but will either be 0x80 (128, 8-bit graphics) or 0x20 (32,
+   4-bit graphics) bytes in length. The pallete data is the beggining of the graphics + the pallete
+   size.
+4. Once you have extracted your palette, go back to your pointer in the MFT and add + 0x80 to the
+   pointer (e.g. $08700000 would become $08700080) for 8-bit graphics, or else 0x20 for 4-bit
+   graphics. Save your changes.
+
+If you are not tweaking gs2mapcodecompressor's source code to make things easier:
+5. Change whatever map code file pointers you want to match the pointers of the graphic files you
+   wish to extract. Save your changes. gs2mapcodecompressor only exports from MFT ID 1609 till 1722,
+   so we could be replacing 1609 pointer, for example, by the pointer you want. 1609 is at
+   0x08681924 that points to graphic 0x08ec3878. If we want to extract Volcanos graphics (MFT id
+   326) we can get it graphics pointer that's in hex(326 * 4) + 0x08680000 = 0x08680518 location,
+   which is is 0x088cbc4c. So at 0x08681924, we replace 1609 graphics 0x08ec3878 by Volcano's
+   graphics which is 0x088cbc4c + pallete offset (0x80 on Volcanos case), then 0x088cbccc. Then
+   when gs2mapcodecompressor exports 1609, it will be volcano.
+
+Using the tool:
+6. Once saved, click+drag your ROM onto the compression tool. If a folder does not exist, it will
+   automatically extract all MFT files within range, decompressed for your convenience. If the
+   folder does exist, then it will compress everything in the folder back to the ROM; note that it
+   only compresses to one format, so you may not get 1:1 byte size parity).
+
+Using TiledGGD to view (i.e. to confirm you ripped it successfully, and also to fully determine graphic
+widths used):
+7. You will want to load your newly extracted graphic file + the palette as a separate file.
+8. Once you have done so, you can use the arrow keys on your keyboard to change width and height
+   of whatever is displayed.
+9. You can also go to Image > Go to offset... (shortcut Ctrl+G) to start from later in the graphic
+   file, since it is very common for one graphic file to contain multiple graphics).
+10. Keep experimenting until you figure out everything you want!
+*/
+
 import {GoldenSun} from "../GoldenSun";
 import * as numbers from "../magic_numbers";
 import {elements, element_colors_in_battle, range_360, engine_filters} from "../utils";

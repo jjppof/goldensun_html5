@@ -41,6 +41,7 @@ export class GenericSpriteEvent extends GameEvent {
         active,
         key_name,
         keep_reveal,
+        keep_custom_psynergy,
         control_type,
         generic_sprite_key_name,
         misc_sprite_key,
@@ -62,7 +63,7 @@ export class GenericSpriteEvent extends GameEvent {
         collision_layer,
         send_to_back
     ) {
-        super(game, data, event_types.GENERIC_SPRITE, active, key_name, keep_reveal);
+        super(game, data, event_types.GENERIC_SPRITE, active, key_name, keep_reveal, keep_custom_psynergy);
         this.control_type = control_type;
         this.generic_sprite_key_name = generic_sprite_key_name;
         this.misc_sprite_key = misc_sprite_key;

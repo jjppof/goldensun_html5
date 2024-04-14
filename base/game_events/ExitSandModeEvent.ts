@@ -4,8 +4,8 @@ import {GameEvent, event_types} from "./GameEvent";
 export class ExitSandModeEvent extends GameEvent {
     private finish_events: GameEvent[];
 
-    constructor(game, data, active, key_name, keep_reveal, finish_events) {
-        super(game, data, event_types.EXIT_SAND_MODE, active, key_name, keep_reveal);
+    constructor(game, data, active, key_name, keep_reveal, keep_custom_psynergy, finish_events) {
+        super(game, data, event_types.EXIT_SAND_MODE, active, key_name, keep_reveal, keep_custom_psynergy);
         this.finish_events = [];
         if (finish_events !== undefined) {
             finish_events.forEach(event_info => {

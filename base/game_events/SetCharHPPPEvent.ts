@@ -12,8 +12,8 @@ export class SetCharHPPPEvent extends GameEvent {
     private points_type: string;
     private value: number | "full";
 
-    constructor(game, data, active, key_name, keep_reveal, char_key, points_type, value) {
-        super(game, data, event_types.SET_CHAR_HP_PP, active, key_name, keep_reveal);
+    constructor(game, data, active, key_name, keep_reveal, keep_custom_psynergy, char_key, points_type, value) {
+        super(game, data, event_types.SET_CHAR_HP_PP, active, key_name, keep_reveal, keep_custom_psynergy);
         this.char_key = char_key;
         this.points_type = points_type;
         this.value = value;

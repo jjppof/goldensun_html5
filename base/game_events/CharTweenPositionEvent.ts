@@ -26,6 +26,7 @@ export class CharTweenPositionEvent extends GameEvent {
         active,
         key_name,
         keep_reveal,
+        keep_custom_psynergy,
         is_npc,
         npc_label,
         duration,
@@ -41,7 +42,7 @@ export class CharTweenPositionEvent extends GameEvent {
         shadow_follow_char,
         keep_char_collision_disable
     ) {
-        super(game, data, event_types.CHAR_TWEEN_POSITION, active, key_name, keep_reveal);
+        super(game, data, event_types.CHAR_TWEEN_POSITION, active, key_name, keep_reveal, keep_custom_psynergy);
         this.is_npc = is_npc;
         this.npc_label = npc_label;
         this.duration = duration;

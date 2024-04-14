@@ -18,6 +18,7 @@ export class CharAnimPlayEvent extends GameEvent {
         active,
         key_name,
         keep_reveal,
+        keep_custom_psynergy,
         is_npc,
         npc_label,
         action,
@@ -29,7 +30,7 @@ export class CharAnimPlayEvent extends GameEvent {
         reset_before_start,
         finish_events
     ) {
-        super(game, data, event_types.CHAR_ANIMATION_PLAY, active, key_name, keep_reveal);
+        super(game, data, event_types.CHAR_ANIMATION_PLAY, active, key_name, keep_reveal, keep_custom_psynergy);
         this.npc_label = npc_label;
         this.is_npc = is_npc;
         this.action = action;
@@ -80,6 +81,15 @@ export class CharAnimPlayEvent extends GameEvent {
                     --this.data.game_event_manager.events_running_count;
                     this.finish_events.forEach(event => event.fire(this.origin_npc));
                 });
+            } else {
+                const previous_force_idle_action_in_event = target_char.force_idle_action_in_event;
+                target_char.force_idle_action_in_event = false;
+                let callback_key;
+                const anim_change_callback = () => {
+                    target_char.remove_animation_callback(callback_key);
+                    target_char.force_idle_action_in_event = previous_force_idle_action_in_event;
+                };
+                callback_key = target_char.add_animation_callback(anim_change_callback);
             }
         }
     }

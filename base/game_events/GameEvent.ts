@@ -2,6 +2,7 @@ import {StoragePosition} from "Storage";
 import {GoldenSun} from "../GoldenSun";
 import {NPC} from "../NPC";
 import * as _ from "lodash";
+import {msg_types} from "../Logger";
 
 type BasicValues = string | number | boolean;
 
@@ -114,6 +115,7 @@ export enum event_types {
     CHAR_FALL = "char_fall",
     SET_CHAR_HP_PP = "set_char_hp_pp",
     AUDIO_STOP = "audio_stop",
+    CHAR_SPLASH_SWEAT_DROPS = "char_splash_sweat_drops",
 }
 
 export enum game_event_misc_origin {
@@ -154,6 +156,9 @@ export abstract class GameEvent {
     private _keep_reveal: boolean;
     private _origin_npc: NPC;
 
+    /** If true, custom psynergies won't be stopped on this event fire. */
+    private keep_custom_psynergy: boolean;
+
     /** The GameEvents id incrementer. */
     public static id_incrementer: number;
     /** The events object where the keys are the ids. */
@@ -167,7 +172,8 @@ export abstract class GameEvent {
         type: event_types,
         active: boolean,
         key_name: string,
-        keep_reveal: boolean
+        keep_reveal: boolean,
+        keep_custom_psynergy: boolean
     ) {
         this.game = game;
         this.data = data;
@@ -180,6 +186,7 @@ export abstract class GameEvent {
             GameEvent.labeled_events[this.key_name] = this;
         }
         this._keep_reveal = keep_reveal ?? false;
+        this.keep_custom_psynergy = keep_custom_psynergy ?? false;
         this._origin_npc = null;
     }
 
@@ -217,7 +224,7 @@ export abstract class GameEvent {
 
     /** Check if a custom psynergy is currently active. If yes, then cancel it. */
     private check_custom_psynergy() {
-        if (this.data?.hero.on_custom_psynergy_effect) {
+        if (this.data?.hero.on_custom_psynergy_effect && !this.keep_custom_psynergy) {
             _.forEach(this.data.info.field_abilities_list, ability => {
                 if (ability.is_custom_psynergy) {
                     ability.finish_psynergy(false, false);
@@ -240,6 +247,12 @@ export abstract class GameEvent {
         }
         this.check_reveal();
         this.check_custom_psynergy();
+        if (this.data.verbose_game_event_fire) {
+            this.data.logger.log_message(
+                `Game event of type '${this.type}' fired.${this.key_name ? ` Key name: '${this.key_name}'.` : ""}`,
+                msg_types.INFO
+            );
+        }
         this._origin_npc = origin_npc;
         this._fire();
     }

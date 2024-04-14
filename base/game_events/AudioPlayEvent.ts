@@ -22,6 +22,7 @@ export class AudioPlayEvent extends GameEvent {
         active,
         key_name,
         keep_reveal,
+        keep_custom_psynergy,
         audio_type,
         audio_key,
         volume,
@@ -31,7 +32,7 @@ export class AudioPlayEvent extends GameEvent {
         bgm_identifier,
         finish_events
     ) {
-        super(game, data, event_types.AUDIO_PLAY, active, key_name, keep_reveal);
+        super(game, data, event_types.AUDIO_PLAY, active, key_name, keep_reveal, keep_custom_psynergy);
         this.audio_type = audio_type;
         this.audio_key = audio_key;
         this.volume = volume ?? 1.0;

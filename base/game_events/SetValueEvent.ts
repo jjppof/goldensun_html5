@@ -22,6 +22,7 @@ export class SetValueEvent extends GameEvent {
         active,
         key_name,
         keep_reveal,
+        keep_custom_psynergy,
         event_value,
         check_npc_storage_values,
         check_io_storage_values,
@@ -33,7 +34,7 @@ export class SetValueEvent extends GameEvent {
         increment,
         dismiss_checks
     ) {
-        super(game, data, event_types.SET_VALUE, active, key_name, keep_reveal);
+        super(game, data, event_types.SET_VALUE, active, key_name, keep_reveal, keep_custom_psynergy);
         this.event_value = event_value;
         this.check_npc_storage_values = check_npc_storage_values ?? false;
         this.check_io_storage_values = check_io_storage_values ?? false;

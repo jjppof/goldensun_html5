@@ -25,8 +25,19 @@ export class BranchEvent extends GameEvent {
     private events: GameEvent[] = [];
     private else_events: GameEvent[] = [];
 
-    constructor(game, data, active, key_name, keep_reveal, combination, comparator_pairs, events, else_events) {
-        super(game, data, event_types.BRANCH, active, key_name, keep_reveal);
+    constructor(
+        game,
+        data,
+        active,
+        key_name,
+        keep_reveal,
+        keep_custom_psynergy,
+        combination,
+        comparator_pairs,
+        events,
+        else_events
+    ) {
+        super(game, data, event_types.BRANCH, active, key_name, keep_reveal, keep_custom_psynergy);
         this.combination = combination ?? combinations.OR;
         this.comparator_pairs = comparator_pairs ?? [];
         this.initialize_events(events, else_events);

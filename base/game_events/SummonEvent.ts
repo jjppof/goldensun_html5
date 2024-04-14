@@ -33,8 +33,8 @@ export class SummonEvent extends GameEvent {
     private finish_events: GameEvent[];
     private control_key: number;
 
-    constructor(game, data, active, key_name, keep_reveal, summon_key, animate, finish_events) {
-        super(game, data, event_types.SUMMON, active, key_name, keep_reveal);
+    constructor(game, data, active, key_name, keep_reveal, keep_custom_psynergy, summon_key, animate, finish_events) {
+        super(game, data, event_types.SUMMON, active, key_name, keep_reveal, keep_custom_psynergy);
         this.summon = this.data.info.summons_list[summon_key];
         this.control_enable = false;
         this.dialog = null;

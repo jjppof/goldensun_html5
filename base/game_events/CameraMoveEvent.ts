@@ -20,12 +20,13 @@ export class CameraMoveEvent extends GameEvent {
         active,
         key_name,
         keep_reveal,
+        keep_custom_psynergy,
         positions,
         reset_follow,
         return_to_target_duration,
         finish_events
     ) {
-        super(game, data, event_types.CAMERA_MOVE, active, key_name, keep_reveal);
+        super(game, data, event_types.CAMERA_MOVE, active, key_name, keep_reveal, keep_custom_psynergy);
         this.positions = positions ?? [];
         this.reset_follow = reset_follow ?? false;
         this.return_to_target_duration = return_to_target_duration ?? 0;

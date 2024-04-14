@@ -5,8 +5,8 @@ export class SetCharVisibilityEvent extends GameEvent {
     private npc_label: string;
     private visible: boolean;
 
-    constructor(game, data, active, key_name, keep_reveal, is_npc, npc_label, visible) {
-        super(game, data, event_types.SET_CHAR_VISIBILITY, active, key_name, keep_reveal);
+    constructor(game, data, active, key_name, keep_reveal, keep_custom_psynergy, is_npc, npc_label, visible) {
+        super(game, data, event_types.SET_CHAR_VISIBILITY, active, key_name, keep_reveal, keep_custom_psynergy);
         this.is_npc = is_npc;
         this.npc_label = npc_label;
         this.visible = visible;

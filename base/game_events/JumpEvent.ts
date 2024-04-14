@@ -17,6 +17,7 @@ export class JumpEvent extends GameEvent {
         distance?: number;
     };
     private jump_direction: directions;
+    private dont_play_jump_animation: boolean;
     private sfx_key: string;
     private finish_events: GameEvent[];
 
@@ -26,6 +27,7 @@ export class JumpEvent extends GameEvent {
         active,
         key_name,
         keep_reveal,
+        keep_custom_psynergy,
         is_npc,
         npc_index,
         npc_label,
@@ -35,9 +37,10 @@ export class JumpEvent extends GameEvent {
         dest,
         jump_direction,
         sfx_key,
-        wait_after
+        wait_after,
+        dont_play_jump_animation
     ) {
-        super(game, data, event_types.JUMP, active, key_name, keep_reveal);
+        super(game, data, event_types.JUMP, active, key_name, keep_reveal, keep_custom_psynergy);
         this.is_npc = is_npc;
         this.npc_index = npc_index;
         this.npc_label = npc_label;
@@ -47,6 +50,7 @@ export class JumpEvent extends GameEvent {
         this.dest = dest;
         this.jump_direction = jump_direction !== undefined ? directions[jump_direction as string] : undefined;
         this.sfx_key = sfx_key;
+        this.dont_play_jump_animation = dont_play_jump_animation;
         this.finish_events = [];
         if (finish_events !== undefined) {
             finish_events.forEach(event_info => {
@@ -80,6 +84,7 @@ export class JumpEvent extends GameEvent {
             dest: this.dest,
             time_on_finish: this.wait_after,
             sfx_key: this.sfx_key,
+            dont_play_jump_animation: this.dont_play_jump_animation,
         });
 
         char.force_char_stop_in_event = previous_force_char_stop_in_event;
