@@ -35,10 +35,21 @@ export class SpriteBase {
     }
 
     setActionAnimations(action, animations, frame_counts) {
+        if (!this.actions.hasOwnProperty(action)) {
+            this.data.logger.log_message(`Sprite '${this.key_name}' has no action '${action}'.`, msg_types.ERROR);
+            return;
+        }
         this.actions[action].animations = new Array(animations.length);
         this.actions[action].frame_counts = new Array(animations.length);
         this.actions[action].frame_names = {};
         const frame_count_is_array = Array.isArray(frame_counts);
+        if (frame_count_is_array && frame_counts.length !== animations.length) {
+            this.data.logger.log_message(
+                `Frames count and animations size must match. Issue on sprite '${this.key_name}' for action action '${action}'.`,
+                msg_types.ERROR
+            );
+            return;
+        }
         for (let i = 0; i < animations.length; ++i) {
             const frame_count = frame_count_is_array ? frame_counts[i] : frame_counts;
             this.actions[action].animations[i] = animations[i];
@@ -47,6 +58,17 @@ export class SpriteBase {
     }
 
     setActionFrameRate(action, frame_rate) {
+        if (!this.actions.hasOwnProperty(action)) {
+            this.data.logger.log_message(`Sprite '${this.key_name}' has no action '${action}'.`, msg_types.ERROR);
+            return;
+        }
+        if (!Array.isArray(frame_rate) && !(typeof frame_rate === "number")) {
+            this.data.logger.log_message(
+                `Invalid frame rate set for action '${action}' for sprite '${this.key_name}'.`,
+                msg_types.ERROR
+            );
+            return;
+        }
         this.actions[action].frame_rate = {};
         for (let i = 0; i < this.actions[action].animations.length; ++i) {
             const animation = this.actions[action].animations[i];
@@ -59,6 +81,13 @@ export class SpriteBase {
                 }
             } else {
                 this_frame_rate = frame_rate;
+            }
+            if (this_frame_rate === undefined) {
+                this.data.logger.log_message(
+                    `Invalid frame rate set for action '${action}' for sprite '${this.key_name}'.`,
+                    msg_types.ERROR
+                );
+                continue;
             }
             this.actions[action].frame_rate[animation] = this_frame_rate;
         }
