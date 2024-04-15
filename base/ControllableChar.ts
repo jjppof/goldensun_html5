@@ -773,7 +773,9 @@ export abstract class ControllableChar {
         }
         const animation_key = this.sprite_info.getAnimationKey(action, animation);
         if (!this.sprite.animations.getAnimation(animation_key)) {
-            this.sprite_info.setAnimation(this.sprite, action);
+            if (!this.sprite_info.setAnimation(this.sprite, action)) {
+                return null;
+            }
         }
         const animation_obj = this.sprite.animations.getAnimation(animation_key);
         if (!animation_obj) {

@@ -73458,7 +73458,7 @@ Phaser.FrameData.prototype = {
      */
     checkFrameName: function (name)
     {
-        if (this._frameNames[name] == null)
+        if (this._frameNames[name] == null || this._frameNames[name] === undefined)
         {
             return false;
         }

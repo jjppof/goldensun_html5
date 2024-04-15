@@ -125,7 +125,7 @@ export class SpriteBase {
             const action_key = this.getSpriteKey(action);
             if (game.cache.checkImageKey(action_key)) {
                 this.data.logger.log_message(
-                    `Sprite key '<key_name>/<action>' '${action_key} is already registered in the engine. Please consider renaming it.'`,
+                    `Sprite key '<key_name>/<action>' '${action_key}' is already registered in the engine. Please consider renaming it.`,
                     msg_types.ERROR
                 );
             }
@@ -162,10 +162,18 @@ export class SpriteBase {
                     Array.isArray(loop) ? loop[i] : loop,
                     false
                 );
+                if (!sprite.animations.frameData.getFrameByName(`${anim_key}${SpriteBase.ACTION_ANIM_SEPARATOR}00`)) {
+                    this.data.logger.log_message(
+                        `Animation '${anim_key}' is not valid for action '${action}' for sprite '${this.key_name}'.`,
+                        msg_types.ERROR
+                    );
+                    return false;
+                }
             }
         } else {
             this.data.logger.log_message(`Action '${action}' not available for '${this.key_name}'.`);
         }
+        return true;
     }
 
     generateAllFrames() {
