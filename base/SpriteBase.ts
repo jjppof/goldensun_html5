@@ -20,11 +20,15 @@ export class SpriteBase {
             frame_names?: {[animation: string]: string[]};
         };
     };
+    private action_aliases: {
+        [alias: string]: string;
+    };
 
     constructor(data, key_name, actions) {
         this.data = data;
         this.key_name = key_name;
         this.actions = {};
+        this.action_aliases = {};
         for (let i = 0; i < actions.length; ++i) {
             this.actions[actions[i]] = {};
         }
@@ -108,7 +112,15 @@ export class SpriteBase {
         if (reference_action in this.actions) {
             this.actions[alias] = this.actions[reference_action];
             game.cache.setCacheAlias(this.getSpriteKey(alias), this.getSpriteKey(reference_action), Phaser.Cache.IMAGE);
+            this.action_aliases[alias] = reference_action;
         }
+    }
+
+    getActionRefFromAlias(alias) {
+        if (alias in this.action_aliases) {
+            return this.action_aliases[alias];
+        }
+        return null;
     }
 
     hasAction(action: string) {
@@ -154,7 +166,7 @@ export class SpriteBase {
             for (let i = 0; i < animations.length; ++i) {
                 const animation = animations[i];
                 const frame_rate = this.actions[action].frame_rate[animation];
-                const anim_key = this.getAnimationKey(action, animation);
+                let anim_key = this.getAnimationKey(action, animation);
                 sprite.animations.add(
                     anim_key,
                     this.actions[action].frame_names[animation],
@@ -162,18 +174,20 @@ export class SpriteBase {
                     Array.isArray(loop) ? loop[i] : loop,
                     false
                 );
+                const ref_action = this.getActionRefFromAlias(action);
+                if (ref_action) {
+                    anim_key = this.getAnimationKey(ref_action, animation);
+                }
                 if (!sprite.animations.frameData.getFrameByName(`${anim_key}${SpriteBase.ACTION_ANIM_SEPARATOR}00`)) {
                     this.data.logger.log_message(
                         `Animation '${anim_key}' is not valid for action '${action}' for sprite '${this.key_name}'.`,
                         msg_types.ERROR
                     );
-                    return false;
                 }
             }
         } else {
             this.data.logger.log_message(`Action '${action}' not available for '${this.key_name}'.`);
         }
-        return true;
     }
 
     generateAllFrames() {

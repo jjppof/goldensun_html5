@@ -161,6 +161,10 @@ export class GameEventManager {
      * Look for valid npcs in the nearby.
      */
     private search_for_npc() {
+        const close_npcs: {
+            npc: NPC;
+            distance: number;
+        }[] = [];
         for (let i = 0; i < this.data.map.npcs.length; ++i) {
             const npc = this.data.map.npcs[i];
             if (
@@ -170,8 +174,17 @@ export class GameEventManager {
             ) {
                 continue;
             }
-            const is_close_check = this.data.hero.is_close(npc);
-            if (is_close_check) {
+            const npc_distance = this.data.hero.is_close(npc);
+            if (npc_distance) {
+                close_npcs.push({
+                    npc: npc,
+                    distance: npc_distance,
+                });
+            }
+        }
+        if (close_npcs.length) {
+            for (let close_npc_data of _.sortBy(close_npcs, close_npc_data => close_npc_data.distance)) {
+                const npc = close_npc_data.npc;
                 if (
                     npc.allow_only_front_interaction &&
                     (npc.tile_pos.y + 1 !== this.data.hero.tile_pos.y || npc.tile_pos.x !== this.data.hero.tile_pos.x)
