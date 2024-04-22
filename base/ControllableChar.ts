@@ -796,7 +796,7 @@ export abstract class ControllableChar {
     /**
      * Returns if this char is enough close to a target char.
      * @param target_char The target char.
-     * @returns Returns whether it's close or not.
+     * @returns If it's close enough, returns the distance, else returns null.
      */
     is_close(target_char: NPC) {
         const reference_angle = (8 - this.transition_direction) * numbers.degree45;
@@ -816,10 +816,9 @@ export abstract class ControllableChar {
         upper_limit += angle_shift;
         const target_angle = range_360(-Math.atan2(relative_point.y, relative_point.x) + angle_shift);
         const angle_condition = target_angle >= lower_limit && target_angle <= upper_limit;
-        const distance_condition =
-            get_sqr_distance(0, relative_point.x, 0, relative_point.y) <=
-            target_char.talk_range * target_char.talk_range;
-        return angle_condition && distance_condition;
+        const relative_dist = get_sqr_distance(0, relative_point.x, 0, relative_point.y);
+        const distance_condition = relative_dist <= target_char.talk_range * target_char.talk_range;
+        return angle_condition && distance_condition ? relative_dist : null;
     }
 
     /**
