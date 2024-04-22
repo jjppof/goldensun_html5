@@ -23,13 +23,13 @@ const WIN_X3 = 8;
 const WIN_Y3 = 96;
 
 const CHAR_GROUP_X = 16;
-const CHAR_GROUP_Y = 130;
+const CHAR_GROUP_Y = 18;
 
 const CHAR_GROUP_X2 = 16;
 const CHAR_GROUP_Y2 = 28;
 
-const CHAR_GROUP_X3 = 24;
-const CHAR_GROUP_Y3 = 112;
+const CHAR_GROUP_X3 = 16;
+const CHAR_GROUP_Y3 = 18;
 
 const GAP_SIZE = 24;
 
