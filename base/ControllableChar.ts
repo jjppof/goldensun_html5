@@ -882,7 +882,10 @@ export abstract class ControllableChar {
     async jump(options: {
         /** A time to wait on jump finish in ms. */
         time_on_finish?: number;
-        /** The height of the jump in px. */
+        /**
+         * The height of the jump in px. This option
+         * is not valid if it's a diagonal direction jumping.
+         */
         jump_height?: number;
         /** The duration of the jump in ms. */
         duration?: number;
@@ -898,7 +901,8 @@ export abstract class ControllableChar {
             y?: number;
             /**
              * The jump distance that this char will perform. If not given,
-             * this char will jump into the center of the destination.
+             * this char will jump into the center of the destination. This option
+             * is not valid if it's a diagonal direction jumping.
              */
             distance?: number;
             /** The distance multiplier that will be applied to the final jump distance. */
@@ -923,34 +927,44 @@ export abstract class ControllableChar {
         this.data.audio.play_se(options?.sfx_key ?? "actions/jump");
         if (options?.dest !== undefined) {
             //deals with jumps that have a different position from the current char position.
-            const dest_char = {
+            const dest_pos = {
                 x: options.dest.x ?? get_centered_pos_in_px(options.dest.tile_x, this.data.map.tile_width) ?? this.x,
                 y: options.dest.y ?? get_centered_pos_in_px(options.dest.tile_y, this.data.map.tile_height) ?? this.y,
             };
-            const is_jump_over_x_axis =
-                (options.dest.tile_x ?? get_tile_position(dest_char.x, this.data.map.tile_width)) === this.tile_x_pos;
-            const axis: "x" | "y" = is_jump_over_x_axis ? "y" : "x";
+            const same_x_axis =
+                (options.dest.tile_x ?? get_tile_position(dest_pos.x, this.data.map.tile_width)) === this.tile_x_pos;
+            const same_y_axis =
+                (options.dest.tile_y ?? get_tile_position(dest_pos.y, this.data.map.tile_height)) === this.tile_y_pos;
+            const diagonal_jump = !(same_x_axis || same_y_axis);
+            const axis: "x" | "y" = same_x_axis ? "y" : "x";
             let distance: number;
-            if (options.dest.distance !== undefined) {
-                distance = options.dest.distance;
+            if (!diagonal_jump) {
+                if (options.dest.distance !== undefined) {
+                    distance = options.dest.distance;
+                } else {
+                    distance = get_distance(this.x, dest_pos.x, this.y, dest_pos.y);
+                    if (this.sprite[axis] > dest_pos[axis]) {
+                        distance *= -1;
+                    }
+                }
+                distance *= options.dest.distance_multiplier ?? 1.0;
+            }
+            const tween_obj: {x?: number | number[]; y?: number | number[]} = {};
+            if (diagonal_jump) {
+                tween_obj.x = dest_pos.x;
+                const middle_pt_y = Math.min(dest_pos.y, this.y) - 6;
+                tween_obj.y = [middle_pt_y, dest_pos.y];
             } else {
-                distance = get_distance(this.x, dest_char.x, this.y, dest_char.y);
-                if (this.sprite[axis] > dest_char[axis]) {
-                    distance *= -1;
+                tween_obj[axis] = this.sprite[axis] + distance;
+                if (axis === "x") {
+                    const half_height = jump_height >> 1;
+                    const aux_height = dest_pos.y - half_height;
+                    tween_obj.y = [aux_height, dest_pos.y - jump_height, aux_height, dest_pos.y];
+                } else {
+                    tween_obj.x = dest_pos.x;
                 }
             }
-            const distance_multiplier = options.dest.distance_multiplier ?? 1.0;
-            const tween_obj: {x?: number; y?: number | number[]} = {
-                [axis]: this.sprite[axis] + distance * distance_multiplier,
-            };
             const jump_direction = options.jump_direction ?? this.current_direction;
-            if (axis === "x") {
-                const half_height = jump_height >> 1;
-                const aux_height = dest_char.y - half_height;
-                tween_obj.y = [aux_height, dest_char.y - jump_height, aux_height, dest_char.y];
-            } else {
-                tween_obj.x = dest_char.x;
-            }
             this.toggle_collision(false);
             this.jumping = true;
             if (this.sprite_info.hasAction(base_actions.JUMP) && !options.dont_play_jump_animation) {
@@ -1016,6 +1030,7 @@ export abstract class ControllableChar {
             }
         }
         await promise;
+        this.update_tile_position();
         if (options?.time_on_finish) {
             const time_promise = new Promise(resolve => (promise_resolve = resolve));
             this.game.time.events.add(options.time_on_finish, promise_resolve);
