@@ -298,6 +298,7 @@ export class PlayerSprite {
                     this.weapon_sprite.anchor.setTo(0.5, 1);
                     this.weapon_sprite.y += player.weapon_sprite_shift;
                     player.weapons_sprite_base.setAnimation(this.weapon_sprite, this.current_weapon_type);
+                    this.weapon_sprite.scale.setTo(player.battle_scale, player.battle_scale);
                 }
             }
         }
