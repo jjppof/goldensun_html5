@@ -163,6 +163,7 @@ export class Storage {
      * @param engine_storage if true, will use engine storage instead of default storage.
      */
     set(key_name: string, value: RawStorageRecord["value"], engine_storage: boolean = false) {
+        key_name = key_name.startsWith("not:") ? key_name.replace("not:", "") : key_name;
         const storage = engine_storage ? this.engine_storage : this.internal_storage;
         if (!(key_name in storage)) {
             this.data.logger.log_message(`There's no storage value with key '${key_name}'.`);
