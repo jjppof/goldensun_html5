@@ -102,15 +102,21 @@ export class DialogEvent extends GameEvent {
     }
 
     set_control() {
+        const on_down = () => {
+            if (!this.active || !this.running || !this.control_enable) return;
+            this.next();
+        };
+
         this.reset_control();
         this.control_key = this.data.control_manager.add_controls(
             [
                 {
                     buttons: Button.A,
-                    on_down: () => {
-                        if (!this.active || !this.running || !this.control_enable) return;
-                        this.next();
-                    },
+                    on_down,
+                },
+                {
+                    buttons: Button.B,
+                    on_down,
                 },
             ],
             {persist: true}
