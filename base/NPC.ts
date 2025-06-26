@@ -7,6 +7,7 @@ import {
     next_px_step,
     range_360,
     engine_filters,
+    directions,
 } from "./utils";
 import {ControllableChar} from "./ControllableChar";
 import {interaction_patterns} from "./game_events/GameEventManager";
@@ -18,6 +19,7 @@ import {SnapshotData} from "./Snapshot";
 export enum npc_movement_types {
     IDLE = "idle",
     RANDOM = "random",
+    CUSTOM = "custom",
 }
 
 export enum npc_types {
@@ -88,10 +90,27 @@ export class NPC extends ControllableChar {
     private _after_psynergy_cast_events: {
         [psynergy_key: string]: GameEvent[];
     };
+    private _custom_movement: {
+        position?: {
+            x: number,
+            y: number,
+            is_px?: boolean,
+            incremental?: boolean
+        }
+        dashing?: boolean,
+        look_direction?: directions,
+        wait?: number,
+        animation?: {
+            animation: string,
+            action: string,
+            frame_rate: number,
+            reset_before_start?: boolean
+        }
+    }[];
 
     /** If true, this NPC will move freely while a game event is happening. */
     public move_freely_in_event: boolean;
-    /** The type of movement of this NPC. Idle or random walk. */
+    /** The type of movement of this NPC. Idle, random walk, or custom. */
     public movement_type: npc_movement_types;
 
     constructor(
@@ -144,7 +163,8 @@ export class NPC extends ControllableChar {
         allow_interaction_when_inactive,
         after_psynergy_cast_events,
         force_char_stop_in_event,
-        force_idle_action_in_event
+        force_idle_action_in_event,
+        custom_movement
     ) {
         super(
             game,
@@ -220,6 +240,7 @@ export class NPC extends ControllableChar {
         this._step_max_variation = step_max_variation;
         this._map_index = map_index;
         this._allow_interaction_when_inactive = allow_interaction_when_inactive ?? false;
+        this._custom_movement = custom_movement ?? [];
     }
 
     /** The list of GameEvents related to this NPC. */
@@ -486,39 +507,55 @@ export class NPC extends ControllableChar {
         if (this.movement_type === npc_movement_types.IDLE) {
             this.stop_char(false);
         } else if (this.movement_type === npc_movement_types.RANDOM) {
-            if (this._stepping && this._step_frame_counter < this._step_duration) {
-                if (!this.set_speed_factors()) {
-                    this._step_frame_counter = this._step_duration;
-                } else {
-                    this.choose_direction_by_speed();
-                    this.set_direction();
-                    this.choose_action_based_on_char_state();
-                    this.calculate_speed();
-                    this.apply_speed();
-                    this.play_current_action(true);
-                    if (
-                        get_sqr_distance(this.x, this._step_destination.x, this.y, this._step_destination.y) <
-                        NPC.STOP_MINIMAL_DISTANCE_SQR
-                    ) {
-                        this._step_frame_counter = this._step_duration;
-                    }
-                }
-            } else if (!this._stepping && this._step_frame_counter < this._wait_duration) {
-                this.stop_char(true);
-            } else if (this._step_frame_counter >= (this._stepping ? this._step_duration : this._wait_duration)) {
-                this._stepping = !this._stepping;
-                if (this._stepping) {
-                    if (!this.update_random_walk()) {
-                        this._stepping = false;
-                    }
-                }
-                this._step_frame_counter = 0;
-            }
-            this._step_frame_counter += 1;
+            this.execute_random_walk();
+        } else if (this.movement_type === npc_movement_types.CUSTOM) {
+            this.execute_custom_moves();
         }
         this.update_shadow();
         this.update_tile_position();
         this.update_sweat_drops_position();
+    }
+
+    /**
+     * Do all the necessary steps to execute a list of custom moves.
+     */
+    private execute_custom_moves() {
+
+    }
+
+    /**
+     * Do all the necessary steps to execute a random walk.
+     */
+    private execute_random_walk() {
+        if (this._stepping && this._step_frame_counter < this._step_duration) {
+            if (!this.set_speed_factors()) {
+                this._step_frame_counter = this._step_duration;
+            } else {
+                this.choose_direction_by_speed();
+                this.set_direction();
+                this.choose_action_based_on_char_state();
+                this.calculate_speed();
+                this.apply_speed();
+                this.play_current_action(true);
+                if (
+                    get_sqr_distance(this.x, this._step_destination.x, this.y, this._step_destination.y) <
+                    NPC.STOP_MINIMAL_DISTANCE_SQR
+                ) {
+                    this._step_frame_counter = this._step_duration;
+                }
+            }
+        } else if (!this._stepping && this._step_frame_counter < this._wait_duration) {
+            this.stop_char(true);
+        } else if (this._step_frame_counter >= (this._stepping ? this._step_duration : this._wait_duration)) {
+            this._stepping = !this._stepping;
+            if (this._stepping) {
+                if (!this.update_random_walk()) {
+                    this._stepping = false;
+                }
+            }
+            this._step_frame_counter = 0;
+        }
+        this._step_frame_counter += 1;
     }
 
     /**
