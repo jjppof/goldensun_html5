@@ -1,0 +1,53 @@
+{
+    "key_name": "fire",
+    "cast_type": "psynergy_cast",
+    "wait_for_cast_animation": false,
+    "sprites": [{
+        "key_name": "cast",
+        "per_target": true,
+        "position": "between"
+    }],
+    "particles_sequence": [{
+        "data": {
+            "fire_balls" : {
+                "red": 255,
+                "green": 10,
+                "blue": 0,
+                "lifespan": 6000,
+                "velocity": {
+                    "initial": {"min": 0.7, "max": 1.5},
+                    "radial": { "arcStart": -90, "arcEnd": 90 }
+                }
+            }
+        },
+        "zones": {},
+        "emitters": [{
+            "x": "caster",
+            "y": "caster",
+            "gravity_well": {
+                "x": "targets",
+                "y": "targets",
+                "power": 2,
+                "epsilon": 240,
+                "gravity": 100
+            },
+            "position": "between",
+            "render_type": "pixel",
+            "show_trails": true,
+            "trails_clear_factor": 0.3,
+            "pixel_size": 6,
+            "pixel_is_rect": false,
+            "particles_display_blend_mode": "screen",
+            "render_white_core": true,
+            "core_custom_color": "rgba(255,255,255,0.85)",
+            "total": 250,
+            "frequency": 10,
+            "emitter_data_key": "fire_balls",
+            "delay": {
+                "start": 1000,
+                "visible": false
+            }
+        }],
+        "emission_finish": 6000
+    }]
+}
