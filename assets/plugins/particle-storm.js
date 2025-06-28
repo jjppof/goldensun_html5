@@ -191,9 +191,9 @@ Phaser.ParticleStorm.PI_180 = Math.PI / 180.0;
 *     This is different to force which is applied as a velocity on the particle, where-as scrollSpeed directly adjusts their final position.
 * @return {Phaser.ParticleStorm.Emitter} The Emitter object.
 */
-Phaser.ParticleStorm.prototype.createEmitter = function (renderType, force, scrollSpeed, render_white_core = false, core_custom_color = null) {
+Phaser.ParticleStorm.prototype.createEmitter = function (renderType, force, scrollSpeed, render_white_core = false, core_custom_color = null, transforms = null) {
 
-    var emitter = new Phaser.ParticleStorm.Emitter(this, renderType, force, scrollSpeed, render_white_core, core_custom_color);
+    var emitter = new Phaser.ParticleStorm.Emitter(this, renderType, force, scrollSpeed, render_white_core, core_custom_color, transforms);
 
     this.emitters.push(emitter);
 
@@ -697,7 +697,7 @@ Phaser.ParticleStorm.prototype.update = function () {
 * @param {Phaser.Point} [scrollSpeed] - All particles can be scrolled. This offsets their positions by the amount in this Point each update.
 *     This is different to force which is applied as a velocity on the particle, where-as scrollSpeed directly adjusts their final position.
 */
-Phaser.ParticleStorm.Emitter = function (parent, renderType, force, scrollSpeed, render_white_core = false, core_custom_color = null) {
+Phaser.ParticleStorm.Emitter = function (parent, renderType, force, scrollSpeed, render_white_core = false, core_custom_color = null, transforms = null) {
 
     /**
     * @property {Phaser.Game} game - A reference to the Phaser Game instance.
@@ -888,6 +888,8 @@ Phaser.ParticleStorm.Emitter = function (parent, renderType, force, scrollSpeed,
     this.wells = [];
 
     this.core_custom_color = core_custom_color;
+
+    this.transforms = transforms;
 
     /**
     * Internal Point object used by the emit methods.
@@ -1276,7 +1278,7 @@ Phaser.ParticleStorm.Emitter.prototype = {
             //  ------------------------------------------------
             for (var c = 0; c < this.batch.length; c++)
             {
-                this.batch[c].radiate(config.radiate.velocity, config.radiate.from, config.radiate.to);
+                this.batch[c].radiate(config.radiate.velocity, config.radiate.from, config.radiate.to, config.radiate.transform_key);
             }
         }
         else if (config.radiateFrom)
@@ -1286,7 +1288,7 @@ Phaser.ParticleStorm.Emitter.prototype = {
             //  ------------------------------------------------
             for (var c = 0; c < this.batch.length; c++)
             {
-                this.batch[c].radiateFrom(config.radiateFrom.x, config.radiateFrom.y, config.radiateFrom.velocity);
+                this.batch[c].radiateFrom(config.radiateFrom.x, config.radiateFrom.y, config.radiateFrom.velocity, config.radiateFrom.transform_key);
             }
         }
 
@@ -1440,8 +1442,15 @@ Phaser.ParticleStorm.Emitter.prototype = {
 
             if (!p.ignoreScrollSpeed)
             {
-                p.transform.x += this.scrollSpeed.x;
-                p.transform.y += this.scrollSpeed.y;
+                if (p.emitter.transforms) {
+                    for (let transform_key in p.transform) {
+                        p.transform[transform_key].x += this.scrollSpeed.x;
+                        p.transform[transform_key].y += this.scrollSpeed.y;
+                    }
+                } else {
+                    p.transform.x += this.scrollSpeed.x;
+                    p.transform.y += this.scrollSpeed.y;
+                }
             }
 
             for (var w = 0; w < this.wells.length; w++)
@@ -1833,7 +1842,15 @@ Phaser.ParticleStorm.Particle = function (emitter) {
     * The transform control for this particle. Contains properties such as position, velocity and acceleration.
     * @property {Phaser.ParticleStorm.Controls.Transform} transform
     */
-    this.transform = new Phaser.ParticleStorm.Controls.Transform(this);
+    if (emitter.transforms) {
+        this.transform = {};
+        for (let transform_key of emitter.transforms) {
+            this.transform[transform_key] = new Phaser.ParticleStorm.Controls.Transform(this);
+        }
+    } else {
+        this.transform = new Phaser.ParticleStorm.Controls.Transform(this);
+    }
+    this.active_transforms = this.transform;
 
     /**
     * The color control for this particle. Contains color related properties including red, green, blue, alpha, tint and blendMode.
@@ -1972,7 +1989,13 @@ Phaser.ParticleStorm.Particle.prototype = {
 
         this.renderer = renderer;
 
-        this.transform.reset();
+        if (this.emitter.transforms) {
+            for (let transform_key in this.transform) {
+                this.transform[transform_key].reset();
+            }
+        } else {
+            this.transform.reset();
+        }
         this.color.reset();
         this.texture.reset();
 
@@ -2019,6 +2042,8 @@ Phaser.ParticleStorm.Particle.prototype = {
     */
     create: function (x, y, data) {
 
+        this.data = data;
+
         //  ------------------------------------------------
         //  Lifespan
         //  ------------------------------------------------
@@ -2046,7 +2071,13 @@ Phaser.ParticleStorm.Particle.prototype = {
         //  Update controls
         //  ------------------------------------------------
 
-        this.transform.init(x, y, data);
+        if (this.emitter.transforms) {
+            for (let transform_key in this.transform) {
+                this.transform[transform_key].init(x, y, data);
+            }
+        } else {
+            this.transform.init(x, y, data);
+        }
         this.color.init(data);
         this.texture.init(data);
 
@@ -2071,7 +2102,13 @@ Phaser.ParticleStorm.Particle.prototype = {
         if (this.alive)
         {
             //  Make sure all parameters are set
-            this.transform.step();
+            if (this.emitter.transforms) {
+                for (let transform_key in this.transform) {
+                    this.transform[transform_key].step();
+                }
+            } else {
+                this.transform.step();
+            }
             this.color.step();
 
             //  Add a display system object for this particle
@@ -2141,11 +2178,46 @@ Phaser.ParticleStorm.Particle.prototype = {
 
         if (force && !this.ignoreForce)
         {
-            this.transform.velocity.x.value += force.x;
-            this.transform.velocity.y.value += force.y;
+            if (this.emitter.transforms) {
+                for (let transform_key in this.transform) {
+                    this.transform[transform_key].velocity.x.value += force.x;
+                    this.transform[transform_key].velocity.y.value += force.y;
+                }
+            } else {
+                this.transform.velocity.x.value += force.x;
+                this.transform.velocity.y.value += force.y;
+            }
         }
 
-        this.transform.step();
+        if (this.emitter.transforms && this.data.transform_control) {
+            let control = null;
+            for (let c of this.data.transform_control) {
+                if (this.life >= c.x) {
+                    control = c;
+                } else {
+                    break;
+                }
+            }
+            if (new Set(Object.keys(this.active_transforms)).difference(new Set(control.transforms)).size) {
+                this.active_transforms = Object.fromEntries(
+                    Object.entries(this.transform).filter(([key]) => control.transforms.includes(key))
+                );
+                if (control.copy) {
+                    for (let copy_info of control.copy) {
+                        this.transform[copy_info.to].x = this.transform[copy_info.from].x;
+                        this.transform[copy_info.to].y = this.transform[copy_info.from].y;
+                    }
+                }
+            }
+        }
+
+        if (this.emitter.transforms) {
+            for (let transform_key in this.transform) {
+                this.transform[transform_key].step();
+            }
+        } else {
+            this.transform.step();
+        }
         this.color.step();
 
         this.onUpdate();
@@ -2218,7 +2290,22 @@ Phaser.ParticleStorm.Particle.prototype = {
 
         if (key)
         {
-            var p = this.emitter.emitParticle(key, this.transform.x + x, this.transform.y + y, this);
+            let transform_x = 0;
+            let transform_y = 0;
+            if (this.emitter.transforms) {
+                let transforms_count = 0;
+                for (let transform_key in this.active_transforms) {
+                    transform_x += this.active_transforms[transform_key].x;
+                    transform_y += this.active_transforms[transform_key].y;
+                    ++transforms_count;
+                }
+                transform_x /= transforms_count;
+                transform_y /= transforms_count;
+            } else {
+                transform_x = this.transform.x;
+                transform_y = this.transform.y;
+            }
+            var p = this.emitter.emitParticle(key, transform_x + x, transform_y + y, this);
 
             //  Apply any overwrite parameters to the new child particle
             if (p && this.emit.overwrite)
@@ -2292,7 +2379,7 @@ Phaser.ParticleStorm.Particle.prototype = {
     * @param {number} [to=359] - If both arc variables are defined the particle will radiate within the arc range defined.
     * @return {Phaser.ParticleStorm.Particle} This Particle object.
     */
-    radiate: function (velocity, from, to) {
+    radiate: function (velocity, from, to, transform_key) {
 
         //  If `from` is defined, but `to` isn't, we set `to` to match `from`
         if (to === undefined && from !== undefined)
@@ -2318,8 +2405,16 @@ Phaser.ParticleStorm.Particle.prototype = {
 
         var angle = (Math.random() * (to - from) + from) * Phaser.ParticleStorm.PI_180;
 
-        this.transform.velocity.x.value = Math.sin(angle) * v;
-        this.transform.velocity.y.value = -Math.cos(angle) * v;
+        if (transform_key) {
+            this.transform[transform_key].velocity.x.value = Math.sin(angle) * v;
+            this.transform[transform_key].velocity.y.value = -Math.cos(angle) * v;
+        } else if (this.emitter.transforms) { 
+            this.transform[this.emitter.transforms[0]].velocity.x.value = Math.sin(angle) * v;
+            this.transform[this.emitter.transforms[0]].velocity.y.value = -Math.cos(angle) * v;
+        } else {
+            this.transform.velocity.x.value = Math.sin(angle) * v;
+            this.transform.velocity.y.value = -Math.cos(angle) * v;
+        }
 
         return this;
 
@@ -2334,7 +2429,7 @@ Phaser.ParticleStorm.Particle.prototype = {
     * @param {object} velocity - An object containing a min/max pair, an array of strings containing discrete values, or a single discrete value.
     * @return {Phaser.ParticleStorm.Particle} This Particle object.
     */
-    radiateFrom: function (x, y, velocity) {
+    radiateFrom: function (x, y, velocity, transform_key) {
 
         var v = velocity;
 
@@ -2347,12 +2442,14 @@ Phaser.ParticleStorm.Particle.prototype = {
             v = parseFloat(this.emitter.game.rnd.pick(velocity), 10);
         }
 
-        var dx = (this.transform.x - x);
-        var dy = (this.transform.y - y);
+        let t = transform_key ? this.transform[transform_key] : (this.emitter.transforms ? this.transform[this.emitter.transforms[0]] : this.transform);
+
+        var dx = (t.x - x);
+        var dy = (t.y - y);
         var d = Math.sqrt(dx * dx + dy * dy);
 
-        this.transform.velocity.x.value = dx * v / d;
-        this.transform.velocity.y.value = dy * v / d;
+        t.velocity.x.value = dx * v / d;
+        t.velocity.y.value = dy * v / d;
 
         return this;
 
@@ -2380,7 +2477,7 @@ Phaser.ParticleStorm.Particle.prototype = {
 
         var x = 0;
         var y = 0;
-        var t = this.transform;
+        var t = data.transform_key ? this.transform[data.transform_key] : (this.emitter.transforms ? this.transform[this.emitter.transforms[0]] : this.transform);
 
         if (data.x)
         {
@@ -2405,7 +2502,8 @@ Phaser.ParticleStorm.Particle.prototype = {
         var dx = t.x - x;
         var dy = t.y - y;
 
-        var speed = Math.sqrt(dx * dx + dy * dy) / (this.lifespan / 1000);
+        const duration = data.duration ? data.duration : this.lifespan;
+        var speed = Math.sqrt(dx * dx + dy * dy) / (duration / 1000);
 
         var vx = (Math.cos(angle) * speed) * t.time.delta * 0.001;
         var vy = (Math.sin(angle) * speed) * t.time.delta * 0.001;
@@ -2419,6 +2517,12 @@ Phaser.ParticleStorm.Particle.prototype = {
         {
             t.velocity.x.value = vx;
             t.velocity.y.value = vy;
+        }
+
+        if (data.hasOwnProperty('control'))
+        {
+            t.velocity.x.control = data.control;
+            t.velocity.y.control = data.control;
         }
 
         return this;
@@ -2659,9 +2763,23 @@ Phaser.ParticleStorm.GravityWell.prototype = {
     * @param {Phaser.ParticleStorm.Particle} particle - The particle to adjust based on this Gravity Well.
     */
     step: function (particle) {
-
-        var x = this.position.x - particle.transform.x;
-        var y = this.position.y - particle.transform.y;
+        let transform_x = 0;
+        let transform_y = 0;
+        if (particle.emitter.transforms) {
+            let transforms_count = 0;
+            for (let transform_key in particle.active_transforms) {
+                transform_x += particle.active_transforms[transform_key].x;
+                transform_y += particle.active_transforms[transform_key].y;
+                ++transforms_count;
+            }
+            transform_x /= transforms_count;
+            transform_y /= transforms_count;
+        } else {
+            transform_x = particle.transform.x;
+            transform_y = particle.transform.y;
+        }
+        var x = this.position.x - transform_x;
+        var y = this.position.y - transform_y;
         var dSq = x * x + y * y;
 
         if (dSq === 0)
@@ -3148,7 +3266,7 @@ Phaser.ParticleStorm.Graph = {
     * @param {number} percent - The current lifePercent value of a particle.
     * @return {number} The value of the parameter object at this point in the particles life.
     */
-    getValue: function (obj, percent) {
+    getValue: function (obj, percent, callback) {
 
         if (!obj.control || percent === undefined)
         {
@@ -3186,6 +3304,10 @@ Phaser.ParticleStorm.Graph = {
         }
 
         var prev = obj.control[index - 1];
+
+        if (callback) {
+            callback(prev);
+        }
 
         //  Linear interpolation: f(x) = y0 + (y1 - y0) * (x - x0) / (x1 - x0)
         return obj.value * (prev.y + (percent - prev.x) * (point.y - prev.y) / (point.x - prev.x));
@@ -5071,6 +5193,7 @@ Phaser.ParticleStorm.Controls.Transform.prototype = {
 
         this.x = x;
         this.y = y;
+        this.data = data;
 
         //  ------------------------------------------------
         //  Anchor
@@ -5165,7 +5288,7 @@ Phaser.ParticleStorm.Controls.Transform.prototype = {
                 this.graph.fromData(data.vy, this.velocity.y);
             }
         }
-        else if (data.hasOwnProperty('target'))
+        if (data.hasOwnProperty('target'))
         {
             //  ------------------------------------------------
             //  Target
@@ -5413,8 +5536,19 @@ Phaser.ParticleStorm.Controls.Transform.prototype = {
             this.y += v * -Math.cos(r);
         }
 
-        this.x += this.velocity.x.initial + this.graph.getValue(this.velocity.x, life);
-        this.y += this.velocity.y.initial + this.graph.getValue(this.velocity.y, life);
+        let target_refresh_callback;
+        if (this.data.target && this.data.target.control) {
+            target_refresh_callback = (point) => {
+                if (point.refresh_target) {
+                    if (point.reference_transform_key) {
+                        this.data.target.transform_key = point.reference_transform_key;
+                    }
+                    this.particle.target(this.data.target);
+                }
+            };
+        }
+        this.x += this.velocity.x.initial + this.graph.getValue(this.velocity.x, life, target_refresh_callback);
+        this.y += this.velocity.y.initial + this.graph.getValue(this.velocity.y, life, target_refresh_callback);
 
     }
 
@@ -5614,7 +5748,13 @@ Phaser.ParticleStorm.Renderer.Sprite.prototype.add = function (particle) {
 
     if (spr)
     {
-        spr.reset(particle.transform.x, particle.transform.y);
+        //GSHTML5: TODO: get avg?
+        if (particle.emitter.transforms) {
+            let t = particle.transform[particle.emitter.transforms[0]];
+            spr.reset(t.x, t.y);
+        } else {
+            spr.reset(particle.transform.x, particle.transform.y);
+        }
 
         if (spr.key !== key)
         {
@@ -5634,10 +5774,22 @@ Phaser.ParticleStorm.Renderer.Sprite.prototype.add = function (particle) {
     }
     else
     {
-        spr = this.display.create(particle.transform.x, particle.transform.y, key, frame);
+        //GSHTML5: TODO: get avg?
+        if (particle.emitter.transforms) {
+            let t = particle.transform[particle.emitter.transforms[0]];
+            spr = this.display.create(t.x, t.y, key, frame);
+        } else {
+            spr = this.display.create(particle.transform.x, particle.transform.y, key, frame);
+        }
     }
 
-    spr.anchor.set(particle.transform.anchor.x, particle.transform.anchor.y);
+    //GSHTML5: TODO: get avg?
+    if (particle.emitter.transforms) {
+        let t = particle.transform[particle.emitter.transforms[0]];
+        spr.anchor.set(t.anchor.x, t.anchor.y);
+    } else {
+        spr.anchor.set(particle.transform.anchor.x, particle.transform.anchor.y);
+    }
 
     if (particle.color.isTinted)
     {
@@ -5676,18 +5828,42 @@ Phaser.ParticleStorm.Renderer.Sprite.prototype.update = function (particle) {
 
     spr.alpha = particle.color.alpha.calc;
 
-    spr.rotation = particle.transform.rotation.calc;
+    if (particle.emitter.transforms) {
+        let t = particle.transform[particle.emitter.transforms[0]];
+        spr.rotation = t.rotation.calc;
+    } else {
+        spr.rotation = particle.transform.rotation.calc;
+    }
 
     if (particle.color.isTinted)
     {
         spr.tint = particle.color.tint;
     }
 
-    spr.scale.setTo(particle.transform.scale.x.calc, particle.transform.scale.y.calc);
+    if (particle.emitter.transforms) {
+        let t = particle.transform[particle.emitter.transforms[0]];
+        spr.scale.setTo(t.scale.x.calc, t.scale.y.calc);
+    } else {
+        spr.scale.setTo(particle.transform.scale.x.calc, particle.transform.scale.y.calc);
+    }
 
-    spr.x = particle.transform.x;
-    spr.y = particle.transform.y;
-
+    let transform_x = 0;
+    let transform_y = 0;
+    if (particle.emitter.transforms) {
+        let transforms_count = 0;
+        for (let transform_key in particle.active_transforms) {
+            transform_x += particle.active_transforms[transform_key].x;
+            transform_y += particle.active_transforms[transform_key].y;
+            ++transforms_count;
+        }
+        transform_x /= transforms_count;
+        transform_y /= transforms_count;
+    } else {
+        transform_x = particle.transform.x;
+        transform_y = particle.transform.y;
+    }
+    spr.x = transform_x;
+    spr.y = transform_y;
 };
 
 /**
@@ -5856,8 +6032,23 @@ Phaser.ParticleStorm.Renderer.Pixel.prototype.update = function (particle) {
     }
 
     //  We need whole numbers to render pixels
-    var x = Math.floor(particle.transform.x);
-    var y = Math.floor(particle.transform.y);
+    let transform_x = 0;
+    let transform_y = 0;
+    if (particle.emitter.transforms) {
+        let transforms_count = 0;
+        for (let transform_key in particle.active_transforms) {
+            transform_x += particle.active_transforms[transform_key].x;
+            transform_y += particle.active_transforms[transform_key].y;
+            ++transforms_count;
+        }
+        transform_x /= transforms_count;
+        transform_y /= transforms_count;
+    } else {
+        transform_x = particle.transform.x;
+        transform_y = particle.transform.y;
+    }
+    var x = Math.floor(transform_x);
+    var y = Math.floor(transform_y);
 
     var r = particle.color.red.calc;
     var g = particle.color.green.calc;
@@ -6070,11 +6261,27 @@ Phaser.ParticleStorm.Renderer.BitmapData.prototype.update = function (particle) 
     }
 
     //  We need whole numbers to render pixels
-    var t = particle.transform;
+    var t = particle.emitter.transforms ? particle.transform[particle.emitter.transforms[0]] : particle.transform;
+
+    let transform_x = 0;
+    let transform_y = 0;
+    if (particle.emitter.transforms) {
+        let transforms_count = 0;
+        for (let transform_key in particle.active_transforms) {
+            transform_x += particle.active_transforms[transform_key].x;
+            transform_y += particle.active_transforms[transform_key].y;
+            ++transforms_count;
+        }
+        transform_x /= transforms_count;
+        transform_y /= transforms_count;
+    } else {
+        transform_x = particle.transform.x;
+        transform_y = particle.transform.y;
+    }
 
     this.bmd.copy(particle.texture.key, 
         0, 0, null, null, 
-        t.x, t.y, null, null, 
+        transform_x, transform_y, null, null, 
         t.rotation.calc, 
         t.anchor.x, t.anchor.y, 
         t.scale.x.calc, t.scale.y.calc, 
@@ -6225,11 +6432,13 @@ Phaser.ParticleStorm.Renderer.RenderTexture.prototype.update = function (particl
         }
     }
 
-    this.stamp.anchor.set(particle.transform.anchor.x, particle.transform.anchor.y);
+    let t = particle.emitter.transforms ? particle.transform[particle.emitter.transforms[0]] : particle.transform;
+
+    this.stamp.anchor.set(t.anchor.x, t.anchor.y);
 
     this.stamp.alpha = particle.color.alpha.calc;
 
-    this.stamp.rotation = particle.transform.rotation.calc;
+    this.stamp.rotation = t.rotation.calc;
 
     if (particle.color.isTinted)
     {
@@ -6240,9 +6449,24 @@ Phaser.ParticleStorm.Renderer.RenderTexture.prototype.update = function (particl
 
     this.stamp.texture.baseTexture.scaleMode = particle.texture.scaleMode;
 
-    this.stamp.scale.setTo(particle.transform.scale.x.calc, particle.transform.scale.y.calc);
+    this.stamp.scale.setTo(t.scale.x.calc, t.scale.y.calc);
 
-    this.renderTexture.renderXY(this.stamp, particle.transform.x, particle.transform.y, false);
+    let transform_x = 0;
+    let transform_y = 0;
+    if (particle.emitter.transforms) {
+        let transforms_count = 0;
+        for (let transform_key in particle.active_transforms) {
+            transform_x += particle.active_transforms[transform_key].x;
+            transform_y += particle.active_transforms[transform_key].y;
+            ++transforms_count;
+        }
+        transform_x /= transforms_count;
+        transform_y /= transforms_count;
+    } else {
+        transform_x = particle.transform.x;
+        transform_y = particle.transform.y;
+    }
+    this.renderTexture.renderXY(this.stamp, transform_x, transform_y, false);
 
 };
 
@@ -6319,9 +6543,11 @@ Phaser.ParticleStorm.Renderer.SpriteBatch.prototype.add = function (particle) {
         frame = particle.texture.frameName;
     }
 
+    let t = particle.emitter.transforms ? particle.transform[particle.emitter.transforms[0]] : particle.transform;
+
     if (spr)
     {
-        spr.reset(particle.transform.x, particle.transform.y);
+        spr.reset(t.x, t.y);
 
         if (spr.key !== key)
         {
@@ -6341,12 +6567,12 @@ Phaser.ParticleStorm.Renderer.SpriteBatch.prototype.add = function (particle) {
     }
     else
     {
-        spr = this.game.make.sprite(particle.transform.x, particle.transform.y, key, frame);
+        spr = this.game.make.sprite(t.x, t.y, key, frame);
     }
     
     this.display.addChild(spr);
 
-    spr.anchor.set(particle.transform.anchor.x, particle.transform.anchor.y);
+    spr.anchor.set(t.anchor.x, t.anchor.y);
 
     if (particle.color.isTinted)
     {
@@ -6385,17 +6611,35 @@ Phaser.ParticleStorm.Renderer.SpriteBatch.prototype.update = function (particle)
 
     spr.alpha = particle.color.alpha.calc;
 
-    spr.rotation = particle.transform.rotation.calc;
+    let t = particle.emitter.transforms ? particle.transform[particle.emitter.transforms[0]] : particle.transform;
+
+    spr.rotation = t.rotation.calc;
 
     if (particle.color.isTinted)
     {
         spr.tint = particle.color.tint;
     }
 
-    spr.scale.setTo(particle.transform.scale.x.calc, particle.transform.scale.y.calc);
+    spr.scale.setTo(t.scale.x.calc, t.scale.y.calc);
 
-    spr.x = particle.transform.x;
-    spr.y = particle.transform.y;
+    let transform_x = 0;
+    let transform_y = 0;
+    if (particle.emitter.transforms) {
+        let transforms_count = 0;
+        for (let transform_key in particle.active_transforms) {
+            transform_x += particle.active_transforms[transform_key].x;
+            transform_y += particle.active_transforms[transform_key].y;
+            ++transforms_count;
+        }
+        transform_x /= transforms_count;
+        transform_y /= transforms_count;
+    } else {
+        transform_x = particle.transform.x;
+        transform_y = particle.transform.y;
+    }
+
+    spr.x = transform_x;
+    spr.y = transform_y;
 
 };
 

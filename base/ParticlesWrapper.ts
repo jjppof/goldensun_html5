@@ -9,6 +9,7 @@ export type AdvParticleValue =
     | number
     | {min: number; max: number}
     | {
+          transform_key?: string;
           initial?: number | {min: number; max: number};
           value?: number | {min: number; max: number};
           delta?: number | {min: number; max: number};
@@ -43,10 +44,21 @@ export type ParticleObject = {
         y: number;
         shift_x: number;
         shift_y: number;
+        duration?: number;
         zone_key?: string;
         zone?: Phaser.ParticleStorm.Zones.Base;
         speed?: "yoyo" | "reverse" | "linear";
+        control?: {x: number; y: number; refresh_target?: boolean; reference_transform_key?: string}[];
+        transform_key?: string;
     };
+    transform_control?: {
+        x: number;
+        transforms: string[];
+        copy?: {
+            from: string;
+            to: string;
+        }[];
+    }[];
 };
 
 export enum zone_types {
@@ -99,6 +111,7 @@ export type Emitter = {
     particles_display_blend_mode?: string;
     render_white_core?: boolean;
     core_custom_color?: string;
+    transforms?: string[];
     zone_key?: string;
     random_in_zone?: boolean;
     spacing?: number | number[];
@@ -297,7 +310,8 @@ export class ParticlesWrapper {
                     undefined,
                     undefined,
                     emitter_info.render_white_core,
-                    emitter_info.core_custom_color
+                    emitter_info.core_custom_color,
+                    emitter_info.transforms
                 );
                 emitter.force.x = emitter_info.force?.x ?? emitter.force.x;
                 emitter.force.y = emitter_info.force?.y ?? emitter.force.y;

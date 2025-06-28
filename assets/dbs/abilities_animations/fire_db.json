@@ -7,16 +7,41 @@
         "per_target": true,
         "position": "between"
     }],
+    "stage_angle_sequence": [{
+      "is_absolute": false,
+      "tween": "Quadratic.Out",
+      "duration": 500,
+      "start_delay": 500,
+      "direction": "closest",
+      "to": 0
+    }],
     "particles_sequence": [{
         "data": {
             "fire_balls" : {
                 "red": 255,
                 "green": 10,
                 "blue": 0,
-                "lifespan": 6000,
+                "lifespan": 5000,
+                "transform_control": [
+                    {"x": 0, "transforms": ["particles_out"]},
+                    {"x": 0.5, "transforms": ["particles_in"], "copy": [{"from": "particles_out", "to": "particles_in"}]}
+                ],
                 "velocity": {
-                    "initial": {"min": 0.7, "max": 1.5},
-                    "radial": { "arcStart": -90, "arcEnd": 90 }
+                    "transform_key": "particles_out",
+                    "initial": {"min": 0.8, "max": 2.5},
+                    "radial": { "arcStart": -95, "arcEnd": 95 },
+                    "control": [ { "x": 0, "y": 1 }, { "x": 0.5, "y": 0 } ]
+                },
+                "target": {
+                    "transform_key": "particles_in",
+                    "x": "targets",
+                    "y": "targets",
+                    "duration": 150,
+                    "control": [
+                        { "x": 0, "y": 0 },
+                        { "x": 0.5, "y": 0, "refresh_target": true },
+                        { "x": 1, "y": 1 }
+                    ]
                 }
             }
         },
@@ -24,13 +49,8 @@
         "emitters": [{
             "x": "caster",
             "y": "caster",
-            "gravity_well": {
-                "x": "targets",
-                "y": "targets",
-                "power": 2,
-                "epsilon": 240,
-                "gravity": 100
-            },
+            "transforms": ["particles_out", "particles_in"],
+            "shift_y": -40,
             "position": "between",
             "render_type": "pixel",
             "show_trails": true,
@@ -48,6 +68,6 @@
                 "visible": false
             }
         }],
-        "emission_finish": 6000
+        "emission_finish": 5000
     }]
 }

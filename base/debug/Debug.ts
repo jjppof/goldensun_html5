@@ -369,9 +369,13 @@ export class Debug {
                     (this.game.input.mousePointer.y * window.devicePixelRatio) / this.data.scale_factor;
                 const mouse_x_tile = (mouse_x / this.data.map.tile_width) | 0;
                 const mouse_y_tile = (mouse_y / this.data.map.tile_height) | 0;
+                const mouse_x_canvas = (mouse_x - this.game.camera.x) | 0;
+                const mouse_y_canvas = (mouse_y - this.game.camera.y) | 0;
                 this.game.debug.text(
-                    `x: ${mouse_x_tile}/${mouse_x | 0}, y: ${mouse_y_tile}/${mouse_y | 0}`,
-                    60,
+                    `x: ${mouse_x_tile}/${mouse_x | 0}/${mouse_x_canvas}, y: ${mouse_y_tile}/${
+                        mouse_y | 0
+                    }/${mouse_y_canvas}`,
+                    15,
                     15,
                     "#00ff00"
                 );
