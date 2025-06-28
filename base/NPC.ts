@@ -7,6 +7,9 @@ import {
     next_px_step,
     range_360,
     engine_filters,
+    directions,
+    get_centered_pos_in_px,
+    promised_wait,
 } from "./utils";
 import {ControllableChar} from "./ControllableChar";
 import {interaction_patterns} from "./game_events/GameEventManager";
@@ -18,6 +21,7 @@ import {SnapshotData} from "./Snapshot";
 export enum npc_movement_types {
     IDLE = "idle",
     RANDOM = "random",
+    CUSTOM = "custom",
 }
 
 export enum npc_types {
@@ -88,10 +92,34 @@ export class NPC extends ControllableChar {
     private _after_psynergy_cast_events: {
         [psynergy_key: string]: GameEvent[];
     };
+    private _custom_movements: {
+        position?: {
+            x: number;
+            y: number;
+            is_px?: boolean;
+            incremental?: boolean;
+            dashing?: boolean;
+            extra_speed?: number;
+        };
+        look_direction?: string;
+        wait?: number;
+        animation?: {
+            animation: string;
+            action: string;
+            frame_rate: number;
+            reset_before_start?: boolean;
+            stop_char_on_finish?: boolean;
+        };
+    }[];
+    private _next_custom_move_available: boolean;
+    private _custom_move_index: number;
+    private _custom_move_moving: boolean;
+    private _loop_custom_move: boolean;
+    private _custom_move_destination: {x: number; y: number};
 
     /** If true, this NPC will move freely while a game event is happening. */
     public move_freely_in_event: boolean;
-    /** The type of movement of this NPC. Idle or random walk. */
+    /** The type of movement of this NPC. Idle, random walk, or custom. */
     public movement_type: npc_movement_types;
 
     constructor(
@@ -144,7 +172,9 @@ export class NPC extends ControllableChar {
         allow_interaction_when_inactive,
         after_psynergy_cast_events,
         force_char_stop_in_event,
-        force_idle_action_in_event
+        force_idle_action_in_event,
+        custom_movement,
+        loop_custom_move
     ) {
         super(
             game,
@@ -169,6 +199,10 @@ export class NPC extends ControllableChar {
             movement_type = this.data.storage.get(this.storage_keys.movement_type);
         }
         this.movement_type = movement_type ?? npc_movement_types.IDLE;
+        this._custom_movements = custom_movement ?? [];
+        if (this.movement_type === npc_movement_types.CUSTOM && !this._custom_movements.length) {
+            this.movement_type = npc_movement_types.IDLE;
+        }
         if (this.storage_keys.move_freely_in_event !== undefined) {
             move_freely_in_event = this.data.storage.get(this.storage_keys.move_freely_in_event);
         }
@@ -220,6 +254,11 @@ export class NPC extends ControllableChar {
         this._step_max_variation = step_max_variation;
         this._map_index = map_index;
         this._allow_interaction_when_inactive = allow_interaction_when_inactive ?? false;
+        this._next_custom_move_available = true;
+        this._custom_move_index = 0;
+        this._custom_move_moving = false;
+        this._custom_move_destination = {x: 0, y: 0};
+        this._loop_custom_move = loop_custom_move ?? true;
     }
 
     /** The list of GameEvents related to this NPC. */
@@ -486,9 +525,24 @@ export class NPC extends ControllableChar {
         if (this.movement_type === npc_movement_types.IDLE) {
             this.stop_char(false);
         } else if (this.movement_type === npc_movement_types.RANDOM) {
-            if (this._stepping && this._step_frame_counter < this._step_duration) {
+            this.execute_random_walk();
+        } else if (this.movement_type === npc_movement_types.CUSTOM) {
+            this.execute_custom_moves();
+        }
+        this.update_shadow();
+        this.update_tile_position();
+        this.update_sweat_drops_position();
+    }
+
+    /**
+     * Do all the necessary steps to execute a list of custom moves.
+     * Types of custom moves: move to position, face direction, wait and animation.
+     */
+    private execute_custom_moves() {
+        if (!this._next_custom_move_available) {
+            if (this._custom_move_moving) {
                 if (!this.set_speed_factors()) {
-                    this._step_frame_counter = this._step_duration;
+                    this.stop_char(true);
                 } else {
                     this.choose_direction_by_speed();
                     this.set_direction();
@@ -497,32 +551,126 @@ export class NPC extends ControllableChar {
                     this.apply_speed();
                     this.play_current_action(true);
                     if (
-                        get_sqr_distance(this.x, this._step_destination.x, this.y, this._step_destination.y) <
-                        NPC.STOP_MINIMAL_DISTANCE_SQR
+                        get_sqr_distance(
+                            this.x,
+                            this._custom_move_destination.x,
+                            this.y,
+                            this._custom_move_destination.y
+                        ) < NPC.STOP_MINIMAL_DISTANCE_SQR
                     ) {
-                        this._step_frame_counter = this._step_duration;
+                        this.stop_char(true);
+                        this.increase_extra_speed(
+                            -this._custom_movements[this._custom_move_index].position.extra_speed ?? 0
+                        );
+                        this._next_custom_move_available = true;
+                        ++this._custom_move_index;
+                        this._custom_move_moving = false;
                     }
                 }
-            } else if (!this._stepping && this._step_frame_counter < this._wait_duration) {
-                this.stop_char(true);
-            } else if (this._step_frame_counter >= (this._stepping ? this._step_duration : this._wait_duration)) {
-                this._stepping = !this._stepping;
-                if (this._stepping) {
-                    if (!this.update_random_walk()) {
-                        this._stepping = false;
-                    }
-                }
-                this._step_frame_counter = 0;
             }
-            this._step_frame_counter += 1;
+            return;
         }
-        this.update_shadow();
-        this.update_tile_position();
-        this.update_sweat_drops_position();
+        if (this._custom_move_index === this._custom_movements.length) {
+            if (!this._loop_custom_move) {
+                return;
+            }
+            this._custom_move_index = 0;
+        }
+        this._next_custom_move_available = false;
+        const move = this._custom_movements[this._custom_move_index];
+        if (move.position) {
+            let x = move.position.is_px
+                ? move.position.x
+                : get_centered_pos_in_px(move.position.x, this.data.map.tile_width);
+            if (move.position.incremental) {
+                x += this.x;
+            }
+            let y = move.position.is_px
+                ? move.position.y
+                : get_centered_pos_in_px(move.position.y, this.data.map.tile_height);
+            if (move.position.incremental) {
+                y += this.y;
+            }
+            this._custom_move_destination.x = x;
+            this._custom_move_destination.y = y;
+            const speed_vector = new Phaser.Point(x - this.x, y - this.y).normalize();
+            this.force_diagonal_speed.x = speed_vector.x;
+            this.force_diagonal_speed.y = speed_vector.y;
+            this._angle_direction = Math.atan2(speed_vector.y, speed_vector.x);
+            this._custom_move_moving = true;
+            this.dashing = move.position.dashing ?? false;
+            this.increase_extra_speed(move.position.extra_speed ?? 0);
+        } else if (move.look_direction) {
+            const direction = directions[move.look_direction];
+            this.face_direction(direction).then(() => {
+                this._next_custom_move_available = true;
+                ++this._custom_move_index;
+            });
+        } else if (move.animation) {
+            if (move.animation.animation in directions) {
+                this.set_direction(directions[move.animation.animation]);
+            }
+            const anim = this.play(
+                move.animation.action,
+                move.animation.animation,
+                true,
+                move.animation.frame_rate,
+                false,
+                move.animation.reset_before_start
+            );
+            anim.onComplete.addOnce(() => {
+                if (move.animation.stop_char_on_finish) {
+                    this.stop_char(true);
+                }
+                this._next_custom_move_available = true;
+                ++this._custom_move_index;
+            });
+        } else if (move.wait) {
+            promised_wait(this.game, move.wait, () => {
+                this._next_custom_move_available = true;
+                ++this._custom_move_index;
+            });
+        }
+    }
+
+    /**
+     * Do all the necessary steps to execute a random walk.
+     */
+    private execute_random_walk() {
+        if (this._stepping && this._step_frame_counter < this._step_duration) {
+            if (!this.set_speed_factors()) {
+                this._step_frame_counter = this._step_duration;
+            } else {
+                this.choose_direction_by_speed();
+                this.set_direction();
+                this.choose_action_based_on_char_state();
+                this.calculate_speed();
+                this.apply_speed();
+                this.play_current_action(true);
+                if (
+                    get_sqr_distance(this.x, this._step_destination.x, this.y, this._step_destination.y) <
+                    NPC.STOP_MINIMAL_DISTANCE_SQR
+                ) {
+                    this._step_frame_counter = this._step_duration;
+                }
+            }
+        } else if (!this._stepping && this._step_frame_counter < this._wait_duration) {
+            this.stop_char(true);
+        } else if (this._step_frame_counter >= (this._stepping ? this._step_duration : this._wait_duration)) {
+            this._stepping = !this._stepping;
+            if (this._stepping) {
+                if (!this.update_random_walk()) {
+                    this._stepping = false;
+                }
+            }
+            this._step_frame_counter = 0;
+        }
+        this._step_frame_counter += 1;
     }
 
     /**
      * Sets the x-y speed values that this NPC is going to be using to move.
+     * It's important to have NPC._angle_direction set for correct checking.
      * @returns Returns true if the speed values were set. Going towards a collision direction is not acceptable, then returns false.
      */
     private set_speed_factors() {

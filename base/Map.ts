@@ -1187,7 +1187,9 @@ export class Map {
                 property_info.allow_interaction_when_inactive,
                 property_info.after_psynergy_cast_events,
                 property_info.force_char_stop_in_event,
-                property_info.force_idle_action_in_event
+                property_info.force_idle_action_in_event,
+                property_info.custom_movements,
+                property_info.loop_custom_move
             );
             this.npcs.push(npc);
             if (npc.label) {

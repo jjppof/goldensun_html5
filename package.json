@@ -22,6 +22,7 @@
   "main": "./electron/main.js",
   "scripts": {
     "start": "npx webpack-dev-server --config webpack.config.dev.js",
+    "start-new-node": "set NODE_OPTIONS=--openssl-legacy-provider && npx webpack-dev-server --config webpack.config.dev.js",
     "start-desktop": "npm run build_prod && npx electron ./electron/main.js",
     "start-desktop-dev": "npm run build && npx electron ./electron/main.js dev",
     "build": "npx webpack --config webpack.config.dev.js",
