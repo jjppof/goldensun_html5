@@ -2481,12 +2481,20 @@ Phaser.ParticleStorm.Particle.prototype = {
 
         if (data.x)
         {
-            x = data.x;
+            if (data.x instanceof Function) {
+                x = data.x();
+            } else {
+                x = data.x;
+            }
         }
 
         if (data.y)
         {
-            y = data.y;
+            if (data.y instanceof Function) {
+                y = data.y();
+            } else {
+                y = data.y;
+            }
         }
 
         if (data.zone)

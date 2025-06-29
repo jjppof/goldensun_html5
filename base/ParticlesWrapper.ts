@@ -1,7 +1,7 @@
 import {battle_positions} from "./battle/BattleAnimation";
 import {GoldenSun} from "GoldenSun";
 import {GAME_HEIGHT, GAME_WIDTH} from "./magic_numbers";
-import {elements, element_colors_in_battle, hex2rgb} from "./utils";
+import {elements, element_colors_in_battle, hex2rgb, promised_wait} from "./utils";
 import * as _ from "lodash";
 import {EventValue} from "game_events/GameEvent";
 
@@ -40,8 +40,8 @@ export type ParticleObject = {
     bringToTop?: boolean;
     hsv?: AdvParticleValue;
     target?: {
-        x: number;
-        y: number;
+        x: number | (() => number);
+        y: number | (() => number);
         shift_x: number;
         shift_y: number;
         duration?: number;
@@ -50,6 +50,7 @@ export type ParticleObject = {
         speed?: "yoyo" | "reverse" | "linear";
         control?: {x: number; y: number; refresh_target?: boolean; reference_transform_key?: string}[];
         transform_key?: string;
+        dynamic_pos?: boolean;
     };
     transform_control?: {
         x: number;
@@ -93,6 +94,7 @@ export type Emitter = {
     render_type?: "pixel" | "sprite";
     x?: number | string;
     y?: number | string;
+    dynamic_pos?: boolean;
     position?: battle_positions;
     shift_x?: number;
     shift_y?: number;
@@ -159,6 +161,7 @@ export type ParticlesInfo = {
     group_type?: game_groups;
     zones: {[zone_key: string]: ParticlesZone};
     emitters: Emitter[];
+    emission_delay: number;
     emission_finish: number;
     particles_callback?: (particle: Phaser.ParticleStorm.Particle) => void;
 }[];
@@ -278,14 +281,39 @@ export class ParticlesWrapper {
                         data.target.zone = zone_objs[data.target.zone_key];
                     }
                     if (data.target.hasOwnProperty("x") && data.target.hasOwnProperty("y")) {
-                        const {x, y} = xy_pos_getter(
-                            data.target.x,
-                            data.target.y,
-                            data.target.shift_x,
-                            data.target.shift_y
-                        );
-                        data.target.x = x;
-                        data.target.y = y;
+                        if (data.target.dynamic_pos) {
+                            const orig_x = data.target.x;
+                            const orig_y = data.target.y;
+                            const x_getter = () => {
+                                const {x, y} = xy_pos_getter(
+                                    orig_x as number,
+                                    orig_y as number,
+                                    data.target.shift_x,
+                                    data.target.shift_y
+                                );
+                                return x;
+                            };
+                            const y_getter = () => {
+                                const {x, y} = xy_pos_getter(
+                                    orig_x as number,
+                                    orig_y as number,
+                                    data.target.shift_x,
+                                    data.target.shift_y
+                                );
+                                return y;
+                            };
+                            data.target.x = x_getter;
+                            data.target.y = y_getter;
+                        } else {
+                            const {x, y} = xy_pos_getter(
+                                data.target.x as number,
+                                data.target.y as number,
+                                data.target.shift_x,
+                                data.target.shift_y
+                            );
+                            data.target.x = x;
+                            data.target.y = y;
+                        }
                     }
                 }
                 if (data.color) {
@@ -303,6 +331,7 @@ export class ParticlesWrapper {
             }
 
             const render_callbacks = [];
+            const emit_promises: Promise<void>[] = [];
             const emitters: Phaser.ParticleStorm.Emitter[] = [];
             adv_particles_seq.emitters.forEach((emitter_info, index) => {
                 const emitter = this.data.particle_manager.createEmitter(
@@ -386,12 +415,6 @@ export class ParticlesWrapper {
                         emitter_info.gravity_well.gravity
                     );
                 }
-                const {x, y} = xy_pos_getter(
-                    emitter_info.x,
-                    emitter_info.y,
-                    emitter_info.shift_x,
-                    emitter_info.shift_y
-                );
                 if (
                     emitter_info.hue_angle !== undefined ||
                     emitter_info.random_animation_start ||
@@ -441,79 +464,114 @@ export class ParticlesWrapper {
                         }
                     );
                 }
+                const {x, y} = xy_pos_getter(
+                    emitter_info.x,
+                    emitter_info.y,
+                    emitter_info.shift_x,
+                    emitter_info.shift_y
+                );
                 const pos = {x: x, y: y};
-                const get_x = () => pos.x;
-                const get_y = () => pos.y;
-                emitter.emit(emitter_info.emitter_data_key, get_x, get_y, {
-                    ...(emitter_info.total !== undefined && {total: emitter_info.total}),
-                    ...(emitter_info.repeat !== undefined && {repeat: emitter_info.repeat}),
-                    ...(emitter_info.frequency !== undefined && {frequency: emitter_info.frequency}),
-                    ...(emitter_info.x_step !== undefined && {xStep: emitter_info.x_step}),
-                    ...(emitter_info.y_step !== undefined && {yStep: emitter_info.y_step}),
-                    ...(emitter_info.delay !== undefined && {delay: emitter_info.delay}),
-                    ...(emitter_info.zone_key !== undefined && {zone: zone_objs[emitter_info.zone_key]}),
-                    ...(emitter_info.random_in_zone !== undefined && {random: emitter_info.random_in_zone}),
-                    ...(emitter_info.spacing !== undefined && {spacing: emitter_info.spacing}),
-                    ...(emitter_info.radiate !== undefined && {radiate: emitter_info.radiate}),
-                    ...(emitter_info.radiateFrom !== undefined && {radiateFrom: emitter_info.radiateFrom}),
-                });
-                if (emitter_info.tween_emitter) {
-                    const dest: {x?: number; y?: number} = {};
-                    if (emitter_info.tween_emitter.x) {
-                        if (typeof emitter_info.tween_emitter.x !== "number") {
-                            dest.x = this.data.game_event_manager.get_value(emitter_info.tween_emitter.x);
-                        } else {
-                            dest.x = emitter_info.tween_emitter.x;
-                        }
-                        dest.x = (emitter_info.tween_emitter.incremental ? pos.x : 0) + dest.x;
-                    }
-                    if (emitter_info.tween_emitter.y) {
-                        if (typeof emitter_info.tween_emitter.y !== "number") {
-                            dest.y = this.data.game_event_manager.get_value(emitter_info.tween_emitter.y);
-                        } else {
-                            dest.y = emitter_info.tween_emitter.y;
-                        }
-                        dest.y = (emitter_info.tween_emitter.incremental ? pos.y : 0) + dest.y;
-                    }
-                    this.game.add
-                        .tween(pos)
-                        .to(
-                            dest,
-                            emitter_info.tween_emitter.duration,
-                            _.get(Phaser.Easing, emitter_info.tween_emitter.easing ?? "Linear.None"),
-                            true
+                const get_x = () => {
+                    if (emitter_info.dynamic_pos) {
+                        const {x, y} = xy_pos_getter(
+                            emitter_info.x,
+                            emitter_info.y,
+                            emitter_info.shift_x,
+                            emitter_info.shift_y
                         );
-                }
-                emitters.push(emitter);
+                        return x;
+                    } else {
+                        return pos.x;
+                    }
+                };
+                const get_y = () => {
+                    if (emitter_info.dynamic_pos) {
+                        const {x, y} = xy_pos_getter(
+                            emitter_info.x,
+                            emitter_info.y,
+                            emitter_info.shift_x,
+                            emitter_info.shift_y
+                        );
+                        return y;
+                    } else {
+                        return pos.y;
+                    }
+                };
+                const emit_promise = promised_wait(this.game, adv_particles_seq.emission_delay ?? 0, () => {
+                    emitter.emit(emitter_info.emitter_data_key, get_x, get_y, {
+                        ...(emitter_info.total !== undefined && {total: emitter_info.total}),
+                        ...(emitter_info.repeat !== undefined && {repeat: emitter_info.repeat}),
+                        ...(emitter_info.frequency !== undefined && {frequency: emitter_info.frequency}),
+                        ...(emitter_info.x_step !== undefined && {xStep: emitter_info.x_step}),
+                        ...(emitter_info.y_step !== undefined && {yStep: emitter_info.y_step}),
+                        ...(emitter_info.delay !== undefined && {delay: emitter_info.delay}),
+                        ...(emitter_info.zone_key !== undefined && {zone: zone_objs[emitter_info.zone_key]}),
+                        ...(emitter_info.random_in_zone !== undefined && {random: emitter_info.random_in_zone}),
+                        ...(emitter_info.spacing !== undefined && {spacing: emitter_info.spacing}),
+                        ...(emitter_info.radiate !== undefined && {radiate: emitter_info.radiate}),
+                        ...(emitter_info.radiateFrom !== undefined && {radiateFrom: emitter_info.radiateFrom}),
+                    });
+                    if (emitter_info.tween_emitter) {
+                        const dest: {x?: number; y?: number} = {};
+                        if (emitter_info.tween_emitter.x) {
+                            if (typeof emitter_info.tween_emitter.x !== "number") {
+                                dest.x = this.data.game_event_manager.get_value(emitter_info.tween_emitter.x);
+                            } else {
+                                dest.x = emitter_info.tween_emitter.x;
+                            }
+                            dest.x = (emitter_info.tween_emitter.incremental ? pos.x : 0) + dest.x;
+                        }
+                        if (emitter_info.tween_emitter.y) {
+                            if (typeof emitter_info.tween_emitter.y !== "number") {
+                                dest.y = this.data.game_event_manager.get_value(emitter_info.tween_emitter.y);
+                            } else {
+                                dest.y = emitter_info.tween_emitter.y;
+                            }
+                            dest.y = (emitter_info.tween_emitter.incremental ? pos.y : 0) + dest.y;
+                        }
+                        this.game.add
+                            .tween(pos)
+                            .to(
+                                dest,
+                                emitter_info.tween_emitter.duration,
+                                _.get(Phaser.Easing, emitter_info.tween_emitter.easing ?? "Linear.None"),
+                                true
+                            );
+                    }
+                    emitters.push(emitter);
+                });
+                emit_promises.push(emit_promise);
             });
 
-            const timer = this.game.time.create(true);
-            let destroyed = false;
-            const force_destroy = () => {
-                timer.stop(true);
-                timer.destroy();
-                if (destroyed) {
-                    return;
-                }
-                destroyed = true;
-                render_callbacks.forEach(key => {
-                    delete this.render_callbacks[key];
-                });
-                emitters.forEach(emitter => {
-                    this.data.particle_manager.removeEmitter(emitter);
-                    if (emitter.onEmit) {
-                        emitter.onEmit.removeAll();
+            Promise.all(emit_promises).then(() => {
+                const timer = this.game.time.create(true);
+                let destroyed = false;
+                const force_destroy = () => {
+                    timer.stop(true);
+                    timer.destroy();
+                    if (destroyed) {
+                        return;
                     }
-                    emitter.destroy();
-                });
-                for (let key in adv_particles_seq.data) {
-                    this.data.particle_manager.clearData(key);
-                }
-                resolve_function();
-            };
-            timer.add(adv_particles_seq.emission_finish, force_destroy);
-            timer.start();
-            force_destroy_callbacks.push(force_destroy);
+                    destroyed = true;
+                    render_callbacks.forEach(key => {
+                        delete this.render_callbacks[key];
+                    });
+                    emitters.forEach(emitter => {
+                        this.data.particle_manager.removeEmitter(emitter);
+                        if (emitter.onEmit) {
+                            emitter.onEmit.removeAll();
+                        }
+                        emitter.destroy();
+                    });
+                    for (let key in adv_particles_seq.data) {
+                        this.data.particle_manager.clearData(key);
+                    }
+                    resolve_function();
+                };
+                timer.add(adv_particles_seq.emission_finish, force_destroy);
+                timer.start();
+                force_destroy_callbacks.push(force_destroy);
+            });
         }
 
         return {
