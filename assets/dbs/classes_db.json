@@ -1,0 +1,1586 @@
+{
+    "class_table": {
+        "venus": {
+            "venus": 1, "mercury": 3, "mars": 4, "jupiter": 5
+        },
+        "mercury": {
+            "venus": 8, "mercury": 6, "mars": 9, "jupiter": 10
+        },
+        "mars": {
+            "venus": 4, "mercury": 3, "mars": 2, "jupiter": 5
+        },
+        "jupiter": {
+            "venus": 8, "mercury": 10, "mars": 9, "jupiter": 7
+        }
+    },
+    "classes": [
+        {
+            "key_name": "squire",
+            "name": "Squire",
+            "required_level": {
+                "venus": 5,
+                "mercury": 0,
+                "mars": 0,
+                "jupiter": 0
+            },
+            "hp_boost": 1.1,
+            "pp_boost": 0.8,
+            "atk_boost": 1.1,
+            "def_boost": 1.0,
+            "agi_boost": 1.1,
+            "luk_boost": 1.0,
+            "ability_level_pairs": [
+                {"ability": "ragnarok", "level": 13},
+                {"ability": "quake", "level": 2},
+                {"ability": "earthquake", "level": 4},
+                {"ability": "quake_sphere", "level": 14},
+                {"ability": "leaf_blower", "level": 7},
+                {"ability": "spire", "level": 6},
+                {"ability": "clay_spire", "level": 20},
+                {"ability": "stone_spire", "level": 42},
+                {"ability": "cure", "level": 1},
+                {"ability": "cure_well", "level": 10},
+                {"ability": "potent_cure", "level": 28}
+            ],
+            "class_type": 1
+        },{
+            "key_name": "knight",
+            "name": "Knight",
+            "required_level": {
+                "venus": 7,
+                "mercury": 0,
+                "mars": 0,
+                "jupiter": 0
+            },
+            "hp_boost": 1.3,
+            "pp_boost": 0.9,
+            "atk_boost": 1.2,
+            "def_boost": 1.1,
+            "agi_boost": 1.2,
+            "luk_boost": 1.0,
+            "ability_level_pairs": [
+                {"ability": "ragnarok", "level": 13},
+                {"ability": "quake", "level": 2},
+                {"ability": "earthquake", "level": 4},
+                {"ability": "quake_sphere", "level": 14},
+                {"ability": "leaf_blower", "level": 7},
+                {"ability": "spire", "level": 6},
+                {"ability": "clay_spire", "level": 20},
+                {"ability": "stone_spire", "level": 42},
+                {"ability": "cure", "level": 1},
+                {"ability": "cure_well", "level": 10},
+                {"ability": "potent_cure", "level": 28}
+            ],
+            "class_type": 1
+        },{
+            "key_name": "gallant",
+            "name": "Gallant",
+            "required_level": {
+                "venus": 9,
+                "mercury": 0,
+                "mars": 0,
+                "jupiter": 0
+            },
+            "hp_boost": 1.5,
+            "pp_boost": 1.0,
+            "atk_boost": 1.3,
+            "def_boost": 1.2,
+            "agi_boost": 1.3,
+            "luk_boost": 1.0,
+            "ability_level_pairs": [
+                {"ability": "ragnarok", "level": 13},
+                {"ability": "quake", "level": 2},
+                {"ability": "earthquake", "level": 4},
+                {"ability": "quake_sphere", "level": 14},
+                {"ability": "leaf_blower", "level": 7},
+                {"ability": "spire", "level": 6},
+                {"ability": "clay_spire", "level": 20},
+                {"ability": "stone_spire", "level": 42},
+                {"ability": "gaia", "level": 7},
+                {"ability": "mother_gaia", "level": 24},
+                {"ability": "grand_gaia", "level": 54},
+                {"ability": "cure", "level": 1},
+                {"ability": "cure_well", "level": 10},
+                {"ability": "potent_cure", "level": 28},
+                {"ability": "revive", "level": 19}
+            ],
+            "class_type": 1
+        },{
+            "key_name": "lord",
+            "name": "Lord",
+            "required_level": {
+                "venus": 11,
+                "mercury": 0,
+                "mars": 0,
+                "jupiter": 0
+            },
+            "hp_boost": 1.7,
+            "pp_boost": 1.1,
+            "atk_boost": 1.4,
+            "def_boost": 1.3,
+            "agi_boost": 1.4,
+            "luk_boost": 1.0,
+            "ability_level_pairs": [
+                {"ability": "odyssey", "level": 13},
+                {"ability": "quake", "level": 2},
+                {"ability": "earthquake", "level": 4},
+                {"ability": "quake_sphere", "level": 14},
+                {"ability": "leaf_blower", "level": 7},
+                {"ability": "spire", "level": 6},
+                {"ability": "clay_spire", "level": 20},
+                {"ability": "stone_spire", "level": 42},
+                {"ability": "gaia", "level": 7},
+                {"ability": "mother_gaia", "level": 24},
+                {"ability": "grand_gaia", "level": 54},
+                {"ability": "cure", "level": 1},
+                {"ability": "cure_well", "level": 10},
+                {"ability": "potent_cure", "level": 28},
+                {"ability": "revive", "level": 19}
+            ],
+            "class_type": 1
+        },{
+            "key_name": "slayer",
+            "name": "Slayer",
+            "required_level": {
+                "venus": 13,
+                "mercury": 0,
+                "mars": 0,
+                "jupiter": 0
+            },
+            "hp_boost": 1.9,
+            "pp_boost": 1.2,
+            "atk_boost": 1.5,
+            "def_boost": 1.4,
+            "agi_boost": 1.5,
+            "luk_boost": 1.0,
+            "ability_level_pairs": [
+                {"ability": "odyssey", "level": 13},
+                {"ability": "quake", "level": 2},
+                {"ability": "earthquake", "level": 4},
+                {"ability": "quake_sphere", "level": 14},
+                {"ability": "spire", "level": 6},
+                {"ability": "clay_spire", "level": 20},
+                {"ability": "stone_spire", "level": 42},
+                {"ability": "gaia", "level": 7},
+                {"ability": "mother_gaia", "level": 24},
+                {"ability": "grand_gaia", "level": 54},
+                {"ability": "cure", "level": 1},
+                {"ability": "cure_well", "level": 10},
+                {"ability": "potent_cure", "level": 28},
+                {"ability": "revive", "level": 19}
+            ],
+            "class_type": 1
+        },{
+            "key_name": "guard",
+            "name": "Guard",
+            "required_level": {
+                "venus": 0,
+                "mercury": 0,
+                "mars": 5,
+                "jupiter": 0
+            },
+            "hp_boost": 1.1,
+            "pp_boost": 0.8,
+            "atk_boost": 1.0,
+            "def_boost": 1.1,
+            "agi_boost": 0.7,
+            "luk_boost": 1.0,
+            "ability_level_pairs": [
+                {"ability": "heat_wave", "level": 12},
+                {"ability": "flare", "level": 1},
+                {"ability": "flare_wall", "level": 16},
+                {"ability": "flare_storm", "level": 18},
+                {"ability": "fire", "level": 4},
+                {"ability": "fireball", "level": 14},
+                {"ability": "inferno", "level": 36},
+                {"ability": "volcano", "level": 8},
+                {"ability": "eruption", "level": 22},
+                {"ability": "pyroclasm", "level": 48}
+            ],
+            "class_type": 2
+        },{
+            "key_name": "soldier",
+            "name": "Soldier",
+            "required_level": {
+                "venus": 0,
+                "mercury": 0,
+                "mars": 7,
+                "jupiter": 0
+            },
+            "hp_boost": 1.3,
+            "pp_boost": 0.9,
+            "atk_boost": 1.1,
+            "def_boost": 1.2,
+            "agi_boost": 0.8,
+            "luk_boost": 1.0,
+            "ability_level_pairs": [
+                {"ability": "heat_wave", "level": 12},
+                {"ability": "flare", "level": 1},
+                {"ability": "flare_wall", "level": 16},
+                {"ability": "flare_storm", "level": 18},
+                {"ability": "fire", "level": 4},
+                {"ability": "fireball", "level": 14},
+                {"ability": "inferno", "level": 36},
+                {"ability": "volcano", "level": 8},
+                {"ability": "eruption", "level": 22},
+                {"ability": "pyroclasm", "level": 48}
+            ],
+            "class_type": 2
+        },{
+            "key_name": "warrior",
+            "name": "Warrior",
+            "required_level": {
+                "venus": 0,
+                "mercury": 0,
+                "mars": 9,
+                "jupiter": 0
+            },
+            "hp_boost": 1.5,
+            "pp_boost": 1.0,
+            "atk_boost": 1.2,
+            "def_boost": 1.3,
+            "agi_boost": 0.9,
+            "luk_boost": 1.0,
+            "ability_level_pairs": [
+                {"ability": "heat_wave", "level": 12},
+                {"ability": "flare", "level": 1},
+                {"ability": "flare_wall", "level": 16},
+                {"ability": "flare_storm", "level": 18},
+                {"ability": "fire", "level": 4},
+                {"ability": "fireball", "level": 14},
+                {"ability": "inferno", "level": 36},
+                {"ability": "volcano", "level": 8},
+                {"ability": "eruption", "level": 22},
+                {"ability": "pyroclasm", "level": 48},
+                {"ability": "guard", "level": 3},
+                {"ability": "protect", "level": 15},
+                {"ability": "impair", "level": 9},
+                {"ability": "debilitate", "level": 26}
+            ],
+            "class_type": 2
+        },{
+            "key_name": "champion",
+            "name": "Champion",
+            "required_level": {
+                "venus": 0,
+                "mercury": 0,
+                "mars": 11,
+                "jupiter": 0
+            },
+            "hp_boost": 1.7,
+            "pp_boost": 1.1,
+            "atk_boost": 1.3,
+            "def_boost": 1.4,
+            "agi_boost": 1.0,
+            "luk_boost": 1.0,
+            "ability_level_pairs": [
+                {"ability": "liquifier", "level": 12},
+                {"ability": "flare", "level": 1},
+                {"ability": "flare_wall", "level": 16},
+                {"ability": "flare_storm", "level": 18},
+                {"ability": "fire", "level": 4},
+                {"ability": "fireball", "level": 14},
+                {"ability": "inferno", "level": 36},
+                {"ability": "volcano", "level": 8},
+                {"ability": "eruption", "level": 22},
+                {"ability": "pyroclasm", "level": 48},
+                {"ability": "guard", "level": 3},
+                {"ability": "protect", "level": 15},
+                {"ability": "impair", "level": 9},
+                {"ability": "debilitate", "level": 26}
+            ],
+            "class_type": 2
+        },{
+            "key_name": "hero",
+            "name": "Hero",
+            "required_level": {
+                "venus": 0,
+                "mercury": 0,
+                "mars": 13,
+                "jupiter": 0
+            },
+            "hp_boost": 1.9,
+            "pp_boost": 1.2,
+            "atk_boost": 1.4,
+            "def_boost": 1.5,
+            "agi_boost": 1.1,
+            "luk_boost": 1.0,
+            "ability_level_pairs": [
+                {"ability": "liquifier", "level": 12},
+                {"ability": "flare", "level": 1},
+                {"ability": "flare_wall", "level": 16},
+                {"ability": "flare_storm", "level": 18},
+                {"ability": "fire", "level": 4},
+                {"ability": "fireball", "level": 14},
+                {"ability": "inferno", "level": 36},
+                {"ability": "volcano", "level": 8},
+                {"ability": "eruption", "level": 22},
+                {"ability": "pyroclasm", "level": 48},
+                {"ability": "guard", "level": 3},
+                {"ability": "protect", "level": 15},
+                {"ability": "impair", "level": 9},
+                {"ability": "debilitate", "level": 26}
+            ],
+            "class_type": 2
+        },{
+            "key_name": "wind_seer",
+            "name": "Wind Seer",
+            "required_level": {
+                "venus": 0,
+                "mercury": 0,
+                "mars": 0,
+                "jupiter": 5
+            },
+            "hp_boost": 0.8,
+            "pp_boost": 1.4,
+            "atk_boost": 0.8,
+            "def_boost": 0.9,
+            "agi_boost": 1.3,
+            "luk_boost": 1.1,
+            "ability_level_pairs": [
+                {"ability": "ray", "level": 4},
+                {"ability": "storm_ray", "level": 14},
+                {"ability": "destruct_ray", "level": 36},
+                {"ability": "whirlwind", "level": 1},
+                {"ability": "tornado", "level": 18},
+                {"ability": "tempest", "level": 44},
+                {"ability": "plasma", "level": 8},
+                {"ability": "shine_plasma", "level": 26},
+                {"ability": "spark_plasma", "level": 50},
+                {"ability": "sleep", "level": 12},
+                {"ability": "bind", "level": 17}
+            ],
+            "class_type": 7
+        },{
+            "key_name": "magician",
+            "name": "Magician",
+            "required_level": {
+                "venus": 0,
+                "mercury": 0,
+                "mars": 0,
+                "jupiter": 7
+            },
+            "hp_boost": 0.9,
+            "pp_boost": 1.5,
+            "atk_boost": 0.9,
+            "def_boost": 1.0,
+            "agi_boost": 1.4,
+            "luk_boost": 1.1,
+            "ability_level_pairs": [
+                {"ability": "ray", "level": 4},
+                {"ability": "storm_ray", "level": 14},
+                {"ability": "destruct_ray", "level": 36},
+                {"ability": "whirlwind", "level": 1},
+                {"ability": "tornado", "level": 18},
+                {"ability": "tempest", "level": 44},
+                {"ability": "plasma", "level": 8},
+                {"ability": "shine_plasma", "level": 26},
+                {"ability": "spark_plasma", "level": 50},
+                {"ability": "sleep", "level": 12},
+                {"ability": "bind", "level": 17},
+                {"ability": "impact", "level": 5},
+                {"ability": "high_impact", "level": 21}
+            ],
+            "class_type": 7
+        },{
+            "key_name": "mage",
+            "name": "Mage",
+            "required_level": {
+                "venus": 0,
+                "mercury": 0,
+                "mars": 0,
+                "jupiter": 9
+            },
+            "hp_boost": 1.1,
+            "pp_boost": 1.6,
+            "atk_boost": 1.0,
+            "def_boost": 1.1,
+            "agi_boost": 1.5,
+            "luk_boost": 1.1,
+            "ability_level_pairs": [
+                {"ability": "ray", "level": 4},
+                {"ability": "storm_ray", "level": 14},
+                {"ability": "destruct_ray", "level": 36},
+                {"ability": "whirlwind", "level": 1},
+                {"ability": "tornado", "level": 18},
+                {"ability": "tempest", "level": 44},
+                {"ability": "plasma", "level": 8},
+                {"ability": "shine_plasma", "level": 26},
+                {"ability": "spark_plasma", "level": 50},
+                {"ability": "sleep", "level": 12},
+                {"ability": "bind", "level": 17},
+                {"ability": "impact", "level": 5},
+                {"ability": "high_impact", "level": 21},
+                {"ability": "ward", "level": 6},
+                {"ability": "resist", "level": 22}
+            ],
+            "class_type": 7
+        },{
+            "key_name": "magister",
+            "name": "Magister",
+            "required_level": {
+                "venus": 0,
+                "mercury": 0,
+                "mars": 0,
+                "jupiter": 11
+            },
+            "hp_boost": 1.3,
+            "pp_boost": 1.7,
+            "atk_boost": 1.1,
+            "def_boost": 1.2,
+            "agi_boost": 1.6,
+            "luk_boost": 1.1,
+            "ability_level_pairs": [
+                {"ability": "ray", "level": 4},
+                {"ability": "storm_ray", "level": 14},
+                {"ability": "destruct_ray", "level": 36},
+                {"ability": "whirlwind", "level": 1},
+                {"ability": "tornado", "level": 18},
+                {"ability": "tempest", "level": 44},
+                {"ability": "plasma", "level": 8},
+                {"ability": "shine_plasma", "level": 26},
+                {"ability": "spark_plasma", "level": 50},
+                {"ability": "sleep", "level": 12},
+                {"ability": "bind", "level": 17},
+                {"ability": "impact", "level": 5},
+                {"ability": "high_impact", "level": 21},
+                {"ability": "ward", "level": 6},
+                {"ability": "resist", "level": 22}
+            ],
+            "class_type": 7
+        },{
+            "key_name": "sorcerer",
+            "name": "Sorcerer",
+            "required_level": {
+                "venus": 0,
+                "mercury": 0,
+                "mars": 0,
+                "jupiter": 13
+            },
+            "hp_boost": 1.5,
+            "pp_boost": 1.8,
+            "atk_boost": 1.2,
+            "def_boost": 1.3,
+            "agi_boost": 1.7,
+            "luk_boost": 1.1,
+            "ability_level_pairs": [
+                {"ability": "ray", "level": 4},
+                {"ability": "storm_ray", "level": 14},
+                {"ability": "destruct_ray", "level": 36},
+                {"ability": "whirlwind", "level": 1},
+                {"ability": "tornado", "level": 18},
+                {"ability": "tempest", "level": 44},
+                {"ability": "plasma", "level": 8},
+                {"ability": "shine_plasma", "level": 26},
+                {"ability": "spark_plasma", "level": 50},
+                {"ability": "sleep", "level": 12},
+                {"ability": "bind", "level": 17},
+                {"ability": "impact", "level": 5},
+                {"ability": "high_impact", "level": 21},
+                {"ability": "ward", "level": 6},
+                {"ability": "resist", "level": 22}
+            ],
+            "class_type": 7
+        },{
+            "key_name": "apprentice",
+            "name": "Apprentice",
+            "required_level": {
+                "venus": 5,
+                "mercury": 0,
+                "mars": 0,
+                "jupiter": 0
+            },
+            "hp_boost": 1.0,
+            "pp_boost": 1.2,
+            "atk_boost": 1.1,
+            "def_boost": 1.0,
+            "agi_boost": 1.2,
+            "luk_boost": 0.9,
+            "ability_level_pairs": [
+                {"ability": "astral_blast", "level": 11},
+                {"ability": "gaia", "level": 6},
+                {"ability": "mother_gaia", "level": 24},
+                {"ability": "grand_gaia", "level": 54},
+                {"ability": "weaken", "level": 9},
+                {"ability": "enfeeble", "level": 25},
+                {"ability": "delude", "level": 1},
+                {"ability": "sleep", "level": 14},
+                {"ability": "haunt", "level": 17},
+                {"ability": "curse", "level": 20},
+                {"ability": "drain", "level": 31},
+                {"ability": "psy_drain", "level": 39}
+            ],
+            "class_type": 5
+        },{
+            "key_name": "illusionist",
+            "name": "Illusionist",
+            "required_level": {
+                "venus": 5,
+                "mercury": 0,
+                "mars": 0,
+                "jupiter": 2
+            },
+            "hp_boost": 1.2,
+            "pp_boost": 1.3,
+            "atk_boost": 1.2,
+            "def_boost": 1.1,
+            "agi_boost": 1.3,
+            "luk_boost": 0.9,
+            "ability_level_pairs": [
+                {"ability": "astral_blast", "level": 11},
+                {"ability": "gaia", "level": 6},
+                {"ability": "mother_gaia", "level": 24},
+                {"ability": "grand_gaia", "level": 54},
+                {"ability": "weaken", "level": 9},
+                {"ability": "enfeeble", "level": 25},
+                {"ability": "delude", "level": 1},
+                {"ability": "sleep", "level": 14},
+                {"ability": "haunt", "level": 17},
+                {"ability": "curse", "level": 20},
+                {"ability": "drain", "level": 31},
+                {"ability": "psy_drain", "level": 39}
+            ],
+            "class_type": 5
+        },{
+            "key_name": "page",
+            "name": "Page",
+            "required_level": {
+                "venus": 0,
+                "mercury": 0,
+                "mars": 5,
+                "jupiter": 0
+            },
+            "hp_boost": 1.0,
+            "pp_boost": 1.2,
+            "atk_boost": 1.1,
+            "def_boost": 1.0,
+            "agi_boost": 1.2,
+            "luk_boost": 0.9,
+            "ability_level_pairs": [
+                {"ability": "astral_blast", "level": 11},
+                {"ability": "volcano", "level": 6},
+                {"ability": "eruption", "level": 22},
+                {"ability": "pyroclasm", "level": 48},
+                {"ability": "ward", "level": 6},
+                {"ability": "resist", "level": 22},
+                {"ability": "weaken", "level": 9},
+                {"ability": "enfeeble", "level": 25},
+                {"ability": "delude", "level": 1},
+                {"ability": "sleep", "level": 14},
+                {"ability": "drain", "level": 31},
+                {"ability": "psy_drain", "level": 39}
+            ],
+            "class_type": 5
+        },{
+            "key_name": "illusionist_2",
+            "name": "Illusionist",
+            "required_level": {
+                "venus": 0,
+                "mercury": 0,
+                "mars": 5,
+                "jupiter": 2
+            },
+            "hp_boost": 1.2,
+            "pp_boost": 1.3,
+            "atk_boost": 1.2,
+            "def_boost": 1.1,
+            "agi_boost": 1.3,
+            "luk_boost": 0.9,
+            "ability_level_pairs": [
+                {"ability": "astral_blast", "level": 11},
+                {"ability": "volcano", "level": 6},
+                {"ability": "eruption", "level": 22},
+                {"ability": "pyroclasm", "level": 48},
+                {"ability": "ward", "level": 6},
+                {"ability": "resist", "level": 22},
+                {"ability": "weaken", "level": 9},
+                {"ability": "enfeeble", "level": 25},
+                {"ability": "delude", "level": 1},
+                {"ability": "sleep", "level": 14},
+                {"ability": "drain", "level": 31},
+                {"ability": "psy_drain", "level": 39}
+            ],
+            "class_type": 5
+        },{
+            "key_name": "enchanter_2",
+            "name": "Enchanter",
+            "required_level": {
+                "venus": 0,
+                "mercury": 0,
+                "mars": 5,
+                "jupiter": 4
+            },
+            "hp_boost": 1.4,
+            "pp_boost": 1.4,
+            "atk_boost": 1.3,
+            "def_boost": 1.2,
+            "agi_boost": 1.4,
+            "luk_boost": 0.9,
+            "ability_level_pairs": [
+                {"ability": "astral_blast", "level": 11},
+                {"ability": "volcano", "level": 6},
+                {"ability": "eruption", "level": 22},
+                {"ability": "pyroclasm", "level": 48},
+                {"ability": "impact", "level": 5},
+                {"ability": "high_impact", "level": 21},
+                {"ability": "guard", "level": 3},
+                {"ability": "protect", "level": 15},
+                {"ability": "ward", "level": 6},
+                {"ability": "resist", "level": 22},
+                {"ability": "weaken", "level": 9},
+                {"ability": "enfeeble", "level": 25},
+                {"ability": "delude", "level": 1},
+                {"ability": "sleep", "level": 14},
+                {"ability": "drain", "level": 31},
+                {"ability": "psy_drain", "level": 39}
+            ],
+            "class_type": 5
+        },{
+            "key_name": "pilgrim",
+            "name": "Pilgrim",
+            "required_level": {
+                "venus": 0,
+                "mercury": 0,
+                "mars": 0,
+                "jupiter": 5
+            },
+            "hp_boost": 0.9,
+            "pp_boost": 1.2,
+            "atk_boost": 0.9,
+            "def_boost": 1.0,
+            "agi_boost": 1.2,
+            "luk_boost": 1.2,
+            "ability_level_pairs": [
+                {"ability": "slash", "level": 1},
+                {"ability": "wind_slash", "level": 10},
+                {"ability": "sonic_slash", "level": 30},
+                {"ability": "plasma", "level": 9},
+                {"ability": "shine_plasma", "level": 26},
+                {"ability": "spark_plasma", "level": 50},
+                {"ability": "drain", "level": 31},
+                {"ability": "psy_drain", "level": 39}
+            ],
+            "class_type": 9
+        },{
+            "key_name": "wanderer",
+            "name": "Wanderer",
+            "required_level": {
+                "venus": 0,
+                "mercury": 0,
+                "mars": 2,
+                "jupiter": 5
+            },
+            "hp_boost": 1.1,
+            "pp_boost": 1.3,
+            "atk_boost": 1.0,
+            "def_boost": 1.1,
+            "agi_boost": 1.3,
+            "luk_boost": 1.2,
+            "ability_level_pairs": [
+                {"ability": "slash", "level": 1},
+                {"ability": "wind_slash", "level": 10},
+                {"ability": "sonic_slash", "level": 30},
+                {"ability": "plasma", "level": 9},
+                {"ability": "shine_plasma", "level": 26},
+                {"ability": "spark_plasma", "level": 50},
+                {"ability": "drain", "level": 31},
+                {"ability": "psy_drain", "level": 39}
+            ],
+            "class_type": 9
+        },{
+            "key_name": "ascetic",
+            "name": "Ascetic",
+            "required_level": {
+                "venus": 0,
+                "mercury": 0,
+                "mars": 4,
+                "jupiter": 5
+            },
+            "hp_boost": 1.2,
+            "pp_boost": 1.4,
+            "atk_boost": 1.1,
+            "def_boost": 1.2,
+            "agi_boost": 1.4,
+            "luk_boost": 1.2,
+            "ability_level_pairs": [
+                {"ability": "slash", "level": 1},
+                {"ability": "wind_slash", "level": 10},
+                {"ability": "sonic_slash", "level": 30},
+                {"ability": "plasma", "level": 9},
+                {"ability": "shine_plasma", "level": 26},
+                {"ability": "spark_plasma", "level": 50},
+                {"ability": "volcano", "level": 6},
+                {"ability": "eruption", "level": 22},
+                {"ability": "pyroclasm", "level": 48},
+                {"ability": "ward", "level": 6},
+                {"ability": "resist", "level": 22},
+                {"ability": "drain", "level": 31},
+                {"ability": "psy_drain", "level": 39}
+            ],
+            "class_type": 9
+        },{
+            "key_name": "brute",
+            "name": "Brute",
+            "required_level": {
+                "venus": 1,
+                "mercury": 0,
+                "mars": 1,
+                "jupiter": 0
+            },
+            "hp_boost": 1.0,
+            "pp_boost": 0.7,
+            "atk_boost": 1.2,
+            "def_boost": 0.9,
+            "agi_boost": 1.1,
+            "luk_boost": 0.7,
+            "ability_level_pairs": [
+                {"ability": "planet_diver", "level": 13},
+                {"ability": "growth", "level": 1},
+                {"ability": "mad_growth", "level": 12},
+                {"ability": "wild_growth", "level": 28},
+                {"ability": "blast", "level": 6},
+                {"ability": "nova", "level": 16},
+                {"ability": "supernova", "level": 40},
+                {"ability": "haunt", "level": 17},
+                {"ability": "curse", "level": 24},
+                {"ability": "condemn", "level": 29}
+            ],
+            "class_type": 4
+        },{
+            "key_name": "ruffian",
+            "name": "Ruffian",
+            "required_level": {
+                "venus": 2,
+                "mercury": 0,
+                "mars": 2,
+                "jupiter": 0
+            },
+            "hp_boost": 1.2,
+            "pp_boost": 0.8,
+            "atk_boost": 1.3,
+            "def_boost": 1.0,
+            "agi_boost": 1.2,
+            "luk_boost": 0.7,
+            "ability_level_pairs": [
+                {"ability": "planet_diver", "level": 13},
+                {"ability": "growth", "level": 1},
+                {"ability": "mad_growth", "level": 12},
+                {"ability": "wild_growth", "level": 28},
+                {"ability": "blast", "level": 6},
+                {"ability": "nova", "level": 16},
+                {"ability": "supernova", "level": 40},
+                {"ability": "haunt", "level": 17},
+                {"ability": "curse", "level": 24},
+                {"ability": "condemn", "level": 29}
+            ],
+            "class_type": 4
+        },{
+            "key_name": "savage",
+            "name": "Savage",
+            "required_level": {
+                "venus": 4,
+                "mercury": 0,
+                "mars": 4,
+                "jupiter": 0
+            },
+            "hp_boost": 1.4,
+            "pp_boost": 0.9,
+            "atk_boost": 1.4,
+            "def_boost": 1.1,
+            "agi_boost": 1.3,
+            "luk_boost": 0.7,
+            "ability_level_pairs": [
+                {"ability": "planet_diver", "level": 13},
+                {"ability": "spire", "level": 6},
+                {"ability": "clay_spire", "level": 20},
+                {"ability": "stone_spire", "level": 42},
+                {"ability": "growth", "level": 1},
+                {"ability": "mad_growth", "level": 12},
+                {"ability": "wild_growth", "level": 28},
+                {"ability": "blast", "level": 6},
+                {"ability": "nova", "level": 16},
+                {"ability": "supernova", "level": 40},
+                {"ability": "revive", "level": 19},
+                {"ability": "impair", "level": 9},
+                {"ability": "debilitate", "level": 23},
+                {"ability": "haunt", "level": 17},
+                {"ability": "curse", "level": 24},
+                {"ability": "condemn", "level": 29}
+            ],
+            "class_type": 4
+        },{
+            "key_name": "seer",
+            "name": "Seer",
+            "required_level": {
+                "venus": 0,
+                "mercury": 0,
+                "mars": 0,
+                "jupiter": 5
+            },
+            "hp_boost": 0.9,
+            "pp_boost": 1.3,
+            "atk_boost": 0.9,
+            "def_boost": 0.9,
+            "agi_boost": 1.1,
+            "luk_boost": 1.0,
+            "ability_level_pairs": [
+                {"ability": "bolt", "level": 2},
+                {"ability": "flash_bolt", "level": 6},
+                {"ability": "blue_bolt", "level": 22},
+                {"ability": "growth", "level": 1},
+                {"ability": "mad_growth", "level": 12},
+                {"ability": "wild_growth", "level": 28},
+                {"ability": "cure", "level": 1},
+                {"ability": "cure_well", "level": 10},
+                {"ability": "potent_cure", "level": 28},
+                {"ability": "bind", "level": 18},
+                {"ability": "drain", "level": 31},
+                {"ability": "psy_drain", "level": 39}
+            ],
+            "class_type": 8
+        },{
+            "key_name": "diviner",
+            "name": "Diviner",
+            "required_level": {
+                "venus": 2,
+                "mercury": 0,
+                "mars": 0,
+                "jupiter": 5
+            },
+            "hp_boost": 1.1,
+            "pp_boost": 1.4,
+            "atk_boost": 1.0,
+            "def_boost": 1.0,
+            "agi_boost": 1.2,
+            "luk_boost": 1.0,
+            "ability_level_pairs": [
+                {"ability": "bolt", "level": 2},
+                {"ability": "flash_bolt", "level": 6},
+                {"ability": "blue_bolt", "level": 22},
+                {"ability": "growth", "level": 1},
+                {"ability": "mad_growth", "level": 12},
+                {"ability": "wild_growth", "level": 28},
+                {"ability": "cure", "level": 1},
+                {"ability": "cure_well", "level": 10},
+                {"ability": "potent_cure", "level": 28},
+                {"ability": "bind", "level": 18},
+                {"ability": "drain", "level": 31},
+                {"ability": "psy_drain", "level": 39}
+            ],
+            "class_type": 8
+        },{
+            "key_name": "shaman",
+            "name": "Shaman",
+            "required_level": {
+                "venus": 4,
+                "mercury": 0,
+                "mars": 0,
+                "jupiter": 5
+            },
+            "hp_boost": 1.2,
+            "pp_boost": 1.5,
+            "atk_boost": 1.1,
+            "def_boost": 1.1,
+            "agi_boost": 1.3,
+            "luk_boost": 1.0,
+            "ability_level_pairs": [
+                {"ability": "bolt", "level": 2},
+                {"ability": "flash_bolt", "level": 6},
+                {"ability": "blue_bolt", "level": 22},
+                {"ability": "growth", "level": 1},
+                {"ability": "mad_growth", "level": 12},
+                {"ability": "wild_growth", "level": 28},
+                {"ability": "cure", "level": 1},
+                {"ability": "cure_well", "level": 10},
+                {"ability": "potent_cure", "level": 28},
+                {"ability": "revive", "level": 19},
+                {"ability": "bind", "level": 18},
+                {"ability": "ward", "level": 6},
+                {"ability": "resist", "level": 22},
+                {"ability": "drain", "level": 31},
+                {"ability": "psy_drain", "level": 39}
+            ],
+            "class_type": 8
+        },{
+            "key_name": "pierrot",
+            "name": "Pierrot",
+            "required_level": {
+                "venus": 0,
+                "mercury": 0,
+                "mars": 0,
+                "jupiter": 0
+            },
+            "hp_boost": 1.0,
+            "pp_boost": 0.8,
+            "atk_boost": 1.0,
+            "def_boost": 1.1,
+            "agi_boost": 1.3,
+            "luk_boost": 1.2,
+            "ability_level_pairs": [
+                {"ability": "baffle_card", "level": 3},
+                {"ability": "juggle", "level": 5},
+                {"ability": "avoid", "level": 6},
+                {"ability": "sword_card", "level": 8},
+                {"ability": "sabre_dance", "level": 10},
+                {"ability": "flame_card", "level": 13},
+                {"ability": "sleep_card", "level": 15},
+                {"ability": "heat_juggle", "level": 17},
+                {"ability": "fire_breath", "level": 22},
+                {"ability": "thunder_card", "level": 25},
+                {"ability": "death_card", "level": 27},
+                {"ability": "bramble_card", "level": 33},
+                {"ability": "fiery_juggle", "level": 37},
+                {"ability": "frost_card", "level": 46}
+            ],
+            "class_type": 15
+        },{
+            "key_name": "harlequin",
+            "name": "Harlequin",
+            "required_level": {
+                "venus": 1,
+                "mercury": 1,
+                "mars": 1,
+                "jupiter": 1
+            },
+            "hp_boost": 1.3,
+            "pp_boost": 1.0,
+            "atk_boost": 1.1,
+            "def_boost": 1.2,
+            "agi_boost": 1.4,
+            "luk_boost": 1.2,
+            "ability_level_pairs": [
+                {"ability": "baffle_card", "level": 3},
+                {"ability": "juggle", "level": 5},
+                {"ability": "avoid", "level": 6},
+                {"ability": "sword_card", "level": 8},
+                {"ability": "sabre_dance", "level": 10},
+                {"ability": "flame_card", "level": 13},
+                {"ability": "sleep_card", "level": 15},
+                {"ability": "heat_juggle", "level": 17},
+                {"ability": "fire_breath", "level": 22},
+                {"ability": "thunder_card", "level": 25},
+                {"ability": "death_card", "level": 27},
+                {"ability": "bramble_card", "level": 33},
+                {"ability": "fiery_juggle", "level": 37},
+                {"ability": "frost_card", "level": 46}
+            ],
+            "class_type": 15
+        },{
+            "key_name": "punchinello",
+            "name": "Punchinello",
+            "required_level": {
+                "venus": 2,
+                "mercury": 2,
+                "mars": 2,
+                "jupiter": 2
+            },
+            "hp_boost": 1.6,
+            "pp_boost": 1.1,
+            "atk_boost": 1.3,
+            "def_boost": 1.3,
+            "agi_boost": 1.5,
+            "luk_boost": 1.2,
+            "ability_level_pairs": [
+                {"ability": "baffle_card", "level": 3},
+                {"ability": "juggle", "level": 5},
+                {"ability": "avoid", "level": 6},
+                {"ability": "sword_card", "level": 8},
+                {"ability": "sabre_dance", "level": 10},
+                {"ability": "flame_card", "level": 13},
+                {"ability": "sleep_card", "level": 15},
+                {"ability": "heat_juggle", "level": 17},
+                {"ability": "fire_breath", "level": 22},
+                {"ability": "thunder_card", "level": 25},
+                {"ability": "death_card", "level": 27},
+                {"ability": "backstab", "level": 29},
+                {"ability": "bramble_card", "level": 33},
+                {"ability": "fiery_juggle", "level": 37},
+                {"ability": "frost_card", "level": 46}
+            ],
+            "class_type": 15
+        },{
+            "key_name": "acrobat",
+            "name": "Acrobat",
+            "required_level": {
+                "venus": 3,
+                "mercury": 3,
+                "mars": 3,
+                "jupiter": 3
+            },
+            "hp_boost": 1.9,
+            "pp_boost": 1.2,
+            "atk_boost": 1.4,
+            "def_boost": 1.4,
+            "agi_boost": 1.6,
+            "luk_boost": 1.2,
+            "ability_level_pairs": [
+                {"ability": "baffle_card", "level": 3},
+                {"ability": "juggle", "level": 5},
+                {"ability": "avoid", "level": 6},
+                {"ability": "sword_card", "level": 8},
+                {"ability": "sabre_dance", "level": 10},
+                {"ability": "flame_card", "level": 13},
+                {"ability": "sleep_card", "level": 15},
+                {"ability": "heat_juggle", "level": 17},
+                {"ability": "fire_breath", "level": 22},
+                {"ability": "thunder_card", "level": 25},
+                {"ability": "death_card", "level": 27},
+                {"ability": "backstab", "level": 29},
+                {"ability": "bramble_card", "level": 33},
+                {"ability": "fiery_juggle", "level": 37},
+                {"ability": "frost_card", "level": 46}
+            ],
+            "class_type": 15
+        },{
+            "key_name": "mariner",
+            "name": "Mariner",
+            "required_level": {
+                "venus": 0,
+                "mercury": 5,
+                "mars": 0,
+                "jupiter": 0
+            },
+            "hp_boost": 1.1,
+            "pp_boost": 0.9,
+            "atk_boost": 1.0,
+            "def_boost": 1.0,
+            "agi_boost": 0.9,
+            "luk_boost": 1.2,
+            "ability_level_pairs": [
+                {"ability": "diamond_dust", "level": 12},
+                {"ability": "frost", "level": 1},
+                {"ability": "tundra", "level": 8},
+                {"ability": "glacier", "level": 24},
+                {"ability": "cool", "level": 4},
+                {"ability": "supercool", "level": 21},
+                {"ability": "megacool", "level": 48},
+                {"ability": "ply", "level": 2},
+                {"ability": "ply_well", "level": 17},
+                {"ability": "pure_ply", "level": 35},
+                {"ability": "cure_poison", "level": 5},
+                {"ability": "restore", "level": 13},
+                {"ability": "break", "level": 30}
+            ],
+            "class_type": 14
+        },{
+            "key_name": "privateer",
+            "name": "Privateer",
+            "required_level": {
+                "venus": 0,
+                "mercury": 7,
+                "mars": 0,
+                "jupiter": 0
+            },
+            "hp_boost": 1.3,
+            "pp_boost": 1.0,
+            "atk_boost": 1.1,
+            "def_boost": 1.1,
+            "agi_boost": 1.0,
+            "luk_boost": 1.2,
+            "ability_level_pairs": [
+                {"ability": "diamond_dust", "level": 12},
+                {"ability": "frost", "level": 1},
+                {"ability": "tundra", "level": 8},
+                {"ability": "glacier", "level": 24},
+                {"ability": "cool", "level": 4},
+                {"ability": "supercool", "level": 21},
+                {"ability": "megacool", "level": 48},
+                {"ability": "ply", "level": 2},
+                {"ability": "ply_well", "level": 17},
+                {"ability": "pure_ply", "level": 35},
+                {"ability": "cure_poison", "level": 5},
+                {"ability": "restore", "level": 13},
+                {"ability": "break", "level": 30},
+                {"ability": "avoid", "level": 6}
+            ],
+            "class_type": 14
+        },{
+            "key_name": "commander",
+            "name": "Commander",
+            "required_level": {
+                "venus": 0,
+                "mercury": 9,
+                "mars": 0,
+                "jupiter": 0
+            },
+            "hp_boost": 1.5,
+            "pp_boost": 1.1,
+            "atk_boost": 1.2,
+            "def_boost": 1.2,
+            "agi_boost": 1.1,
+            "luk_boost": 1.2,
+            "ability_level_pairs": [
+                {"ability": "diamond_dust", "level": 12},
+                {"ability": "frost", "level": 1},
+                {"ability": "tundra", "level": 8},
+                {"ability": "glacier", "level": 24},
+                {"ability": "cool", "level": 4},
+                {"ability": "supercool", "level": 21},
+                {"ability": "megacool", "level": 48},
+                {"ability": "ply", "level": 2},
+                {"ability": "ply_well", "level": 17},
+                {"ability": "pure_ply", "level": 35},
+                {"ability": "cure_poison", "level": 5},
+                {"ability": "restore", "level": 13},
+                {"ability": "break", "level": 30},
+                {"ability": "avoid", "level": 6}
+            ],
+            "class_type": 14
+        },{
+            "key_name": "pilgrim_2",
+            "name": "Pilgrim",
+            "required_level": {
+                "venus": 0,
+                "mercury": 5,
+                "mars": 0,
+                "jupiter": 0
+            },
+            "hp_boost": 0.9,
+            "pp_boost": 1.2,
+            "atk_boost": 0.9,
+            "def_boost": 1.0,
+            "agi_boost": 1.2,
+            "luk_boost": 1.2,
+            "ability_level_pairs": [
+                {"ability": "douse", "level": 1},
+                {"ability": "drench", "level": 12},
+                {"ability": "deluge", "level": 30},
+                {"ability": "prism", "level": 6},
+                {"ability": "hail_prism", "level": 20},
+                {"ability": "freeze_prism", "level": 52},
+                {"ability": "cure_poison", "level": 5},
+                {"ability": "restore", "level": 13},
+                {"ability": "break", "level": 34}
+            ],
+            "class_type": 9
+        },{
+            "key_name": "wanderer_2",
+            "name": "Wanderer",
+            "required_level": {
+                "venus": 0,
+                "mercury": 5,
+                "mars": 2,
+                "jupiter": 0
+            },
+            "hp_boost": 1.1,
+            "pp_boost": 1.3,
+            "atk_boost": 1.0,
+            "def_boost": 1.1,
+            "agi_boost": 1.3,
+            "luk_boost": 1.2,
+            "ability_level_pairs": [
+                {"ability": "douse", "level": 1},
+                {"ability": "drench", "level": 12},
+                {"ability": "deluge", "level": 30},
+                {"ability": "prism", "level": 6},
+                {"ability": "hail_prism", "level": 20},
+                {"ability": "freeze_prism", "level": 52},
+                {"ability": "cure_poison", "level": 5},
+                {"ability": "restore", "level": 13},
+                {"ability": "break", "level": 34}
+            ],
+            "class_type": 9
+        },{
+            "key_name": "ascetic_2",
+            "name": "Ascetic",
+            "required_level": {
+                "venus": 0,
+                "mercury": 5,
+                "mars": 4,
+                "jupiter": 0
+            },
+            "hp_boost": 1.2,
+            "pp_boost": 1.4,
+            "atk_boost": 1.1,
+            "def_boost": 1.2,
+            "agi_boost": 1.4,
+            "luk_boost": 1.2,
+            "ability_level_pairs": [
+                {"ability": "douse", "level": 1},
+                {"ability": "drench", "level": 12},
+                {"ability": "deluge", "level": 30},
+                {"ability": "prism", "level": 6},
+                {"ability": "hail_prism", "level": 20},
+                {"ability": "freeze_prism", "level": 52},
+                {"ability": "volcano", "level": 8},
+                {"ability": "eruption", "level": 22},
+                {"ability": "pyroclasm", "level": 48},
+                {"ability": "wish", "level": 9},
+                {"ability": "wish_well", "level": 24},
+                {"ability": "pure_wish", "level": 46},
+                {"ability": "cure_poison", "level": 5},
+                {"ability": "restore", "level": 13},
+                {"ability": "break", "level": 34}
+            ],
+            "class_type": 9
+        },{
+            "key_name": "seer_2",
+            "name": "Seer",
+            "required_level": {
+                "venus": 0,
+                "mercury": 5,
+                "mars": 0,
+                "jupiter": 0
+            },
+            "hp_boost": 0.9,
+            "pp_boost": 1.3,
+            "atk_boost": 0.9,
+            "def_boost": 0.9,
+            "agi_boost": 1.1,
+            "luk_boost": 1.0,
+            "ability_level_pairs": [
+                {"ability": "froth", "level": 2},
+                {"ability": "froth_sphere", "level": 14},
+                {"ability": "froth_spiral", "level": 40},
+                {"ability": "growth", "level": 3},
+                {"ability": "mad_growth", "level": 12},
+                {"ability": "wild_growth", "level": 29},
+                {"ability": "cure", "level": 1},
+                {"ability": "cure_well", "level": 10},
+                {"ability": "potent_cure", "level": 26},
+                {"ability": "cure_poison", "level": 5},
+                {"ability": "restore", "level": 13},
+                {"ability": "break", "level": 30}
+            ],
+            "class_type": 8
+        },{
+            "key_name": "diviner_2",
+            "name": "Diviner",
+            "required_level": {
+                "venus": 2,
+                "mercury": 5,
+                "mars": 0,
+                "jupiter": 0
+            },
+            "hp_boost": 1.1,
+            "pp_boost": 1.4,
+            "atk_boost": 1.0,
+            "def_boost": 1.0,
+            "agi_boost": 1.2,
+            "luk_boost": 1.0,
+            "ability_level_pairs": [
+                {"ability": "froth", "level": 2},
+                {"ability": "froth_sphere", "level": 14},
+                {"ability": "froth_spiral", "level": 40},
+                {"ability": "growth", "level": 3},
+                {"ability": "mad_growth", "level": 12},
+                {"ability": "wild_growth", "level": 29},
+                {"ability": "cure", "level": 1},
+                {"ability": "cure_well", "level": 10},
+                {"ability": "potent_cure", "level": 26},
+                {"ability": "cure_poison", "level": 5},
+                {"ability": "restore", "level": 13},
+                {"ability": "break", "level": 30}
+            ],
+            "class_type": 8
+        },{
+            "key_name": "shaman_2",
+            "name": "Shaman",
+            "required_level": {
+                "venus": 4,
+                "mercury": 5,
+                "mars": 0,
+                "jupiter": 0
+            },
+            "hp_boost": 1.1,
+            "pp_boost": 1.4,
+            "atk_boost": 1.0,
+            "def_boost": 1.0,
+            "agi_boost": 1.2,
+            "luk_boost": 1.0,
+            "ability_level_pairs": [
+                {"ability": "froth", "level": 2},
+                {"ability": "froth_sphere", "level": 14},
+                {"ability": "froth_spiral", "level": 40},
+                {"ability": "growth", "level": 3},
+                {"ability": "mad_growth", "level": 12},
+                {"ability": "wild_growth", "level": 29},
+                {"ability": "cure", "level": 1},
+                {"ability": "cure_well", "level": 10},
+                {"ability": "potent_cure", "level": 26},
+                {"ability": "revive", "level": 19},
+                {"ability": "wish", "level": 8},
+                {"ability": "wish_well", "level": 22},
+                {"ability": "pure_wish", "level": 46},
+                {"ability": "cure_poison", "level": 5},
+                {"ability": "restore", "level": 13},
+                {"ability": "break", "level": 30}
+            ],
+            "class_type": 8
+        },{
+            "key_name": "hermit",
+            "name": "Hermit",
+            "required_level": {
+                "venus": 0,
+                "mercury": 1,
+                "mars": 0,
+                "jupiter": 1
+            },
+            "hp_boost": 0.8,
+            "pp_boost": 1.4,
+            "atk_boost": 0.8,
+            "def_boost": 0.9,
+            "agi_boost": 1.3,
+            "luk_boost": 1.2,
+            "ability_level_pairs": [
+                {"ability": "prism", "level": 6},
+                {"ability": "hail_prism", "level": 22},
+                {"ability": "freeze_prism", "level": 52},
+                {"ability": "plasma", "level": 8},
+                {"ability": "shine_plasma", "level": 26},
+                {"ability": "spark_plasma", "level": 50},
+                {"ability": "impact", "level": 1},
+                {"ability": "high_impact", "level": 21},
+                {"ability": "bind", "level": 18},
+                {"ability": "drain", "level": 31},
+                {"ability": "psy_drain", "level": 39},
+                {"ability": "break", "level": 30}
+            ],
+            "class_type": 10
+        },{
+            "key_name": "elder",
+            "name": "Elder",
+            "required_level": {
+                "venus": 0,
+                "mercury": 2,
+                "mars": 0,
+                "jupiter": 2
+            },
+            "hp_boost": 0.9,
+            "pp_boost": 1.5,
+            "atk_boost": 0.9,
+            "def_boost": 1.0,
+            "agi_boost": 1.4,
+            "luk_boost": 1.2,
+            "ability_level_pairs": [
+                {"ability": "prism", "level": 6},
+                {"ability": "hail_prism", "level": 22},
+                {"ability": "freeze_prism", "level": 52},
+                {"ability": "plasma", "level": 8},
+                {"ability": "shine_plasma", "level": 26},
+                {"ability": "spark_plasma", "level": 50},
+                {"ability": "impact", "level": 1},
+                {"ability": "high_impact", "level": 21},
+                {"ability": "bind", "level": 18},
+                {"ability": "drain", "level": 31},
+                {"ability": "psy_drain", "level": 39},
+                {"ability": "break", "level": 30}
+            ],
+            "class_type": 10
+        },{
+            "key_name": "scholar",
+            "name": "Scholar",
+            "required_level": {
+                "venus": 0,
+                "mercury": 4,
+                "mars": 0,
+                "jupiter": 4
+            },
+            "hp_boost": 1.1,
+            "pp_boost": 1.6,
+            "atk_boost": 1.0,
+            "def_boost": 1.1,
+            "agi_boost": 1.5,
+            "luk_boost": 1.2,
+            "ability_level_pairs": [
+                {"ability": "prism", "level": 6},
+                {"ability": "hail_prism", "level": 22},
+                {"ability": "freeze_prism", "level": 52},
+                {"ability": "plasma", "level": 8},
+                {"ability": "shine_plasma", "level": 26},
+                {"ability": "spark_plasma", "level": 50},
+                {"ability": "wish", "level": 8},
+                {"ability": "wish_well", "level": 22},
+                {"ability": "pure_wish", "level": 46},
+                {"ability": "impact", "level": 1},
+                {"ability": "high_impact", "level": 21},
+                {"ability": "bind", "level": 18},
+                {"ability": "drain", "level": 31},
+                {"ability": "psy_drain", "level": 39},
+                {"ability": "break", "level": 30}
+            ],
+            "class_type": 10
+        },{
+            "key_name": "swordman",
+            "name": "Swordman",
+            "required_level": {
+                "venus": 5,
+                "mercury": 0,
+                "mars": 0,
+                "jupiter": 0
+            },
+            "hp_boost": 1.0,
+            "pp_boost": 0.9,
+            "atk_boost": 1.1,
+            "def_boost": 1.1,
+            "agi_boost": 0.9,
+            "luk_boost": 1.2,
+            "ability_level_pairs": [
+                {"ability": "cutting_edge", "level": 11},
+                {"ability": "thorn", "level": 4},
+                {"ability": "briar", "level": 14},
+                {"ability": "nettle", "level": 36},
+                {"ability": "revive", "level": 19},
+                {"ability": "cure_poison", "level": 5},
+                {"ability": "restore", "level": 13},
+                {"ability": "break", "level": 30}
+            ],
+            "class_type": 3
+        },{
+            "key_name": "defender",
+            "name": "Defender",
+            "required_level": {
+                "venus": 5,
+                "mercury": 2,
+                "mars": 0,
+                "jupiter": 0
+            },
+            "hp_boost": 1.2,
+            "pp_boost": 1.0,
+            "atk_boost": 1.2,
+            "def_boost": 1.2,
+            "agi_boost": 1.0,
+            "luk_boost": 1.2,
+            "ability_level_pairs": [
+                {"ability": "cutting_edge", "level": 11},
+                {"ability": "thorn", "level": 4},
+                {"ability": "briar", "level": 14},
+                {"ability": "nettle", "level": 36},
+                {"ability": "ply", "level": 2},
+                {"ability": "ply_well", "level": 17},
+                {"ability": "pure_ply", "level": 35},
+                {"ability": "revive", "level": 19},
+                {"ability": "cure_poison", "level": 5},
+                {"ability": "restore", "level": 13},
+                {"ability": "break", "level": 30},
+                {"ability": "avoid", "level": 6}
+            ],
+            "class_type": 3
+        },{
+            "key_name": "cavalier",
+            "name": "Cavalier",
+            "required_level": {
+                "venus": 5,
+                "mercury": 4,
+                "mars": 0,
+                "jupiter": 0
+            },
+            "hp_boost": 1.4,
+            "pp_boost": 1.1,
+            "atk_boost": 1.3,
+            "def_boost": 1.3,
+            "agi_boost": 1.1,
+            "luk_boost": 1.2,
+            "ability_level_pairs": [
+                {"ability": "cutting_edge", "level": 11},
+                {"ability": "thorn", "level": 4},
+                {"ability": "briar", "level": 14},
+                {"ability": "nettle", "level": 36},
+                {"ability": "ply", "level": 2},
+                {"ability": "ply_well", "level": 17},
+                {"ability": "pure_ply", "level": 35},
+                {"ability": "wish", "level": 8},
+                {"ability": "wish_well", "level": 22},
+                {"ability": "pure_wish", "level": 46},
+                {"ability": "revive", "level": 19},
+                {"ability": "cure_poison", "level": 5},
+                {"ability": "restore", "level": 13},
+                {"ability": "break", "level": 30},
+                {"ability": "avoid", "level": 6}
+            ],
+            "class_type": 3
+        },{
+            "key_name": "swordman_2",
+            "name": "Swordman",
+            "required_level": {
+                "venus": 0,
+                "mercury": 0,
+                "mars": 5,
+                "jupiter": 0
+            },
+            "hp_boost": 1.0,
+            "pp_boost": 0.9,
+            "atk_boost": 1.1,
+            "def_boost": 1.1,
+            "agi_boost": 0.9,
+            "luk_boost": 1.2,
+            "ability_level_pairs": [
+                {"ability": "cutting_edge", "level": 11},
+                {"ability": "blast_2", "level": 2},
+                {"ability": "mad_blast", "level": 10},
+                {"ability": "fiery_blast", "level": 28},
+                {"ability": "cure_poison", "level": 5},
+                {"ability": "restore", "level": 13},
+                {"ability": "guard", "level": 3},
+                {"ability": "protect", "level": 15},
+                {"ability": "break", "level": 30}
+            ],
+            "class_type": 3
+        },{
+            "key_name": "defender_2",
+            "name": "Defender",
+            "required_level": {
+                "venus": 0,
+                "mercury": 2,
+                "mars": 5,
+                "jupiter": 0
+            },
+            "hp_boost": 1.2,
+            "pp_boost": 1.0,
+            "atk_boost": 1.2,
+            "def_boost": 1.2,
+            "agi_boost": 1.0,
+            "luk_boost": 1.2,
+            "ability_level_pairs": [
+                {"ability": "cutting_edge", "level": 11},
+                {"ability": "blast_2", "level": 2},
+                {"ability": "mad_blast", "level": 10},
+                {"ability": "fiery_blast", "level": 28},
+                {"ability": "ply", "level": 2},
+                {"ability": "ply_well", "level": 17},
+                {"ability": "pure_ply", "level": 35},
+                {"ability": "cure_poison", "level": 5},
+                {"ability": "restore", "level": 13},
+                {"ability": "guard", "level": 3},
+                {"ability": "protect", "level": 15},
+                {"ability": "break", "level": 30},
+                {"ability": "avoid", "level": 6}
+            ],
+            "class_type": 3
+        },{
+            "key_name": "cavalier_2",
+            "name": "Cavalier",
+            "required_level": {
+                "venus": 0,
+                "mercury": 4,
+                "mars": 5,
+                "jupiter": 0
+            },
+            "hp_boost": 1.4,
+            "pp_boost": 1.1,
+            "atk_boost": 1.3,
+            "def_boost": 1.3,
+            "agi_boost": 1.1,
+            "luk_boost": 1.2,
+            "ability_level_pairs": [
+                {"ability": "cutting_edge", "level": 11},
+                {"ability": "blast_2", "level": 2},
+                {"ability": "mad_blast", "level": 10},
+                {"ability": "fiery_blast", "level": 28},
+                {"ability": "ply", "level": 2},
+                {"ability": "ply_well", "level": 17},
+                {"ability": "pure_ply", "level": 35},
+                {"ability": "wish", "level": 8},
+                {"ability": "wish_well", "level": 22},
+                {"ability": "pure_wish", "level": 46},
+                {"ability": "cure_poison", "level": 5},
+                {"ability": "restore", "level": 13},
+                {"ability": "guard", "level": 3},
+                {"ability": "protect", "level": 15},
+                {"ability": "break", "level": 30},
+                {"ability": "avoid", "level": 6}
+            ],
+            "class_type": 3
+        }
+    ]
+}

@@ -1,0 +1,20 @@
+{"frames": {
+
+"grant/down/00":
+{
+	"frame": {"x":1,"y":1,"w":26,"h":32},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":3,"y":0,"w":26,"h":32},
+	"sourceSize": {"w":32,"h":32}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "isaac_grant.png",
+	"format": "RGBA8888",
+	"size": {"w":28,"h":34},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:80335f8a43c5ec8413fae30fda394bcf:5a49de01582542189d0d9a437be7bda2:b435105cee55da1ab71d80faff82709e$"
+}
+}
