@@ -4,8 +4,9 @@
     "wait_for_cast_animation": false,
     "sprites": [{
         "key_name": "cast",
-        "per_target": false,
-        "position": "between"
+        "per_target": true,
+        "position": "between",
+        "per_target_key": "fire_sprite"
     }],
     "stage_angle_sequence": [{
       "is_absolute": false,
@@ -31,7 +32,7 @@
     },{
         "animation_key": "cast",
         "start_delay": 3100,
-        "sprite_index": 0,
+        "per_target_key": "fire_sprite",
         "reverse": false,
         "frame_rate": 15,
         "repeat": false,
@@ -77,55 +78,55 @@
         "start_delay": 3100,
         "to": 1.0,
         "is_absolute": true,
-        "sprite_index": 0
+        "per_target_key": "fire_sprite"
     },{
         "start_delay": 0,
         "to": 0,
         "is_absolute": true,
-        "sprite_index": 0
+        "per_target_key": "fire_sprite"
     }],
     "blend_mode_sequence": [{
         "start_delay": 0,
         "mode": "screen",
-        "sprite_index": 0
+        "per_target_key": "fire_sprite"
     }],
     "x_sequence": [{
         "to": "targets",
         "start_delay": 3000,
         "is_absolute": true,
-        "sprite_index": 0,
+        "per_target_key": "fire_sprite",
         "round_final_value": true
     }],
     "y_sequence": [{
         "to": "targets",
         "start_delay": 3000,
         "is_absolute": true,
-        "sprite_index": 0,
+        "per_target_key": "fire_sprite",
         "round_final_value": true
     }],
     "x_anchor_sequence": [{
         "to": 0.5,
         "start_delay": 0,
         "is_absolute": true,
-        "sprite_index": 0
+        "per_target_key": "fire_sprite"
     }],
     "y_anchor_sequence": [{
         "to": 1,
         "start_delay": 0,
         "is_absolute": true,
-        "sprite_index": 0
+        "per_target_key": "fire_sprite"
     }],
     "x_scale_sequence": [{
         "to": 1.3,
         "start_delay": 0,
         "is_absolute": true,
-        "sprite_index": 0
+        "per_target_key": "fire_sprite"
     }],
     "y_scale_sequence": [{
         "to": 1.3,
         "start_delay": 0,
         "is_absolute": true,
-        "sprite_index": 0
+        "per_target_key": "fire_sprite"
     }],
     "particles_sequence": [{
         "data": {

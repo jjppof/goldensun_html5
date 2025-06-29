@@ -87,6 +87,7 @@ type DefaultAttr = {
     tween: string;
     duration: number;
     sprite_index?: string | number | number[];
+    per_target_key?: string;
     yoyo?: boolean;
     shift?: number | number[] | CompactValuesSpecifier;
     shift_direction?: ("in_center" | "out_center") | ("in_center" | "out_center")[];
@@ -100,6 +101,7 @@ type MiscAttr = {
     type: "trail_toggle";
     start_delay: number | number[] | CompactValuesSpecifier;
     sprite_index?: string | number | number[];
+    per_target_key?: string;
     ignore_if_dodge?: boolean;
     value: any;
 };
@@ -107,6 +109,7 @@ type MiscAttr = {
 type ShakeAttr = {
     start_delay: number | number[] | CompactValuesSpecifier;
     sprite_index: string | number | number[];
+    per_target_key?: string;
     ignore_if_dodge: boolean;
     interval: number;
     direction: "x" | "y";
@@ -117,6 +120,7 @@ type ShakeAttr = {
 type GeneralFilterAttr = {
     start_delay: number | number[] | CompactValuesSpecifier;
     sprite_index: string | number | number[];
+    per_target_key?: string;
     remove: boolean;
     ignore_if_dodge?: boolean;
     duration?: number;
@@ -166,6 +170,7 @@ type InitialConfig = {
 type SpriteKey = {
     key_name: string;
     per_target: boolean;
+    per_target_key: string;
     position: string;
     count: number;
     trails: boolean;
@@ -272,6 +277,9 @@ export class BattleAnimation {
     public init_pos: {
         x: number;
         y: number;
+    };
+    public per_target_sprites: {
+        [key: string]: (Phaser.Sprite | Phaser.Graphics)[];
     };
     public caster_sprite: PlayerSprite;
     public targets_sprites: PlayerSprite[];
@@ -411,6 +419,7 @@ export class BattleAnimation {
         target_dodged?: boolean
     ) {
         this.sprites = [];
+        this.per_target_sprites = {};
         this.sprites_prev_properties = {};
         this.stage_prev_value = undefined;
         this.init_pos = {
@@ -485,9 +494,10 @@ export class BattleAnimation {
                     this.trails_objs.push(trail_image);
                     this.ability_sprites_groups[sprite_info.position].addChild(trail_image);
                 }
-                if (!sprite_info.per_target) {
-                    const count = sprite_info.count ? sprite_info.count : 1;
-                    for (let j = 0; j < count; ++j) {
+                const per_target_count = sprite_info.per_target ? this.targets_sprites.length : 1;
+                const count = sprite_info.count ?? 1;
+                for (let j = 0; j < count; ++j) {
+                    for (let k = 0; k < per_target_count; ++k) {
                         let psy_sprite: Phaser.Sprite | Phaser.Graphics;
                         const sprite_type = sprite_info.type ?? sprite_types.SPRITE;
                         let color;
@@ -551,7 +561,9 @@ export class BattleAnimation {
                             psy_sprite.data.keep_core_white = sprite_info.geometry_info.keep_core_white;
                         }
                         this.ability_sprites_groups[sprite_info.position].addChild(psy_sprite);
-                        psy_sprite.data.custom_key = `${sprite_type}/${i}/${j}`;
+                        psy_sprite.data.custom_key = sprite_info.per_target
+                            ? `${sprite_type}/${i}/${j}/${sprite_info.per_target_key}/${k}`
+                            : `${sprite_type}/${i}/${j}`;
                         psy_sprite.data.trail_image = trail_image;
                         psy_sprite.data.trail_enabled = true;
                         psy_sprite.data.ignore_trim = true;
@@ -574,15 +586,24 @@ export class BattleAnimation {
                                 psy_sprite.blendMode = Phaser.blendModes.SCREEN;
                             }
                         }
-                        this.sprites.push(psy_sprite);
+                        if (sprite_info.per_target) {
+                            if (sprite_info.per_target_key in this.per_target_sprites) {
+                                this.per_target_sprites[sprite_info.per_target_key].push(psy_sprite);
+                            } else {
+                                this.per_target_sprites[sprite_info.per_target_key] = [psy_sprite];
+                            }
+                            if (k === 0) {
+                                this.sprites.push(null);
+                            }
+                        } else {
+                            this.sprites.push(psy_sprite);
+                        }
                     }
-                } else {
-                    //TODO: create one sprite for each target
                 }
             }
         }
         this.sprites.forEach(sprite => {
-            if (sprite.data.follow_sprite !== undefined) {
+            if (sprite?.data.follow_sprite !== undefined) {
                 sprite.data.follow_sprite = Object.values(
                     this.get_sprites({sprite_index: sprite.data.follow_sprite})
                 )[0].obj;
@@ -610,7 +631,7 @@ export class BattleAnimation {
     }
 
     set_filters() {
-        this.sprites.forEach(sprite => {
+        const set_available_filters = (sprite: BattleAnimation["sprites"][0]) => {
             const colorize_filter = this.game.add.filter("Colorize") as Phaser.Filter.Colorize;
             sprite.available_filters[colorize_filter.key] = colorize_filter;
             const levels_filter = this.game.add.filter("Levels") as Phaser.Filter.Levels;
@@ -627,7 +648,20 @@ export class BattleAnimation {
             sprite.available_filters[flame_filter.key] = flame_filter;
             const pixel_shift_filter = this.game.add.filter("PixelShift") as Phaser.Filter.PixelShift;
             sprite.available_filters[pixel_shift_filter.key] = pixel_shift_filter;
+        };
+        this.sprites.forEach(sprite => {
+            if (!sprite) {
+                return;
+            }
+            set_available_filters(sprite);
         });
+        for (let key in this.per_target_sprites) {
+            for (let sprite of this.per_target_sprites[key]) {
+                if (sprite) {
+                    set_available_filters(sprite);
+                }
+            }
+        }
     }
 
     get_expanded_values(recipe: CompactValuesSpecifier, number: number) {
@@ -684,12 +718,26 @@ export class BattleAnimation {
         Promise.all(this.promises).then(() => {
             if (this.destroy_sprites) {
                 this.sprites.forEach(sprite => {
+                    if (!sprite) {
+                        return;
+                    }
                     sprite.filters = undefined;
                     for (let filter_key in sprite.available_filters) {
                         (sprite.available_filters[filter_key] as Phaser.Filter).destroy();
                     }
                     sprite.destroy();
                 });
+                for (let key in this.per_target_sprites) {
+                    for (let sprite of this.per_target_sprites[key]) {
+                        if (sprite) {
+                            sprite.filters = undefined;
+                            for (let filter_key in sprite.available_filters) {
+                                (sprite.available_filters[filter_key] as Phaser.Filter).destroy();
+                            }
+                            sprite.destroy();
+                        }
+                    }
+                }
             }
             this.trails_objs.forEach(obj => {
                 obj.destroy(true);
@@ -768,6 +816,15 @@ export class BattleAnimation {
                         };
                         return prev;
                     }, {});
+                } else if (seq.per_target_key) {
+                    return this.per_target_sprites[seq.per_target_key].reduce((acc, cur, index) => {
+                        acc[cur.data.custom_key] = {
+                            obj: _.get(cur, obj_propety),
+                            sprite: cur,
+                            index: index,
+                        };
+                        return acc;
+                    }, {});
                 } else {
                     return {
                         [this.sprites[seq.sprite_index].data.custom_key]: {
@@ -817,6 +874,14 @@ export class BattleAnimation {
                         index: index,
                     };
                     return prev;
+                }, {});
+            } else if (seq.per_target_key) {
+                return this.per_target_sprites[seq.per_target_key].reduce((acc, cur, index) => {
+                    acc[cur.data.custom_key] = {
+                        obj: cur,
+                        index: index,
+                    };
+                    return acc;
                 }, {});
             } else {
                 return {
@@ -888,7 +953,11 @@ export class BattleAnimation {
                     ) {
                         let player_sprite = this.caster_sprite;
                         if (seq_to === target_types.TARGETS) {
-                            player_sprite = this.targets_sprites[this.targets_sprites.length >> 1];
+                            if (seq.per_target_key) {
+                                player_sprite = this.targets_sprites[sprite_info.index];
+                            } else {
+                                player_sprite = this.targets_sprites[this.targets_sprites.length >> 1];
+                            }
                         } else if (seq_to === target_types.ALLIES) {
                             player_sprite = this.allies_sprites[this.allies_sprites.length >> 1];
                         }
@@ -1653,6 +1722,9 @@ export class BattleAnimation {
     render() {
         this.trails_bmps.forEach(bmp => bmp.fill(0, 0, 0, bmp.trail_factor));
         this.sprites.forEach(sprite => {
+            if (!sprite) {
+                return;
+            }
             if (sprite.data.follow_sprite) {
                 sprite.x = sprite.data.follow_sprite.x;
                 sprite.y = sprite.data.follow_sprite.y;
