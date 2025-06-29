@@ -141,7 +141,7 @@
                     "seal",
                     "sleep",
                     "stun",
-                    "venon"
+                    "venom"
                 ],
                 "frames_count": [2,2,2,2,2,2,2,4,5,4,4,4,4,4],
                 "loop": true,

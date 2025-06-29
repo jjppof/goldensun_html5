@@ -2206,6 +2206,8 @@ Phaser.ParticleStorm.Particle.prototype = {
                     for (let copy_info of control.copy) {
                         this.transform[copy_info.to].x = this.transform[copy_info.from].x;
                         this.transform[copy_info.to].y = this.transform[copy_info.from].y;
+                        this.transform[copy_info.to].scale.x = this.transform[copy_info.from].scale.x;
+                        this.transform[copy_info.to].scale.y = this.transform[copy_info.from].scale.y;
                     }
                 }
             }
@@ -5551,6 +5553,9 @@ Phaser.ParticleStorm.Controls.Transform.prototype = {
                     if (point.reference_transform_key) {
                         this.data.target.transform_key = point.reference_transform_key;
                     }
+                    if (point.duration) {
+                        this.data.target.duration = point.duration;
+                    }
                     this.particle.target(this.data.target);
                 }
             };
@@ -6069,17 +6074,32 @@ Phaser.ParticleStorm.Renderer.Pixel.prototype.update = function (particle) {
         core_color = particle.emitter.core_custom_color ? particle.emitter.core_custom_color : `rgba(255,255,255,${a2/255})`;
     }
 
+    let pixel_size_scale = 1;
+    if (particle.data.scale) {
+        pixel_size_scale = 0;
+        if (particle.emitter.transforms) {
+            let transforms_count = 0;
+            for (let transform_key in particle.active_transforms) {
+                pixel_size_scale += particle.active_transforms[transform_key].scale.x.calc;
+                ++transforms_count;
+            }
+            pixel_size_scale /= transforms_count;
+        } else {
+            pixel_size_scale = particle.transform.scale.x.calc;
+        }
+    }
+    let pixel_size = this.pixelSize * pixel_size_scale;
     if (this.pixelSize > 2)
     {
         if (this.useRect) {
-            this.bmd.rect(x, y, this.pixelSize, this.pixelSize, particle.color.rgba);
+            this.bmd.rect(x, y, pixel_size, pixel_size, particle.color.rgba);
             if (this.bmd2) {
-                this.bmd2.rect(x, y, this.pixelSize, this.pixelSize, core_color);
+                this.bmd2.rect(x, y, pixel_size, pixel_size, core_color);
             }
         } else {
-            this.bmd.circle(x, y, this.pixelSize/2, particle.color.rgba);
+            this.bmd.circle(x, y, pixel_size/2, particle.color.rgba);
             if (this.bmd2) {
-                this.bmd2.circle(x, y, this.pixelSize/2, core_color);
+                this.bmd2.circle(x, y, pixel_size/2, core_color);
             }
         }
     }

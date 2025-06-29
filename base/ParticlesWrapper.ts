@@ -161,7 +161,7 @@ export type ParticlesInfo = {
     group_type?: game_groups;
     zones: {[zone_key: string]: ParticlesZone};
     emitters: Emitter[];
-    emission_delay: number;
+    emission_delay?: number;
     emission_finish: number;
     particles_callback?: (particle: Phaser.ParticleStorm.Particle) => void;
 }[];
