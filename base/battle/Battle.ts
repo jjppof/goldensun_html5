@@ -1748,6 +1748,7 @@ So, if a character will die after 5 turns and you land another Curse on them, it
             //deal with djinn that are with recovery status
             const player = this.data.info.party_data.members[i];
             if (player === undefined) continue;
+            if (player.is_downed()) continue;
 
             const player_djinni = player.djinni;
             for (let j = 0; j < player_djinni.length; ++j) {
