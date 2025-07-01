@@ -2537,25 +2537,25 @@
          "objects":[
                 {
                  "class":"",
-                 "height":256,
+                 "height":224,
                  "id":34,
                  "name":"",
                  "rotation":0,
                  "visible":true,
-                 "width":96,
-                 "x":656,
-                 "y":-16
+                 "width":64,
+                 "x":672,
+                 "y":0
                 }, 
                 {
                  "class":"",
-                 "height":512,
+                 "height":480,
                  "id":35,
                  "name":"",
                  "rotation":0,
                  "visible":true,
-                 "width":512,
-                 "x":-16,
-                 "y":-16
+                 "width":480,
+                 "x":0,
+                 "y":0
                 }],
          "opacity":1,
          "properties":

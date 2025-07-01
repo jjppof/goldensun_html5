@@ -1771,7 +1771,7 @@
              "join_with_layer":"int"
             },
          "type":"objectgroup",
-         "visible":false,
+         "visible":true,
          "x":0,
          "y":0
         }, 
@@ -1943,7 +1943,7 @@
              "join_with_layer":"int"
             },
          "type":"objectgroup",
-         "visible":false,
+         "visible":true,
          "x":0,
          "y":0
         }, 
@@ -2031,7 +2031,7 @@
              "join_with_layer":"int"
             },
          "type":"objectgroup",
-         "visible":false,
+         "visible":true,
          "x":0,
          "y":0
         }, 
@@ -2195,7 +2195,7 @@
              "layer_index":"int"
             },
          "type":"objectgroup",
-         "visible":false,
+         "visible":true,
          "x":0,
          "y":0
         }, 
@@ -2226,7 +2226,7 @@
              "join_with_layer":"int"
             },
          "type":"objectgroup",
-         "visible":false,
+         "visible":true,
          "x":0,
          "y":0
         }, 
@@ -2237,36 +2237,36 @@
          "objects":[
                 {
                  "class":"",
-                 "height":376,
+                 "height":360,
                  "id":33,
                  "name":"",
                  "rotation":0,
                  "visible":true,
-                 "width":528,
-                 "x":-8,
-                 "y":-8
+                 "width":512,
+                 "x":0,
+                 "y":0
                 }, 
                 {
                  "class":"",
-                 "height":272,
+                 "height":256,
                  "id":34,
                  "name":"",
                  "rotation":0,
                  "visible":true,
-                 "width":176,
-                 "x":712,
-                 "y":-8
+                 "width":160,
+                 "x":720,
+                 "y":0
                 }, 
                 {
                  "class":"",
-                 "height":136,
+                 "height":120,
                  "id":35,
                  "name":"",
                  "rotation":0,
                  "visible":true,
-                 "width":136,
-                 "x":952,
-                 "y":-8
+                 "width":120,
+                 "x":960,
+                 "y":0
                 }],
          "opacity":1,
          "properties":

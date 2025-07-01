@@ -557,3 +557,14 @@ export function weighted_random_pick<T>(items: T[], weights: number[]): T {
 
     return items[choosen];
 }
+
+/**
+ * Check if a given rect contains or intersects with a given point.
+ * @param rect the rectangle to be checked.
+ * @param x the x point cord to be checked.
+ * @param y the y point cord to be checked.
+ * @returns returns true if the given rect contains or intersects with the given point.
+ */
+export function rect_contains_or_intersects(rect: Phaser.Rectangle, x: number, y: number) {
+    return x >= rect.x && x <= rect.right && y >= rect.y && y <= rect.bottom;
+}

@@ -15,6 +15,7 @@ import {
     weighted_random_pick,
     engine_filters,
     get_sqr_distance,
+    rect_contains_or_intersects,
 } from "./utils";
 import {BattleEvent} from "./game_events/BattleEvent";
 import {Djinn} from "./Djinn";
@@ -632,7 +633,10 @@ export class Map {
             const collision_layer_objects = this.sprite.objects[this.collision_layer]?.objectsData ?? [];
             for (let i = 0; i < collision_layer_objects.length; ++i) {
                 const collision_object = collision_layer_objects[i];
-                if (current_bounding_box && !current_bounding_box.contains(collision_object.x, collision_object.y)) {
+                if (
+                    current_bounding_box &&
+                    !rect_contains_or_intersects(current_bounding_box, collision_object.x, collision_object.y)
+                ) {
                     continue;
                 }
                 let sensor_active = false;
@@ -720,7 +724,10 @@ export class Map {
             const collision_layer_objects = this.sprite.objects[collision_layer]?.objectsData ?? [];
             for (let i = 0; i < collision_layer_objects.length; ++i) {
                 const collision_object = collision_layer_objects[i];
-                if (current_bounding_box && !current_bounding_box.contains(collision_object.x, collision_object.y)) {
+                if (
+                    current_bounding_box &&
+                    !rect_contains_or_intersects(current_bounding_box, collision_object.x, collision_object.y)
+                ) {
                     continue;
                 }
                 let sensor_active = false;
@@ -1455,6 +1462,9 @@ export class Map {
      * Updates camera bounds to fit current portion of the map.
      */
     change_camera_bounds() {
+        if (this.is_world_map) {
+            return;
+        }
         if (this.current_bounding_box_id !== null && this.current_bounding_box_id >= 0) {
             const bounding_box = this.bounding_boxes.find(bb => bb.id === this.current_bounding_box_id).rect;
             this.game.camera.bounds.setTo(bounding_box.x, bounding_box.y, bounding_box.width, bounding_box.height);
