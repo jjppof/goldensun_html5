@@ -46,9 +46,9 @@
             173, 173, 173, 173, 173, 173, 174, 253, 254, 255, 231, 247, 248, 232, 222, 223, 224, 167, 168, 131, 132, 135, 136, 206, 207, 208, 167, 168, 167, 168, 167, 253, 254, 255, 256, 167, 167, 168, 167, 179,
             173, 173, 173, 173, 173, 173, 174, 167, 168, 249, 231, 232, 232, 232, 234, 167, 167, 167, 167, 168, 148, 151, 221, 222, 223, 224, 173, 173, 173, 173, 173, 173, 174, 233, 234, 167, 168, 167, 167, 167,
             173, 175, 176, 173, 173, 173, 190, 167, 168, 249, 222, 251, 252, 2147483870, 234, 167, 168, 0, 167, 168, 168, 167, 168, 168, 168, 168, 173, 173, 173, 173, 173, 173, 174, 233, 234, 167, 168, 131, 132, 133,
-            173, 168, 167, 173, 173, 190, 167, 168, 206, 207, 208, 163, 164, 237, 238, 239, 516, 167, 168, 168, 168, 168, 168, 168, 106, 167, 173, 175, 176, 173, 173, 173, 190, 233, 234, 167, 168, 183, 148, 149,
-            173, 173, 173, 173, 190, 191, 192, 221, 222, 223, 224, 179, 180, 253, 254, 251, 122, 167, 167, 167, 167, 168, 150, 151, 167, 167, 173, 168, 167, 173, 173, 190, 167, 233, 234, 167, 167, 168, 168, 168,
-            173, 173, 173, 174, 168, 205, 206, 207, 208, 167, 168, 195, 196, 167, 168, 167, 138, 139, 0, 167, 142, 143, 167, 168, 167, 167, 173, 173, 173, 173, 190, 191, 192, 249, 250, 167, 167, 167, 167, 167,
+            173, 168, 167, 173, 173, 190, 167, 168, 206, 207, 208, 163, 164, 237, 238, 239, 516, 167, 168, 168, 168, 168, 168, 2147484898, 911, 167, 173, 175, 176, 173, 173, 173, 190, 233, 234, 167, 168, 183, 148, 149,
+            173, 173, 173, 173, 190, 191, 192, 221, 222, 223, 224, 179, 180, 253, 254, 251, 122, 167, 167, 167, 167, 168, 150, 150, 151, 167, 173, 168, 167, 173, 173, 190, 167, 233, 234, 167, 167, 168, 168, 168,
+            173, 173, 173, 174, 168, 205, 206, 207, 208, 167, 168, 195, 196, 167, 168, 167, 138, 139, 0, 167, 142, 143, 151, 168, 167, 167, 173, 173, 173, 173, 190, 191, 192, 249, 250, 167, 167, 167, 167, 167,
             189, 172, 173, 174, 168, 221, 222, 223, 224, 167, 168, 165, 166, 168, 167, 168, 131, 132, 133, 134, 135, 136, 167, 168, 167, 167, 167, 167, 167, 167, 167, 168, 55, 497, 498, 68, 69, 68, 68, 69,
             167, 188, 189, 190, 168, 237, 238, 239, 240, 167, 168, 181, 182, 168, 167, 167, 168, 148, 149, 150, 151, 167, 165, 166, 165, 166, 167, 167, 167, 167, 168, 54, 70, 495, 496, 84, 85, 84, 84, 85,
             167, 168, 172, 173, 174, 253, 254, 255, 256, 167, 167, 879, 880, 168, 167, 167, 168, 1073742051, 1073742052, 167, 168, 167, 181, 202, 201, 202, 198, 168, 167, 168, 55, 70, 72, 19, 19, 19, 18, 19, 19, 18,
@@ -122,9 +122,9 @@
             616, 617, 651, 616, 617, 651, 618, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 259, 260, 293,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 291, 292, 293, 294, 295, 0, 0, 0, 0, 652, 617, 617, 617, 617, 651, 0, 0, 0, 0, 0, 515, 516, 549,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 547, 548, 549, 550, 551, 552, 0, 0, 172, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 225, 226, 257,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 259, 260, 261, 523, 264, 1073742117, 263, 264, 545, 546, 172, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 651, 652, 0, 0, 397, 398, 0, 0, 0, 0, 0, 0, 0, 0, 515, 516, 517, 524, 516, 209, 584, 545, 582, 0, 172, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 526, 515, 122, 123, 123, 193, 194, 0, 0, 0, 172, 0, 651, 652, 0, 0, 397, 398, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 259, 260, 261, 523, 264, 1073742117, 263, 264, 294, 3221225774, 172, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 651, 652, 0, 0, 397, 398, 0, 0, 0, 0, 0, 0, 0, 0, 515, 516, 517, 524, 516, 209, 584, 583, 2147484539, 2147483977, 172, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 526, 515, 122, 123, 123, 193, 194, 581, 0, 0, 172, 0, 651, 652, 0, 0, 397, 398, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 131, 522, 0, 549, 514, 0, 0, 0, 0, 0, 172, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1212, 1197, 1197, 1197, 1214, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 616, 617, 618, 0, 0, 0, 0, 0, 0, 0, 397, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1212, 1213, 1214, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -365,16 +365,20 @@
                          "y":-24
                         }, 
                         {
-                         "x":78.4375,
-                         "y":-16.0625
+                         "x":80,
+                         "y":-16
                         }, 
                         {
-                         "x":52.125,
-                         "y":-1.4375
+                         "x":80,
+                         "y":-8
                         }, 
                         {
-                         "x":52.1875,
-                         "y":8.125
+                         "x":56,
+                         "y":0
+                        }, 
+                        {
+                         "x":56,
+                         "y":8
                         }, 
                         {
                          "x":32,
@@ -544,7 +548,7 @@
                 }],
          "opacity":1,
          "type":"objectgroup",
-         "visible":false,
+         "visible":true,
          "x":0,
          "y":0
         }, 
@@ -623,7 +627,7 @@
              "encounter_zone":"bool"
             },
          "type":"objectgroup",
-         "visible":true,
+         "visible":false,
          "x":0,
          "y":0
         }],
@@ -632,27 +636,18 @@
  "orientation":"orthogonal",
  "properties":
     {
-     "npc\/01":"{\n    \"key_name\": \"towns\",\n    \"x\": 16,\n    \"y\": 47,\n    \"npc_type\": \"sprite\",\n    \"movement_type\": \"idle\",\n    \"animation\": \"town_00\"\n}",
-     "npc\/02":"{\n    \"key_name\": \"towns\",\n    \"x\": 22,\n    \"y\": 44,\n    \"npc_type\": \"sprite\",\n    \"movement_type\": \"idle\",\n    \"animation\": \"cave_00\",\n    \"ignore_world_map_scale\": false\n}",
-     "npc\/03":"{\n    \"key_name\": \"towns\",\n    \"x\": 22,\n    \"y\": 8,\n    \"npc_type\": \"sprite\",\n    \"movement_type\": \"idle\",\n    \"animation\": \"town_02\"\n}",
-     "npc\/04":"{\n    \"key_name\": \"towns\",\n    \"x\": 17,\n    \"y\": 16,\n    \"npc_type\": \"sprite\",\n    \"movement_type\": \"idle\",\n    \"animation\": \"cave_00\",\n    \"ignore_world_map_scale\": false\n}",
-     "npc\/05":"{\n    \"key_name\": \"towns\",\n    \"x\": 29,\n    \"y\": 41,\n    \"npc_type\": \"sprite\",\n    \"movement_type\": \"idle\",\n    \"animation\": \"forest_00\",\n    \"ignore_world_map_scale\": false\n}",
-     "tile_event\/01":"{\n\"type\": \"teleport\",\n\"x\": 16,\n\"y\": 47,\n\"target\": \"madra\",\n\"activation_directions\": \"all\",\n\"x_target\": 29,\n\"y_target\": 32,\n\"dest_collision_layer\": 1,\n\"activation_collision_layers\": 0\n}",
-     "tile_event\/02":"{\n\"type\": \"teleport\",\n\"x\": 16,\n\"y\": 48,\n\"target\": \"madra\",\n\"activation_directions\": \"all\",\n\"x_target\": 29,\n\"y_target\": 32,\n\"dest_collision_layer\": 1,\n\"activation_collision_layers\": 0\n}",
-     "tile_event\/03":"{\n\"type\": \"teleport\",\n\"x\": 15,\n\"y\": 47,\n\"target\": \"madra\",\n\"activation_directions\": \"all\",\n\"x_target\": 29,\n\"y_target\": 32,\n\"dest_collision_layer\": 1,\n\"activation_collision_layers\": 0\n}",
-     "tile_event\/04":"{\n\"type\": \"teleport\",\n\"x\": 17,\n\"y\": 47,\n\"target\": \"madra\",\n\"activation_directions\": \"all\",\n\"x_target\": 29,\n\"y_target\": 32,\n\"dest_collision_layer\": 1,\n\"activation_collision_layers\": 0\n}",
-     "tile_event\/05":"{\n\"type\": \"teleport\",\n\"x\": 22,\n\"y\": 8,\n\"target\": \"snowland\",\n\"activation_directions\": \"all\",\n\"x_target\": 1,\n\"y_target\": 18,\n\"dest_collision_layer\": 0,\n\"activation_collision_layers\": 0,\n\"destination_direction\": \"right\"\n}",
-     "tile_event\/06":"{\n\"type\": \"teleport\",\n\"x\": 21,\n\"y\": 8,\n\"target\": \"snowland\",\n\"activation_directions\": \"all\",\n\"x_target\": 1,\n\"y_target\": 18,\n\"dest_collision_layer\": 0,\n\"activation_collision_layers\": 0,\n\"destination_direction\": \"right\"\n}",
-     "tile_event\/07":"{\n\"type\": \"teleport\",\n\"x\": 23,\n\"y\": 8,\n\"target\": \"snowland\",\n\"activation_directions\": \"all\",\n\"x_target\": 1,\n\"y_target\": 18,\n\"dest_collision_layer\": 0,\n\"activation_collision_layers\": 0,\n\"destination_direction\": \"right\"\n}",
-     "tile_event\/08":"{\n\"type\": \"teleport\",\n\"x\": 22,\n\"y\": 9,\n\"target\": \"snowland\",\n\"activation_directions\": \"all\",\n\"x_target\": 1,\n\"y_target\": 18,\n\"dest_collision_layer\": 0,\n\"activation_collision_layers\": 0,\n\"destination_direction\": \"right\"\n}",
-     "tile_event\/09":"{\n\"type\": \"teleport\",\n\"x\": 21,\n\"y\": 9,\n\"target\": \"snowland\",\n\"activation_directions\": \"all\",\n\"x_target\": 1,\n\"y_target\": 18,\n\"dest_collision_layer\": 0,\n\"activation_collision_layers\": 0,\n\"destination_direction\": \"right\"\n}",
-     "tile_event\/10":"{\n\"type\": \"teleport\",\n\"x\": 23,\n\"y\": 9,\n\"target\": \"snowland\",\n\"activation_directions\": \"all\",\n\"x_target\": 1,\n\"y_target\": 18,\n\"dest_collision_layer\": 0,\n\"activation_collision_layers\": 0,\n\"destination_direction\": \"right\"\n}",
-     "tile_event\/11":"{\n\"type\": \"teleport\",\n\"x\": 22,\n\"y\": 45,\n\"target\": \"cave\",\n\"activation_directions\": \"all\",\n\"x_target\": 10.5,\n\"y_target\": 27,\n\"dest_collision_layer\": 0,\n\"activation_collision_layers\": 0,\n\"destination_direction\": \"up\"\n}",
-     "tile_event\/12":"{\n\"type\": \"teleport\",\n\"x\": 17,\n\"y\": 17,\n\"target\": \"cave\",\n\"activation_directions\": \"all\",\n\"x_target\": 88,\n\"y_target\": 14,\n\"dest_collision_layer\": 0,\n\"activation_collision_layers\": 0,\n\"destination_direction\": \"up\"\n}",
-     "tile_event\/13":"{\n\"type\": \"teleport\",\n\"x\": 29,\n\"y\": 41,\n\"target\": \"nyungwe\",\n\"activation_directions\": \"all\",\n\"x_target\": 10,\n\"y_target\": 20,\n\"dest_collision_layer\": 0,\n\"activation_collision_layers\": 0\n}",
-     "tile_event\/14":"{\n\"type\": \"teleport\",\n\"x\": 29,\n\"y\": 42,\n\"target\": \"nyungwe\",\n\"activation_directions\": \"all\",\n\"x_target\": 10,\n\"y_target\": 20,\n\"dest_collision_layer\": 0,\n\"activation_collision_layers\": 0\n}",
-     "tile_event\/15":"{\n\"type\": \"teleport\",\n\"x\": 28,\n\"y\": 41,\n\"target\": \"nyungwe\",\n\"activation_directions\": \"all\",\n\"x_target\": 10,\n\"y_target\": 20,\n\"dest_collision_layer\": 0,\n\"activation_collision_layers\": 0\n}",
-     "tile_event\/16":"{\n\"type\": \"teleport\",\n\"x\": 30,\n\"y\": 41,\n\"target\": \"nyungwe\",\n\"activation_directions\": \"all\",\n\"x_target\": 10,\n\"y_target\": 20,\n\"dest_collision_layer\": 0,\n\"activation_collision_layers\": 0\n}",
+     "npc\/01":"{\n    \"key_name\": \"towns\",\n    \"x\": 8,\n    \"y\": 23,\n    \"npc_type\": \"sprite\",\n    \"movement_type\": \"idle\",\n    \"animation\": \"town_00\"\n}",
+     "npc\/02":"{\n    \"key_name\": \"towns\",\n    \"x\": 11,\n    \"y\": 22,\n    \"npc_type\": \"sprite\",\n    \"movement_type\": \"idle\",\n    \"animation\": \"cave_00\",\n    \"ignore_world_map_scale\": false\n}",
+     "npc\/03":"{\n    \"key_name\": \"towns\",\n    \"x\": 11,\n    \"y\": 3,\n    \"npc_type\": \"sprite\",\n    \"movement_type\": \"idle\",\n    \"animation\": \"town_02\"\n}",
+     "npc\/04":"{\n    \"key_name\": \"towns\",\n    \"x\": 8,\n    \"y\": 8,\n    \"npc_type\": \"sprite\",\n    \"movement_type\": \"idle\",\n    \"animation\": \"cave_00\",\n    \"ignore_world_map_scale\": false\n}",
+     "npc\/05":"{\n    \"key_name\": \"towns\",\n    \"x\": 14,\n    \"y\": 20,\n    \"npc_type\": \"sprite\",\n    \"movement_type\": \"idle\",\n    \"animation\": \"forest_00\",\n    \"ignore_world_map_scale\": false\n}",
+     "real_tile_height":16,
+     "real_tile_width":16,
+     "tile_event\/01":"{\n\"type\": \"teleport\",\n\"x\": 8,\n\"y\": 23,\n\"target\": \"madra\",\n\"activation_directions\": \"all\",\n\"x_target\": 29,\n\"y_target\": 32,\n\"dest_collision_layer\": 1,\n\"activation_collision_layers\": 0\n}",
+     "tile_event\/05":"{\n\"type\": \"teleport\",\n\"x\": 8,\n\"y\": 8,\n\"target\": \"cave\",\n\"activation_directions\": \"all\",\n\"x_target\": 88,\n\"y_target\": 14,\n\"dest_collision_layer\": 0,\n\"activation_collision_layers\": 0,\n\"destination_direction\": \"up\"\n}",
+     "tile_event\/10":"{\n\"type\": \"teleport\",\n\"x\": 11,\n\"y\": 3,\n\"target\": \"snowland\",\n\"activation_directions\": \"all\",\n\"x_target\": 1,\n\"y_target\": 18,\n\"dest_collision_layer\": 0,\n\"activation_collision_layers\": 0,\n\"destination_direction\": \"right\"\n}",
+     "tile_event\/11":"{\n\"type\": \"teleport\",\n\"x\": 11,\n\"y\": 22,\n\"target\": \"cave\",\n\"activation_directions\": \"all\",\n\"x_target\": 10.5,\n\"y_target\": 27,\n\"dest_collision_layer\": 0,\n\"activation_collision_layers\": 0,\n\"destination_direction\": \"up\"\n}",
+     "tile_event\/13":"{\n\"type\": \"teleport\",\n\"x\": 14,\n\"y\": 20,\n\"target\": \"nyungwe\",\n\"activation_directions\": \"all\",\n\"x_target\": 10,\n\"y_target\": 20,\n\"dest_collision_layer\": 0,\n\"activation_collision_layers\": 0\n}",
      "world_map":true
     },
  "propertytypes":
@@ -662,26 +657,17 @@
      "npc\/03":"string",
      "npc\/04":"string",
      "npc\/05":"string",
+     "real_tile_height":"int",
+     "real_tile_width":"int",
      "tile_event\/01":"string",
-     "tile_event\/02":"string",
-     "tile_event\/03":"string",
-     "tile_event\/04":"string",
      "tile_event\/05":"string",
-     "tile_event\/06":"string",
-     "tile_event\/07":"string",
-     "tile_event\/08":"string",
-     "tile_event\/09":"string",
      "tile_event\/10":"string",
      "tile_event\/11":"string",
-     "tile_event\/12":"string",
      "tile_event\/13":"string",
-     "tile_event\/14":"string",
-     "tile_event\/15":"string",
-     "tile_event\/16":"string",
      "world_map":"bool"
     },
  "renderorder":"right-down",
- "tiledversion":"1.9.1",
+ "tiledversion":"1.9.2",
  "tileheight":8,
  "tilesets":[
         {
