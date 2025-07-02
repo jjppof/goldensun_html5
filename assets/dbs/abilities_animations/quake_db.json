@@ -1,0 +1,16 @@
+{
+    "key_name": "quake",
+    "cast_type": "psynergy_cast",
+    "wait_for_cast_animation": false,
+    "sprites": [{
+        "key_name": "quake",
+        "per_target": false,
+        "position": "between",
+        "initial_config": {
+            "anchor": {
+                "x": 0.5,
+                "y": 1.0
+            }
+        }
+    }]
+}
