@@ -572,6 +572,7 @@ export class NPC extends ControllableChar {
         }
         if (this._custom_move_index === this._custom_movements.length) {
             if (!this._loop_custom_move) {
+                this.movement_type = npc_movement_types.IDLE;
                 return;
             }
             this._custom_move_index = 0;
