@@ -1,0 +1,32 @@
+{
+    "alex_walked": false,
+    "alex_position": {
+        "x": 25,
+        "y": 12
+    },
+    "alex_direction": "down",
+    "alex_movement_type": "idle",
+    "festival_coat_chest": "closed",
+    "pound_cube_chest": "closed",
+    "frost_jewel_chest": "closed",
+    "lifting_gem_chest": "closed",
+    "aura_gloves_chest": "closed",
+    "psy_stone_madra_active": true,
+    "piers_active": true,
+    "herb_box_madra": true,
+    "summon_megaera_stone": true,
+    "ground_djinn": true,
+    "ember_djinn": true,
+    "chill_djinn": true,
+    "kite_djinn": true,
+    "door_bush": true,
+    "madra_door_teleport_enable": false,
+    "forest_pillar_position": {
+        "x": 24,
+        "y": 9
+    },
+    "forest_pillar_collision_layer": 0,
+    "forest_pillar_animation": "pillar",
+    "play_introduction": true,
+    "avimander_battle": true
+}

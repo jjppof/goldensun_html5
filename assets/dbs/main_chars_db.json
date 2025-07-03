@@ -1,0 +1,305 @@
+[
+    {
+        "key_name": "isaac",
+        "name": "Isaac",
+        "hp_curve": [38, 45, 53, 60, 68, 76, 83, 91, 98, 106, 114, 121, 129, 136, 144, 152, 159, 167, 174, 182, 190, 197, 205, 212, 220, 228, 235, 243, 250, 258, 266],
+        "pp_curve": [32, 35, 38, 40, 42, 45, 48, 50, 52, 55, 58, 60, 62, 65, 68, 70, 72, 75, 78, 80, 82, 85, 88, 90, 92, 95, 98, 100, 102, 105, 108],
+        "atk_curve": [14, 18, 21, 25, 29, 33, 37, 40, 44, 48, 52, 56, 59, 63, 67, 71, 75, 78, 82, 86, 90, 94, 97, 101, 105, 109, 113, 116, 120, 124, 128],
+        "def_curve": [9, 10, 12, 13, 15, 16, 18, 19, 21, 22, 24, 26, 27, 29, 30, 32, 33, 35, 36, 38, 40, 41, 43, 44, 46, 47, 49, 50, 52, 54, 55],
+        "agi_curve": [13, 17, 21, 24, 28, 32, 36, 40, 44, 47, 51, 55, 59, 63, 67, 71, 74, 78, 82, 86, 90, 94, 98, 101, 105, 109, 113, 117, 121, 124, 128],
+        "luk_curve": [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+        "exp_curve": [0, 24, 67, 144, 283, 519, 873, 1369, 2039, 2910, 3999, 5306, 6861, 8696, 10843, 13334, 16224, 19548, 23371, 27767, 32778, 38491, 45004, 52429, 60893, 70457, 81264, 93476, 107276, 122732],
+        "starting_level": 23,
+        "base_level": {
+            "venus": 5,
+            "mercury": 0,
+            "mars": 0,
+            "jupiter": 0
+        },
+        "base_power": {
+            "venus": 104,
+            "mercury": 78,
+            "mars": 76,
+            "jupiter": 77
+        },
+        "base_resist": {
+            "venus": 114,
+            "mercury": 88,
+            "mars": 86,
+            "jupiter": 87
+        },
+        "innate_abilities": ["move", "sand", "retreat"],
+        "in_party": true,
+        "battle_scale": 0.9,
+        "battle_shadow_key": "00",
+        "status_sprite_shift": 15,
+        "weapon_sprite_shift": 4,
+        "djinn": ["flint", "granite", "quartz", "vine", "sap"],
+        "items": [
+            {
+                "key_name": "gaia_blade",
+                "quantity": 1,
+                "equipped": true
+            },{
+                "key_name": "knights_shield",
+                "quantity": 1,
+                "equipped": true
+            },{
+                "key_name": "knights_helm",
+                "quantity": 1,
+                "equipped": true
+            },{
+                "key_name": "steel_armor",
+                "quantity": 1,
+                "equipped": true
+            },{
+                "key_name": "herb",
+                "quantity": 13
+            },{
+                "key_name": "elven_rapier",
+                "quantity": 1,
+                "equipped": false
+            },{
+                "key_name": "elven_rapier",
+                "quantity": 1,
+                "equipped": false
+            },{
+                "key_name": "ice_crystal",
+                "quantity": 1,
+                "equipped": true
+            },{
+                "key_name": "spirit_ring",
+                "quantity": 1,
+                "equipped": true,
+                "broken": true
+            },{
+                "key_name": "mysterious_card",
+                "quantity": 1,
+                "equipped": false
+            }
+        ],
+        "battle_animations_variations": {
+            "attack": "attack_jumping"
+        },
+        "weapons_sprites": {
+            "sword": {
+                "spritesheet": {
+                    "json": "assets/images/spritesheets/battle/weapons/isaac_sword.json",
+                    "image": "assets/images/spritesheets/battle/weapons/isaac_sword.png"
+                }
+            }
+        }
+    },{
+        "key_name": "garet",
+        "name": "Garet",
+        "hp_curve": [39, 47, 55, 63, 71, 79, 87, 95, 103, 111, 119, 127, 135, 143, 151, 159, 167, 175, 183, 191, 199, 207, 215, 223, 231, 239, 247, 255, 263, 271, 279],
+        "pp_curve": [30, 33, 35, 38, 40, 42, 45, 47, 50, 52, 54, 57, 59, 62, 64, 66, 69, 71, 74, 76, 78, 81, 83, 86, 88, 90, 93, 95, 98, 100, 102],
+        "atk_curve": [14, 17, 21, 25, 28, 32, 36, 39, 43, 47, 50, 54, 57, 61, 65, 68, 72, 76, 79, 83, 87, 90, 94, 98, 101, 105, 109, 112, 116, 120, 123],
+        "def_curve": [9, 10, 12, 14, 16, 17, 19, 21, 22, 24, 26, 27, 29, 31, 32, 34, 36, 38, 39, 41, 43, 44, 46, 48, 50, 51, 53, 55, 56, 58, 60],
+        "agi_curve": [11, 15, 18, 22, 25, 28, 32, 35, 39, 42, 45, 49, 52, 56, 59, 62, 66, 69, 73, 76, 79, 83, 86, 90, 93, 96, 100, 103, 107, 110, 113],
+        "luk_curve": [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
+        "exp_curve": [0,30,84,176,332,582,957,1482,2191,3113,4265,5647,7292,9233,11504,14138,17193,20706,24746,29271,34339,40015,46372,53492,61894,71808,83308,96418,111232,127824],
+        "starting_level": 22,
+        "base_level": {
+            "venus": 0,
+            "mercury": 0,
+            "mars": 5,
+            "jupiter": 0
+        },
+        "base_power": {
+            "venus": 76,
+            "mercury": 77,
+            "mars": 104,
+            "jupiter": 78
+        },
+        "base_resist": {
+            "venus": 86,
+            "mercury": 87,
+            "mars": 114,
+            "jupiter": 88
+        },
+        "innate_abilities": ["move"],
+        "in_party": true,
+        "battle_scale": 1.05,
+        "battle_shadow_key": "00",
+        "status_sprite_shift": 15,
+        "weapon_sprite_shift": 0,
+        "djinn": ["forge", "fever", "corona", "scorch"],
+        "items": [
+            {
+                "key_name": "great_axe",
+                "quantity": 1,
+                "equipped": true
+            },{
+                "key_name": "knights_shield",
+                "quantity": 1,
+                "equipped": true
+            },{
+                "key_name": "knights_helm",
+                "quantity": 1,
+                "equipped": true
+            },{
+                "key_name": "steel_armor",
+                "quantity": 1,
+                "equipped": true
+            },{
+                "key_name": "cookie",
+                "quantity": 2
+            },{
+                "key_name": "asuras_armor",
+                "quantity": 1
+            },{
+                "key_name": "cotton_shirt",
+                "quantity": 1
+            }
+        ],
+        "battle_animations_variations": {
+            "attack": "attack_jumping"
+        },
+        "weapons_sprites": {
+            "axe": {
+                "spritesheet": {
+                    "json": "assets/images/spritesheets/battle/weapons/garet_axe.json",
+                    "image": "assets/images/spritesheets/battle/weapons/garet_axe.png"
+                }
+            }
+        }
+    },{
+        "key_name": "sheba",
+        "name": "Sheba",
+        "hp_curve": [41, 48, 55, 62, 70, 77, 84, 91, 98, 105, 112, 119, 126, 134, 141, 148, 155, 162, 169, 176, 183, 190, 197, 204, 212, 219, 226, 233, 240, 247],
+        "pp_curve": [40, 43, 45, 48, 51, 54, 57, 60, 62, 65, 68, 71, 74, 77, 80, 82, 85, 88, 91, 94, 97, 100, 102, 105, 108, 111, 114, 117, 120, 122],
+        "atk_curve": [16, 19, 23, 26, 30, 33, 37, 40, 44, 47, 50, 54, 57, 61, 64, 68, 71, 75, 78, 81, 85, 88, 92, 95, 99, 102, 106, 109, 113, 116],
+        "def_curve": [9, 10, 12, 14, 15, 16, 18, 20, 21, 22, 24, 26, 27, 28, 30, 32, 33, 34, 36, 38, 39, 40, 42, 44, 45, 46, 48, 50, 51, 52],
+        "agi_curve": [16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 68, 72, 76, 80, 84, 88, 92, 96, 100, 104, 108, 112, 116, 120, 124, 128, 132],
+        "luk_curve": [5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5],
+        "exp_curve": [0,29,81,169,319,559,919,1423,2109,2987,4092,5473,7199,9270,11693,14504,17765,21515,25827,30656,36064,42121,48905,56639,65456,75507,86865,99700,114204,130448],
+        "starting_level": 22,
+        "base_level": {
+            "venus": 0,
+            "mercury": 0,
+            "mars": 0,
+            "jupiter": 5
+        },
+        "base_power": {
+            "venus": 77,
+            "mercury": 76,
+            "mars": 78,
+            "jupiter": 104
+        },
+        "base_resist": {
+            "venus": 87,
+            "mercury": 106,
+            "mars": 88,
+            "jupiter": 114
+        },
+        "innate_abilities": ["whirlwind", "reveal", "mind_read"],
+        "in_party": true,
+        "battle_scale": 0.85,
+        "battle_shadow_key": "00",
+        "status_sprite_shift": 15,
+        "weapon_sprite_shift": 4,
+        "djinn": ["gust", "breeze", "zephyr", "smog"],
+        "items": [
+            {
+                "key_name": "wooden_stick",
+                "quantity": 1,
+                "equipped": false
+            },{
+                "key_name": "cotton_shirt",
+                "quantity": 1,
+                "equipped": true
+            },{
+                "key_name": "leather_cap",
+                "quantity": 1,
+                "equipped": true
+            },{
+                "key_name": "staff_of_anubis",
+                "quantity": 1,
+                "equipped": true
+            }
+        ],
+        "battle_animations_variations": {
+            "attack": "attack_jumping"
+        },
+        "weapons_sprites": {
+            "staff": {
+                "spritesheet": {
+                    "json": "assets/images/spritesheets/battle/weapons/sheba_staff.json",
+                    "image": "assets/images/spritesheets/battle/weapons/sheba_staff.png"
+                }
+            }
+        }
+    },{
+        "key_name": "piers",
+        "name": "Piers",
+        "hp_curve": [30, 38, 46, 54, 62, 70, 78, 86, 94, 102, 111, 119, 127, 135, 143, 151, 159, 167, 175, 184, 192, 200, 208, 216, 224, 232, 240, 248, 256, 265, 273],
+        "pp_curve": [19, 22, 25, 28, 31, 34, 37, 41, 44, 47, 50, 53, 56, 60, 63, 66, 69, 72, 75, 79, 82, 85, 88, 91, 94, 97, 101, 104, 107, 110, 113],
+        "atk_curve": [11, 14, 18, 22, 25, 29, 33, 37, 40, 44, 48, 52, 55, 59, 63, 67, 70, 74, 78, 82, 85, 89, 93, 96, 100, 104, 108, 111, 115, 119, 123],
+        "def_curve": [7, 8, 10, 12, 13, 15, 17, 18, 20, 22, 23, 25, 27, 28, 30, 32, 33, 35, 37, 39, 40, 42, 44, 45, 47, 49, 50, 52, 54, 55, 57],
+        "agi_curve": [6, 9, 13, 17, 21, 24, 28, 32, 36, 40, 43, 47, 51, 55, 59, 62, 66, 70, 74, 78, 81, 85, 89, 93, 96, 100, 104, 108, 112, 115, 119],
+        "luk_curve": [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+        "exp_curve": [0,33,92,198,368,640,1051,1639,2414,3432,4704,6294,8282,10668,13531,16909,20827,25333,30425,36128,42401,49301,56891,65240,74424,84526,95941,108840,123416,139741],
+        "starting_level": 22,
+        "base_level": {
+            "venus": 0,
+            "mercury": 5,
+            "mars": 0,
+            "jupiter": 0
+        },
+        "base_power": {
+            "venus": 78,
+            "mercury": 104,
+            "mars": 77,
+            "jupiter": 76
+        },
+        "base_resist": {
+            "venus": 88,
+            "mercury": 114,
+            "mars": 87,
+            "jupiter": 86
+        },
+        "innate_abilities": ["frost", "douse"],
+        "in_party": false,
+        "battle_scale": 0.95,
+        "battle_shadow_key": "00",
+        "status_sprite_shift": 15,
+        "weapon_sprite_shift": 0,
+        "special_class_type": 14,
+        "djinn": ["fog", "sour", "spring", "shade"],
+        "items": [
+            {
+                "key_name": "battle_mace",
+                "quantity": 1,
+                "equipped": true
+            },{
+                "key_name": "thunder_crown",
+                "quantity": 1,
+                "equipped": false
+            },{
+                "key_name": "antidote",
+                "quantity": 3,
+                "equipped": false
+            },{
+                "key_name": "elixir",
+                "quantity": 3,
+                "equipped": false
+            },{
+                "key_name": "lash_pebble",
+                "quantity": 1,
+                "equipped": false
+            }
+        ],
+        "battle_animations_variations": {
+            "attack": "attack_jumping"
+        },
+        "weapons_sprites": {
+            "mace": {
+                "spritesheet": {
+                    "json": "assets/images/spritesheets/battle/weapons/piers_mace.json",
+                    "image": "assets/images/spritesheets/battle/weapons/piers_mace.png"
+                }
+            }
+        }
+    }
+]
