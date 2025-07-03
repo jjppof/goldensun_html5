@@ -141,6 +141,7 @@ enum sprite_types {
     CIRCLE = "circle",
     RECTANGLE = "rectangle",
     RING = "ring",
+    BACKGROUND_COPY = "background_copy",
 }
 
 type GeometryInfo = {
@@ -150,6 +151,13 @@ type GeometryInfo = {
     height: number;
     thickness: number;
     keep_core_white: boolean;
+};
+
+type BackgrounCopyInfo = {
+    width: number;
+    height: number;
+    x: number;
+    y: number;
 };
 
 type InitialConfig = {
@@ -179,6 +187,7 @@ type SpriteKey = {
     type: sprite_types;
     follow_sprite: string | number;
     geometry_info: GeometryInfo;
+    background_copy_info: BackgrounCopyInfo;
     initial_config: InitialConfig;
 };
 
@@ -551,6 +560,34 @@ export class BattleAnimation {
                                 psy_sprite.beginFill(color, 1);
                                 psy_sprite.drawCircle(0, 0, sprite_info.geometry_info.radius << 1);
                                 psy_sprite.endFill();
+                                break;
+                            case sprite_types.BACKGROUND_COPY:
+                                const bmd = this.game.add.bitmapData(
+                                    sprite_info.background_copy_info.width,
+                                    sprite_info.background_copy_info.height,
+                                    undefined,
+                                    undefined,
+                                    true
+                                );
+                                bmd.smoothed = false;
+                                psy_sprite = this.game.add.sprite(this.init_pos.x, this.init_pos.y, bmd);
+                                const pos = this.get_sprite_xy_pos(
+                                    sprite_info.background_copy_info.x,
+                                    sprite_info.background_copy_info.y,
+                                    0,
+                                    0
+                                );
+                                for (let bg of this.background_sprites) {
+                                    const pos_x =
+                                        -pos.x + (sprite_info.initial_config.anchor?.x ?? 1) * bmd.width + (bg.x | 0);
+                                    const pos_y =
+                                        -pos.y + (sprite_info.initial_config.anchor?.y ?? 1) * bmd.height + (bg.y | 0);
+                                    bmd.writeOnCanvas(bg, pos_x, pos_y, bg.scale.x, bg.scale.y);
+                                }
+                                bmd.update();
+                                psy_sprite.events.onDestroy.addOnce(() => {
+                                    bmd.destroy();
+                                });
                                 break;
                         }
                         if (psy_sprite instanceof Phaser.Graphics) {

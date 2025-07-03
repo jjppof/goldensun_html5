@@ -7,10 +7,46 @@
         "per_target": false,
         "position": "between",
         "initial_config": {
+            "x": "targets",
+            "y": 0,
             "anchor": {
                 "x": 0.5,
                 "y": 1.0
             }
         }
+    },{
+        "key_name": "quake",
+        "type": "background_copy",
+        "per_target": false,
+        "position": "behind",
+        "background_copy_info": {
+            "width": 40,
+            "height": 16,
+            "x": "targets",
+            "y": "targets"
+        },
+        "initial_config": {
+            "x": "targets",
+            "y": "targets",
+            "anchor": {
+                "x": 0.5,
+                "y": 1.0
+            }
+        }
+    }],
+    "alpha_sequence": [{
+        "start_delay": 200,
+        "to": 0.75,
+        "is_absolute": true,
+        "tween": "Linear.None",
+        "sprite_index": "background",
+        "duration": 400
+    },{
+        "start_delay": 3600,
+        "to": 1.0,
+        "is_absolute": true,
+        "tween": "Linear.None",
+        "sprite_index": "background",
+        "duration": 200
     }]
 }
