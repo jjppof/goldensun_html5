@@ -6,6 +6,12 @@ body {
 body.electron {
     overflow: hidden;
 }
+label {
+    font-family: monospace;
+}
+input[type='checkbox'] {
+    vertical-align: middle;
+}
 .warning-banner {
     background-color: #ec0040;
     text-align: center;

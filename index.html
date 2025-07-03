@@ -62,7 +62,11 @@ Join our <b><a href="https://discord.gg/fYFSxPMjmS">discord</a></b> server, feel
             <input type="text" id="animation_tester_enemy_party" placeholder="enemy party key name" /> <br>
             <button onclick="GoldenSun.debug.start_battle_animation_tester()">Start animation tester</button> <br><br>
             <input type="text" id="animation_tester_ability_keyname" placeholder="ability key name"/> <br>
-            <button onclick="GoldenSun.debug.fire_battle_animation()">Fire animation</button> <br><br>
+            <button onclick="GoldenSun.debug.fire_battle_animation()">Fire animation</button> <br>
+            <div>
+                <input type="checkbox" id="animation_tester_all_enemies" name="animation_tester_all_enemies" />
+                <label for="animation_tester_all_enemies">Hit all enemies</label>
+            </div> <br><br>
             <textarea id="battle_anim_recipe"></textarea>
         </div>
         <div id="key_debug">

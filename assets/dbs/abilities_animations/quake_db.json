@@ -5,10 +5,11 @@
     "sprites": [{
         "key_name": "quake",
         "per_target": false,
-        "position": "between",
+        "position": "behind",
+        "count": 3,
         "initial_config": {
             "x": "targets",
-            "y": 0,
+            "y": "targets",
             "anchor": {
                 "x": 0.5,
                 "y": 1.0
@@ -22,19 +23,154 @@
         "background_copy_info": {
             "width": 40,
             "height": 16,
-            "x": "targets",
-            "y": "targets"
+            "x": 34,
+            "y": 128
         },
         "initial_config": {
-            "x": "targets",
-            "y": "targets",
+            "x": 34,
+            "y": 128,
+            "anchor": {
+                "x": 0.5,
+                "y": 1.0
+            }
+        }
+    },{
+        "key_name": "quake",
+        "type": "background_copy",
+        "per_target": false,
+        "position": "behind",
+        "background_copy_info": {
+            "width": 40,
+            "height": 16,
+            "x": 74,
+            "y": 128
+        },
+        "initial_config": {
+            "x": 74,
+            "y": 128,
+            "anchor": {
+                "x": 0.5,
+                "y": 1.0
+            }
+        }
+    },{
+        "key_name": "quake",
+        "type": "background_copy",
+        "per_target": false,
+        "position": "behind",
+        "background_copy_info": {
+            "width": 40,
+            "height": 16,
+            "x": 114,
+            "y": 128
+        },
+        "initial_config": {
+            "x": 114,
+            "y": 128,
             "anchor": {
                 "x": 0.5,
                 "y": 1.0
             }
         }
     }],
+    "x_sequence": [{
+        "to": [34, 74, 114],
+        "start_delay": 0,
+        "is_absolute": true,
+        "sprite_index": [0, 1, 2]
+    }],
+    "y_sequence": [{
+        "to": -46,
+        "start_delay": [0, 70, 140],
+        "is_absolute": false,
+        "yoyo": true,
+        "tween": "Quadratic.InOut",
+        "duration": 500,
+        "sprite_index": [3, 4, 5]
+    },{
+        "to": -116,
+        "start_delay": {
+            "starting_value": 280,
+            "cumulator": -70
+        },
+        "is_absolute": false,
+        "tween": "Quadratic.InOut",
+        "duration": 450,
+        "sprite_index": "targets"
+    },{
+        "to": 116,
+        "start_delay": {
+            "starting_value": 730,
+            "cumulator": -70
+        },
+        "is_absolute": false,
+        "tween": "Quadratic.In",
+        "duration": 300,
+        "sprite_index": "targets"
+    }],
+    "texture_displacement_sequence": [{
+        "sprite_index": [0, 1, 2],
+        "start_delay": 0,
+        "repeat_texture": false,
+        "shift": {
+            "y": 96
+        }
+    },{
+        "sprite_index": [0, 1, 2],
+        "start_delay": [0, 70, 140],
+        "duration": 500,
+        "repeat_texture": false,
+        "yoyo": true,
+        "tween": "Quadratic.InOut",
+        "shift": {
+            "y": 50
+        }
+    }],
+    "play_sequence": [{
+        "animation_key": "damage",
+        "start_delay": {
+            "starting_value": 950,
+            "cumulator": -70
+        },
+        "sprite_index": "targets",
+        "wait": false
+    }],
+    "blink_sequence": [{
+        "sprite_index": "targets",
+        "start_delay": {
+            "starting_value": 1000,
+            "cumulator": -70
+        },
+        "count": 1,
+        "interval": 50
+    }],
+    "shake_sequence": [{
+        "sprite_index": "background",
+        "start_delay": 0,
+        "interval": 50,
+        "shake_count": 12,
+        "intensity": 1,
+        "direction": "y"
+    }],
     "alpha_sequence": [{
+        "start_delay": {
+            "starting_value": 120,
+            "cumulator": -70
+        },
+        "affect_only_shadow": true,
+        "to": 0,
+        "is_absolute": true,
+        "sprite_index": "targets"
+    },{
+        "start_delay": {
+            "starting_value": 1000,
+            "cumulator": -70
+        },
+        "affect_only_shadow": true,
+        "to": 1,
+        "is_absolute": true,
+        "sprite_index": "targets"
+    },{
         "start_delay": 200,
         "to": 0.75,
         "is_absolute": true,
@@ -42,7 +178,7 @@
         "sprite_index": "background",
         "duration": 400
     },{
-        "start_delay": 3600,
+        "start_delay": 1500,
         "to": 1.0,
         "is_absolute": true,
         "tween": "Linear.None",

@@ -113,12 +113,12 @@ export class BattleAnimationTester {
         this.initialized = true;
     }
 
-    async fire_animation(ability_key: string) {
+    async fire_animation(ability_key: string, hit_all_enemies: boolean = false) {
         if (this.playing_animation) {
             return;
         }
         this.playing_animation = true;
-        await this.battle_phase_round_start(ability_key);
+        await this.battle_phase_round_start(ability_key, hit_all_enemies);
         await this.battle_phase_combat();
         this.playing_animation = false;
     }
@@ -219,25 +219,23 @@ export class BattleAnimationTester {
         });
     }
 
-    async battle_phase_round_start(ability_key: string) {
+    async battle_phase_round_start(ability_key: string, hit_all_enemies: boolean = false) {
         const this_char = this.data.info.party_data.members[0];
 
-        const enem_index = this.enemies_info.length - 1;
+        const enemies = hit_all_enemies ? this.enemies_info : [this.enemies_info[this.enemies_info.length - 1]];
         this.action = {
             key_name: ability_key,
             caster: this_char,
             caster_battle_key: this_char.key_name,
-            targets: [
-                {
-                    magnitude: 1,
-                    target: {
-                        sprite_key: this.enemies_info[enem_index].sprite_key,
-                        instance: this.enemies_info[enem_index].instance,
-                        battle_key: this.enemies_info[enem_index].battle_key,
-                        sprite: this.enemies_info[enem_index].sprite,
-                    },
+            targets: enemies.map(enem => ({
+                magnitude: 1,
+                target: {
+                    sprite_key: enem.sprite_key,
+                    instance: enem.instance,
+                    battle_key: enem.battle_key,
+                    sprite: enem.sprite,
                 },
-            ],
+            })),
         };
 
         const ability = this.data.info.abilities_list[this.action.key_name];

@@ -192,8 +192,9 @@ export class Debug {
 
     fire_battle_animation() {
         const ability_keyname = (document.getElementById("animation_tester_ability_keyname") as HTMLInputElement).value;
+        const hit_all_enemies = (document.getElementById("animation_tester_all_enemies") as HTMLInputElement).checked;
         if (ability_keyname && this.battle_anim_tester) {
-            this.battle_anim_tester.fire_animation(ability_keyname);
+            this.battle_anim_tester.fire_animation(ability_keyname, hit_all_enemies);
         }
     }
 

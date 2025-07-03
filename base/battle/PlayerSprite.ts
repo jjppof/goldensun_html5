@@ -60,7 +60,7 @@ export class PlayerSprite {
     private sprite_base: SpriteBase;
     private _player_info: PlayerInfo;
     private char_sprite: Phaser.Sprite;
-    private shadow_sprite: Phaser.Sprite;
+    private _shadow_sprite: Phaser.Sprite;
     private status_sprite: Phaser.Sprite;
     private weapon_sprite: Phaser.Sprite;
     private parent_group: Phaser.Group;
@@ -256,13 +256,16 @@ export class PlayerSprite {
     get group() {
         return this._group;
     }
+    get shadow_sprite() {
+        return this._shadow_sprite;
+    }
 
     initialize_player() {
         this._active = true;
 
-        this.shadow_sprite = this.group.create(0, 0, "battle_shadows", this.player_instance.battle_shadow_key);
-        this.shadow_sprite.anchor.setTo(0.5, 1);
-        this.shadow_sprite.scale.setTo(this.player_instance.battle_scale, this.player_instance.battle_scale);
+        this._shadow_sprite = this.group.create(0, 0, "battle_shadows", this.player_instance.battle_shadow_key);
+        this._shadow_sprite.anchor.setTo(0.5, 1);
+        this._shadow_sprite.scale.setTo(this.player_instance.battle_scale, this.player_instance.battle_scale);
 
         this.char_sprite = this.group.create(0, 0, this.player_info.sprite_key);
         this.char_sprite.anchor.setTo(0.5, 1);
@@ -375,7 +378,7 @@ export class PlayerSprite {
         const img: Phaser.Sprite = this.group.create(0, 0, bmd);
         img.anchor.setTo(0.5, 1.0);
 
-        const sprites = [this.shadow_sprite, this.char_sprite];
+        const sprites = [this._shadow_sprite, this.char_sprite];
         for (let i = 0; i < sprites.length; ++i) {
             const sprite = sprites[i] as Phaser.Sprite;
             const x_pos = ((bmd_width - sprite.texture.crop.width * sprite.scale.x) * sprite.anchor.x) | 0;
