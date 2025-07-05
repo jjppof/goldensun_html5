@@ -157,13 +157,13 @@ type GeometryInfo = {
 type BackgrounCopyInfo = {
     width: number;
     height: number;
-    x: number;
-    y: number;
+    x: number | sprite_types;
+    y: number | sprite_types;
 };
 
 type InitialConfig = {
-    x: number | string;
-    y: number | string;
+    x: number | sprite_types;
+    y: number | sprite_types;
     alpha: number;
     scale: {
         x: number;
@@ -1572,7 +1572,7 @@ export class BattleAnimation {
                 this.promises.push(this_promise);
 
                 const apply_shake = async () => {
-                    for (let i = 0; i < shake_seq.shake_count ?? 1; ++i) {
+                    for (let i = 0; i < shake_seq.shake_count ? shake_seq.shake_count : 1; ++i) {
                         let resolve_f;
                         const this_prom = new Promise(resolve => (resolve_f = resolve));
                         const direction = shake_seq.direction ?? "y";
@@ -1580,7 +1580,7 @@ export class BattleAnimation {
                             .tween(sprite)
                             .to(
                                 {
-                                    [direction]: sprite[direction] + shake_seq.intensity ?? 2,
+                                    [direction]: sprite[direction] + shake_seq.intensity ? shake_seq.intensity : 2,
                                 },
                                 shake_seq.interval ?? 70,
                                 Phaser.Easing.Linear.None,
