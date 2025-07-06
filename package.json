@@ -28,6 +28,7 @@
     "build": "npx webpack --config webpack.config.dev.js",
     "build_prod": "npx webpack --env.production --config webpack.config.prod.js",
     "deploy": "npm run build_prod && node scripts/generate_deploy.js",
+    "deploy-new-node": "set NODE_OPTIONS=--openssl-legacy-provider && npm run build_prod && node scripts/generate_deploy.js",
     "format-check": "npx prettier --check \"base/**/*.ts\"",
     "format": "npx prettier --write \"base/**/*.ts\"",
     "docs": "node scripts/generate_docs.js",
