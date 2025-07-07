@@ -1,0 +1,20 @@
+{"frames": {
+
+"quake/000":
+{
+	"frame": {"x":1,"y":1,"w":40,"h":96},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":40,"h":96},
+	"sourceSize": {"w":40,"h":96}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "quake.png",
+	"format": "RGBA8888",
+	"size": {"w":42,"h":98},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:0c215442f23f0ca47bb4884a82bcd0d2:39bba328acd93a38f88b152739c939d1:c891ebe2c11e2c47c03b136376664a66$"
+}
+}

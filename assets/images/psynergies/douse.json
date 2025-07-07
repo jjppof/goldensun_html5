@@ -1,0 +1,36 @@
+{"frames": {
+
+"douse/cloud/00":
+{
+	"frame": {"x":35,"y":1,"w":32,"h":22},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":6,"w":32,"h":22},
+	"sourceSize": {"w":32,"h":32}
+},
+"douse/cloud/01":
+{
+	"frame": {"x":69,"y":1,"w":31,"h":22},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":6,"w":31,"h":22},
+	"sourceSize": {"w":32,"h":32}
+},
+"douse/cloud/02":
+{
+	"frame": {"x":1,"y":1,"w":32,"h":23},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":6,"w":32,"h":23},
+	"sourceSize": {"w":32,"h":32}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "douse.png",
+	"format": "RGBA8888",
+	"size": {"w":101,"h":25},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:b8d3e5e2efc3bdf2cbfbab9aaf83d7d1:1732d210e96cacb0804a523b3d609d59:ebdf02de901513c567f75c8643692f36$"
+}
+}
