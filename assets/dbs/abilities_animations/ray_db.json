@@ -1,0 +1,16 @@
+{
+    "key_name": "ray",
+    "lighting_sequence": [{
+        "start_delay": 100,
+        "from": {
+            "pos": {"x": 60, "y": 17},
+            "range_delta": {"x": 10}
+        },
+        "to": {
+            "pos": {"x": 60, "y": 137},
+            "range_delta": {"x": 10}
+        },
+        "count": 1,
+        "duration": 2000
+    }]
+}

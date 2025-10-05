@@ -1,0 +1,227 @@
+[
+    {
+        "key_name": "footprints",
+        "initial_animation": "double",
+        "actions": {
+            "footprints": {
+                "frame_rate": 10,
+                "animations": ["single", "double"],
+                "frames_count": 3,
+                "loop": false,
+                "spritesheet": {
+                    "image": "assets/images/misc/footprints.png",
+                    "json": "assets/images/misc/footprints.json"
+                }
+            }
+        }
+    },
+    {
+        "key_name": "move_hand",
+        "initial_animation": "down",
+        "actions": {
+            "move_hand": {
+                "frame_rate": 10,
+                "animations": [
+                    "down",
+                    "up",
+                    "left",
+                    "right"
+                ],
+                "frames_count": 2,
+                "loop": true,
+                "spritesheet": {
+                    "image": "assets/images/psynergies/move_psynergy_hand.png",
+                    "json": "assets/images/psynergies/move_psynergy_hand.json"
+                }
+            }
+        }
+    },
+    {
+        "key_name": "lash_hand",
+        "initial_animation": "open",
+        "actions": {
+            "lash_hand": {
+                "frame_rate": 1,
+                "animations": [
+                    "open",
+                    "down",
+                    "closed",
+                    "tie"
+                ],
+                "frames_count": 1,
+                "loop": false,
+                "spritesheet": {
+                    "image": "assets/images/psynergies/lash_psynergy_hand.png",
+                    "json": "assets/images/psynergies/lash_psynergy_hand.json"
+                }
+            }
+        }
+    },
+    {
+        "key_name": "dialog_crystal",
+        "initial_animation": "rotate",
+        "actions": {
+        "dialog_crystal": {
+                "frame_rate": 12,
+                "animations": ["rotate"],
+                "frames_count": 7,
+                "loop": true,
+                "spritesheet": {
+                    "image": "assets/images/misc/dialog_crystal.png",
+                    "json": "assets/images/misc/dialog_crystal.json"
+                }
+            }
+        }
+    },
+    {
+        "key_name": "dust",
+        "initial_animation": "spread",
+        "actions": {
+            "dust": {
+                "frame_rate": 12,
+                "animations": ["spread"],
+                "frames_count": 8,
+                "loop": false,
+                "spritesheet": {
+                    "image": "assets/images/misc/dust.png",
+                    "json": "assets/images/misc/dust.json"
+                }
+            }
+        }
+    },
+    {
+        "key_name": "sand",
+        "initial_animation": "trail",
+        "actions": {
+            "sand": {
+                "frame_rate": 3,
+                "animations": ["trail"],
+                "frames_count": 3,
+                "loop": false,
+                "spritesheet": {
+                    "image": "assets/images/psynergies/sand_trail.png",
+                    "json": "assets/images/psynergies/sand_trail.json"
+                }
+            }
+        }
+    },
+    {
+        "key_name": "whirlwind",
+        "initial_animation": "blow",
+        "actions": {
+            "whirlwind": {
+                "frame_rate": 18,
+                "animations": ["blow", "end"],
+                "frames_count": [5, 3],
+                "loop": [true, false],
+                "spritesheet": {
+                    "image": "assets/images/psynergies/whirlwind.png",
+                    "json": "assets/images/psynergies/whirlwind.json"
+                }
+            }
+        }
+    },
+    {
+        "key_name": "battle_status_sprites",
+        "initial_animation": "death_curse_0",
+        "actions": {
+            "battle_status_sprites": {
+                "frame_rate": 10,
+                "animations": [
+                    "death_curse_0",
+                    "death_curse_1",
+                    "death_curse_2",
+                    "death_curse_3",
+                    "death_curse_4",
+                    "death_curse_5",
+                    "death_curse_6",
+                    "delusion",
+                    "haunt",
+                    "poison",
+                    "seal",
+                    "sleep",
+                    "stun",
+                    "venom"
+                ],
+                "frames_count": [2,2,2,2,2,2,2,4,5,4,4,4,4,4],
+                "loop": true,
+                "spritesheet": {
+                    "image": "assets/images/spritesheets/battle/battle_status_sprites.png",
+                    "json": "assets/images/spritesheets/battle/battle_status_sprites.json"
+                }
+            }
+        }
+    },
+    {
+        "key_name": "pound_hand",
+        "initial_animation": "down",
+        "actions": {
+            "pound_hand": {
+                "frame_rate": 10,
+                "animations": [
+                    "down",
+                    "up",
+                    "left",
+                    "right"
+                ],
+                "frames_count": 2,
+                "loop": false,
+                "spritesheet": {
+                    "image": "assets/images/psynergies/pound_psynergy_hand.png",
+                    "json": "assets/images/psynergies/pound_psynergy_hand.json"
+                }
+            }
+        }
+    },
+    {
+        "key_name": "psynergy_particle",
+        "initial_animation": "vanish",
+        "actions": {
+            "psynergy_particle": {
+                "frame_rate": [4, 15],
+                "animations": [
+                    "vanish",
+                    "hidden_item"
+                ],
+                "frames_count": [9, 3],
+                "loop": [true, true],
+                "spritesheet": {
+                    "image": "assets/images/interactable_objects/psynergy_particle.png",
+                    "json": "assets/images/interactable_objects/psynergy_particle.json"
+                }
+            }
+        }
+    },
+    {
+        "key_name": "douse",
+        "initial_animation": "cloud",
+        "actions": {
+            "douse": {
+                "frame_rate": 5,
+                "animations": ["cloud"],
+                "frames_count": 3,
+                "loop": true,
+                "spritesheet": {
+                    "image": "assets/images/psynergies/douse.png",
+                    "json": "assets/images/psynergies/douse.json"
+                }
+            }
+        }
+    },
+    {
+        "key_name": "sweat_drops",
+        "initial_animation": "splash",
+        "actions": {
+            "sweat_drops": {
+                "frame_rate": 17,
+                "animations": ["splash"],
+                "frames_count": 5,
+                "loop": false,
+                "spritesheet": {
+                    "image": "assets/images/misc/sweat_drops.png",
+                    "json": "assets/images/misc/sweat_drops.json"
+                }
+            }
+        }
+    }
+]

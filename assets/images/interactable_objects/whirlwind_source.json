@@ -1,0 +1,36 @@
+{"frames": {
+
+"whirlwind_source/down/00":
+{
+	"frame": {"x":1,"y":1,"w":18,"h":32},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":7,"y":0,"w":18,"h":32},
+	"sourceSize": {"w":32,"h":32}
+},
+"whirlwind_source/left/00":
+{
+	"frame": {"x":1,"y":35,"w":18,"h":32},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":7,"y":0,"w":18,"h":32},
+	"sourceSize": {"w":32,"h":32}
+},
+"whirlwind_source/right/00":
+{
+	"frame": {"x":1,"y":69,"w":18,"h":32},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":7,"y":0,"w":18,"h":32},
+	"sourceSize": {"w":32,"h":32}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "whirlwind_source.png",
+	"format": "RGBA8888",
+	"size": {"w":20,"h":102},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:678addb2c0bc8e04bef7f4a5c08e2e9a:6d7c849f15c547c321bf45e7fbd0ed7a:9fe8a438923bc41c55feea2691152f22$"
+}
+}

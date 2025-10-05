@@ -1,0 +1,172 @@
+{"frames": {
+
+"battle/attack_back/00":
+{
+	"frame": {"x":1,"y":1,"w":55,"h":58},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":4,"y":6,"w":55,"h":58},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/attack_back/01":
+{
+	"frame": {"x":58,"y":1,"w":53,"h":54},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":10,"y":8,"w":53,"h":54},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/attack_front/00":
+{
+	"frame": {"x":1,"y":61,"w":54,"h":53},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":2,"y":7,"w":54,"h":53},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/attack_front/01":
+{
+	"frame": {"x":113,"y":1,"w":52,"h":58},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":9,"y":6,"w":52,"h":58},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/attack_init_back/00":
+{
+	"frame": {"x":1,"y":1,"w":55,"h":58},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":4,"y":6,"w":55,"h":58},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/attack_init_front/00":
+{
+	"frame": {"x":1,"y":61,"w":54,"h":53},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":2,"y":7,"w":54,"h":53},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/cast_back/00":
+{
+	"frame": {"x":167,"y":1,"w":42,"h":44},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":12,"y":19,"w":42,"h":44},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/cast_front/00":
+{
+	"frame": {"x":155,"y":61,"w":43,"h":47},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":10,"y":17,"w":43,"h":47},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/cast_init_back/00":
+{
+	"frame": {"x":167,"y":1,"w":42,"h":44},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":12,"y":19,"w":42,"h":44},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/cast_init_front/00":
+{
+	"frame": {"x":155,"y":61,"w":43,"h":47},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":10,"y":17,"w":43,"h":47},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/damage_back/00":
+{
+	"frame": {"x":58,"y":57,"w":47,"h":50},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":9,"y":14,"w":47,"h":50},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/damage_front/00":
+{
+	"frame": {"x":107,"y":61,"w":46,"h":49},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":8,"y":15,"w":46,"h":49},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/idle_back/00":
+{
+	"frame": {"x":167,"y":1,"w":42,"h":44},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":12,"y":19,"w":42,"h":44},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/idle_back/01":
+{
+	"frame": {"x":103,"y":112,"w":43,"h":42},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":11,"y":21,"w":43,"h":42},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/idle_back/02":
+{
+	"frame": {"x":1,"y":116,"w":45,"h":40},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":11,"y":23,"w":45,"h":40},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/idle_back/03":
+{
+	"frame": {"x":103,"y":112,"w":43,"h":42},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":11,"y":21,"w":43,"h":42},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/idle_front/00":
+{
+	"frame": {"x":155,"y":61,"w":43,"h":47},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":10,"y":17,"w":43,"h":47},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/idle_front/01":
+{
+	"frame": {"x":57,"y":109,"w":44,"h":46},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":9,"y":18,"w":44,"h":46},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/idle_front/02":
+{
+	"frame": {"x":155,"y":110,"w":45,"h":43},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":9,"y":21,"w":45,"h":43},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/idle_front/03":
+{
+	"frame": {"x":57,"y":109,"w":44,"h":46},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":9,"y":18,"w":44,"h":46},
+	"sourceSize": {"w":64,"h":64}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "wild_wolf_battle.png",
+	"format": "RGBA8888",
+	"size": {"w":210,"h":157},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:fbbea74cec8398fa9038feb5a136ed6c:b758a58740f97b7abf77faa27c81404b:402ecd2474a4175fbf9573f3eba1aab9$"
+}
+}
