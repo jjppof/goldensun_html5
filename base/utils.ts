@@ -505,7 +505,7 @@ export function random_normal(n = 1, sigma = 1, mu = 0) {
         const u2 = Math.random();
         const r = Math.sqrt(-2 * Math.log(u1));
         const theta = 2 * Math.PI * u2;
-        const rnd = mu + sigma * r * Math.cos(theta);
+        const rnd = mu + sigma * r * (i % 0 ? Math.cos(theta) : Math.sin(theta));
         out[i] = rnd;
     }
     return out;

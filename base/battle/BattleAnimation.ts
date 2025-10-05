@@ -51,6 +51,7 @@ import {
     random_normal,
     get_distance,
     cumsum,
+    promised_wait,
 } from "../utils";
 import {BattleStage, DEFAULT_POS_ANGLE} from "./BattleStage";
 import * as _ from "lodash";
@@ -305,13 +306,16 @@ export class BattleAnimation {
         };
         roughness: number;
         count: number;
+        interval_time: number | number[];
         render_position: battle_positions;
         ignore_if_dodge?: boolean;
+        trail: boolean;
+        trail_factor: number;
         duration: number;
     }[] = [];
     public particles_sequence: ParticlesInfo;
     public running: boolean;
-    public sprites: (Phaser.Sprite | Phaser.Graphics | Phaser.TileSprite | PlayerSprite)[];
+    public sprites: (Phaser.Sprite | Phaser.Graphics | Phaser.TileSprite | PlayerSprite | Phaser.Image)[];
     public sprites_prev_properties: {
         [key: string]: {
             [property: string]: any;
@@ -1349,13 +1353,25 @@ export class BattleAnimation {
             const thickness_base_value = lighting_seq.thickness?.base_value ?? 1;
             const thickness_range_delta = lighting_seq.thickness?.range_delta ?? 0;
             const count = lighting_seq.count ?? 1;
-            for (let i = 0; i < count; ++i) {
+            const trail = lighting_seq.trail ?? true;
+            const trail_factor = lighting_seq.trail_factor ?? 0.5;
+            const duration = _.clamp(lighting_seq.duration, 30, Infinity);
+            for (let j = 0; j < count; ++j) {
                 let resolve_function;
                 const this_promise = new Promise(resolve => {
                     resolve_function = resolve;
                 });
                 this.promises.push(this_promise);
+                let interval_time = 0;
+                if (lighting_seq.count > 1 && lighting_seq.interval_time) {
+                    interval_time = Array.isArray(lighting_seq.interval_time)
+                        ? lighting_seq.interval_time[j]
+                        : lighting_seq.interval_time * j;
+                }
                 const cast_lighting = async () => {
+                    if (interval_time > 30) {
+                        await promised_wait(this.game, interval_time);
+                    }
                     const calcualted_from = {
                         x: from.x + _.random(-pos_range_delta.x, pos_range_delta.x, true),
                         y: from.y + _.random(-pos_range_delta.y, pos_range_delta.y, true),
@@ -1375,17 +1391,33 @@ export class BattleAnimation {
                     const dist = get_distance(calcualted_from.x, calcualted_to.x, calcualted_from.y, calcualted_to.y);
                     const data_size = dist | 0;
 
-                    const group = this.ability_sprites_groups[lighting_seq.render_position ?? battle_positions.BETWEEN];
+                    const group_pos = lighting_seq.render_position ?? battle_positions.BETWEEN;
+                    const group = this.ability_sprites_groups[group_pos];
                     const img = this.game.add.image(0, 0, undefined, undefined, group);
                     const bmp = this.game.add.bitmapData(numbers.GAME_WIDTH, numbers.GAME_HEIGHT);
                     bmp.smoothed = false;
                     bmp.add(img);
                     bmp.clear();
+                    this.sprites.push(img);
+
+                    if (trail) {
+                        const trail_bitmap_data = this.game.make.bitmapData(numbers.GAME_WIDTH, numbers.GAME_HEIGHT);
+                        trail_bitmap_data.smoothed = false;
+                        trail_bitmap_data.fill(0, 0, 0, 1);
+                        trail_bitmap_data.trail_factor = trail_factor;
+                        const trail_image = this.game.make.image(0, 0, trail_bitmap_data);
+                        trail_image.blendMode = Phaser.blendModes.SCREEN;
+                        this.trails_bmps.push(trail_bitmap_data);
+                        this.trails_objs.push(trail_image);
+                        this.ability_sprites_groups[group_pos].addChild(trail_image);
+                        img.data.trail_image = trail_image;
+                        img.data.trail_enabled = true;
+                    }
 
                     const y_data = cumsum(random_normal(data_size, lighting_seq.roughness ?? 0.01, 0));
-                    for (let i = 0; i < data_size; ++i) {
-                        const x = calcualted_from.x + (dist * i) / data_size;
-                        const y = calcualted_from.y + dist * y_data[i];
+                    for (let k = 0; k < data_size; ++k) {
+                        const x = calcualted_from.x + (dist * k) / data_size;
+                        const y = calcualted_from.y + dist * y_data[k];
                         const rot_x =
                             (x - calcualted_from.x) * cast_angle_cos -
                             (y - calcualted_from.y) * cast_angle_sin +
@@ -1399,7 +1431,6 @@ export class BattleAnimation {
 
                     bmp.context.putImageData(bmp.imageData, 0, 0);
 
-                    const duration = _.clamp(lighting_seq.duration, 30, Infinity);
                     this.game.time.events.add(duration, () => {
                         bmp.destroy();
                         img.destroy();
@@ -1410,7 +1441,7 @@ export class BattleAnimation {
                 if (!Array.isArray(start_delay) && typeof start_delay === "object") {
                     start_delay = this.get_expanded_values(start_delay as CompactValuesSpecifier, count);
                 }
-                start_delay = Array.isArray(start_delay) ? start_delay[i] : (start_delay as number) ?? 0;
+                start_delay = Array.isArray(start_delay) ? start_delay[j] : (start_delay as number) ?? 0;
                 if (start_delay < 30) {
                     cast_lighting();
                 } else {
