@@ -167,7 +167,7 @@ export class WhirlwindFieldPsynergy extends FieldAbilities {
                 leaf.centerY = WhirlwindFieldPsynergy.LEAVES_CIRCLE_RAD * Math.sin(this_angle) + shifts[i].y;
                 if (this_angle > dest_angle_fraction) {
                     let new_angle =
-                        this._previous_angles[i] + WhirlwindFieldPsynergy.BLOW_PHI_STEP_SCALE * random_normal();
+                        this._previous_angles[i] + WhirlwindFieldPsynergy.BLOW_PHI_STEP_SCALE * random_normal()[0];
                     new_angle = (4.5 * new_angle + this_angle + degree90) / 5.5;
                     this._previous_angles[i] = new_angle;
                     shifts[i].x += initial_gradient_factor * Math.cos(new_angle);
@@ -231,7 +231,8 @@ export class WhirlwindFieldPsynergy extends FieldAbilities {
             if (!leaf.visible) {
                 continue;
             }
-            const new_angle = this._previous_angles[i] + WhirlwindFieldPsynergy.BLOW_PHI_STEP_SCALE * random_normal();
+            const new_angle =
+                this._previous_angles[i] + WhirlwindFieldPsynergy.BLOW_PHI_STEP_SCALE * random_normal()[0];
             this._previous_angles[i] = new_angle;
             leaf.centerX += this._blow_gradient.gradient * Math.cos(new_angle);
             leaf.centerY += this._blow_gradient.gradient * Math.sin(new_angle);

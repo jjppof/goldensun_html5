@@ -43,7 +43,15 @@ widths used):
 
 import {GoldenSun} from "../GoldenSun";
 import * as numbers from "../magic_numbers";
-import {elements, element_colors_in_battle, range_360, engine_filters} from "../utils";
+import {
+    elements,
+    element_colors_in_battle,
+    range_360,
+    engine_filters,
+    random_normal,
+    get_distance,
+    cumsum,
+} from "../utils";
 import {BattleStage, DEFAULT_POS_ANGLE} from "./BattleStage";
 import * as _ from "lodash";
 import {battle_actions, PlayerSprite} from "./PlayerSprite";
@@ -279,6 +287,28 @@ export class BattleAnimation {
         volume: number;
         ignore_if_dodge?: boolean;
     }[] = [];
+    public lighting_sequence: {
+        start_delay: number | number[] | CompactValuesSpecifier;
+        from: {
+            delta: {x: number; y: number};
+            pos: {x: number | target_types; y: number | target_types};
+            range_delta: {x: number; y: number};
+        };
+        to: {
+            delta: {x: number; y: number};
+            pos: {x: number | target_types; y: number | target_types};
+            range_delta: {x: number; y: number};
+        };
+        thickness: {
+            base_value: number;
+            range_delta: number;
+        };
+        roughness: number;
+        count: number;
+        render_position: battle_positions;
+        ignore_if_dodge?: boolean;
+        duration: number;
+    }[] = [];
     public particles_sequence: ParticlesInfo;
     public running: boolean;
     public sprites: (Phaser.Sprite | Phaser.Graphics | Phaser.TileSprite | PlayerSprite)[];
@@ -362,6 +392,7 @@ export class BattleAnimation {
         shake_sequence,
         texture_displacement_sequence,
         misc_sequence,
+        lighting_sequence,
         cast_type,
         wait_for_cast_animation,
         follow_caster,
@@ -401,6 +432,7 @@ export class BattleAnimation {
         this.shake_sequence = shake_sequence ?? [];
         this.texture_displacement_sequence = texture_displacement_sequence ?? [];
         this.misc_sequence = misc_sequence ?? [];
+        this.lighting_sequence = lighting_sequence ?? [];
         this.running = false;
         this.cast_type = cast_type;
         this.wait_for_cast_animation = wait_for_cast_animation;
@@ -753,6 +785,7 @@ export class BattleAnimation {
         this.play_shake_sequence();
         this.play_texture_displacement_sequence();
         this.play_misc_sequence();
+        this.play_lightning_sequence();
         this.unmount_animation(finish_callback);
     }
 
@@ -1290,6 +1323,98 @@ export class BattleAnimation {
                     this.game.time.events.add(start_delay, apply_blend_mode);
                 } else {
                     apply_blend_mode();
+                }
+            }
+        }
+    }
+
+    play_lightning_sequence() {
+        for (let i = 0; i < this.lighting_sequence.length; ++i) {
+            const lighting_seq = this.lighting_sequence[i];
+            if (lighting_seq.ignore_if_dodge && this.target_dodged) {
+                continue;
+            }
+            const from_delta = lighting_seq.from.delta ?? {x: 0, y: 0};
+            const to_delta = lighting_seq.from.delta ?? {x: 0, y: 0};
+            const from = this.get_sprite_xy_pos(
+                lighting_seq.from.pos.x,
+                lighting_seq.from.pos.y,
+                from_delta.x,
+                from_delta.y
+            );
+            const to = this.get_sprite_xy_pos(lighting_seq.to.pos.x, lighting_seq.to.pos.y, to_delta.x, to_delta.y);
+            const pos_range_delta = lighting_seq.from.range_delta ?? {x: 0, y: 0};
+            pos_range_delta.x = pos_range_delta.x ?? 0;
+            pos_range_delta.y = pos_range_delta.y ?? 0;
+            const thickness_base_value = lighting_seq.thickness?.base_value ?? 1;
+            const thickness_range_delta = lighting_seq.thickness?.range_delta ?? 0;
+            const count = lighting_seq.count ?? 1;
+            for (let i = 0; i < count; ++i) {
+                let resolve_function;
+                const this_promise = new Promise(resolve => {
+                    resolve_function = resolve;
+                });
+                this.promises.push(this_promise);
+                const cast_lighting = async () => {
+                    const calcualted_from = {
+                        x: from.x + _.random(-pos_range_delta.x, pos_range_delta.x, true),
+                        y: from.y + _.random(-pos_range_delta.y, pos_range_delta.y, true),
+                    };
+                    const calcualted_to = {
+                        x: to.x + _.random(-pos_range_delta.y, pos_range_delta.x, true),
+                        y: to.y + _.random(-pos_range_delta.y, pos_range_delta.x, true),
+                    };
+                    const thickness =
+                        thickness_base_value + _.random(-thickness_range_delta, thickness_range_delta, true);
+                    const cast_angle = Math.atan2(
+                        calcualted_to.y - calcualted_from.y,
+                        calcualted_to.x - calcualted_from.x
+                    );
+                    const cast_angle_sin = Math.sin(cast_angle);
+                    const cast_angle_cos = Math.cos(cast_angle);
+                    const dist = get_distance(calcualted_from.x, calcualted_to.x, calcualted_from.y, calcualted_to.y);
+                    const data_size = dist | 0;
+
+                    const group = this.ability_sprites_groups[lighting_seq.render_position ?? battle_positions.BETWEEN];
+                    const img = this.game.add.image(0, 0, undefined, undefined, group);
+                    const bmp = this.game.add.bitmapData(numbers.GAME_WIDTH, numbers.GAME_HEIGHT);
+                    bmp.smoothed = false;
+                    bmp.add(img);
+                    bmp.clear();
+
+                    const y_data = cumsum(random_normal(data_size, lighting_seq.roughness ?? 0.01, 0));
+                    for (let i = 0; i < data_size; ++i) {
+                        const x = calcualted_from.x + (dist * i) / data_size;
+                        const y = calcualted_from.y + dist * y_data[i];
+                        const rot_x =
+                            (x - calcualted_from.x) * cast_angle_cos -
+                            (y - calcualted_from.y) * cast_angle_sin +
+                            calcualted_from.x;
+                        const rot_y =
+                            (x - calcualted_from.x) * cast_angle_sin +
+                            (y - calcualted_from.y) * cast_angle_cos +
+                            calcualted_from.y;
+                        bmp.setPixel32(rot_x | 0, rot_y | 0, 255, 255, 255, 255, false);
+                    }
+
+                    bmp.context.putImageData(bmp.imageData, 0, 0);
+
+                    const duration = _.clamp(lighting_seq.duration, 30, Infinity);
+                    this.game.time.events.add(duration, () => {
+                        bmp.destroy();
+                        img.destroy();
+                        resolve_function();
+                    });
+                };
+                let start_delay = lighting_seq.start_delay;
+                if (!Array.isArray(start_delay) && typeof start_delay === "object") {
+                    start_delay = this.get_expanded_values(start_delay as CompactValuesSpecifier, count);
+                }
+                start_delay = Array.isArray(start_delay) ? start_delay[i] : (start_delay as number) ?? 0;
+                if (start_delay < 30) {
+                    cast_lighting();
+                } else {
+                    this.game.time.events.add(start_delay, cast_lighting);
                 }
             }
         }

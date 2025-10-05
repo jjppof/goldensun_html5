@@ -492,15 +492,41 @@ export function mount_collision_polygon(width: number, shift: number, bevel: num
 }
 
 /**
- * Standard Normal variate using Box-Muller transform. Mean = 0, variance = 1.
+ * Standard normal variate using Box-Muller transform. Mean = 0, variance = 1.
+ * @param n the number of data points to generate.
+ * @param sigma the distribution standard deviation.
+ * @param mu the distribution mean.
  * @returns returns a normal pseudo-random number.
  */
-export function random_normal() {
-    let u = 0,
-        v = 0;
-    while (u === 0) u = Math.random();
-    while (v === 0) v = Math.random();
-    return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+export function random_normal(n = 1, sigma = 1, mu = 0) {
+    const out = new Float64Array(n);
+    for (let i = 0; i < n; i += 2) {
+        const u1 = Math.random();
+        const u2 = Math.random();
+        const r = Math.sqrt(-2 * Math.log(u1));
+        const theta = 2 * Math.PI * u2;
+        const rnd = mu + sigma * r * Math.cos(theta);
+        out[i] = rnd;
+    }
+    return out;
+}
+
+/**
+ * Generates the cumulative array of a given input array.
+ * @param arr The input array
+ * @returns returns the cumulated array.
+ */
+export function cumsum(arr: number[] | Float64Array) {
+    const n = arr.length;
+    const out = new Float64Array(n);
+    if (n === 0) {
+        return out;
+    }
+    out[0] = arr[0];
+    for (let i = 1; i < n; ++i) {
+        out[i] = out[i - 1] + arr[i];
+    }
+    return out;
 }
 
 /**

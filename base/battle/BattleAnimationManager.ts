@@ -70,6 +70,7 @@ export class BattleAnimationManager {
             animation_recipe.shake_sequence,
             animation_recipe.texture_displacement_sequence,
             animation_recipe.misc_sequence,
+            animation_recipe.lighting_sequence,
             animation_recipe.cast_type,
             animation_recipe.wait_for_cast_animation,
             animation_recipe.follow_caster,
