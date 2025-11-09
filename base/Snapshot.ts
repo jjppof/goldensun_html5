@@ -51,6 +51,15 @@ type FilterSettings = {
         b: number;
         keep_transparent: boolean;
     };
+    [engine_filters.GLOW]?: {
+        r: number;
+        g: number;
+        b: number;
+        inner_strength: number;
+        outer_strength: number;
+        texture_width: number;
+        texture_height: number;
+    };
 };
 
 export type SnapshotData = {
@@ -374,6 +383,17 @@ export class Snapshot {
                                     g: npc.outline_filter.g,
                                     b: npc.outline_filter.b,
                                     keep_transparent: npc.outline_filter.keep_transparent,
+                                },
+                            }),
+                            ...(npc.active_filters.glow && {
+                                glow: {
+                                    r: npc.glow_filter.r,
+                                    g: npc.glow_filter.g,
+                                    b: npc.glow_filter.b,
+                                    inner_strength: npc.glow_filter.inner_strength,
+                                    outer_strength: npc.glow_filter.outer_strength,
+                                    texture_width: npc.glow_filter.texture_width,
+                                    texture_height: npc.glow_filter.texture_height,
                                 },
                             }),
                         },

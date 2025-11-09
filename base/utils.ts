@@ -115,6 +115,7 @@ export enum engine_filters {
     WATERY = "watery",
     MODE7 = "mode7",
     PIXEL_SHIFT = "pixel_shift",
+    GLOW = "glow",
 }
 
 /**

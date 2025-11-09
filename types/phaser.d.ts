@@ -1212,6 +1212,18 @@ declare module Phaser {
 
     module Filter {
 
+        class Glow extends Phaser.Filter {
+            r: number;
+            g: number;
+            b: number;
+            inner_strength: number;
+            outer_strength: number;
+            texture_width: number;
+            texture_height: number;
+            distance: number;
+            quality: number;
+        }
+
         class Outline extends Phaser.Filter {
             texture_width: number;
             texture_height: number;

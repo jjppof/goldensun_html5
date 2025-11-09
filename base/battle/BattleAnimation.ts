@@ -304,6 +304,13 @@ export class BattleAnimation {
             base_value: number;
             range_delta: number;
         };
+        glow: {
+            distance: number;
+            strength: number;
+            r: number;
+            g: number;
+            b: number;
+        };
         roughness: number;
         count: number;
         interval_time: number | number[];
@@ -1399,6 +1406,21 @@ export class BattleAnimation {
                     bmp.add(img);
                     bmp.clear();
                     this.sprites.push(img);
+
+                    if (lighting_seq.glow) {
+                        const glow_filter = this.game.add.filter(
+                            "Glow",
+                            lighting_seq.glow.distance,
+                            0.5
+                        ) as Phaser.Filter.Glow;
+                        glow_filter.r = lighting_seq.glow.r;
+                        glow_filter.g = lighting_seq.glow.g;
+                        glow_filter.b = lighting_seq.glow.b;
+                        glow_filter.outer_strength = lighting_seq.glow.strength;
+                        glow_filter.texture_width = img.texture.baseTexture.width;
+                        glow_filter.texture_height = img.texture.baseTexture.height;
+                        img.filters = [glow_filter];
+                    }
 
                     if (trail) {
                         const trail_bitmap_data = this.game.make.bitmapData(numbers.GAME_WIDTH, numbers.GAME_HEIGHT);

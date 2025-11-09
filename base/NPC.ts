@@ -560,7 +560,7 @@ export class NPC extends ControllableChar {
                     ) {
                         this.stop_char(true);
                         this.increase_extra_speed(
-                            -this._custom_movements[this._custom_move_index].position.extra_speed ?? 0
+                            -(this._custom_movements[this._custom_move_index].position.extra_speed ?? 0)
                         );
                         this._next_custom_move_available = true;
                         ++this._custom_move_index;
@@ -945,6 +945,16 @@ export class NPC extends ControllableChar {
                 this.outline_filter.g = this.snapshot_info.filter_settings.outline.g;
                 this.outline_filter.b = this.snapshot_info.filter_settings.outline.b;
                 this.outline_filter.keep_transparent = this.snapshot_info.filter_settings.outline.keep_transparent;
+            }
+            if (active_filters[engine_filters.GLOW]) {
+                this.manage_filter(this.glow_filter, true);
+                this.glow_filter.r = this.snapshot_info.filter_settings.glow.r;
+                this.glow_filter.g = this.snapshot_info.filter_settings.glow.g;
+                this.glow_filter.b = this.snapshot_info.filter_settings.glow.b;
+                this.glow_filter.inner_strength = this.snapshot_info.filter_settings.glow.inner_strength;
+                this.glow_filter.outer_strength = this.snapshot_info.filter_settings.glow.outer_strength;
+                this.glow_filter.texture_width = this.snapshot_info.filter_settings.glow.texture_width;
+                this.glow_filter.texture_height = this.snapshot_info.filter_settings.glow.texture_height;
             }
         }
         this.update_shadow();

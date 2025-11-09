@@ -4,13 +4,23 @@
         "start_delay": 100,
         "from": {
             "pos": {"x": 60, "y": 17},
-            "range_delta": {"x": 10}
+            "range_delta": {"x": 20}
         },
         "to": {
             "pos": {"x": 60, "y": 137},
-            "range_delta": {"x": 10}
+            "range_delta": {"x": 20}
         },
-        "count": 1,
-        "duration": 2000
+        "count": 3,
+        "duration": 1000,
+        "interval_time": 1000,
+        "trail_factor": 0.1,
+        "trail": true,
+        "glow": {
+            "distance": 5,
+            "r": 0.81,
+            "g": 0.25,
+            "b": 0.94,
+            "strength": 2
+        }
     }]
 }

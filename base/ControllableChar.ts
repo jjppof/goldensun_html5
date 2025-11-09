@@ -165,6 +165,7 @@ export abstract class ControllableChar {
     private _flame_filter: Phaser.Filter.Flame;
     private _watery_filter: Phaser.Filter.Watery;
     private _outline_filter: Phaser.Filter.Outline;
+    private _glow_filter: Phaser.Filter.Glow;
     private _pixel_shift_filter: Phaser.Filter.PixelShift;
     private _active_filters: {[key in engine_filters]?: boolean};
     protected _push_timer: Phaser.Timer;
@@ -277,10 +278,12 @@ export abstract class ControllableChar {
         this._flame_filter = this.game.add.filter("Flame") as Phaser.Filter.Flame;
         this._watery_filter = this.game.add.filter("Watery") as Phaser.Filter.Watery;
         this._outline_filter = this.game.add.filter("Outline") as Phaser.Filter.Outline;
+        this._glow_filter = this.game.add.filter("Glow") as Phaser.Filter.Glow;
         this._pixel_shift_filter = this.game.add.filter("PixelShift") as Phaser.Filter.PixelShift;
         this._active_filters = {
             [engine_filters.COLORIZE]: false,
             [engine_filters.OUTLINE]: false,
+            [engine_filters.GLOW]: false,
             [engine_filters.LEVELS]: false,
             [engine_filters.COLOR_BLEND]: false,
             [engine_filters.HUE]: false,
@@ -445,6 +448,10 @@ export abstract class ControllableChar {
     /** The Phaser.Filter that activates an outline in this char sprite. */
     get outline_filter() {
         return this._outline_filter;
+    }
+    /** The Phaser.Filter that activates a glow in this char sprite. */
+    get glow_filter() {
+        return this._glow_filter;
     }
     /** The Phaser.Filter that ashifts the texture of this char sprite. */
     get pixel_shift_filter() {
@@ -1769,8 +1776,8 @@ export abstract class ControllableChar {
      * @param delta_value the x and/or y speed variation object.
      */
     increase_forced_extra_speed(delta_value: {x?: number; y?: number}) {
-        this._extra_speed_force.x += delta_value.x | 0 ?? 0;
-        this._extra_speed_force.y += delta_value.y | 0 ?? 0;
+        this._extra_speed_force.x += (delta_value.x ?? 0) | 0;
+        this._extra_speed_force.y += (delta_value.y ?? 0) | 0;
     }
 
     /**
