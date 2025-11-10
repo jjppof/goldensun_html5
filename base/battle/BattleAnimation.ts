@@ -1434,6 +1434,7 @@ export class BattleAnimation {
                         this.ability_sprites_groups[group_pos].addChild(trail_image);
                         img.data.trail_image = trail_image;
                         img.data.trail_enabled = true;
+                        img.data.render_texture = this.game.make.renderTexture(img.width, img.height);
                     }
 
                     const y_data = cumsum(random_normal(data_size, lighting_seq.roughness ?? 0.01, 0));
@@ -1981,7 +1982,12 @@ export class BattleAnimation {
             if (sprite.data.keep_core_white) {
                 sprite.tint = sprite.data.color;
             }
-            bm_data.draw(sprite);
+            if (sprite.data.render_texture) {
+                sprite.data.render_texture.renderXY(sprite, 0, 0);
+                bm_data.draw(sprite.data.render_texture);
+            } else {
+                bm_data.draw(sprite);
+            }
             if (sprite.data.keep_core_white) {
                 sprite.tint = 0xffffff;
             }

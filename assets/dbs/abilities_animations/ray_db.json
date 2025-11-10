@@ -1,26 +1,67 @@
 {
     "key_name": "ray",
+    "cast_type": "psynergy_cast",
+    "wait_for_cast_animation": true,
     "lighting_sequence": [{
         "start_delay": 100,
         "from": {
-            "pos": {"x": 60, "y": 17},
-            "range_delta": {"x": 20}
+            "pos": {"x": "targets", "y": 17},
+            "range_delta": {"x": 25}
         },
         "to": {
-            "pos": {"x": 60, "y": 137},
-            "range_delta": {"x": 20}
+            "pos": {"x": "targets", "y": "targets"},
+            "range_delta": {"x": 25}
         },
-        "count": 3,
-        "duration": 1000,
-        "interval_time": 1000,
+        "count": 15,
+        "duration": 600,
+        "interval_time": 100,
         "trail_factor": 0.1,
         "trail": true,
         "glow": {
             "distance": 5,
-            "r": 0.81,
+            "r": 0.91,
             "g": 0.25,
             "b": 0.94,
-            "strength": 2
+            "strength": 0.1
         }
+    }],
+    "particles_sequence": [{
+        "data": {
+            "explosion" : {
+                "red": 152,
+                "green": 48,
+                "blue": 240,
+                "lifespan": 1000,
+                "ay": 0.04,
+                "velocity": {
+                    "initial": {"min": 0.7, "max": 6.0},
+                    "radial": { "arcStart": -90, "arcEnd": 90 },
+                    "control": [ { "x": 0, "y": 1 }, { "x": 0.5, "y": 0.75 }, { "x": 1, "y": 0.25 } ]
+                }
+            }
+        },
+        "zones": {},
+        "emitters": [{
+            "x": "targets",
+            "y": "targets",
+            "position": "between",
+            "render_type": "pixel",
+            "show_trails": true,
+            "trails_clear_factor": 0.3,
+            "pixel_size": 8,
+            "pixel_reducing_factor": 0.1,
+            "pixel_is_rect": false,
+            "particles_display_blend_mode": "screen",
+            "render_white_core": true,
+            "core_custom_color": "rgba(255,255,255,0.85)",
+            "total": 250,
+            "frequency": 10,
+            "emitter_data_key": "explosion",
+            "delay": {
+                "start": 1500,
+                "visible": false
+            }
+        }],
+        "emission_finish": 3000
     }]
 }
