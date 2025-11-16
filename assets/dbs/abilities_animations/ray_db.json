@@ -12,17 +12,22 @@
             "pos": {"x": "targets", "y": "targets"},
             "range_delta": {"x": 25}
         },
-        "count": 15,
-        "duration": 600,
-        "interval_time": 100,
-        "trail_factor": 0.1,
+        "count": 17,
+        "duration": 200,
+        "interval_time": 50,
+        "trail_factor": 0.05,
         "trail": true,
+        "trail_count": 4,
+        "trail_colorize": {
+            "color": 0.15,
+            "intensity": 1
+        },
         "glow": {
-            "distance": 5,
+            "distance": 7,
             "r": 0.91,
             "g": 0.25,
             "b": 0.94,
-            "strength": 0.1
+            "strength": 0.6
         }
     }],
     "particles_sequence": [{

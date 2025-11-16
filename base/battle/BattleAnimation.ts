@@ -318,6 +318,11 @@ export class BattleAnimation {
         ignore_if_dodge?: boolean;
         trail: boolean;
         trail_factor: number;
+        trail_count: number;
+        trail_colorize: {
+            color: number;
+            intensity: number;
+        };
         duration: number;
     }[] = [];
     public particles_sequence: ParticlesInfo;
@@ -1362,6 +1367,8 @@ export class BattleAnimation {
             const count = lighting_seq.count ?? 1;
             const trail = lighting_seq.trail ?? true;
             const trail_factor = lighting_seq.trail_factor ?? 0.5;
+            const trail_count = lighting_seq.trail_count ?? -1;
+            const trail_colorize = lighting_seq.trail_colorize ?? null;
             const duration = _.clamp(lighting_seq.duration, 30, Infinity);
             for (let j = 0; j < count; ++j) {
                 let resolve_function;
@@ -1433,8 +1440,17 @@ export class BattleAnimation {
                         this.trails_objs.push(trail_image);
                         this.ability_sprites_groups[group_pos].addChild(trail_image);
                         img.data.trail_image = trail_image;
+                        img.data.trail_count = trail_count;
+                        img.data.trail_applied = 0;
                         img.data.trail_enabled = true;
                         img.data.render_texture = this.game.make.renderTexture(img.width, img.height);
+
+                        if (trail_colorize) {
+                            const colorize_filter = this.game.add.filter("Colorize") as Phaser.Filter.Colorize;
+                            colorize_filter.color = trail_colorize.color;
+                            colorize_filter.intensity = trail_colorize.intensity;
+                            trail_image.filters = [colorize_filter];
+                        }
                     }
 
                     const y_data = cumsum(random_normal(data_size, lighting_seq.roughness ?? 0.01, 0));
@@ -1981,6 +1997,12 @@ export class BattleAnimation {
             const bm_data = sprite.data.trail_image.key as Phaser.BitmapData;
             if (sprite.data.keep_core_white) {
                 sprite.tint = sprite.data.color;
+            }
+            if (sprite.data.trail_count > 0) {
+                if (sprite.data.trail_applied > sprite.data.trail_count) {
+                    return;
+                }
+                ++sprite.data.trail_applied;
             }
             if (sprite.data.render_texture) {
                 sprite.data.render_texture.renderXY(sprite, 0, 0);
