@@ -247,6 +247,7 @@ export class BattleAnimation {
     public colorize_sequence: (GeneralFilterAttr & {
         color: number;
         intensity: number;
+        tween: string;
     })[] = [];
     public color_blend_filter_sequence: (GeneralFilterAttr & {
         r: number;
@@ -307,6 +308,7 @@ export class BattleAnimation {
         glow: {
             distance: number;
             strength: number;
+            quality: number;
             r: number;
             g: number;
             b: number;
@@ -1351,7 +1353,7 @@ export class BattleAnimation {
                 continue;
             }
             const from_delta = lighting_seq.from.delta ?? {x: 0, y: 0};
-            const to_delta = lighting_seq.from.delta ?? {x: 0, y: 0};
+            const to_delta = lighting_seq.to.delta ?? {x: 0, y: 0};
             const from = this.get_sprite_xy_pos(
                 lighting_seq.from.pos.x,
                 lighting_seq.from.pos.y,
@@ -1359,9 +1361,12 @@ export class BattleAnimation {
                 from_delta.y
             );
             const to = this.get_sprite_xy_pos(lighting_seq.to.pos.x, lighting_seq.to.pos.y, to_delta.x, to_delta.y);
-            const pos_range_delta = lighting_seq.from.range_delta ?? {x: 0, y: 0};
-            pos_range_delta.x = pos_range_delta.x ?? 0;
-            pos_range_delta.y = pos_range_delta.y ?? 0;
+            const pos_range_delta_from = lighting_seq.from.range_delta ?? {x: 0, y: 0};
+            pos_range_delta_from.x = pos_range_delta_from.x ?? 0;
+            pos_range_delta_from.y = pos_range_delta_from.y ?? 0;
+            const pos_range_delta_to = lighting_seq.from.range_delta ?? {x: 0, y: 0};
+            pos_range_delta_to.x = pos_range_delta_to.x ?? 0;
+            pos_range_delta_to.y = pos_range_delta_to.y ?? 0;
             const thickness_base_value = lighting_seq.thickness?.base_value ?? 1;
             const thickness_range_delta = lighting_seq.thickness?.range_delta ?? 0;
             const count = lighting_seq.count ?? 1;
@@ -1387,12 +1392,12 @@ export class BattleAnimation {
                         await promised_wait(this.game, interval_time);
                     }
                     const calcualted_from = {
-                        x: from.x + _.random(-pos_range_delta.x, pos_range_delta.x, true),
-                        y: from.y + _.random(-pos_range_delta.y, pos_range_delta.y, true),
+                        x: from.x + _.random(-pos_range_delta_from.x, pos_range_delta_from.x, true),
+                        y: from.y + _.random(-pos_range_delta_from.y, pos_range_delta_from.y, true),
                     };
                     const calcualted_to = {
-                        x: to.x + _.random(-pos_range_delta.y, pos_range_delta.x, true),
-                        y: to.y + _.random(-pos_range_delta.y, pos_range_delta.x, true),
+                        x: to.x + _.random(-pos_range_delta_to.y, pos_range_delta_to.x, true),
+                        y: to.y + _.random(-pos_range_delta_to.y, pos_range_delta_to.x, true),
                     };
                     const thickness =
                         thickness_base_value + _.random(-thickness_range_delta, thickness_range_delta, true);
@@ -1418,7 +1423,7 @@ export class BattleAnimation {
                         const glow_filter = this.game.add.filter(
                             "Glow",
                             lighting_seq.glow.distance,
-                            0.5
+                            lighting_seq.glow.quality ?? 0.5
                         ) as Phaser.Filter.Glow;
                         glow_filter.r = lighting_seq.glow.r;
                         glow_filter.g = lighting_seq.glow.g;
@@ -1685,9 +1690,26 @@ export class BattleAnimation {
         this.play_general_filter(
             this.colorize_sequence,
             engine_filters.COLORIZE,
-            (filter_seq: BattleAnimation["colorize_sequence"][0], filter: Phaser.Filter.Colorize) => {
+            async (filter_seq: BattleAnimation["colorize_sequence"][0], filter: Phaser.Filter.Colorize) => {
+                if (filter_seq.duration && filter_seq.duration > 30) {
+                    let promise_resolve;
+                    const promise = new Promise(resolve => (promise_resolve = resolve));
+                    this.data.game.add
+                        .tween(filter)
+                        .to(
+                            {
+                                intensity: filter_seq.intensity ?? filter.intensity,
+                            },
+                            filter_seq.duration,
+                            filter_seq.tween ? _.get(Phaser.Easing, filter_seq.tween) : Phaser.Easing.Linear.None,
+                            true
+                        )
+                        .onComplete.addOnce(promise_resolve);
+                    await promise;
+                } else {
+                    filter.intensity = filter_seq.intensity ?? filter.intensity;
+                }
                 filter.color = filter_seq.color ?? filter.color;
-                filter.intensity = filter_seq.intensity ?? filter.intensity;
             }
         );
     }
