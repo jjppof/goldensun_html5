@@ -1,0 +1,20 @@
+{"frames": {
+
+"entangled_pillar/standard/00":
+{
+	"frame": {"x":1,"y":1,"w":19,"h":43},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":19,"h":43},
+	"sourceSize": {"w":19,"h":43}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "entangled_pillars.png",
+	"format": "RGBA8888",
+	"size": {"w":21,"h":45},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:ce6ae2ff451897840084caafd0db4a31:2480f79646e297ef436a52854a29bf60:4a47b6e649244f2076d12ab96802f0a0$"
+}
+}
