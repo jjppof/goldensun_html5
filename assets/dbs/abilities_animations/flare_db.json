@@ -29,6 +29,20 @@
         "to": 1,
         "is_absolute": true,
         "sprite_index": [0, 1, 2, 3, 4, 5, 6]
+    },{
+        "start_delay": 150,
+        "to": 0.75,
+        "is_absolute": true,
+        "tween": "Linear.None",
+        "sprite_index": "background",
+        "duration": 150
+    },{
+        "start_delay": 1500,
+        "to": 1.0,
+        "is_absolute": true,
+        "tween": "Linear.None",
+        "sprite_index": "background",
+        "duration": 200
     }],
     "play_sequence": [{
         "animation_key": "cast",
