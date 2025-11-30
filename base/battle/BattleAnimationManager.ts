@@ -58,6 +58,7 @@ export class BattleAnimationManager {
             animation_recipe.tint_sequence,
             animation_recipe.grayscale_sequence,
             animation_recipe.colorize_sequence,
+            animation_recipe.glow_sequence,
             animation_recipe.play_sequence,
             animation_recipe.set_frame_sequence,
             animation_recipe.blend_mode_sequence,

@@ -85,7 +85,7 @@ type CompactValuesSpecifier = {
     starting_value: number;
     cumulator: number;
     reverse?: boolean;
-    amount?: number;
+    amount?: number | target_types;
 };
 
 type DefaultAttr = {
@@ -249,6 +249,14 @@ export class BattleAnimation {
         intensity: number;
         tween: string;
     })[] = [];
+    public glow_sequence: (GeneralFilterAttr & {
+        distance: number;
+        strength: number;
+        quality: number;
+        r: number;
+        g: number;
+        b: number;
+    })[] = [];
     public color_blend_filter_sequence: (GeneralFilterAttr & {
         r: number;
         g: number;
@@ -398,6 +406,7 @@ export class BattleAnimation {
         tint_sequence, //{start_delay: value, sprite_index: index, value: %rgb array}
         grayscale_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, yoyo: bool, duration: value, shift: value}
         colorize_sequence,
+        glow_sequence,
         play_sequence, //{start_delay: value, sprite_index: index, reverse: bool, frame_rate: value, repeat: bool, animation_key: key, wait: bool, hide_on_complete: bool}
         set_frame_sequence, //{start_delay: value, frame_name: string, sprite_index: index}
         blend_mode_sequence, //{start_delay: value, mode: type, sprite_index: index}
@@ -438,6 +447,7 @@ export class BattleAnimation {
         this.tint_sequence = tint_sequence ?? [];
         this.grayscale_sequence = grayscale_sequence ?? [];
         this.colorize_sequence = colorize_sequence ?? [];
+        this.glow_sequence = glow_sequence ?? [];
         this.levels_filter_sequence = levels_filter_sequence ?? [];
         this.color_blend_filter_sequence = color_blend_filter_sequence ?? [];
         this.flame_filter_sequence = flame_filter_sequence ?? [];
@@ -740,6 +750,8 @@ export class BattleAnimation {
             sprite.available_filters[flame_filter.key] = flame_filter;
             const pixel_shift_filter = this.game.add.filter("PixelShift") as Phaser.Filter.PixelShift;
             sprite.available_filters[pixel_shift_filter.key] = pixel_shift_filter;
+            const glow_filter = this.game.add.filter("Glow", 5, 0.2) as Phaser.Filter.Glow;
+            sprite.available_filters[glow_filter.key] = glow_filter;
         };
         this.sprites.forEach(sprite => {
             if (!sprite) {
@@ -756,9 +768,25 @@ export class BattleAnimation {
         }
     }
 
-    get_expanded_values(recipe: CompactValuesSpecifier, number: number) {
-        const result = new Array<number>(number);
-        for (let i = 0; i < number; ++i) {
+    get_expanded_values(recipe: CompactValuesSpecifier, number: number | target_types) {
+        if (typeof number === "string") {
+            switch (number) {
+                case target_types.ALLIES:
+                    number = this.allies_sprites.length;
+                    break;
+                case target_types.BACKGROUND:
+                    number = this.background_sprites.length;
+                    break;
+                case target_types.CASTER:
+                    number = 1;
+                    break;
+                case target_types.TARGETS:
+                    number = this.targets_sprites.length;
+                    break;
+            }
+        }
+        const result = new Array<number>(number as number);
+        for (let i = 0; i < (number as number); ++i) {
             result[i] = recipe.starting_value + i * recipe.cumulator;
         }
         return recipe.reverse ? result.reverse() : result;
@@ -792,6 +820,7 @@ export class BattleAnimation {
         this.play_set_frame_sequence();
         this.play_blend_modes();
         this.play_colorize_filter();
+        this.play_glow_filter();
         this.play_tint_filter();
         this.play_levels_filter();
         this.play_color_blend_filter();
@@ -1560,7 +1589,7 @@ export class BattleAnimation {
     play_general_filter(
         sequence: GeneralFilterAttr[],
         filter_key: engine_filters,
-        set_filter?: (
+        set_filter: (
             sequence: GeneralFilterAttr,
             filter: Phaser.Filter,
             sprite?: PlayerSprite | Phaser.Sprite,
@@ -1671,7 +1700,7 @@ export class BattleAnimation {
     }
 
     play_flame_filter() {
-        this.play_general_filter(this.flame_filter_sequence, engine_filters.FLAME);
+        this.play_general_filter(this.flame_filter_sequence, engine_filters.FLAME, null);
     }
 
     play_tint_filter() {
@@ -1710,6 +1739,21 @@ export class BattleAnimation {
                     filter.intensity = filter_seq.intensity ?? filter.intensity;
                 }
                 filter.color = filter_seq.color ?? filter.color;
+            }
+        );
+    }
+
+    play_glow_filter() {
+        this.play_general_filter(
+            this.glow_sequence,
+            engine_filters.GLOW,
+            async (filter_seq: BattleAnimation["glow_sequence"][0], filter: Phaser.Filter.Glow, sprite) => {
+                filter.r = filter_seq.r;
+                filter.g = filter_seq.g;
+                filter.b = filter_seq.b;
+                filter.outer_strength = filter_seq.strength;
+                filter.texture_width = sprite.texture.baseTexture.width;
+                filter.texture_height = sprite.texture.baseTexture.height;
             }
         );
     }

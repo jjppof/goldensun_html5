@@ -1,0 +1,99 @@
+{
+    "key_name": "flare",
+    "cast_type": "psynergy_cast",
+    "wait_for_cast_animation": false,
+    "sprites": [{
+        "key_name": "cast",
+        "per_target": false,
+        "position": "between",
+        "count": 7,
+        "initial_config": {
+            "blend_mode": "screen",
+            "alpha": 0,
+            "scale": {
+                "x": 1.2,
+                "y": 1.0
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.9
+            }
+        }
+    }],
+    "alpha_sequence": [{
+        "start_delay": {
+            "starting_value": 200,
+            "cumulator": 70,
+            "amount": 7
+        },
+        "to": 1,
+        "is_absolute": true,
+        "sprite_index": [0, 1, 2, 3, 4, 5, 6]
+    }],
+    "play_sequence": [{
+        "animation_key": "cast",
+        "start_delay": {
+            "starting_value": 200,
+            "cumulator": 70,
+            "amount": 7
+        },
+        "sprite_index": [0, 1, 2, 3, 4, 5, 6],
+        "wait": true,
+        "frame_rate": 12,
+        "hide_on_complete": true,
+        "repeat": false
+    },{
+        "animation_key": "damage",
+        "start_delay": {
+            "starting_value": 500,
+            "cumulator": 60,
+            "amount": "targets",
+            "reverse": true
+        },
+        "sprite_index": "targets",
+        "wait": false
+    }],
+    "flame_filter_sequence": [{
+        "sprite_index": "targets",
+        "start_delay": {
+            "starting_value": 500,
+            "cumulator": 60,
+            "amount": "targets",
+            "reverse": true
+        }
+    },{
+        "sprite_index": "targets",
+        "start_delay": {
+            "starting_value": 900,
+            "cumulator": 60,
+            "amount": "targets",
+            "reverse": true
+        },
+        "remove": true
+    }],
+    "levels_filter_sequence": [{
+        "start_delay": 0, 
+        "sprite_index": [0, 1, 2, 3, 4, 5, 6],
+        "min_input": 0.1,
+        "max_input": 0.8,
+        "gamma": 1.5
+    },{
+        "start_delay": 1600,
+        "sprite_index": [0, 1, 2, 3, 4, 5, 6],
+        "remove": true
+    }],
+    "x_sequence": [{
+        "to": "targets",
+        "start_delay": 0,
+        "is_absolute": true,
+        "shift": [-60, -40, -20, 0, 15, 27, 35],
+        "sprite_index": [0, 1, 2, 3, 4, 5, 6]
+    }],
+    "y_sequence": [{
+        "to": "targets",
+        "start_delay": 0,
+        "is_absolute": true,
+        "shift": [-5, -2, 2, 5, 2, -2, -5],
+        "sprite_index": [0, 1, 2, 3, 4, 5, 6]
+    }]
+}
