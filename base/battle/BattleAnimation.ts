@@ -266,6 +266,7 @@ export class BattleAnimation {
         duration: number;
     })[] = [];
     public flame_filter_sequence: GeneralFilterAttr[] = [];
+    public alpha_gray_filter_sequence: GeneralFilterAttr[] = [];
     public play_sequence: {
         start_delay: number | number[];
         sprite_index: target_types | number | number[];
@@ -413,6 +414,7 @@ export class BattleAnimation {
         levels_filter_sequence,
         color_blend_filter_sequence,
         flame_filter_sequence,
+        alpha_gray_filter_sequence,
         particles_sequence,
         sfx_sequence,
         blink_sequence,
@@ -447,10 +449,10 @@ export class BattleAnimation {
         this.tint_sequence = tint_sequence ?? [];
         this.grayscale_sequence = grayscale_sequence ?? [];
         this.colorize_sequence = colorize_sequence ?? [];
-        this.glow_sequence = glow_sequence ?? [];
         this.levels_filter_sequence = levels_filter_sequence ?? [];
         this.color_blend_filter_sequence = color_blend_filter_sequence ?? [];
         this.flame_filter_sequence = flame_filter_sequence ?? [];
+        this.alpha_gray_filter_sequence = alpha_gray_filter_sequence ?? [];
         this.play_sequence = play_sequence ?? [];
         this.set_frame_sequence = set_frame_sequence ?? [];
         this.blend_mode_sequence = blend_mode_sequence ?? [];
@@ -461,6 +463,7 @@ export class BattleAnimation {
         this.texture_displacement_sequence = texture_displacement_sequence ?? [];
         this.misc_sequence = misc_sequence ?? [];
         this.lighting_sequence = lighting_sequence ?? [];
+        this.glow_sequence = glow_sequence ?? [];
         this.running = false;
         this.cast_type = cast_type;
         this.wait_for_cast_animation = wait_for_cast_animation;
@@ -750,6 +753,8 @@ export class BattleAnimation {
             sprite.available_filters[flame_filter.key] = flame_filter;
             const pixel_shift_filter = this.game.add.filter("PixelShift") as Phaser.Filter.PixelShift;
             sprite.available_filters[pixel_shift_filter.key] = pixel_shift_filter;
+            const alpha_gray_filter = this.game.add.filter("AlphaGray") as Phaser.Filter.AlphaGray;
+            sprite.available_filters[alpha_gray_filter.key] = alpha_gray_filter;
             const glow_filter = this.game.add.filter("Glow", 5, 0.2) as Phaser.Filter.Glow;
             sprite.available_filters[glow_filter.key] = glow_filter;
         };
@@ -820,11 +825,11 @@ export class BattleAnimation {
         this.play_set_frame_sequence();
         this.play_blend_modes();
         this.play_colorize_filter();
-        this.play_glow_filter();
         this.play_tint_filter();
         this.play_levels_filter();
         this.play_color_blend_filter();
         this.play_flame_filter();
+        this.play_alpha_gray_filter();
         this.play_stage_angle_sequence();
         this.play_particles();
         this.play_sfx();
@@ -833,6 +838,7 @@ export class BattleAnimation {
         this.play_texture_displacement_sequence();
         this.play_misc_sequence();
         this.play_lightning_sequence();
+        this.play_glow_filter();
         this.unmount_animation(finish_callback);
     }
 
@@ -1701,6 +1707,10 @@ export class BattleAnimation {
 
     play_flame_filter() {
         this.play_general_filter(this.flame_filter_sequence, engine_filters.FLAME, null);
+    }
+
+    play_alpha_gray_filter() {
+        this.play_general_filter(this.alpha_gray_filter_sequence, engine_filters.ALPHA_GRAY, null);
     }
 
     play_tint_filter() {

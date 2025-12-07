@@ -116,6 +116,7 @@ export enum engine_filters {
     MODE7 = "mode7",
     PIXEL_SHIFT = "pixel_shift",
     GLOW = "glow",
+    ALPHA_GRAY = "alpha_gray",
 }
 
 /**

@@ -102,6 +102,7 @@ function load_filters(game) {
     game.load.script("watery", "assets/filters/watery.js");
     game.load.script("outline", "assets/filters/outline.js");
     game.load.script("glow", "assets/filters/glow.js");
+    game.load.script("alpha_gray", "assets/filters/alpha_gray.js");
     game.load.script("mode7", "assets/filters/mode7.js");
     game.load.script("reveal", "assets/filters/reveal.js");
     game.load.script("pixel_shift", "assets/filters/pixel_shift.js");

@@ -65,6 +65,7 @@ export class BattleAnimationManager {
             animation_recipe.levels_filter_sequence,
             animation_recipe.color_blend_filter_sequence,
             animation_recipe.flame_filter_sequence,
+            animation_recipe.alpha_gray_filter_sequence,
             animation_recipe.particles_sequence,
             animation_recipe.sfx_sequence,
             animation_recipe.blink_sequence,

@@ -1256,6 +1256,8 @@ declare module Phaser {
 
         class Flame extends Phaser.Filter { }
 
+        class AlphaGray extends Phaser.Filter { }
+
         class Watery extends Phaser.Filter { }
 
         class Levels extends Phaser.Filter {
