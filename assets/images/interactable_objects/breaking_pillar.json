@@ -1,0 +1,36 @@
+{"frames": {
+
+"breaking_pillar/broken/00":
+{
+	"frame": {"x":41,"y":1,"w":18,"h":39},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":7,"y":25,"w":18,"h":39},
+	"sourceSize": {"w":32,"h":64}
+},
+"breaking_pillar/standard/00":
+{
+	"frame": {"x":1,"y":1,"w":18,"h":49},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":7,"y":15,"w":18,"h":49},
+	"sourceSize": {"w":32,"h":64}
+},
+"breaking_pillar/to_break/00":
+{
+	"frame": {"x":21,"y":1,"w":18,"h":49},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":7,"y":15,"w":18,"h":49},
+	"sourceSize": {"w":32,"h":64}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "breaking_pillar.png",
+	"format": "RGBA8888",
+	"size": {"w":60,"h":51},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:e43505263456605818195eddd8e2dd1c:df9a55772c0360f5de0fefda6b577821:07e82cf1a77545e9c1b18bdb00dcd56f$"
+}
+}
