@@ -249,7 +249,7 @@ export class BattleAnimation {
         intensity: number;
         tween: string;
     })[] = [];
-    public glow_sequence: (GeneralFilterAttr & {
+    public glow_filter_sequence: (GeneralFilterAttr & {
         distance: number;
         strength: number;
         quality: number;
@@ -407,7 +407,7 @@ export class BattleAnimation {
         tint_sequence, //{start_delay: value, sprite_index: index, value: %rgb array}
         grayscale_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, yoyo: bool, duration: value, shift: value}
         colorize_sequence,
-        glow_sequence,
+        glow_filter_sequence,
         play_sequence, //{start_delay: value, sprite_index: index, reverse: bool, frame_rate: value, repeat: bool, animation_key: key, wait: bool, hide_on_complete: bool}
         set_frame_sequence, //{start_delay: value, frame_name: string, sprite_index: index}
         blend_mode_sequence, //{start_delay: value, mode: type, sprite_index: index}
@@ -463,7 +463,7 @@ export class BattleAnimation {
         this.texture_displacement_sequence = texture_displacement_sequence ?? [];
         this.misc_sequence = misc_sequence ?? [];
         this.lighting_sequence = lighting_sequence ?? [];
-        this.glow_sequence = glow_sequence ?? [];
+        this.glow_filter_sequence = glow_filter_sequence ?? [];
         this.running = false;
         this.cast_type = cast_type;
         this.wait_for_cast_animation = wait_for_cast_animation;
@@ -1755,9 +1755,9 @@ export class BattleAnimation {
 
     play_glow_filter() {
         this.play_general_filter(
-            this.glow_sequence,
+            this.glow_filter_sequence,
             engine_filters.GLOW,
-            async (filter_seq: BattleAnimation["glow_sequence"][0], filter: Phaser.Filter.Glow, sprite) => {
+            async (filter_seq: BattleAnimation["glow_filter_sequence"][0], filter: Phaser.Filter.Glow, sprite) => {
                 filter.r = filter_seq.r;
                 filter.g = filter_seq.g;
                 filter.b = filter_seq.b;
