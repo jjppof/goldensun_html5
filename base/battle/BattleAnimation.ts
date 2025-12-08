@@ -129,7 +129,7 @@ type ShakeAttr = {
 
 type GeneralFilterAttr = {
     start_delay: number | number[] | CompactValuesSpecifier;
-    sprite_index: string | number | number[];
+    sprite_index: string | number | number[] | CompactValuesSpecifier;
     per_target_key?: string;
     remove: boolean;
     ignore_if_dodge?: boolean;
