@@ -97,6 +97,7 @@ type DefaultAttr = {
     duration: number;
     sprite_index?: string | number | number[];
     affect_only_shadow?: boolean;
+    dont_affect_shadow?: boolean;
     per_target_key?: string;
     yoyo?: boolean;
     shift?: number | number[] | CompactValuesSpecifier;
@@ -174,6 +175,7 @@ type InitialConfig = {
     x: number | sprite_types;
     y: number | sprite_types;
     alpha: number;
+    frame_name: string;
     scale: {
         x: number;
         y: number;
@@ -679,6 +681,9 @@ export class BattleAnimation {
                             psy_sprite.scale.x = sprite_info.initial_config.scale?.x ?? psy_sprite.scale.x;
                             psy_sprite.scale.y = sprite_info.initial_config.scale?.y ?? psy_sprite.scale.y;
                             psy_sprite.alpha = sprite_info.initial_config.alpha ?? psy_sprite.alpha;
+                            if (sprite_info.initial_config.frame_name) {
+                                psy_sprite.frameName = sprite_info.initial_config.frame_name;
+                            }
                             const pos = this.get_sprite_xy_pos(
                                 sprite_info.initial_config.x ?? psy_sprite.x,
                                 sprite_info.initial_config.y ?? psy_sprite.y,
@@ -904,19 +909,31 @@ export class BattleAnimation {
                     return prev;
                 }, {});
             } else if (seq.sprite_index === target_types.CASTER) {
+                let sprite: PlayerSprite | PIXI.DisplayObject = this.caster_sprite;
+                if (seq.dont_affect_shadow) {
+                    sprite = this.caster_sprite.char_sprite;
+                } else if (seq.affect_only_shadow) {
+                    sprite = this.caster_sprite.shadow_sprite;
+                }
                 return {
                     [this.caster_sprite.key]: {
                         obj: _.get(this.caster_sprite, obj_propety) as keyof PlayerSprite,
-                        sprite: seq.affect_only_shadow ? this.caster_sprite.shadow_sprite : this.caster_sprite,
+                        sprite: sprite,
                         index: 0,
                     },
                 };
             } else if (seq.sprite_index === target_types.TARGETS || seq.sprite_index === target_types.ALLIES) {
                 const sprites = seq.sprite_index === target_types.TARGETS ? this.targets_sprites : this.allies_sprites;
                 return sprites.reduce((prev, cur, index) => {
+                    let sprite: PlayerSprite | PIXI.DisplayObject = cur;
+                    if (seq.dont_affect_shadow) {
+                        sprite = cur.char_sprite;
+                    } else if (seq.affect_only_shadow) {
+                        sprite = cur.shadow_sprite;
+                    }
                     prev[`${cur.key}/${index}`] = {
                         obj: _.get(cur, obj_propety),
-                        sprite: seq.affect_only_shadow ? cur.shadow_sprite : cur,
+                        sprite: sprite,
                         index: index,
                     };
                     return prev;
@@ -973,17 +990,29 @@ export class BattleAnimation {
                     return prev;
                 }, {});
             } else if (seq.sprite_index === target_types.CASTER) {
+                let sprite: PlayerSprite | PIXI.DisplayObject = this.caster_sprite;
+                if (seq.dont_affect_shadow) {
+                    sprite = this.caster_sprite.char_sprite;
+                } else if (seq.affect_only_shadow) {
+                    sprite = this.caster_sprite.shadow_sprite;
+                }
                 return {
                     [this.caster_sprite.key]: {
-                        obj: seq.affect_only_shadow ? this.caster_sprite.shadow_sprite : this.caster_sprite,
+                        obj: sprite,
                         index: 0,
                     },
                 };
             } else if (seq.sprite_index === target_types.TARGETS || seq.sprite_index === target_types.ALLIES) {
                 const sprites = seq.sprite_index === target_types.TARGETS ? this.targets_sprites : this.allies_sprites;
                 return sprites.reduce((prev, cur, index) => {
+                    let sprite: PlayerSprite | PIXI.DisplayObject = cur;
+                    if (seq.dont_affect_shadow) {
+                        sprite = cur.char_sprite;
+                    } else if (seq.affect_only_shadow) {
+                        sprite = cur.shadow_sprite;
+                    }
                     prev[`${cur.key}/${index}`] = {
-                        obj: seq.affect_only_shadow ? cur.shadow_sprite : cur,
+                        obj: sprite,
                         index: index,
                     };
                     return prev;

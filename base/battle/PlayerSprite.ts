@@ -59,7 +59,7 @@ export class PlayerSprite {
     private current_weapon_type: weapon_types;
     private sprite_base: SpriteBase;
     private _player_info: PlayerInfo;
-    private char_sprite: Phaser.Sprite;
+    private _char_sprite: Phaser.Sprite;
     private _shadow_sprite: Phaser.Sprite;
     private status_sprite: Phaser.Sprite;
     private weapon_sprite: Phaser.Sprite;
@@ -138,10 +138,10 @@ export class PlayerSprite {
     }
 
     get anchor() {
-        return this.char_sprite.anchor;
+        return this._char_sprite.anchor;
     }
     set anchor(anchor: Phaser.Sprite["anchor"]) {
-        this.char_sprite.anchor = anchor;
+        this._char_sprite.anchor = anchor;
     }
 
     get width() {
@@ -173,35 +173,35 @@ export class PlayerSprite {
     }
 
     get frameName() {
-        return this.char_sprite.frameName;
+        return this._char_sprite.frameName;
     }
     set frameName(frameName: string) {
-        this.char_sprite.frameName = frameName;
+        this._char_sprite.frameName = frameName;
     }
 
     get avoidFilterCapping() {
-        return this.char_sprite.avoidFilterCapping;
+        return this._char_sprite.avoidFilterCapping;
     }
     set avoidFilterCapping(avoidFilterCapping: boolean) {
-        this.char_sprite.avoidFilterCapping = avoidFilterCapping;
+        this._char_sprite.avoidFilterCapping = avoidFilterCapping;
     }
 
     get tint() {
-        return this.char_sprite.tint;
+        return this._char_sprite.tint;
     }
     set tint(tint: number) {
-        this.char_sprite.tint = tint;
+        this._char_sprite.tint = tint;
     }
 
     get texture() {
-        return this.char_sprite.texture;
+        return this._char_sprite.texture;
     }
 
     get blendMode() {
-        return this.char_sprite.blendMode;
+        return this._char_sprite.blendMode;
     }
     set blendMode(blendMode) {
-        this.char_sprite.blendMode = blendMode;
+        this._char_sprite.blendMode = blendMode;
     }
 
     get visible() {
@@ -216,17 +216,17 @@ export class PlayerSprite {
     }
 
     get filters() {
-        return this.char_sprite.filters;
+        return this._char_sprite.filters;
     }
     set filters(filters) {
-        this.char_sprite.filters = filters;
+        this._char_sprite.filters = filters;
     }
 
     get available_filters() {
-        return this.char_sprite.available_filters;
+        return this._char_sprite.available_filters;
     }
     set available_filters(available_filters) {
-        this.char_sprite.available_filters = available_filters;
+        this._char_sprite.available_filters = available_filters;
     }
 
     get action() {
@@ -243,7 +243,7 @@ export class PlayerSprite {
     }
 
     get animations() {
-        return this.char_sprite.animations;
+        return this._char_sprite.animations;
     }
 
     get active() {
@@ -256,6 +256,9 @@ export class PlayerSprite {
     get group() {
         return this._group;
     }
+    get char_sprite() {
+        return this._char_sprite;
+    }
     get shadow_sprite() {
         return this._shadow_sprite;
     }
@@ -267,26 +270,26 @@ export class PlayerSprite {
         this._shadow_sprite.anchor.setTo(0.5, 1);
         this._shadow_sprite.scale.setTo(this.player_instance.battle_scale, this.player_instance.battle_scale);
 
-        this.char_sprite = this.group.create(0, 0, this.player_info.sprite_key);
-        this.char_sprite.anchor.setTo(0.5, 1);
-        this.char_sprite.scale.setTo(this.player_instance.battle_scale, this.player_instance.battle_scale);
+        this._char_sprite = this.group.create(0, 0, this.player_info.sprite_key);
+        this._char_sprite.anchor.setTo(0.5, 1);
+        this._char_sprite.scale.setTo(this.player_instance.battle_scale, this.player_instance.battle_scale);
 
         const colorize_filter = this.game.add.filter("Colorize") as Phaser.Filter.Colorize;
-        this.char_sprite.available_filters[colorize_filter.key] = colorize_filter;
+        this._char_sprite.available_filters[colorize_filter.key] = colorize_filter;
         const levels_filter = this.game.add.filter("Levels") as Phaser.Filter.Levels;
-        this.char_sprite.available_filters[levels_filter.key] = levels_filter;
+        this._char_sprite.available_filters[levels_filter.key] = levels_filter;
         const color_blend_filter = this.game.add.filter("ColorBlend") as Phaser.Filter.ColorBlend;
-        this.char_sprite.available_filters[color_blend_filter.key] = color_blend_filter;
+        this._char_sprite.available_filters[color_blend_filter.key] = color_blend_filter;
         const hue_filter = this.game.add.filter("Hue") as Phaser.Filter.Hue;
-        this.char_sprite.available_filters[hue_filter.key] = hue_filter;
+        this._char_sprite.available_filters[hue_filter.key] = hue_filter;
         const tint_filter = this.game.add.filter("Tint") as Phaser.Filter.Tint;
-        this.char_sprite.available_filters[tint_filter.key] = tint_filter;
+        this._char_sprite.available_filters[tint_filter.key] = tint_filter;
         const gray_filter = this.game.add.filter("Gray") as Phaser.Filter.Gray;
-        this.char_sprite.available_filters[gray_filter.key] = gray_filter;
+        this._char_sprite.available_filters[gray_filter.key] = gray_filter;
         const flame_filter = this.game.add.filter("Flame") as Phaser.Filter.Flame;
-        this.char_sprite.available_filters[flame_filter.key] = flame_filter;
+        this._char_sprite.available_filters[flame_filter.key] = flame_filter;
         const pixel_shift_filter = this.game.add.filter("PixelShift") as Phaser.Filter.PixelShift;
-        this.char_sprite.available_filters[pixel_shift_filter.key] = pixel_shift_filter;
+        this._char_sprite.available_filters[pixel_shift_filter.key] = pixel_shift_filter;
 
         this.reset_hue_angle();
 
@@ -320,16 +323,16 @@ export class PlayerSprite {
         this.ellipses_semi_minor = SEMI_MINOR_AXIS;
         this.stage_angle = 0;
 
-        this.sprite_base.setAnimation(this.char_sprite, base_actions.BATTLE);
+        this.sprite_base.setAnimation(this._char_sprite, base_actions.BATTLE);
         this.play_position();
     }
 
     play_position(frame_rate?: number, loop?: boolean) {
         if (!this.active) return;
         const anim_key = this.sprite_base.getAnimationKey(base_actions.BATTLE, this.battle_key);
-        if (this.char_sprite.animations.getAnimation(anim_key)) {
-            this.char_sprite.animations.play(anim_key, frame_rate, loop);
-            this.char_sprite.animations.currentAnim.restart();
+        if (this._char_sprite.animations.getAnimation(anim_key)) {
+            this._char_sprite.animations.play(anim_key, frame_rate, loop);
+            this._char_sprite.animations.currentAnim.restart();
         }
         if (this.weapon_sprite) {
             const player = this.player_instance as MainChar;
@@ -364,9 +367,9 @@ export class PlayerSprite {
 
     reset_hue_angle() {
         if (!this.is_ally && this.hue_angle) {
-            const hue_filter = this.char_sprite.available_filters[engine_filters.HUE] as Phaser.Filter.Hue;
+            const hue_filter = this._char_sprite.available_filters[engine_filters.HUE] as Phaser.Filter.Hue;
             hue_filter.angle = this.hue_angle;
-            this.char_sprite.filters = [hue_filter];
+            this._char_sprite.filters = [hue_filter];
         }
     }
 
@@ -378,7 +381,7 @@ export class PlayerSprite {
         const img: Phaser.Sprite = this.group.create(0, 0, bmd);
         img.anchor.setTo(0.5, 1.0);
 
-        const sprites = [this._shadow_sprite, this.char_sprite];
+        const sprites = [this._shadow_sprite, this._char_sprite];
         for (let i = 0; i < sprites.length; ++i) {
             const sprite = sprites[i] as Phaser.Sprite;
             const x_pos = ((bmd_width - sprite.texture.crop.width * sprite.scale.x) * sprite.anchor.x) | 0;
@@ -446,7 +449,7 @@ export class PlayerSprite {
             ) {
                 this.status_sprite.visible = true;
                 this.status_sprite.y =
-                    -(this.char_sprite.height * sprites_height_factors[status]) +
+                    -(this._char_sprite.height * sprites_height_factors[status]) +
                     this.player_instance.status_sprite_shift * this.player_instance.battle_scale;
                 let status_key: string = status;
                 if ((status as temporary_status) === temporary_status.DEATH_CURSE) {
@@ -496,9 +499,9 @@ export class PlayerSprite {
         this.on_status_change_subs.unsubscribe();
         this.status_timer.stop();
         this.status_timer.destroy();
-        this.char_sprite.filters = undefined;
-        for (let filter_key in this.char_sprite.available_filters) {
-            (this.char_sprite.available_filters[filter_key] as Phaser.Filter).destroy();
+        this._char_sprite.filters = undefined;
+        for (let filter_key in this._char_sprite.available_filters) {
+            (this._char_sprite.available_filters[filter_key] as Phaser.Filter).destroy();
         }
         this.parent_group.remove(this.group);
         this.group.destroy(true);
