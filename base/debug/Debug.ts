@@ -158,6 +158,8 @@ export class Debug {
                         mode: {name: "javascript", json: true},
                         lineNumbers: true,
                         tabSize: 4,
+                        indentUnit: 4,
+                        indentWithTabs: false,
                         lineWrapping: true,
                         readOnly: false,
                         spellcheck: false,

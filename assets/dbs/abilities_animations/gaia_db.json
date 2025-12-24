@@ -1,0 +1,114 @@
+{
+    "key_name": "gaia",
+    "cast_type": "psynergy_cast",
+    "wait_for_cast_animation": false,
+    "sprites": [{
+        "key_name": "beam",
+        "per_target": false,
+        "position": "between",
+        "count": 2,
+        "initial_config": {
+            "x": "targets",
+            "y": "targets",
+            "frame_name": "beam/000",
+            "anchor": {
+                "x": 0.5,
+                "y": 1.0
+            }
+        }
+    },{
+        "key_name": "opening",
+        "per_target": false,
+        "position": "between",
+        "count": 2,
+        "initial_config": {
+            "x": "targets",
+            "y": "targets",
+            "anchor": {
+                "x": 0.5,
+                "y": 1.0
+            }
+        }
+    },{
+        "key_name": "hole",
+        "per_target": false,
+        "position": "between",
+        "count": 2,
+        "initial_config": {
+            "x": "targets",
+            "y": "targets",
+            "alpha": 0,
+            "anchor": {
+                "x": 0.5,
+                "y": 1.0
+            }
+        }
+    }],
+    "x_sequence": [{
+        "is_absolute": false,
+        "to": [-20, 20, -10, 10, -24, 24],
+        "start_delay": 0,
+        "sprite_index": [0, 1, 2, 3, 4, 5]
+    }],
+    "y_sequence": [{
+        "is_absolute": false,
+        "to": [5, 5, 13, 13],
+        "start_delay": 0,
+        "sprite_index": [2, 3, 4, 5]
+    }],
+    "alpha_sequence": [{
+        "is_absolute": true,
+        "to": 1,
+        "start_delay": 1600,
+        "sprite_index": [4, 5]
+    },{
+        "is_absolute": true,
+        "to": 1,
+        "start_delay": 2500,
+        "sprite_index": [4, 5]
+    },{
+        "is_absolute": true,
+        "to": 0,
+        "start_delay": 1400,
+        "duration": 200,
+        "sprite_index": [2,3]
+    }],
+    "x_scale_sequence": [{
+        "is_absolute": true,
+        "to": -1,
+        "start_delay": 0,
+        "sprite_index": [1,3,5]
+    }],
+    "y_scale_sequence": [{
+        "is_absolute": true,
+        "to": 120,
+        "duration": 200,
+        "start_delay": 0,
+        "sprite_index": [0, 1]
+    },{
+        "is_absolute": true,
+        "to": 2.5,
+        "start_delay": 0,
+        "sprite_index": [4, 5]
+    }],
+    "play_sequence": [{
+        "animation_key": "opening",
+        "start_delay": 0,
+        "sprite_index": [2,3],
+        "wait": false,
+        "frame_rate": 22,
+        "repeat": true
+    },{
+        "animation_key": "beam",
+        "start_delay": 1200,
+        "sprite_index": [0,1],
+        "wait": true,
+        "frame_rate": 23,
+        "repeat": false,
+        "hide_on_complete": true
+    }],
+    "alpha_gray_filter_sequence": [{
+        "start_delay": 0,
+        "sprite_index": [0, 1, 2, 3, 4, 5]
+    }]
+}
