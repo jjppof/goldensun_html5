@@ -301,6 +301,7 @@ export class BattleAnimationTester {
         //resets stage and chars position to default
         this.battle_stage.pause_players_update = false;
         this.battle_stage.set_update_factor(1);
+        this.battle_stage.set_bg_default_position();
         await Promise.all([this.battle_stage.reset_chars_position(), this.battle_stage.set_stage_default_position()]);
     }
 

@@ -448,6 +448,11 @@ export class BattleStage {
         await promise;
     }
 
+    set_bg_default_position() {
+        this.battle_bg.y = BG_Y;
+        this.battle_bg2.y = BG_Y;
+    }
+
     get_player_position_in_stage(sprite_index: number, target_angle?: number) {
         const player_sprite = this.sprites[sprite_index];
         target_angle = target_angle ?? this.camera_angle.rad;

@@ -55,8 +55,101 @@
         "to": [5, 5, 13, 13],
         "start_delay": 0,
         "sprite_index": [2, 3, 4, 5]
+    },{
+        "is_absolute": false,
+        "to": -10,
+        "start_delay": 1200,
+        "duration": 300,
+        "sprite_index": "targets",
+        "dont_affect_shadow": true
+    },{
+        "is_absolute": false,
+        "to": -5,
+        "start_delay": 1500,
+        "duration": 300,
+        "sprite_index": "targets",
+        "dont_affect_shadow": true
+    },{
+        "is_absolute": false,
+        "to": 7,
+        "start_delay": 1800,
+        "duration": 300,
+        "sprite_index": "targets",
+        "dont_affect_shadow": true
+    },{
+        "is_absolute": false,
+        "to": -5,
+        "start_delay": 2100,
+        "duration": 300,
+        "sprite_index": "targets",
+        "dont_affect_shadow": true
+    },{
+        "is_absolute": false,
+        "to": 13,
+        "start_delay": 2700,
+        "duration": 50,
+        "sprite_index": "targets",
+        "dont_affect_shadow": true,
+        "tween": "Bounce.Out"
+    }],
+    "shake_sequence": [{
+        "sprite_index": "background",
+        "start_delay": 300,
+        "interval": 45,
+        "shake_count": 8,
+        "intensity": 1,
+        "direction": "y"
+    },{
+        "sprite_index": "background",
+        "start_delay": 1200,
+        "interval": 50,
+        "shake_count": 12,
+        "intensity": 2,
+        "direction": "x"
+    },{
+        "sprite_index": "background",
+        "start_delay": 1200,
+        "interval": 45,
+        "shake_count": 12,
+        "intensity": 1,
+        "direction": "y"
+    },{
+        "sprite_index": "targets",
+        "start_delay": 1200,
+        "interval": 40,
+        "shake_count": 10,
+        "intensity": 2,
+        "direction": "y"
     }],
     "alpha_sequence": [{
+        "start_delay": 0,
+        "to": 0.75,
+        "is_absolute": true,
+        "tween": "Linear.None",
+        "sprite_index": "background",
+        "duration": 200
+    },{
+        "start_delay": 2500,
+        "to": 1.0,
+        "is_absolute": true,
+        "tween": "Linear.None",
+        "sprite_index": "background",
+        "duration": 200
+    },{
+        "start_delay": 0,
+        "to": 0.0,
+        "is_absolute": true,
+        "tween": "Linear.None",
+        "sprite_index": "allies",
+        "duration": 500
+    },{
+        "start_delay": 2500,
+        "to": 1.0,
+        "is_absolute": true,
+        "tween": "Linear.None",
+        "sprite_index": "allies",
+        "duration": 300
+    },{
         "is_absolute": true,
         "to": 1,
         "start_delay": 1600,
@@ -72,6 +165,18 @@
         "start_delay": 1400,
         "duration": 200,
         "sprite_index": [2,3]
+    },{
+        "is_absolute": true,
+        "to": 1,
+        "start_delay": 2500,
+        "duration": 200,
+        "sprite_index": [0,1]
+    },{
+        "is_absolute": true,
+        "to": 0,
+        "start_delay": 2500,
+        "duration": 200,
+        "sprite_index": [4, 5]
     }],
     "x_scale_sequence": [{
         "is_absolute": true,
@@ -96,7 +201,7 @@
         "start_delay": 0,
         "sprite_index": [2,3],
         "wait": false,
-        "frame_rate": 22,
+        "frame_rate": 25,
         "repeat": true
     },{
         "animation_key": "beam",
@@ -106,9 +211,109 @@
         "frame_rate": 23,
         "repeat": false,
         "hide_on_complete": true
+    },{
+        "animation_key": "beam",
+        "start_delay": 2500,
+        "sprite_index": [0,1],
+        "wait": true,
+        "frame_rate": 23,
+        "repeat": false,
+        "reverse": true,
+        "hide_on_complete": true
+    },{
+        "animation_key": "damage",
+        "start_delay": 1200,
+        "sprite_index": "targets",
+        "wait": false
     }],
     "alpha_gray_filter_sequence": [{
         "start_delay": 0,
         "sprite_index": [0, 1, 2, 3, 4, 5]
+    }],
+    "blink_sequence": [{
+        "sprite_index": "targets",
+        "start_delay": 1200,
+        "count": 4,
+		"duration": 80,
+        "interval": 150
+    }],
+    "center_shift_sequence": [{
+        "start_delay": 1200,
+        "to": 12,
+        "is_absolute": false,
+        "tween": "Quadratic.Out",
+        "sprite_index": "targets",
+        "duration": 150
+    }],
+    "particles_sequence": [{
+        "data": {
+            "rocks_1" : {
+                "image": "gaia_battle_animation",
+                "scale": { "min": 0.4, "max": 0.7 },
+                "rotation" : { "min": 0, "max": 360},
+                "animations": {
+                    "leaf": {
+                        "frames": { "start": 0, "stop": 2, "prefix": "rocks/", "suffix": "", "zeroPad": 3 },
+                        "frameRate": 0
+                    }
+                },
+                "vy": { "min": -17, "max": -10 }
+            },
+            "rocks_2" : {
+                "image": "gaia_battle_animation",
+                "scale": { "min": 0.7, "max": 1.2 },
+                "rotation" : { "min": 0, "max": 360},
+                "animations": {
+                    "leaf": {
+                        "frames": { "start": 0, "stop": 2, "prefix": "rocks/", "suffix": "", "zeroPad": 3 },
+                        "frameRate": 0
+                    }
+                },
+                "vy": { "min": -11, "max": -8 }
+            }
+        },
+        "zones": {
+            "rect_zone_1": {
+                "type": "rectangle",
+                "width": 30,
+                "height": 5
+            },
+            "rect_zone_2": {
+                "type": "rectangle",
+                "width": 90,
+                "height": 5
+            }
+        },
+        "emitters": [{
+            "x": "targets",
+            "y": "targets",
+            "shift_x": -15,
+            "zone_key": "rect_zone_1",
+            "position": "between",
+            "render_type": "sprite",
+            "repeat": 10,
+            "frequency": 80,
+            "emitter_data_key": "rocks_1",
+            "delay": {
+                "start": 300,
+                "visible": false
+            }
+        },{
+            "x": "targets",
+            "y": "targets",
+            "shift_x": -45,
+            "zone_key": "rect_zone_2",
+            "position": "between",
+            "render_type": "sprite",
+            "total": 3,
+            "repeat": 16,
+            "frequency": 80,
+            "emitter_data_key": "rocks_2",
+            "delay": {
+                "start": 1200,
+                "visible": false
+            }
+        }],
+        "emission_finish": 2500
     }]
 }

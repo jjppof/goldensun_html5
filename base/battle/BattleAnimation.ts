@@ -511,7 +511,7 @@ export class BattleAnimation {
             y: this.caster_sprite.y,
         };
         this.targets_sprites = targets_sprites;
-        this.allies_sprites = allies_sprites;
+        this.allies_sprites = allies_sprites.filter(s => s !== caster_sprite);
         this.background_sprites = background_sprites;
         this.group_caster = group_caster;
         this.group_enemy = group_enemy;
@@ -1937,12 +1937,19 @@ export class BattleAnimation {
                     const r = filter_seq?.color?.r ?? 1.0;
                     const g = filter_seq?.color?.g ?? 1.0;
                     const b = filter_seq?.color?.b ?? 1.0;
-                    blink_timer.loop(filter_seq.interval, () => {
+                    const blink_duration = filter_seq?.duration ?? null;
+                    blink_timer.loop(filter_seq.interval, async () => {
                         if (counter % 2 === 0) {
                             filter.r = r;
                             filter.g = g;
                             filter.b = b;
                         } else {
+                            filter.r = -1;
+                            filter.g = -1;
+                            filter.b = -1;
+                        }
+                        if (blink_duration && blink_duration > 30 && filter.r !== -1) {
+                            await promised_wait(this.game, blink_duration);
                             filter.r = -1;
                             filter.g = -1;
                             filter.b = -1;
