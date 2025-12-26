@@ -15,8 +15,8 @@ Phaser.Filter.Glow.prototype.constructor = Phaser.Filter.Glow;
 Phaser.Filter.Glow.prototype.key = "glow";
 
 Phaser.Filter.Glow.prototype.init = function(distance, quality) {
-    this.distance = distance ?? 5.0;
-    this.quality_dist = 1 / (quality ?? 0.5) / this.distance;
+    this.distance = distance ? distance : 5.0;
+    this.quality_dist = 1 / (quality ? quality : 0.5) / this.distance;
 
     this.fragmentSrc = `
         precision mediump float;
