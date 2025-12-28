@@ -1,3 +1,4 @@
+import {game_groups} from "utils";
 import {SpriteBase} from "../SpriteBase";
 import {GameEvent, event_types} from "./GameEvent";
 
@@ -5,12 +6,6 @@ enum control_types {
     ADD = "add",
     UPDATE = "update",
     REMOVE = "remove",
-}
-
-enum game_groups {
-    LOWER = "lower",
-    MIDDLE = "middle",
-    OVER = "over",
 }
 
 export class GenericSpriteEvent extends GameEvent {

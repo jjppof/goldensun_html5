@@ -120,6 +120,15 @@ export enum engine_filters {
 }
 
 /**
+ * The main game overworld groups where npcs and map layers are inserted.
+ */
+export enum game_groups {
+    LOWER = "lower",
+    MIDDLE = "middle",
+    OVER = "over",
+}
+
+/**
  * Generate a mask for the given direction.
  * Examples:
  *  - The given direction is left, which is 4, then this function will return: 00010000

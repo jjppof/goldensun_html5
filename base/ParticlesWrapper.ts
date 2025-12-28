@@ -1,7 +1,7 @@
 import {battle_positions} from "./battle/BattleAnimation";
 import {GoldenSun} from "GoldenSun";
 import {GAME_HEIGHT, GAME_WIDTH} from "./magic_numbers";
-import {elements, element_colors_in_battle, hex2rgb, promised_wait} from "./utils";
+import {elements, element_colors_in_battle, hex2rgb, promised_wait, game_groups} from "./utils";
 import * as _ from "lodash";
 import {EventValue} from "game_events/GameEvent";
 
@@ -82,12 +82,6 @@ export type ParticlesZone = {
         shift_y: number;
     }[];
 };
-
-enum game_groups {
-    LOWER = "lower",
-    MIDDLE = "middle",
-    OVER = "over",
-}
 
 export type Emitter = {
     emitter_data_key?: string;

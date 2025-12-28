@@ -1,11 +1,6 @@
+import {game_groups} from "utils";
 import {ParticlesInfo, ParticlesWrapper} from "../ParticlesWrapper";
 import {GameEvent, event_types} from "./GameEvent";
-
-enum game_groups {
-    LOWER = "lower",
-    MIDDLE = "middle",
-    OVER = "over",
-}
 
 export class ParticlesEvent extends GameEvent {
     private particles_info: ParticlesInfo;
