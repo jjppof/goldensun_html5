@@ -1,4 +1,4 @@
-import {game_groups} from "utils";
+import {game_groups} from "../utils";
 import {ParticlesInfo, ParticlesWrapper} from "../ParticlesWrapper";
 import {GameEvent, event_types} from "./GameEvent";
 

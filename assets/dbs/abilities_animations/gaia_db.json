@@ -251,24 +251,14 @@
                 "image": "gaia_battle_animation",
                 "scale": { "min": 0.4, "max": 0.7 },
                 "rotation" : { "min": 0, "max": 360},
-                "animations": {
-                    "leaf": {
-                        "frames": { "start": 0, "stop": 2, "prefix": "rocks/", "suffix": "", "zeroPad": 3 },
-                        "frameRate": 0
-                    }
-                },
+                "frame": ["rocks/000", "rocks/001", "rocks/002"],
                 "vy": { "min": -17, "max": -10 }
             },
             "rocks_2" : {
                 "image": "gaia_battle_animation",
                 "scale": { "min": 0.7, "max": 1.2 },
                 "rotation" : { "min": 0, "max": 360},
-                "animations": {
-                    "leaf": {
-                        "frames": { "start": 0, "stop": 2, "prefix": "rocks/", "suffix": "", "zeroPad": 3 },
-                        "frameRate": 0
-                    }
-                },
+                "frame": ["rocks/000", "rocks/001", "rocks/002"],
                 "vy": { "min": -11, "max": -8 }
             }
         },

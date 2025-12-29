@@ -1,4 +1,4 @@
-import {game_groups} from "utils";
+import {game_groups} from "../utils";
 import {SpriteBase} from "../SpriteBase";
 import {GameEvent, event_types} from "./GameEvent";
 
