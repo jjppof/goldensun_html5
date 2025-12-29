@@ -46,6 +46,8 @@ export class Debug {
             {buttons: Button.DEBUG_PHYSICS, on_down: this.toggle_debug_physics.bind(this)},
             {buttons: Button.DEBUG_FPS, on_down: this.toggle_fps.bind(this)},
             {buttons: Button.DEBUG_GRID, on_down: this.toggle_grid.bind(this)},
+            {buttons: Button.DEBUG_BATTLE_ANIM_FIRE, on_down: this.fire_battle_animation.bind(this, false)},
+            {buttons: Button.DEBUG_BATTLE_ANIM_FIRE_ALL, on_down: this.fire_battle_animation.bind(this, true)},
         ];
         if (!this.data.electron_app) {
             debug_controls.push(
@@ -174,6 +176,9 @@ export class Debug {
                     this.data.game.input.enabled = true;
                 });
                 this.battle_anim_editor.refresh();
+                if (this.data.electron_app) {
+                    (document.querySelector(".CodeMirror") as HTMLInputElement).style.width = "350px";
+                }
             }
             document.getElementById("animation_tester").style.display = "block";
         } else {
@@ -182,19 +187,29 @@ export class Debug {
     }
 
     start_battle_animation_tester() {
-        let enemy_pt_keyname = (document.getElementById("animation_tester_enemy_party") as HTMLInputElement).value;
+        let enemy_pt_keyname = (document.getElementById("animation_tester_enemy_party") as HTMLInputElement)?.value;
         if (!enemy_pt_keyname) {
             enemy_pt_keyname = Object.keys(this.data.dbs.enemies_parties_db)[0];
         }
         if (enemy_pt_keyname && !this.battle_anim_tester) {
             this.battle_anim_tester = new BattleAnimationTester(this.game, this.data, "bg_world_map", enemy_pt_keyname);
             this.battle_anim_tester.start_battle();
+            this.data.set_canvas_scale();
         }
     }
 
-    fire_battle_animation() {
-        const ability_keyname = (document.getElementById("animation_tester_ability_keyname") as HTMLInputElement).value;
-        const hit_all_enemies = (document.getElementById("animation_tester_all_enemies") as HTMLInputElement).checked;
+    fire_battle_animation(hit_all_enemies?: boolean) {
+        let ability_keyname = (document.getElementById("animation_tester_ability_keyname") as HTMLInputElement)?.value;
+        let editor_recipe: any = this.data.debug.battle_anim_editor?.getValue();
+        if (editor_recipe) {
+            try {
+                editor_recipe = JSON.parse(editor_recipe);
+                ability_keyname = editor_recipe.key_name;
+            } catch (e) {}
+        }
+        if (hit_all_enemies === undefined) {
+            hit_all_enemies = (document.getElementById("animation_tester_all_enemies") as HTMLInputElement).checked;
+        }
         if (ability_keyname && this.battle_anim_tester) {
             this.battle_anim_tester.fire_animation(ability_keyname, hit_all_enemies);
         }

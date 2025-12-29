@@ -7,6 +7,8 @@ const {
     ipcMain
 } = require('electron');
 
+const code_mirror_editor_battle_anim_width = 350;
+
 function createWindow() {
     const is_dev_env = process.argv[2] !== undefined && process.argv[2] == "dev";
     const win = new BrowserWindow({
@@ -73,7 +75,7 @@ app.on('window-all-closed', function () {
     }
 });
 
-ipcMain.on('resize-window', (event, width, height) => {
+ipcMain.on('resize-window', (event, width, height, battle_anim_tester) => {
     const win = BrowserWindow.fromWebContents(event.sender);
-    win.setContentSize(width, height);
+    win.setContentSize(battle_anim_tester ? width + code_mirror_editor_battle_anim_width : width, height);
 });

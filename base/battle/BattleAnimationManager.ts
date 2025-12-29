@@ -82,6 +82,14 @@ export class BattleAnimationManager {
     }
 
     async load_animation(battle_anim_key, caster_battle_key, mirrored_animation) {
+        let editor_recipe: any = this.data.debug.battle_anim_editor?.getValue();
+        if (editor_recipe) {
+            try {
+                editor_recipe = JSON.parse(editor_recipe);
+            } catch (e) {
+                editor_recipe = null;
+            }
+        }
         if (this.not_available.has(battle_anim_key) || battle_anim_key === "no_animation") {
             return null;
         }
@@ -99,12 +107,7 @@ export class BattleAnimationManager {
         this.game.load.onLoadComplete.addOnce(load_complete_promise_resolve);
         this.game.load.start();
         await load_complete_promise;
-        let animation_recipe = this.game.cache.getJSON(recipe_key);
-        if (this.data.debug.battle_anim_editor?.getValue()) {
-            try {
-                animation_recipe = JSON.parse(this.data.debug.battle_anim_editor.getValue());
-            } catch (e) {}
-        }
+        const animation_recipe = editor_recipe ? editor_recipe : this.game.cache.getJSON(recipe_key);
         if (animation_recipe) {
             const key = `${battle_anim_key}/${caster_battle_key}`;
             this.animations[key] = BattleAnimationManager.get_animation_instance(

@@ -295,7 +295,7 @@ export class GoldenSun {
     /**
      * Changes canvas scale and fires appropriate events related to rescaling and window resizing.
      */
-    private set_canvas_scale() {
+    public set_canvas_scale() {
         if (this.scale_factor <= 0 || this.scale_factor > 7) {
             this.scale_factor = 1;
             this.logger.log_message("Invalid scale factor passed. Setting it back to 1.");
@@ -307,7 +307,7 @@ export class GoldenSun {
         height = this.ignore_system_scaling ? (height * 1) / window.devicePixelRatio : height;
         if (this.ipcRenderer) {
             width = this.ignore_system_scaling ? (width * 1) / window.devicePixelRatio : width;
-            this.ipcRenderer.send("resize-window", width, height);
+            this.ipcRenderer.send("resize-window", width, height, Boolean(this.debug.battle_anim_tester));
         } else {
             document.getElementById("game").style.height = `${height}px`;
         }
