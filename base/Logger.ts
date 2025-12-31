@@ -34,7 +34,7 @@ export class Logger {
                 message = `GSHTML5 - [${now}] [WARNING]: limit for '${message}' message reached.`;
                 console.warn(message);
                 if (this.data.electron_app) {
-                    this.data.ipcRenderer.send("register-log", message);
+                    this.data.ipcRenderer.log(message);
                 }
                 return;
             } else if (this.msgs_count[message] > Logger.MESSAGE_NUMBER_LIMIT) {
@@ -60,7 +60,7 @@ export class Logger {
                 return;
         }
         if (this.data.electron_app) {
-            this.data.ipcRenderer.send("register-log", message);
+            this.data.ipcRenderer.log(message);
         }
     }
 }

@@ -43,7 +43,7 @@
     "@webpack-cli/serve": "~3.0.1",
     "ajv": "~8.17.1",
     "ajv-keywords": "~5.1.0",
-    "electron": "4.2.12",
+    "electron": "~39.2.7",
     "electron-packager": "~16.0.0",
     "husky": "^5",
     "pinst": "~2.1",

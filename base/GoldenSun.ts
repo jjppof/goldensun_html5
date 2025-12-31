@@ -168,9 +168,9 @@ export class GoldenSun {
      * If it's running under electron's engine, initializes it.
      */
     private init_electron() {
-        this.electron_app = (window as any).require ?? false;
+        this.electron_app = Boolean((window as any).electron);
         if (this.electron_app) {
-            this.ipcRenderer = (window as any).require("electron").ipcRenderer;
+            this.ipcRenderer = (window as any).electron;
         }
     }
 
@@ -307,7 +307,7 @@ export class GoldenSun {
         height = this.ignore_system_scaling ? (height * 1) / window.devicePixelRatio : height;
         if (this.ipcRenderer) {
             width = this.ignore_system_scaling ? (width * 1) / window.devicePixelRatio : width;
-            this.ipcRenderer.send("resize-window", width, height, Boolean(this.debug.battle_anim_tester));
+            this.ipcRenderer.resize_window(width, height, Boolean(this.debug.battle_anim_tester));
         } else {
             document.getElementById("game").style.height = `${height}px`;
         }
@@ -595,7 +595,11 @@ export class GoldenSun {
         this.camera.update();
 
         //checks whether it's necessary to keep fps at 60
-        if (!this.fps_reduction_active && this.game.time.suggestedFps > numbers.TARGET_FPS_DOUBLE) {
+        if (
+            !this.electron_app &&
+            !this.fps_reduction_active &&
+            this.game.time.suggestedFps > numbers.TARGET_FPS_DOUBLE
+        ) {
             this.force_target_fps();
         }
 
