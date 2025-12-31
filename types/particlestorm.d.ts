@@ -227,7 +227,7 @@ declare module Phaser {
 
         module Renderer {
 
-            class Base {
+            declare class Base {
 
                 constructor(emitter: Phaser.ParticleStorm.Emitter);
 
@@ -247,7 +247,7 @@ declare module Phaser {
 
             }
 
-            class BitmapData extends Base {
+            declare class BitmapData extends Base {
 
                 constructor(emitter: Phaser.ParticleStorm.Emitter, width: number, height: number);
 
@@ -261,7 +261,7 @@ declare module Phaser {
 
             }
 
-            class Pixel extends Base {
+            declare class Pixel extends Base {
 
                 constructor(emitter: Phaser.ParticleStorm.Emitter, width: number, height: number, render_white_core?: boolean);
 
@@ -274,7 +274,7 @@ declare module Phaser {
 
             }
 
-            class RenderTexture extends Base {
+            declare class RenderTexture extends Base {
 
                 constructor(emitter: Phaser.ParticleStorm.Emitter, width: number, height: number);
 
@@ -287,7 +287,7 @@ declare module Phaser {
 
             }
 
-            class Sprite extends Base {
+            declare class Sprite extends Base {
 
                 display: Phaser.Group;
 
@@ -295,7 +295,7 @@ declare module Phaser {
 
             }
 
-            class SpriteBatch extends Base {
+            declare class SpriteBatch extends Base {
 
                 display: Phaser.SpriteBatch;
 
@@ -377,7 +377,7 @@ declare module Phaser {
 
         module Zones {
 
-            class Base {
+            declare class Base {
 
                 constructor(game: Phaser.Game);
 
@@ -392,7 +392,7 @@ declare module Phaser {
 
             }
 
-            class Circle extends Base {
+            declare class Circle extends Base {
 
                 constructor(game: Phaser.Game, radius?: number);
 
@@ -400,15 +400,15 @@ declare module Phaser {
 
             }
 
-            class Ellipse extends Base {
+            declare class Ellipse extends Base {
 
-                constructor(game: Phaser.Game, width: number, height: number);
+                constructor(game: Phaser.Game, width?: number, height?: number);
 
                 shape: Phaser.Ellipse;
 
             }
 
-            class Image extends Base {
+            declare class Image extends Base {
 
                 constructor(game: Phaser.Game, key: Phaser.Sprite | Phaser.Image | Phaser.Text | Phaser.BitmapData | Image | HTMLCanvasElement | string);
 
@@ -424,7 +424,7 @@ declare module Phaser {
 
             }
 
-            class Line extends Base {
+            declare class Line extends Base {
 
                 constructor(game: Phaser.Game, x1?: number, y1?: number, x2?: number, y2?: number);
 
@@ -432,7 +432,7 @@ declare module Phaser {
 
             }
 
-            class Point extends Base {
+            declare class Point extends Base {
 
                 constructor(game: Phaser.Game, x?: number, y?: number);
 
@@ -440,7 +440,7 @@ declare module Phaser {
 
             }
 
-            class Rectangle extends Base {
+            declare class Rectangle extends Base {
 
                 constructor(game: Phaser.Game, width?: number, height?: number);
 
@@ -448,7 +448,7 @@ declare module Phaser {
 
             }
 
-            class Spline extends Base {
+            declare class Spline extends Base {
 
                 constructor(game: Phaser.Game, mode?: number, resolution?: number, closed?: boolean, points?: Phaser.Point[] | number[]);
                 constructor(game: Phaser.Game, mode?: number, resolution?: number, closed?: boolean, ...points: Phaser.Point[]);
@@ -471,7 +471,7 @@ declare module Phaser {
 
             }
 
-            class Text extends Base {
+            declare class Text extends Base {
 
                 constructor(game: Phaser.Game, text: Phaser.Text);
 

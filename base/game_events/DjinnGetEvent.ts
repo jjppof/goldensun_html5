@@ -266,8 +266,8 @@ export class DjinnGetEvent extends GameEvent {
         };
         this.data.particle_manager.addData("finish_data", finish_data);
         const finish_emitter = this.data.particle_manager.createEmitter(Phaser.ParticleStorm.PIXEL);
-        (finish_emitter.renderer as Phaser.ParticleStorm.Renderer.Pixel).pixelSize = 3;
-        (finish_emitter.renderer as Phaser.ParticleStorm.Renderer.Pixel).useRect = true;
+        (finish_emitter.renderer as unknown as Phaser.ParticleStorm.Renderer.Pixel).pixelSize = 3;
+        (finish_emitter.renderer as unknown as Phaser.ParticleStorm.Renderer.Pixel).useRect = true;
 
         const finish_particles_group = this.game.add.group();
         finish_particles_group.x = this.game.camera.x;

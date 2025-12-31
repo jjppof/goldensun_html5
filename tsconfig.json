@@ -3,32 +3,27 @@
 {
     "compilerOptions": {
         "baseUrl": "base",
-        "outDir": "./dist/tsc",
 
         // Library versions
         "moduleResolution": "node",
         "module": "commonjs",
-        "target": "ES2017",
+        "target": "ES2018",
 
         // Types
         "lib": [
             "DOM",
             "ESNext",
         ],
-        "typeRoots": [
-            "types/p2.d.ts",
-            "types/particlestorm.d.ts",
-            "types/phaser.d.ts",
-            "types/pixi.d.ts",
-            "types/codemirror.d.ts"
-        ],
+        "typeRoots": ["types"],
 
         // Misc
-        "allowJs": true,
-        "checkJs": true,
+        "allowJs": false,
+        "checkJs": false,
         "experimentalDecorators": true,
         "preserveSymlinks": true,
         "resolveJsonModule": true,
+        "useDefineForClassFields": false,
+        "skipLibCheck": true,
 
         // Compilation options
         "downlevelIteration": true,

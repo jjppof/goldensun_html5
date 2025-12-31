@@ -178,8 +178,8 @@ export function split_diag_direction(direction: directions) {
  * @return {number} Diagonal direction value
  */
 export function join_directions(dir_1: directions, dir_2: directions): directions {
-    dir_2 = dir_1 === directions.up && dir_2 === directions.right ? 8 : dir_2;
-    return Math.min(dir_1, dir_2) + 1;
+    const dir_2_updated = dir_1 === directions.up && dir_2 === directions.right ? 8 : dir_2;
+    return Math.min(dir_1, dir_2_updated) + 1;
 }
 
 /**

@@ -309,7 +309,7 @@ export class Gamepad {
     }
 
     /** Every game buttons of the emulated gamepad */
-    buttons: {[button in AnyButton]?: GamepadButton} = [];
+    buttons: {[button in AnyButton]?: GamepadButton} = {};
     /** The stick dead zone */
     stick_dead_zone: number;
     /** The trigger dead zone */

@@ -339,20 +339,19 @@ export class ParticlesWrapper {
                 emitter.force.x = emitter_info.force?.x ?? emitter.force.x;
                 emitter.force.y = emitter_info.force?.y ?? emitter.force.y;
 
-                (emitter.renderer as Phaser.ParticleStorm.Renderer.Pixel).autoClear = !emitter_info.show_trails;
+                const renderer = emitter.renderer as unknown as Phaser.ParticleStorm.Renderer.Pixel;
+
+                renderer.autoClear = !emitter_info.show_trails;
                 if (emitter_info.show_trails || emitter_info.pixel_reducing_factor) {
                     const key = `advanced_particles_sequence_${i}_${index}_${emitter_info.emitter_data_key}`;
                     this.render_callbacks[key] = () => {
                         if (emitter_info.render_type === "pixel") {
                             if (emitter_info.show_trails) {
-                                (emitter.renderer as Phaser.ParticleStorm.Renderer.Pixel).clear(
-                                    emitter_info.trails_clear_factor
-                                );
+                                renderer.clear(emitter_info.trails_clear_factor);
                             }
                             if (emitter_info.pixel_reducing_factor !== undefined) {
                                 if (!(emitter as any)._delay.waiting) {
-                                    (emitter.renderer as Phaser.ParticleStorm.Renderer.Pixel).pixelSize -=
-                                        emitter_info.pixel_reducing_factor;
+                                    renderer.pixelSize -= emitter_info.pixel_reducing_factor;
                                 }
                             }
                         }
@@ -361,15 +360,13 @@ export class ParticlesWrapper {
                 }
 
                 if (emitter_info.render_type === "pixel") {
-                    (emitter.renderer as Phaser.ParticleStorm.Renderer.Pixel).pixelSize = emitter_info.pixel_size ?? 2;
-                    (emitter.renderer as Phaser.ParticleStorm.Renderer.Pixel).useRect =
-                        emitter_info.pixel_is_rect ?? false;
+                    renderer.pixelSize = emitter_info.pixel_size ?? 2;
+                    renderer.useRect = emitter_info.pixel_is_rect ?? false;
 
                     if (emitter_info.particles_display_blend_mode === "screen") {
-                        (emitter.renderer as Phaser.ParticleStorm.Renderer.Pixel).display.blendMode =
-                            Phaser.blendModes.SCREEN;
+                        renderer.display.blendMode = Phaser.blendModes.SCREEN;
                     }
-                    (emitter.renderer as Phaser.ParticleStorm.Renderer.Pixel).resize(GAME_WIDTH << 1, GAME_HEIGHT);
+                    renderer.resize(GAME_WIDTH << 1, GAME_HEIGHT);
                 }
 
                 let group = particles_group;

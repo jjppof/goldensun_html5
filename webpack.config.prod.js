@@ -10,6 +10,7 @@ module.exports = merge(common, {
                 use: [{
                     loader: 'ts-loader',
                     options: {
+                        transpileOnly: true,
                         configFile: "tsconfig.prod.json"
                     }
                 }],
