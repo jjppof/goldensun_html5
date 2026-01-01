@@ -252,7 +252,13 @@ export class PoundFieldPsynergy extends FieldAbilities {
             .tween(wave)
             .to({phase: -3.26, transparent_radius: 30}, 400, Phaser.Easing.Linear.None);
 
+        let wave_delta_acc = 0;
         wave_phase.onUpdateCallback(() => {
+            wave_delta_acc += this.game.time.delta;
+            if (wave_delta_acc < numbers.FPS_MULT) {
+                return;
+            }
+            wave_delta_acc = 0;
             wave.update();
         }, this);
 

@@ -2,7 +2,7 @@ import {SpriteBase} from "../SpriteBase";
 import {FieldAbilities} from "./FieldAbilities";
 import {base_actions, get_front_position, get_sqr_distance, random_normal} from "../utils";
 import * as _ from "lodash";
-import {degree360, degree90} from "../magic_numbers";
+import {degree360, degree90, FPS_MULT} from "../magic_numbers";
 import {InteractableObjects} from "../interactable_objects/InteractableObjects";
 
 export class WhirlwindFieldPsynergy extends FieldAbilities {
@@ -31,6 +31,7 @@ export class WhirlwindFieldPsynergy extends FieldAbilities {
     private _previous_angles: Array<number>;
     private _blow_gradient: {gradient: number};
     private _init_sfx: Phaser.Sound;
+    private _update_delta_acc: number;
 
     protected target_object: InteractableObjects;
 
@@ -52,6 +53,7 @@ export class WhirlwindFieldPsynergy extends FieldAbilities {
         this._whirlwind_sprite_base = this.data.info.misc_sprite_base_list[WhirlwindFieldPsynergy.ABILITY_KEY_NAME];
         this._blowing = false;
         this._init_sfx = null;
+        this._update_delta_acc = 0;
     }
 
     init() {
@@ -170,8 +172,8 @@ export class WhirlwindFieldPsynergy extends FieldAbilities {
                         this._previous_angles[i] + WhirlwindFieldPsynergy.BLOW_PHI_STEP_SCALE * random_normal()[0];
                     new_angle = (4.5 * new_angle + this_angle + degree90) / 5.5;
                     this._previous_angles[i] = new_angle;
-                    shifts[i].x += initial_gradient_factor * Math.cos(new_angle);
-                    shifts[i].y += initial_gradient_factor * Math.sin(new_angle);
+                    shifts[i].x += (initial_gradient_factor * Math.cos(new_angle)) / this.data.fps_factor;
+                    shifts[i].y += (initial_gradient_factor * Math.sin(new_angle)) / this.data.fps_factor;
                 }
             }
         });
@@ -226,6 +228,11 @@ export class WhirlwindFieldPsynergy extends FieldAbilities {
         if (!this._blowing) {
             return;
         }
+        this._update_delta_acc += this.game.time.delta;
+        if (this._update_delta_acc < FPS_MULT) {
+            return;
+        }
+        this._update_delta_acc = 0;
         for (let i = 0; i < WhirlwindFieldPsynergy.LEAVES_COUNT; ++i) {
             const leaf = this._leaves.children[i] as Phaser.Sprite;
             if (!leaf.visible) {

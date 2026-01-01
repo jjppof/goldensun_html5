@@ -133,6 +133,9 @@ export class GoldenSun {
     /** The zoom scaling factor if the game canvas. */
     public scale_factor: number = 1;
 
+    /** Factor used in many places of the engine to discount fps variation. */
+    public fps_factor: number = 1;
+
     //Phaser groups that will hold the sprites that are below the hero, same level than hero and above the hero
     /** Phaser.Group that holds sprites that are below Hero. */
     public underlayer_group: Phaser.Group = null;
@@ -557,6 +560,7 @@ export class GoldenSun {
             this.render_loading();
             return;
         }
+        this.fps_factor = this.game.time.fps / numbers.TARGET_FPS;
         if (this.hero_movement_allowed()) {
             this.hero.update_tile_position();
 

@@ -1,7 +1,7 @@
 import {ability_ranges, ability_target_types} from "../Ability";
 import {GoldenSun} from "../GoldenSun";
 import {fighter_types, permanent_status, Player, temporary_status} from "../Player";
-import {PlayerInfo} from "./Battle";
+import {PlayerInfo} from "./BattleBase";
 import {Button} from "../XGamepad";
 import {Target, CHOOSE_TARGET_ALLY_SHIFT, CHOOSE_TARGET_ENEMY_SHIFT, BattleStage} from "./BattleStage";
 import * as _ from "lodash";

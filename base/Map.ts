@@ -468,9 +468,11 @@ export class Map {
                 Math.abs(this.mode7_filter.angle) < Map.MAX_CAMERA_ROTATION * Math.abs(this.data.hero.current_speed.x);
             const sign_check = Math.sign(this.mode7_filter.angle) === this.data.hero.current_speed.x;
             if (this.data.hero.current_speed.x && (value_check || sign_check)) {
-                this.mode7_filter.angle -= Math.sign(this.data.hero.current_speed.x) * Map.CAMERA_ROTATION_STEP;
+                this.mode7_filter.angle -=
+                    (Math.sign(this.data.hero.current_speed.x) * Map.CAMERA_ROTATION_STEP) / this.data.fps_factor;
             } else if (!this.data.hero.current_speed.x && Math.abs(this.mode7_filter.angle) > 0) {
-                this.mode7_filter.angle -= Math.sign(this.mode7_filter.angle) * Map.CAMERA_ROTATION_STEP;
+                this.mode7_filter.angle -=
+                    (Math.sign(this.mode7_filter.angle) * Map.CAMERA_ROTATION_STEP) / this.data.fps_factor;
             }
         }
     }
@@ -1803,7 +1805,7 @@ export class Map {
         const d = c * (0x10000 + a) - a;
         const e = 1 + this.data.info.party_data.random_battle_extra_rate;
         const speed_factor = this.data.hero.get_encounter_speed_factor();
-        this._encounter_cumulator += 64 * ((0x4000000 / d) | 0) * speed_factor * e;
+        this._encounter_cumulator += (64 * ((0x4000000 / d) | 0) * speed_factor * e) / this.data.fps_factor;
         if (this.encounter_cumulator >= 0x100000) {
             this._encounter_cumulator = 0;
             if (this.data.hero.avoid_encounter) {

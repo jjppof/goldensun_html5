@@ -2,7 +2,7 @@ import * as numbers from "../magic_numbers";
 import {range_360} from "../utils";
 import {GoldenSun} from "../GoldenSun";
 import {Button} from "../XGamepad";
-import {PlayerInfo} from "./Battle";
+import {PlayerInfo} from "./BattleBase";
 import {battle_actions, battle_positions, PlayerSprite} from "./PlayerSprite";
 import {BattleAnimation} from "./BattleAnimation";
 import {BattleCursorManager} from "./BattleCursorManager";
