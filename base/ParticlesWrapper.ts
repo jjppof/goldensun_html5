@@ -351,7 +351,7 @@ export class ParticlesWrapper {
                             }
                             if (emitter_info.pixel_reducing_factor !== undefined) {
                                 if (!(emitter as any)._delay.waiting) {
-                                    renderer.pixelSize -= emitter_info.pixel_reducing_factor;
+                                    renderer.pixelSize -= emitter_info.pixel_reducing_factor / this.data.fps_factor;
                                 }
                             }
                         }
