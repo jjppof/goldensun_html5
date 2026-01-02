@@ -560,7 +560,7 @@ export class GoldenSun {
             this.render_loading();
             return;
         }
-        this.fps_factor = this.game.time.fps / numbers.TARGET_FPS;
+        this.fps_factor = this.game.time.delta * numbers.FPS_DIV;
         if (this.hero_movement_allowed()) {
             this.hero.update_tile_position();
 

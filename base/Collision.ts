@@ -317,7 +317,7 @@ export class Collision {
             let speed_limit = this.data.map.is_world_map
                 ? Collision.SPEED_LIMIT_TO_STOP_WORLD_MAP
                 : Collision.SPEED_LIMIT_TO_STOP;
-            speed_limit /= this.data.fps_factor;
+            speed_limit *= this.data.fps_factor;
             //speeds below SPEED_LIMIT_TO_STOP are not considered
             if (
                 Math.abs(char.sprite.body.velocity.x) < speed_limit &&

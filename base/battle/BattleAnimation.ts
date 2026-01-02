@@ -2096,7 +2096,7 @@ export class BattleAnimation {
     }
 
     render() {
-        this.trails_bmps.forEach(bmp => bmp.fill(0, 0, 0, bmp.trail_factor));
+        this.trails_bmps.forEach(bmp => bmp.fill(0, 0, 0, bmp.trail_factor * this.data.fps_factor));
         this.sprites.forEach(sprite => {
             if (!sprite) {
                 return;

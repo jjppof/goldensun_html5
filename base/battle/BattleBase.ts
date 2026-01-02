@@ -134,13 +134,13 @@ export abstract class BattleBase {
         let resolve_promise;
         const promise = new Promise(resolve => (resolve_promise = resolve));
         const tween = this.game.add.tween(circle.scale).to({x: 1, y: 1}, 400, Phaser.Easing.Linear.None, true);
-        let scale_tween_delta_acc = 0;
+        let tween_delta_acc = 0;
         tween.onUpdateCallback(() => {
-            scale_tween_delta_acc += this.game.time.delta;
-            if (scale_tween_delta_acc < FPS_MULT) {
+            tween_delta_acc += this.game.time.delta;
+            if (tween_delta_acc < FPS_MULT) {
                 return;
             }
-            scale_tween_delta_acc = 0;
+            tween_delta_acc = 0;
             circle.visible = !circle.visible;
         });
         tween.onComplete.addOnce(() => {
@@ -160,13 +160,13 @@ export abstract class BattleBase {
                 Phaser.Easing.Linear.None,
                 true
             );
-            scale_tween_delta_acc = 0;
+            tween_delta_acc = 0;
             color_tween.onUpdateCallback(() => {
-                scale_tween_delta_acc += this.game.time.delta;
-                if (scale_tween_delta_acc < FPS_MULT) {
+                tween_delta_acc += this.game.time.delta;
+                if (tween_delta_acc < FPS_MULT) {
                     return;
                 }
-                scale_tween_delta_acc = 0;
+                tween_delta_acc = 0;
                 circle.tint = (color_obj.r << 16) + (color_obj.g << 8) + color_obj.b;
             });
             color_tween.onComplete.addOnce(() => {
