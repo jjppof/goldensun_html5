@@ -569,9 +569,9 @@ export class InteractableObjects {
         this._tile_y_pos = new_y_pos;
     }
 
-    set_enable(enable: boolean) {
+    set_enable(enable: boolean, came_from_value_change: boolean = false) {
         this._enable = enable;
-        if (this.storage_keys.enable !== undefined) {
+        if (this.storage_keys.enable !== undefined && !came_from_value_change) {
             this.data.storage.set(this.storage_keys.enable, enable);
         }
         this.toggle_enable_events.forEach(event_info => {
@@ -584,15 +584,16 @@ export class InteractableObjects {
     /**
      * Sets this IO visibility.
      * @param visible whether to be visible or not.
+     * @param came_from_value_change if this call came from storage value change, won't update it again.
      */
-    set_visible(visible: boolean) {
+    set_visible(visible: boolean, came_from_value_change: boolean = false) {
         if (this.sprite) {
             this.sprite.visible = visible;
             if (this.shadow) {
                 this.shadow.visible = this.sprite.visible;
             }
         }
-        if (this.storage_keys.visible !== undefined) {
+        if (this.storage_keys.visible !== undefined && !came_from_value_change) {
             this.data.storage.set(this.storage_keys.visible, visible);
         }
     }
@@ -1346,7 +1347,7 @@ export class InteractableObjects {
         if (this.storage_keys.active !== undefined) {
             const storage_value = this.data.storage.get(this.storage_keys.active);
             if (this.active !== storage_value) {
-                this.toggle_active(storage_value as boolean);
+                this.toggle_active(storage_value as boolean, true);
             }
         }
         if (this.storage_keys.base_collision_layer !== undefined) {
@@ -1364,13 +1365,13 @@ export class InteractableObjects {
         if (this.storage_keys.visible !== undefined) {
             const storage_value = this.data.storage.get(this.storage_keys.visible);
             if (this.sprite?.visible !== storage_value) {
-                this.set_visible(storage_value as boolean);
+                this.set_visible(storage_value as boolean, true);
             }
         }
         if (this.storage_keys.enable !== undefined) {
             const storage_value = this.data.storage.get(this.storage_keys.enable);
             if (this.enable !== storage_value) {
-                this.set_enable(storage_value as boolean);
+                this.set_enable(storage_value as boolean, true);
             }
         }
         let action_or_animation_changed = false;
@@ -1396,8 +1397,9 @@ export class InteractableObjects {
     /**
      * Activates or deactivates this IO.
      * @param active true, if you want to activate it.
+     * @param came_from_value_change if this call came from storage value change, won't update it again.
      */
-    toggle_active(active: boolean) {
+    toggle_active(active: boolean, came_from_value_change: boolean = false) {
         if (active) {
             this.sprite?.body?.collides(this.data.collision.hero_collision_group);
             this._collision_tiles_bodies.forEach(body => {
@@ -1433,7 +1435,7 @@ export class InteractableObjects {
             }
             this._active = false;
         }
-        if (this.storage_keys.active !== undefined) {
+        if (this.storage_keys.active !== undefined && !came_from_value_change) {
             this.data.storage.set(this.storage_keys.active, this._active);
         }
     }

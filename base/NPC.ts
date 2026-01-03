@@ -362,7 +362,7 @@ export class NPC extends ControllableChar {
         if (this.storage_keys.active !== undefined) {
             const storage_value = this.data.storage.get(this.storage_keys.active);
             if (this.active !== storage_value) {
-                this.toggle_active(storage_value as boolean);
+                this.toggle_active(storage_value as boolean, true);
             }
         }
         if (this.storage_keys.base_collision_layer !== undefined) {
@@ -380,7 +380,7 @@ export class NPC extends ControllableChar {
         if (this.storage_keys.visible !== undefined) {
             const storage_value = this.data.storage.get(this.storage_keys.visible);
             if (this.sprite?.visible !== storage_value) {
-                this.set_visible(storage_value as boolean);
+                this.set_visible(storage_value as boolean, true);
             }
         }
         if (this.storage_keys.movement_type !== undefined) {
@@ -790,8 +790,9 @@ export class NPC extends ControllableChar {
     /**
      * Activates or deactivates this NPC.
      * @param active true, if you want to activate it.
+     * @param came_from_value_change if this call came from storage value change, won't update it again.
      */
-    toggle_active(active: boolean) {
+    toggle_active(active: boolean, came_from_value_change: boolean = false) {
         if (active) {
             this.sprite?.body?.collides(this.data.collision.hero_collision_group);
             if (this.sprite) {
@@ -815,7 +816,7 @@ export class NPC extends ControllableChar {
             }
             this._active = false;
         }
-        if (this.storage_keys.active !== undefined) {
+        if (this.storage_keys.active !== undefined && !came_from_value_change) {
             this.data.storage.set(this.storage_keys.active, this._active);
         }
     }
@@ -823,15 +824,16 @@ export class NPC extends ControllableChar {
     /**
      * Sets this NPC visibility.
      * @param visible whether to be visible or not.
+     * @param came_from_value_change if this call came from storage value change, won't update it again.
      */
-    set_visible(visible: boolean) {
+    set_visible(visible: boolean, came_from_value_change: boolean = false) {
         if (this.sprite) {
             this.sprite.visible = visible;
             if (this.shadow) {
                 this.shadow.visible = this.sprite.visible;
             }
         }
-        if (this.storage_keys.visible !== undefined) {
+        if (this.storage_keys.visible !== undefined && !came_from_value_change) {
             this.data.storage.set(this.storage_keys.visible, visible);
         }
     }
