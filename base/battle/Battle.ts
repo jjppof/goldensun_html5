@@ -590,8 +590,8 @@ export class Battle extends BattleBase {
         //gets item's name in the case this ability is related to an item
         let item_name = action.item_slot ? this.data.info.items_list[action.item_slot.key_name].name : "";
 
-        //change the current ability to unleash ability from weapon
-        const unleash_info = await this.check_if_ability_will_unleash(action, ability, item_name);
+        //change the current ability to custom animation or unleash ability if necessary
+        const unleash_info = await this.check_weapon_ability(action, ability, item_name);
         ability = unleash_info.ability;
         item_name = unleash_info.item_name;
 
@@ -1014,19 +1014,26 @@ export class Battle extends BattleBase {
         return ability;
     }
 
-    async check_if_ability_will_unleash(action: PlayerAbility, ability: Ability, item_name: string) {
-        if (
-            action.caster.fighter_type === fighter_types.ALLY &&
-            ability !== undefined &&
-            ability.can_switch_to_unleash
-        ) {
+    async check_weapon_ability(action: PlayerAbility, ability: Ability, item_name: string) {
+        if (action.caster.fighter_type === fighter_types.ALLY && ability !== undefined) {
             const caster = action.caster as MainChar;
-            if (
-                caster.equip_slots.weapon &&
-                this.data.info.items_list[caster.equip_slots.weapon.key_name].unleash_ability
-            ) {
-                const weapon = this.data.info.items_list[caster.equip_slots.weapon.key_name];
+            const weapon = this.data.info.items_list[caster.equip_slots.weapon.key_name];
 
+            if (!caster.equip_slots.weapon) {
+                return {
+                    ability: ability,
+                    item_name: item_name,
+                };
+            }
+
+            if (weapon.attack_ability) {
+                action.key_name = weapon.attack_ability;
+                ability = this.data.info.abilities_list[weapon.attack_ability];
+
+                await this.set_action_animation_settings(action, ability);
+            }
+
+            if (ability.can_switch_to_unleash && weapon.unleash_ability) {
                 if (Math.random() < weapon.unleash_rate) {
                     item_name = weapon.name;
                     action.key_name = weapon.unleash_ability;
@@ -1036,6 +1043,7 @@ export class Battle extends BattleBase {
                 }
             }
         }
+
         return {
             ability: ability,
             item_name: item_name,
