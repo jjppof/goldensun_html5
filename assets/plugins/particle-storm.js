@@ -1433,7 +1433,7 @@ Phaser.ParticleStorm.Emitter.prototype = {
     */
     update: function () {
 
-        var elapsed = this.game.time.elapsed;
+        var elapsed = this.game.time.delta;
 
         this.renderer.preUpdate();
 
@@ -2806,7 +2806,7 @@ Phaser.ParticleStorm.GravityWell.prototype = {
             dSq = this._epsilon;
         }
 
-        var factor = (this._power * this.time.elapsed) / (dSq * d);
+        var factor = (this._power * this.time.delta) / (dSq * d);
 
         particle.transform.velocity.x.value += x * factor;
         particle.transform.velocity.y.value += y * factor;
@@ -5502,7 +5502,17 @@ Phaser.ParticleStorm.Controls.Transform.prototype = {
     step: function () {
 
         var life = this.particle.life;
-        const fps_factor = this.time.delta * Phaser.ParticleStorm.FPS_MULT;
+
+        let fps_factor = this.time.delta * Phaser.ParticleStorm.FPS_MULT;
+        if (this.particle.data.target) {
+            if (this.particle.data.target.transform_key) {
+                if (this.particle.data.target.transform_key === this.particle.data.velocity.transform_key) {
+                    fps_factor = 1;
+                }
+            } else {
+                fps_factor = 1;
+            }
+        }
 
         this.scale.x.value += this.scale.x.delta;
         this.scale.y.value += this.scale.y.delta;

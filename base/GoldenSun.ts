@@ -51,6 +51,7 @@ export class GoldenSun {
     public showing_fps_banner: boolean = false;
     public ignore_system_scaling: boolean = false;
     public verbose_game_event_fire: boolean = false;
+    public force_desired_fps: boolean = false;
 
     public electron_app: boolean;
     public ipcRenderer: any;
@@ -258,6 +259,8 @@ export class GoldenSun {
         this.initialize_utils_controls();
 
         this.verbose_game_event_fire = this.dbs.init_db.verbose_game_event_fire;
+
+        this.force_desired_fps = this.dbs.init_db.force_desired_fps;
 
         this.scale_factor = this.dbs.init_db.initial_scale_factor;
         this.ignore_system_scaling = this.dbs.init_db.ignore_system_scaling;
@@ -599,7 +602,11 @@ export class GoldenSun {
         this.camera.update();
 
         //checks whether it's necessary to keep fps at 60
-        if (!this.fps_reduction_active && this.game.time.suggestedFps > numbers.TARGET_FPS_DOUBLE) {
+        if (
+            this.force_desired_fps &&
+            !this.fps_reduction_active &&
+            this.game.time.suggestedFps > numbers.TARGET_FPS_DOUBLE
+        ) {
             this.force_target_fps();
         }
 
