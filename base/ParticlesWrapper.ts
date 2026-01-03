@@ -347,11 +347,11 @@ export class ParticlesWrapper {
                     this.render_callbacks[key] = () => {
                         if (emitter_info.render_type === "pixel") {
                             if (emitter_info.show_trails) {
-                                renderer.clear(emitter_info.trails_clear_factor);
+                                renderer.clear(emitter_info.trails_clear_factor * this.data.fps_factor);
                             }
                             if (emitter_info.pixel_reducing_factor !== undefined) {
                                 if (!(emitter as any)._delay.waiting) {
-                                    renderer.pixelSize -= emitter_info.pixel_reducing_factor;
+                                    renderer.pixelSize -= emitter_info.pixel_reducing_factor * this.data.fps_factor;
                                 }
                             }
                         }

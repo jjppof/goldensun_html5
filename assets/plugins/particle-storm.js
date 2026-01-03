@@ -175,6 +175,8 @@ Phaser.ParticleStorm.Zones = {};
 
 Phaser.ParticleStorm.PI_180 = Math.PI / 180.0;
 
+Phaser.ParticleStorm.FPS_MULT = 60 / 1000;
+
 /**
 * Creates a new Particle Emitter. You can specify the type of renderer the emitter will use. By default it uses
 * the Sprite emitter, meaning each particle it creates is its own sprite object.
@@ -1431,7 +1433,7 @@ Phaser.ParticleStorm.Emitter.prototype = {
     */
     update: function () {
 
-        var elapsed = this.game.time.elapsed;
+        var elapsed = this.game.time.delta;
 
         this.renderer.preUpdate();
 
@@ -2804,7 +2806,7 @@ Phaser.ParticleStorm.GravityWell.prototype = {
             dSq = this._epsilon;
         }
 
-        var factor = (this._power * this.time.elapsed) / (dSq * d);
+        var factor = (this._power * this.time.delta) / (dSq * d);
 
         particle.transform.velocity.x.value += x * factor;
         particle.transform.velocity.y.value += y * factor;
@@ -5501,6 +5503,17 @@ Phaser.ParticleStorm.Controls.Transform.prototype = {
 
         var life = this.particle.life;
 
+        let fps_factor = this.time.delta * Phaser.ParticleStorm.FPS_MULT;
+        if (this.particle.data.target) {
+            if (this.particle.data.target.transform_key) {
+                if (this.particle.data.target.transform_key === this.particle.data.velocity.transform_key) {
+                    fps_factor = 1;
+                }
+            } else {
+                fps_factor = 1;
+            }
+        }
+
         this.scale.x.value += this.scale.x.delta;
         this.scale.y.value += this.scale.y.delta;
 
@@ -5533,8 +5546,8 @@ Phaser.ParticleStorm.Controls.Transform.prototype = {
         this.acceleration.x.value += this.acceleration.x.delta;
         this.acceleration.y.value += this.acceleration.y.delta;
 
-        this.velocity.x.value += this.velocity.x.delta + this.acceleration.x.initial + this.graph.getValue(this.acceleration.x, life);
-        this.velocity.y.value += this.velocity.y.delta + this.acceleration.y.initial + this.graph.getValue(this.acceleration.y, life);
+        this.velocity.x.value += (this.velocity.x.delta + this.acceleration.x.initial + this.graph.getValue(this.acceleration.x, life)) * fps_factor;
+        this.velocity.y.value += (this.velocity.y.delta + this.acceleration.y.initial + this.graph.getValue(this.acceleration.y, life)) * fps_factor;
 
         if (this.velocity.facing.value !== null)
         {
@@ -5560,8 +5573,8 @@ Phaser.ParticleStorm.Controls.Transform.prototype = {
                 }
             };
         }
-        this.x += this.velocity.x.initial + this.graph.getValue(this.velocity.x, life, target_refresh_callback);
-        this.y += this.velocity.y.initial + this.graph.getValue(this.velocity.y, life, target_refresh_callback);
+        this.x += (this.velocity.x.initial + this.graph.getValue(this.velocity.x, life, target_refresh_callback)) * fps_factor;
+        this.y += (this.velocity.y.initial + this.graph.getValue(this.velocity.y, life, target_refresh_callback)) * fps_factor;
 
     }
 
@@ -6307,14 +6320,14 @@ Phaser.ParticleStorm.Renderer.BitmapData.prototype.update = function (particle) 
         transform_y = particle.transform.y;
     }
 
-    this.bmd.copy(particle.texture.key, 
-        0, 0, null, null, 
-        transform_x, transform_y, null, null, 
-        t.rotation.calc, 
-        t.anchor.x, t.anchor.y, 
-        t.scale.x.calc, t.scale.y.calc, 
-        particle.color.alpha.calc, 
-        particle.color.blendMode[1], 
+    this.bmd.copy(particle.texture.key,
+        0, 0, null, null,
+        transform_x, transform_y, null, null,
+        t.rotation.calc,
+        t.anchor.x, t.anchor.y,
+        t.scale.x.calc, t.scale.y.calc,
+        particle.color.alpha.calc,
+        particle.color.blendMode[1],
         this.roundPx);
 
 };

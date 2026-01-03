@@ -1,6 +1,7 @@
 import {GoldenSun} from "./GoldenSun";
 import {ControllableChar} from "./ControllableChar";
 import {InteractableObjects} from "./interactable_objects/InteractableObjects";
+import {FPS_MULT} from "./magic_numbers";
 
 /**
  * A helper class to manage Phaser.Camera with some utils.
@@ -19,6 +20,7 @@ export class Camera {
         x: number;
         y: number;
     };
+    private _update_delta_acc: number;
 
     constructor(game: Phaser.Game, data: GoldenSun) {
         this.game = game;
@@ -31,6 +33,7 @@ export class Camera {
             y: 0,
         };
         this._unfollow_hero_on_shake = false;
+        this._update_delta_acc = 0;
     }
 
     /** The target that the camera is following. */
@@ -141,6 +144,11 @@ export class Camera {
      */
     update() {
         if (this.camera_shake_enable) {
+            this._update_delta_acc += this.game.time.delta;
+            if (this._update_delta_acc < FPS_MULT) {
+                return;
+            }
+            this._update_delta_acc = 0;
             this.game.camera.x = this._shake_ref_pos.x + (Math.random() - 0.5) * Camera.SHAKE_INTENSITY;
             this.game.camera.y = this._shake_ref_pos.y + (Math.random() - 0.5) * Camera.SHAKE_INTENSITY;
         }

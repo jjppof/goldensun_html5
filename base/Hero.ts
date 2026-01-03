@@ -334,7 +334,7 @@ export class Hero extends ControllableChar {
     update_general_counter() {
         if (this.data.map.get_current_zones()) {
             const incr = this.dashing ? Hero.GENERAL_COUNTER_INCR_DASH : Hero.GENERAL_COUNTER_INCR_WALK;
-            this.general_counter += incr;
+            this.general_counter += incr * this.data.fps_factor;
             if (this.general_counter >= Hero.GENERAL_COUNTER_LIMIT) {
                 this.general_counter %= Hero.GENERAL_COUNTER_LIMIT;
 

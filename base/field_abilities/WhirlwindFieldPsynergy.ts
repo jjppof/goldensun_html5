@@ -2,7 +2,7 @@ import {SpriteBase} from "../SpriteBase";
 import {FieldAbilities} from "./FieldAbilities";
 import {base_actions, get_front_position, get_sqr_distance, random_normal} from "../utils";
 import * as _ from "lodash";
-import {degree360, degree90} from "../magic_numbers";
+import {degree360, degree90, FPS_MULT} from "../magic_numbers";
 import {InteractableObjects} from "../interactable_objects/InteractableObjects";
 
 export class WhirlwindFieldPsynergy extends FieldAbilities {
@@ -170,8 +170,8 @@ export class WhirlwindFieldPsynergy extends FieldAbilities {
                         this._previous_angles[i] + WhirlwindFieldPsynergy.BLOW_PHI_STEP_SCALE * random_normal()[0];
                     new_angle = (4.5 * new_angle + this_angle + degree90) / 5.5;
                     this._previous_angles[i] = new_angle;
-                    shifts[i].x += initial_gradient_factor * Math.cos(new_angle);
-                    shifts[i].y += initial_gradient_factor * Math.sin(new_angle);
+                    shifts[i].x += initial_gradient_factor * Math.cos(new_angle) * this.data.fps_factor;
+                    shifts[i].y += initial_gradient_factor * Math.sin(new_angle) * this.data.fps_factor;
                 }
             }
         });
@@ -231,11 +231,13 @@ export class WhirlwindFieldPsynergy extends FieldAbilities {
             if (!leaf.visible) {
                 continue;
             }
+            // see https://physics.stackexchange.com/a/154304/22327 for the sqrt reference
             const new_angle =
-                this._previous_angles[i] + WhirlwindFieldPsynergy.BLOW_PHI_STEP_SCALE * random_normal()[0];
+                this._previous_angles[i] +
+                WhirlwindFieldPsynergy.BLOW_PHI_STEP_SCALE * Math.sqrt(this.data.fps_factor) * random_normal()[0];
             this._previous_angles[i] = new_angle;
-            leaf.centerX += this._blow_gradient.gradient * Math.cos(new_angle);
-            leaf.centerY += this._blow_gradient.gradient * Math.sin(new_angle);
+            leaf.centerX += this._blow_gradient.gradient * this.data.fps_factor * Math.cos(new_angle);
+            leaf.centerY += this._blow_gradient.gradient * this.data.fps_factor * Math.sin(new_angle);
             const leaf_distance = get_sqr_distance(leaf.centerX, 0, leaf.centerY, 0);
             if (leaf_distance > WhirlwindFieldPsynergy.KILL_DISTANCE_SQR) {
                 leaf.visible = false;

@@ -28,8 +28,14 @@ export class SandFieldPsynergy extends FieldAbilities {
     async init() {
         this.close_field_psynergy_window();
 
-        const current_tile = _.last(this.data.map.get_current_tile(this.controllable_char) as Phaser.Tile[]);
-        const allow_sand = current_tile?.properties.allow_sand;
+        const allow_sand = Boolean(
+            (this.data.map.get_current_tile(this.controllable_char) as Phaser.Tile[]).filter(tile => {
+                if (tile.layer?.properties?.over) {
+                    return false;
+                }
+                return tile.properties?.allow_sand;
+            }).length
+        );
         this.prev_collision_index = this.data.map.collision_layer;
         this.melt_into_sand(allow_sand);
     }

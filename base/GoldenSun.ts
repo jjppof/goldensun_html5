@@ -51,6 +51,7 @@ export class GoldenSun {
     public showing_fps_banner: boolean = false;
     public ignore_system_scaling: boolean = false;
     public verbose_game_event_fire: boolean = false;
+    public force_desired_fps: boolean = false;
 
     public electron_app: boolean;
     public ipcRenderer: any;
@@ -132,6 +133,9 @@ export class GoldenSun {
     public fullscreen: boolean = false;
     /** The zoom scaling factor if the game canvas. */
     public scale_factor: number = 1;
+
+    /** Factor used in many places of the engine to discount fps variation. */
+    public fps_factor: number = 1;
 
     //Phaser groups that will hold the sprites that are below the hero, same level than hero and above the hero
     /** Phaser.Group that holds sprites that are below Hero. */
@@ -255,6 +259,8 @@ export class GoldenSun {
         this.initialize_utils_controls();
 
         this.verbose_game_event_fire = this.dbs.init_db.verbose_game_event_fire;
+
+        this.force_desired_fps = this.dbs.init_db.force_desired_fps;
 
         this.scale_factor = this.dbs.init_db.initial_scale_factor;
         this.ignore_system_scaling = this.dbs.init_db.ignore_system_scaling;
@@ -557,6 +563,7 @@ export class GoldenSun {
             this.render_loading();
             return;
         }
+        this.fps_factor = this.game.time.delta * numbers.FPS_DIV;
         if (this.hero_movement_allowed()) {
             this.hero.update_tile_position();
 
@@ -596,7 +603,7 @@ export class GoldenSun {
 
         //checks whether it's necessary to keep fps at 60
         if (
-            !this.electron_app &&
+            this.force_desired_fps &&
             !this.fps_reduction_active &&
             this.game.time.suggestedFps > numbers.TARGET_FPS_DOUBLE
         ) {

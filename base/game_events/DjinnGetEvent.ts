@@ -359,7 +359,7 @@ export class DjinnGetEvent extends GameEvent {
         const shift_x = (this.origin_npc.sprite.width * this.origin_npc.sprite.anchor.x) >> 1;
         const shift_y = (this.origin_npc.sprite.height * this.origin_npc.sprite.anchor.y) >> 1;
         final_jump_tween.onUpdateCallback(() => {
-            trail_bitmap_data.fill(0, 0, 0, 0.2);
+            trail_bitmap_data.fill(0, 0, 0, 0.2 * this.data.fps_factor);
             const x = this.origin_npc.sprite.x - this.game.camera.x + shift_x;
             const y = this.origin_npc.sprite.y - this.game.camera.y + shift_y;
             trail_bitmap_data.draw(this.origin_npc.sprite, x, y);
@@ -825,7 +825,7 @@ export class DjinnGetEvent extends GameEvent {
         const shift_x = (this.origin_npc.sprite.width * this.origin_npc.sprite.anchor.x) >> 1;
         const shift_y = (this.origin_npc.sprite.height * this.origin_npc.sprite.anchor.y) >> 1;
         tween.onUpdateCallback(() => {
-            trail_bitmap_data.fill(0, 0, 0, 0.05);
+            trail_bitmap_data.fill(0, 0, 0, 0.05 * this.data.fps_factor);
             const x = this.origin_npc.sprite.x - this.game.camera.x + shift_x;
             const y = this.origin_npc.sprite.y - this.game.camera.y + shift_y;
             trail_bitmap_data.draw(this.origin_npc.sprite, x, y);

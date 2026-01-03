@@ -3,7 +3,7 @@ import {weapon_types} from "../Item";
 import {permanent_status, Player, temporary_status} from "../Player";
 import {SpriteBase} from "../SpriteBase";
 import {base_actions, engine_filters} from "../utils";
-import {PlayerInfo} from "./Battle";
+import {PlayerInfo} from "./BattleBase";
 import {SEMI_MAJOR_AXIS, SEMI_MINOR_AXIS} from "./BattleStage";
 import * as _ from "lodash";
 import {Observable, Subject, Subscription} from "rxjs";

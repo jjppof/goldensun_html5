@@ -43,7 +43,8 @@
         "duration": 200,
         "is_absolute": false,
         "tween": "Quadratic.In",
-        "sprite_index": "targets"
+        "sprite_index": "targets",
+        "dont_affect_shadow": true
     },{
         "to": {
             "starting_value": -5,
@@ -57,6 +58,7 @@
         "duration": 80,
         "is_absolute": false,
         "tween": "Linear.None",
-        "sprite_index": "targets"
+        "sprite_index": "targets",
+        "dont_affect_shadow": true
     }]
 }
