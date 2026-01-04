@@ -11,6 +11,7 @@ export type TextObj = {
     shadow: Phaser.BitmapText;
     right_align: boolean;
     initial_x: number;
+    centered?: boolean;
     text_bg?: Phaser.Graphics;
 };
 
@@ -36,7 +37,7 @@ export type ItemObj = {
  * icons positioning.
  */
 export class Window {
-    private static readonly DEFAULT_WINDOW_COLOR = 0x006080;
+    public static readonly DEFAULT_WINDOW_COLOR = 0x006080;
     private static readonly BG_SHIFT = 2;
     private static readonly MIND_READ_WINDOW_COLOR = 0xffffff;
     public static readonly MIND_READ_FONT_COLOR = 0x0000f8;
@@ -994,6 +995,7 @@ export class Window {
             text: text_sprite,
             shadow: text_sprite_shadow,
             right_align: options?.right_align,
+            centered: options?.is_center_pos,
             initial_x: x_pos,
             text_bg: text_bg,
         };
@@ -1006,7 +1008,7 @@ export class Window {
      * @returns Returns an array of TextObjs that were inserted.
      */
     set_lines_of_text(
-        lines: string[],
+        lines: string | string[],
         options?: {
             /** If true, will update the window size to fit the text. */
             update_size?: boolean;
@@ -1016,6 +1018,10 @@ export class Window {
             padding_y?: number;
             /** A custom value for the space between text lines. */
             space_between_lines?: number;
+            /** If passed, 'lines' property must be a string. Calculates the number of lines based on this width. */
+            max_line_width?: number;
+            /** If true, the text will be italic. */
+            italic?: boolean;
         } & Parameters<Window["set_text_in_position"]>[3]
     ) {
         const top_shift = options?.italic ? -2 : 0;
@@ -1023,17 +1029,43 @@ export class Window {
         let y_pos = options?.padding_y ?? numbers.WINDOW_PADDING_TOP + top_shift;
         const space_between_lines = options?.space_between_lines ?? numbers.SPACE_BETWEEN_LINES;
 
+        let parsed_lines: string[] = [];
+        if (typeof lines === "string") {
+            if (options?.max_line_width) {
+                const words = (lines as string).split(" ");
+                let line = "";
+                let line_next_step = "";
+                for (let word of words) {
+                    line_next_step += word + " ";
+                    if (utils.get_text_width(this.game, line_next_step) > options.max_line_width) {
+                        parsed_lines.push(line.trim());
+                        line_next_step = line = word + " ";
+                        continue;
+                    }
+                    line = line_next_step;
+                }
+                if (line) {
+                    parsed_lines.push(line.trim());
+                }
+            } else {
+                parsed_lines = [lines];
+            }
+        }
+
         if (options?.update_size) {
-            const max_text_width = Math.max(...lines.map(line => utils.get_text_width(this.game, line, false)));
+            const max_text_width = Math.max(...parsed_lines.map(line => utils.get_text_width(this.game, line, false)));
             const width = (x_pos << 1) + max_text_width - 4;
             const height =
-                (y_pos << 1) + lines.length * numbers.FONT_SIZE + space_between_lines * (lines.length - 1) - 4;
+                (y_pos << 1) +
+                parsed_lines.length * numbers.FONT_SIZE +
+                space_between_lines * (parsed_lines.length - 1) -
+                4;
             this.update_size({width: width | 0, height: height | 0});
         }
 
         const lines_objs: TextObj[] = [];
-        for (let i = 0; i < lines.length; ++i) {
-            const line = lines[i];
+        for (let i = 0; i < parsed_lines.length; ++i) {
+            const line = parsed_lines[i];
             const text_obj = this.set_text_in_position(line, x_pos, y_pos, options);
             lines_objs.push(text_obj);
             y_pos += numbers.FONT_SIZE + space_between_lines;
@@ -1091,6 +1123,16 @@ export class Window {
             }
             if (text_obj.text_bg) {
                 text_obj.text_bg.x = text_obj.text.x - 1;
+            }
+        }
+        if (text_obj.centered) {
+            text_obj.text.centerX = text_obj.initial_x;
+            if (text_obj.shadow) {
+                text_obj.shadow.centerX = text_obj.initial_x + 1;
+            }
+            text_obj.text.centerX = text_obj.initial_x;
+            if (text_obj.text_bg) {
+                text_obj.text_bg.centerX = text_obj.initial_x + 1;
             }
         }
         if (color) {

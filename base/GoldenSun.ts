@@ -30,6 +30,7 @@ import {Logger} from "./Logger";
 import {BattleAnimationTester} from "./battle/BattleAnimationTester";
 import {FieldAbilities} from "./field_abilities/FieldAbilities";
 import {load_custom_field_psynergies} from "./initializers/abilities";
+import {LoaderWindow} from "./windows/LoaderWindow";
 
 /**
  * The project has basically two important folders: assets and base. All the source code is located inside base folder.
@@ -78,6 +79,9 @@ export class GoldenSun {
 
     /** Class responbible for the start menu */
     public start_menu: StartMenu = null;
+
+    /** Class responbible for the loader menu */
+    public loader_window: LoaderWindow = null;
 
     /** Class responbible for the main menu */
     public main_menu: MainMenu = null;
@@ -212,13 +216,18 @@ export class GoldenSun {
         if (!this.loading_what) {
             return;
         }
-        if (this.game.time.frames % 4 === 0) {
-            this.loading_progress = this.game.load.progress.toLocaleString("en-US", {
-                minimumIntegerDigits: 2,
-                useGrouping: false,
-            });
+        if (this.loader_window) {
+            this.loader_window.set_description(`Loading ${this.loading_what}.`);
+            this.loader_window.set_loading_percentage(this.game.load.progress);
+        } else {
+            if (this.game.time.frames % 4 === 0) {
+                this.loading_progress = this.game.load.progress.toLocaleString("en-US", {
+                    minimumIntegerDigits: 2,
+                    useGrouping: false,
+                });
+            }
+            this.game.debug.text(`${this.loading_progress}% loading ${this.loading_what}...`, 5, 15, "#00ff00");
         }
-        this.game.debug.text(`${this.loading_progress}% loading ${this.loading_what}...`, 5, 15, "#00ff00");
     }
 
     private load_render() {
@@ -291,6 +300,11 @@ export class GoldenSun {
             //initializes the snapshot manager
             this.snapshot_manager = new Snapshot(this.game, this, snapshot);
 
+            //initializes the loader window and opens it
+            this.loader_window = new LoaderWindow(this.game);
+            this.loader_window.set_title("Loading game data...");
+            this.loader_window.open_window();
+
             //initializes the game
             this.initialize_game();
         };
@@ -331,8 +345,6 @@ export class GoldenSun {
      * Initializes the game. It can be a new one or a restored one from snapshot.
      */
     private async initialize_game() {
-        this.game.camera.fade(0x0, 1);
-
         const snapshot = this.snapshot_manager.snapshot;
 
         this.game.sound.mute = snapshot?.mute ?? this.game.sound.mute;
@@ -427,19 +439,26 @@ export class GoldenSun {
 
         this.assets_loaded = true;
 
+        this.game.camera.fade(0x0, 1);
+
         this.map.fire_game_events(map_game_event_types.BEFORE_CAMERA_FADE);
-        this.game.camera.resetFX();
 
-        this.initialize_psynergy_controls();
+        this.game.camera.onFadeComplete.addOnce(() => {
+            this.loader_window.close();
 
-        if (!this.production_mode && this.dbs.init_db.start_battle_tester_on_init) {
-            this.debug.start_battle_animation_tester();
-            this.debug.toggle_animation_controls();
-        } else {
-            this.map.fire_game_events();
-        }
+            this.game.camera.resetFX();
 
-        this.snapshot_manager.clear_snapshot();
+            this.initialize_psynergy_controls();
+
+            if (!this.production_mode && this.dbs.init_db.start_battle_tester_on_init) {
+                this.debug.start_battle_animation_tester();
+                this.debug.toggle_animation_controls();
+            } else {
+                this.map.fire_game_events();
+            }
+
+            this.snapshot_manager.clear_snapshot();
+        });
     }
 
     /**
