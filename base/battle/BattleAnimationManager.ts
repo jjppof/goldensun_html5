@@ -82,7 +82,7 @@ export class BattleAnimationManager {
     }
 
     async load_animation(battle_anim_key, caster_battle_key, mirrored_animation) {
-        let editor_recipe: any = this.data.debug.battle_anim_editor?.getValue();
+        let editor_recipe: any = this.data.debug?.battle_anim_editor?.getValue();
         if (editor_recipe) {
             try {
                 editor_recipe = JSON.parse(editor_recipe);

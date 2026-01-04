@@ -200,7 +200,7 @@ export class Debug {
 
     fire_battle_animation(hit_all_enemies?: boolean) {
         let ability_keyname = (document.getElementById("animation_tester_ability_keyname") as HTMLInputElement)?.value;
-        let editor_recipe: any = this.data.debug.battle_anim_editor?.getValue();
+        let editor_recipe: any = this.battle_anim_editor?.getValue();
         if (editor_recipe) {
             try {
                 editor_recipe = JSON.parse(editor_recipe);

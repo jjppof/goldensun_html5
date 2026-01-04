@@ -250,7 +250,7 @@ export class SummonEvent extends GameEvent {
 
         const total_phi = (Math.PI * 17) / 2;
         const total_time = 4000;
-        const speed_factor = (total_phi * 1000) / this.game.time.fps / total_time;
+        const speed_factor = (total_phi * this.game.time.delta) / total_time;
         aux_promise = new Promise(resolve => (aux_resolve = resolve));
         let ref_phi = 0;
         const PI = Math.PI;

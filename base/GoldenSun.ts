@@ -52,6 +52,7 @@ export class GoldenSun {
     public ignore_system_scaling: boolean = false;
     public verbose_game_event_fire: boolean = false;
     public force_desired_fps: boolean = false;
+    public production_mode: boolean = false;
 
     public electron_app: boolean;
     public ipcRenderer: any;
@@ -239,6 +240,9 @@ export class GoldenSun {
         await this.audio.init_se();
         await initialize_bgm_data(this.game, this, this.dbs.bgm_db);
 
+        //check if production mode
+        this.production_mode = Boolean(this.dbs.init_db.production_mode);
+
         //init camera custom features
         this.camera = new Camera(this.game, this);
 
@@ -252,8 +256,12 @@ export class GoldenSun {
         this.particle_wrapper = new ParticlesWrapper(this.game, this);
 
         //init debug systems
-        this.debug = new Debug(this.game, this);
-        this.debug.initialize_controls();
+        if (this.production_mode) {
+            this.debug = null;
+        } else {
+            this.debug = new Debug(this.game, this);
+            this.debug.initialize_controls();
+        }
 
         this.audio.initialize_controls();
         this.initialize_utils_controls();
@@ -313,7 +321,7 @@ export class GoldenSun {
         height = this.ignore_system_scaling ? (height * 1) / window.devicePixelRatio : height;
         if (this.ipcRenderer) {
             width = this.ignore_system_scaling ? (width * 1) / window.devicePixelRatio : width;
-            this.ipcRenderer.resize_window(width, height, Boolean(this.debug.battle_anim_tester));
+            this.ipcRenderer.resize_window(width, height, Boolean(this.debug?.battle_anim_tester));
         } else {
             document.getElementById("game").style.height = `${height}px`;
         }
@@ -424,7 +432,7 @@ export class GoldenSun {
 
         this.initialize_psynergy_controls();
 
-        if (this.dbs.init_db.start_battle_tester_on_init) {
+        if (!this.production_mode && this.dbs.init_db.start_battle_tester_on_init) {
             this.debug.start_battle_animation_tester();
             this.debug.toggle_animation_controls();
         } else {
@@ -560,7 +568,9 @@ export class GoldenSun {
      */
     private update() {
         if (!this.assets_loaded) {
-            this.render_loading();
+            if (!this.production_mode) {
+                this.render_loading();
+            }
             return;
         }
         this.fps_factor = this.game.time.delta * numbers.FPS_DIV;
@@ -658,7 +668,7 @@ export class GoldenSun {
      * Renders some debug info.
      */
     private render() {
-        if (this.assets_loaded) {
+        if (this.assets_loaded && !this.production_mode) {
             this.debug.set_debug_info();
             if (!this.electron_app) {
                 if (this.game.time.frames % 8 === 0) {

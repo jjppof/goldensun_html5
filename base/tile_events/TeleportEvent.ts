@@ -439,7 +439,7 @@ export class TeleportEvent extends TileEvent {
         this.data.map.config_all_bodies(this.data.map.collision_layer);
         this.data.collision.config_collisions(this.data.map.collision_layer);
         this.game.physics.p2.updateBoundsCollisionGroup();
-        if (!this.data.electron_app) {
+        if (!this.data.electron_app && !this.data.production_mode) {
             this.data.debug.update_debug_physics(this.data.hero.sprite.body.debug);
         }
         this.data.hero.sprite.body.x = get_centered_pos_in_px(this.x_target, this.data.map.tile_width);
