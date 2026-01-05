@@ -319,6 +319,10 @@ export class MainChar extends Player {
             },
             after: null,
         };
+        if (this.level >= this.data.info.party_data.max_chars_level) {
+            return_data.after = return_data.before;
+            return return_data;
+        }
         this.current_exp += value;
         this.level = _.findIndex(this.exp_curve, exp => exp > this.current_exp);
         this.update_all();

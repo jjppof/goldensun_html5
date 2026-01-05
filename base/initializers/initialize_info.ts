@@ -31,6 +31,7 @@ export type PartyData = {
     coins: number;
     random_battle_extra_rate: number;
     avg_level: number;
+    max_chars_level: number;
     game_tickets: {
         coins_remaining: number;
         tickets_bought: number;
@@ -121,6 +122,7 @@ export async function initialize_game_data(game: Phaser.Game, data: GoldenSun) {
         members: [],
         coins: snapshot?.coins ?? data.dbs.init_db.coins,
         avg_level: 0,
+        max_chars_level: data.dbs.init_db.max_chars_level ?? 99,
         random_battle_extra_rate: snapshot?.random_battle_extra_rate ?? 0,
         game_tickets: {
             coins_remaining: snapshot?.game_tickets.coins_remaining ?? 300,

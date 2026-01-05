@@ -1037,7 +1037,7 @@ export class Window {
                 let line_next_step = "";
                 for (let word of words) {
                     line_next_step += word + " ";
-                    if (utils.get_text_width(this.game, line_next_step) > options.max_line_width) {
+                    if (utils.get_text_width(this.game, line_next_step, options?.italic) > options.max_line_width) {
                         parsed_lines.push(line.trim());
                         line_next_step = line = word + " ";
                         continue;

@@ -66,6 +66,14 @@ app.commandLine.appendSwitch('enable-features',
 if (process.platform === 'win32') {
     app.commandLine.appendSwitch('force_high_performance_gpu');
 }
+app.commandLine.appendSwitch('disable-features', [
+    'MediaRouter',
+    'Translate',
+    'SpellChecker',
+    'Autofill',
+    'OptimizationHints',
+    'BackForwardCache'
+].join(','));
 
 function initializeLogger() {
     const log_dir = path.join(__dirname, '../logs');

@@ -8,6 +8,7 @@
     "y_tile_position": 13,
     "collision_layer": 1,
     "coins": 10000,
+    "max_chars_level": 25,
     "skip_start_menu": false,
     "production_mode": false,
     "ignore_system_scaling": true,
