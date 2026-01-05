@@ -1050,6 +1050,8 @@ export class Window {
             } else {
                 parsed_lines = [lines];
             }
+        } else {
+            parsed_lines = lines;
         }
 
         if (options?.update_size) {
