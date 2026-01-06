@@ -126,6 +126,7 @@ type ShakeAttr = {
     direction: "x" | "y";
     shake_count: number;
     intensity: number;
+    random_delta: number;
 };
 
 type GeneralFilterAttr = {
@@ -1860,6 +1861,13 @@ export class BattleAnimation {
                     Object.keys(sprites).length
                 );
             }
+            const shake_count = shake_seq.shake_count ? shake_seq.shake_count : 1;
+            const random_delta_data = new Array(shake_count).fill(0);
+            if (shake_seq.random_delta) {
+                for (let i = 0; i < shake_count; ++i) {
+                    random_delta_data[i] = _.random(-shake_seq.random_delta, shake_seq.random_delta);
+                }
+            }
             for (let key in sprites) {
                 const sprite_info = sprites[key];
                 const sprite = sprite_info.obj as PlayerSprite | Phaser.Sprite;
@@ -1872,15 +1880,17 @@ export class BattleAnimation {
                 this.promises.push(this_promise);
 
                 const apply_shake = async () => {
-                    for (let i = 0; i < (shake_seq.shake_count ? shake_seq.shake_count : 1); ++i) {
+                    for (let i = 0; i < shake_count; ++i) {
                         let resolve_f;
                         const this_prom = new Promise(resolve => (resolve_f = resolve));
                         const direction = shake_seq.direction ?? "y";
+                        let intensity = shake_seq.intensity ? shake_seq.intensity : 2;
+                        intensity += random_delta_data[i];
                         this.game.add
                             .tween(sprite)
                             .to(
                                 {
-                                    [direction]: sprite[direction] + (shake_seq.intensity ? shake_seq.intensity : 2),
+                                    [direction]: sprite[direction] + intensity,
                                 },
                                 shake_seq.interval ?? 70,
                                 Phaser.Easing.Linear.None,
