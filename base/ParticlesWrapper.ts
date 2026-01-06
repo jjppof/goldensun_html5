@@ -72,10 +72,10 @@ export enum zone_types {
 
 export type ParticlesZone = {
     type: zone_types;
-    radius: number;
-    width: number;
-    height: number;
-    points: {
+    radius?: number;
+    width?: number;
+    height?: number;
+    points?: {
         x: number;
         y: number;
         shift_x: number;
@@ -86,6 +86,7 @@ export type ParticlesZone = {
 export type Emitter = {
     emitter_data_key?: string;
     render_type?: "pixel" | "sprite";
+    resize_renderer?: boolean;
     x?: number | string;
     y?: number | string;
     dynamic_pos?: boolean;
@@ -366,7 +367,9 @@ export class ParticlesWrapper {
                     if (emitter_info.particles_display_blend_mode === "screen") {
                         renderer.display.blendMode = Phaser.blendModes.SCREEN;
                     }
-                    renderer.resize(GAME_WIDTH << 1, GAME_HEIGHT);
+                    if (emitter_info.resize_renderer ?? true) {
+                        renderer.resize(GAME_WIDTH << 1, GAME_HEIGHT);
+                    }
                 }
 
                 let group = particles_group;

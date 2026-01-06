@@ -14,9 +14,11 @@ Phaser.Filter.Glow.prototype = Object.create(Phaser.Filter.prototype);
 Phaser.Filter.Glow.prototype.constructor = Phaser.Filter.Glow;
 Phaser.Filter.Glow.prototype.key = "glow";
 
-Phaser.Filter.Glow.prototype.init = function(distance, quality) {
+Phaser.Filter.Glow.prototype.init = function(distance, quality, distance_increment, initial_distance) {
     this.distance = distance ? distance : 5.0;
     this.quality_dist = 1 / (quality ? quality : 0.5) / this.distance;
+    this.distance_increment = distance_increment ? distance_increment : 1;
+    this.initial_distance = initial_distance ? initial_distance : 1;
 
     this.fragmentSrc = `
         precision mediump float;
@@ -45,7 +47,7 @@ Phaser.Filter.Glow.prototype.init = function(distance, quality) {
             for (float angle = 0.0; angle <= 6.2832; angle += ${this.quality_dist.toFixed(4)}) {
                 cosAngle = cos(angle);
                 sinAngle = sin(angle);
-                for (float curDistance = 1.0; curDistance <= ${this.distance.toFixed(4)}; curDistance++) {
+                for (float curDistance = ${this.initial_distance.toFixed(4)}; curDistance <= ${this.distance.toFixed(4)}; curDistance += ${this.distance_increment.toFixed(4)}) {
                     displaced.x = vTextureCoord.x + cosAngle * curDistance * px.x;
                     displaced.y = vTextureCoord.y + sinAngle * curDistance * px.y;
                     curColor = texture2D(uSampler, displaced);

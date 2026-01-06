@@ -1222,6 +1222,8 @@ declare module Phaser {
             texture_height: number;
             distance: number;
             quality: number;
+            distance_increment: number;
+            initial_distance: number;
         }
 
         class Outline extends Phaser.Filter {

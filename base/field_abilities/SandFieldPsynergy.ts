@@ -197,7 +197,7 @@ export class SandFieldPsynergy extends FieldAbilities {
                         dust: {
                             image: "dust/dust",
                             animations: {
-                                leaf: {
+                                dust: {
                                     frames: {start: 0, stop: 7, prefix: "dust/spread/", suffix: "", zeroPad: 2},
                                     frameRate: 12,
                                     loop: false,

@@ -935,7 +935,11 @@ export class GameEventManager {
                     info.keep_reveal,
                     info.keep_custom_psynergy,
                     info.char_key,
-                    info.ability
+                    info.ability,
+                    info.play_animation,
+                    info.reset_direction,
+                    info.show_learn_msg,
+                    info.finish_events
                 );
             case event_types.STORAGE_CHANGE:
                 return new StorageChangeEvent(
