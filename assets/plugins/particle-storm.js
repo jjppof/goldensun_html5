@@ -1463,7 +1463,7 @@ Phaser.ParticleStorm.Emitter.prototype = {
                 }
             }
 
-            if (!p.step(elapsed, this.force))
+            if (!p.step(elapsed, this.force, i))
             {
                 p.kill();
                 this.pool.push(p);
@@ -2147,7 +2147,7 @@ Phaser.ParticleStorm.Particle.prototype = {
     * @param {Phaser.Point} [force] - A force which is applied to this particle as acceleration on every update call.
     * @return {boolean} True to continue living, false if this particle should die now.
     */
-    step: function (elapsedTime, force) {
+    step: function (elapsedTime, force, particleIndex) {
 
         //  Keep track of the particles age
         this._age += elapsedTime;
@@ -2220,7 +2220,7 @@ Phaser.ParticleStorm.Particle.prototype = {
                 this.transform[transform_key].step();
             }
         } else {
-            this.transform.step();
+            this.transform.step(particleIndex);
         }
         this.color.step();
 
@@ -5499,7 +5499,7 @@ Phaser.ParticleStorm.Controls.Transform.prototype = {
     *
     * @method Phaser.ParticleStorm.Controls.Transform#step
     */
-    step: function () {
+    step: function (particleIndex) {
 
         var life = this.particle.life;
 
