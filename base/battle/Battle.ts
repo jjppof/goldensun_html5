@@ -287,6 +287,7 @@ export class Battle extends BattleBase {
                 caster_sprite,
                 target_sprites,
                 [],
+                [],
                 this.battle_stage.group_allies,
                 this.battle_stage.group_allies,
                 this.battle_stage
@@ -783,6 +784,7 @@ export class Battle extends BattleBase {
                     this.animation_manager.play_animation(
                         dodge_animation,
                         caster_sprite,
+                        [],
                         [],
                         [],
                         this.battle_stage.group_allies,

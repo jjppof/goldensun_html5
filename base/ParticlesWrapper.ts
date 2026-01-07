@@ -23,6 +23,8 @@ export type ParticleObject = {
     red?: AdvParticleValue;
     green?: AdvParticleValue;
     blue?: AdvParticleValue;
+    pixelSize?: number;
+    pixelReducingFactor?: number;
     vx?: AdvParticleValue;
     vy?: AdvParticleValue;
     velocity?: AdvParticleValue;
@@ -108,6 +110,7 @@ export type Emitter = {
     particles_display_blend_mode?: string;
     render_white_core?: boolean;
     core_custom_color?: string;
+    core_size_factor?: number;
     transforms?: string[];
     zone_key?: string;
     random_in_zone?: boolean;
@@ -335,6 +338,7 @@ export class ParticlesWrapper {
                     undefined,
                     emitter_info.render_white_core,
                     emitter_info.core_custom_color,
+                    emitter_info.core_size_factor,
                     emitter_info.transforms
                 );
                 emitter.force.x = emitter_info.force?.x ?? emitter.force.x;

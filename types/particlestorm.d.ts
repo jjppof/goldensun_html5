@@ -24,7 +24,7 @@ declare module Phaser {
         blendModeMap: any;
         hsv: any[];
 
-        createEmitter(renderType?: string, force?: Phaser.Point, scrollSpeed?: Phaser.Point, render_white_core?: boolean, core_custom_color?: string, transforms?: string[]): ParticleStorm.Emitter;
+        createEmitter(renderType?: string, force?: Phaser.Point, scrollSpeed?: Phaser.Point, render_white_core?: boolean, core_custom_color?: string, core_size_factor?: number, transforms?: string[]): ParticleStorm.Emitter;
         removeEmitter(emitter: ParticleStorm.Emitter): void;
         addData(key: string | string[], obj?: any): ParticleStorm;
         getData(key: string): any;

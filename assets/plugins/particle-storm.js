@@ -193,9 +193,9 @@ Phaser.ParticleStorm.FPS_MULT = 60 / 1000;
 *     This is different to force which is applied as a velocity on the particle, where-as scrollSpeed directly adjusts their final position.
 * @return {Phaser.ParticleStorm.Emitter} The Emitter object.
 */
-Phaser.ParticleStorm.prototype.createEmitter = function (renderType, force, scrollSpeed, render_white_core = false, core_custom_color = null, transforms = null) {
+Phaser.ParticleStorm.prototype.createEmitter = function (renderType, force, scrollSpeed, render_white_core = false, core_custom_color = null, core_size_factor = 1, transforms = null) {
 
-    var emitter = new Phaser.ParticleStorm.Emitter(this, renderType, force, scrollSpeed, render_white_core, core_custom_color, transforms);
+    var emitter = new Phaser.ParticleStorm.Emitter(this, renderType, force, scrollSpeed, render_white_core, core_custom_color, core_size_factor, transforms);
 
     this.emitters.push(emitter);
 
@@ -699,7 +699,7 @@ Phaser.ParticleStorm.prototype.update = function () {
 * @param {Phaser.Point} [scrollSpeed] - All particles can be scrolled. This offsets their positions by the amount in this Point each update.
 *     This is different to force which is applied as a velocity on the particle, where-as scrollSpeed directly adjusts their final position.
 */
-Phaser.ParticleStorm.Emitter = function (parent, renderType, force, scrollSpeed, render_white_core = false, core_custom_color = null, transforms = null) {
+Phaser.ParticleStorm.Emitter = function (parent, renderType, force, scrollSpeed, render_white_core = false, core_custom_color = null, core_size_factor = 1, transforms = null) {
 
     /**
     * @property {Phaser.Game} game - A reference to the Phaser Game instance.
@@ -890,6 +890,8 @@ Phaser.ParticleStorm.Emitter = function (parent, renderType, force, scrollSpeed,
     this.wells = [];
 
     this.core_custom_color = core_custom_color;
+
+    this.core_size_factor = core_size_factor;
 
     this.transforms = transforms;
 
@@ -2046,6 +2048,11 @@ Phaser.ParticleStorm.Particle.prototype = {
 
         this.data = data;
 
+        if (data.hasOwnProperty('pixelSize'))
+        {
+            this.pixelSize = data.pixelSize;
+        }
+
         //  ------------------------------------------------
         //  Lifespan
         //  ------------------------------------------------
@@ -2237,7 +2244,7 @@ Phaser.ParticleStorm.Particle.prototype = {
                 this.emitChild();
             }
 
-            this.renderer.update(this);
+            this.renderer.update(this, particleIndex);
         }
 
         if (!this.isComplete && this.life === 1.0)
@@ -5514,10 +5521,10 @@ Phaser.ParticleStorm.Controls.Transform.prototype = {
             }
         }
 
-        this.scale.x.value += this.scale.x.delta;
-        this.scale.y.value += this.scale.y.delta;
+        this.scale.x.value += this.scale.x.delta * fps_factor;
+        this.scale.y.value += this.scale.y.delta * fps_factor;
 
-        this.rotation.value += this.rotation.delta;
+        this.rotation.value += this.rotation.delta * fps_factor;
 
         this.rotation.calc = (this.rotation.initial + this.graph.getValue(this.rotation, life)) * Phaser.ParticleStorm.PI_180;
 
@@ -5536,15 +5543,15 @@ Phaser.ParticleStorm.Controls.Transform.prototype = {
         if (this.acceleration.facing.value !== null)
         {
             //  Add 90 degrees because particle rotation 0 is right-handed
-            this.acceleration.facing.value += this.acceleration.facing.delta;
+            this.acceleration.facing.value += this.acceleration.facing.delta * fps_factor;
             r = this.rotation.calc + ((90 + this.acceleration.facing.offset) * Phaser.ParticleStorm.PI_180);
             v = this.acceleration.facing.initial + this.graph.getValue(this.acceleration.facing, life);
             this.velocity.x.value += v * Math.sin(r);
             this.velocity.y.value += v * -Math.cos(r);
         }
 
-        this.acceleration.x.value += this.acceleration.x.delta;
-        this.acceleration.y.value += this.acceleration.y.delta;
+        this.acceleration.x.value += this.acceleration.x.delta * fps_factor;
+        this.acceleration.y.value += this.acceleration.y.delta * fps_factor;
 
         this.velocity.x.value += (this.velocity.x.delta + this.acceleration.x.initial + this.graph.getValue(this.acceleration.x, life)) * fps_factor;
         this.velocity.y.value += (this.velocity.y.delta + this.acceleration.y.initial + this.graph.getValue(this.acceleration.y, life)) * fps_factor;
@@ -5552,7 +5559,7 @@ Phaser.ParticleStorm.Controls.Transform.prototype = {
         if (this.velocity.facing.value !== null)
         {
             //  Add 90 degrees because particle rotation 0 is right-handed
-            this.velocity.facing.value += this.velocity.facing.delta;
+            this.velocity.facing.value += this.velocity.facing.delta * fps_factor;
             r = this.rotation.calc + ((90 + this.velocity.facing.offset) * Phaser.ParticleStorm.PI_180);
             v = this.velocity.facing.initial + this.graph.getValue(this.velocity.facing, life);
             this.x += v * Math.sin(r);
@@ -6049,7 +6056,7 @@ Phaser.ParticleStorm.Renderer.Pixel.prototype.preUpdate = function () {
 * @method Phaser.ParticleStorm.Renderer.Pixel#update
 * @param {Phaser.ParticleStorm.Particle} particle - The particle to be updated.
 */
-Phaser.ParticleStorm.Renderer.Pixel.prototype.update = function (particle) {
+Phaser.ParticleStorm.Renderer.Pixel.prototype.update = function (particle, particleIndex) {
 
     //  If the particle is delayed AND should be hidden when delayed ...
     if (particle.delay > 0 && !particle.delayVisible)
@@ -6101,18 +6108,24 @@ Phaser.ParticleStorm.Renderer.Pixel.prototype.update = function (particle) {
             pixel_size_scale = particle.transform.scale.x.calc;
         }
     }
-    let pixel_size = this.pixelSize * pixel_size_scale;
-    if (this.pixelSize > 2)
+    if (particle.data.pixelReducingFactor && particle.pixelSize > 0) {
+        particle.pixelSize -= particle.data.pixelReducingFactor * this.game.time.delta * Phaser.ParticleStorm.FPS_MULT;;
+        particle.pixelSize = Math.max(0, particle.pixelSize);
+    }
+    const pixelSizeToRender = particle.pixelSize ? particle.pixelSize : this.pixelSize;
+    const pixel_size = pixelSizeToRender * pixel_size_scale;
+    if (pixelSizeToRender > 2)
     {
         if (this.useRect) {
             this.bmd.rect(x, y, pixel_size, pixel_size, particle.color.rgba);
             if (this.bmd2) {
-                this.bmd2.rect(x, y, pixel_size, pixel_size, core_color);
+                const size = particle.emitter.core_size_factor * pixel_size;
+                this.bmd2.rect(x, y, size, size, core_color);
             }
         } else {
-            this.bmd.circle(x, y, pixel_size/2, particle.color.rgba);
+            this.bmd.circle(x, y, pixel_size / 2, particle.color.rgba);
             if (this.bmd2) {
-                this.bmd2.circle(x, y, pixel_size/2, core_color);
+                this.bmd2.circle(x, y, particle.emitter.core_size_factor * pixel_size / 2, core_color);
             }
         }
     }
@@ -6124,7 +6137,7 @@ Phaser.ParticleStorm.Renderer.Pixel.prototype.update = function (particle) {
         }
 
         //  2x2
-        if (this.pixelSize === 2)
+        if (pixelSizeToRender === 2)
         {
             this.bmd.setPixel32(x + 1, y, r, g, b, a, false);
             this.bmd.setPixel32(x, y + 1, r, g, b, a, false);

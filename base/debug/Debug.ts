@@ -205,7 +205,9 @@ export class Debug {
             try {
                 editor_recipe = JSON.parse(editor_recipe);
                 ability_keyname = editor_recipe.key_name;
-            } catch (e) {}
+            } catch (e) {
+                this.battle_anim_tester.battle_log.add("Animation recipe is an invalid JSON.");
+            }
         }
         if (hit_all_enemies === undefined) {
             hit_all_enemies = (document.getElementById("animation_tester_all_enemies") as HTMLInputElement).checked;

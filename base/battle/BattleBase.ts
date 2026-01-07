@@ -213,6 +213,7 @@ export abstract class BattleBase {
             const allies_sprites = Object.values(caster_targets_sprites.allies).filter(
                 ally => ally.battle_key !== action.caster_battle_key
             );
+            const enemies_sprites = this.enemies_info.map(info => info.sprite);
             const group_caster =
                 action.caster.fighter_type === fighter_types.ALLY
                     ? this.battle_stage.group_allies
@@ -240,6 +241,7 @@ export abstract class BattleBase {
                     caster_sprite,
                     target_sprites,
                     allies_sprites,
+                    enemies_sprites,
                     group_caster,
                     group_taker,
                     this.battle_stage
@@ -255,6 +257,7 @@ export abstract class BattleBase {
                 caster_sprite,
                 target_sprites,
                 allies_sprites,
+                enemies_sprites,
                 group_caster,
                 group_taker,
                 this.battle_stage,

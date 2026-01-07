@@ -103,12 +103,14 @@
         "start_delay": 500,
         "is_absolute": false,
         "sprite_index": "targets",
+        "dont_affect_shadow": true,
         "duration": 200
     },{
         "to": 10,
         "start_delay": 1600,
         "is_absolute": false,
         "sprite_index": "targets",
+        "dont_affect_shadow": true,
         "duration": 70,
         "tween": "Bounce.Out"
     }],

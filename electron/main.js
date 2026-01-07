@@ -50,6 +50,7 @@ function createWindow() {
     }));
 }
 
+// app.commandLine.appendSwitch('disable-frame-rate-limit'); // used only to test high fps behavior
 app.commandLine.appendSwitch('max-gpu-frame-rate', '60');
 app.commandLine.appendSwitch('disable-gpu-vsync');
 app.commandLine.appendSwitch('enable-gpu-rasterization');

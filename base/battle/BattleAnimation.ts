@@ -65,6 +65,7 @@ export const MIRRORED_CAST_STAGE_POSITION = -0.7151327;
 enum target_types {
     CASTER = "caster",
     TARGETS = "targets",
+    NON_TARGETS = "non_targets",
     ALLIES = "allies",
     BACKGROUND = "background",
 }
@@ -357,6 +358,7 @@ export class BattleAnimation {
     };
     public caster_sprite: PlayerSprite;
     public targets_sprites: PlayerSprite[];
+    public non_targets_sprites: PlayerSprite[];
     public allies_sprites: PlayerSprite[];
     public background_sprites: Phaser.TileSprite[];
     public group_caster: Phaser.Group;
@@ -490,6 +492,7 @@ export class BattleAnimation {
         caster_sprite: PlayerSprite,
         targets_sprites: PlayerSprite[],
         allies_sprites: PlayerSprite[],
+        enemies_sprites: PlayerSprite[],
         group_caster: Phaser.Group,
         group_enemy: Phaser.Group,
         super_group: Phaser.Group,
@@ -512,6 +515,7 @@ export class BattleAnimation {
             y: this.caster_sprite.y,
         };
         this.targets_sprites = targets_sprites;
+        this.non_targets_sprites = enemies_sprites.filter(s => !targets_sprites.includes(s));
         this.allies_sprites = allies_sprites.filter(s => s !== caster_sprite);
         this.background_sprites = background_sprites;
         this.group_caster = group_caster;
@@ -552,6 +556,9 @@ export class BattleAnimation {
                     break;
                 case target_types.TARGETS:
                     sprites = this.targets_sprites;
+                    break;
+                case target_types.NON_TARGETS:
+                    sprites = this.non_targets_sprites;
                     break;
             }
             for (let i = 0; i < sprites.length; ++i) {
@@ -794,6 +801,9 @@ export class BattleAnimation {
                 case target_types.TARGETS:
                     number = this.targets_sprites.length;
                     break;
+                case target_types.NON_TARGETS:
+                    number = this.non_targets_sprites.length;
+                    break;
             }
         }
         const result = new Array<number>(number as number);
@@ -899,162 +909,100 @@ export class BattleAnimation {
             index: number;
         };
     } {
-        if (obj_propety) {
-            if (seq.sprite_index === target_types.BACKGROUND) {
-                return this.background_sprites.reduce((prev, cur, index) => {
-                    prev[`${cur.key}/${index}`] = {
-                        obj: _.get(cur, obj_propety),
-                        sprite: cur,
-                        index: index,
-                    };
-                    return prev;
-                }, {});
-            } else if (seq.sprite_index === target_types.CASTER) {
-                let sprite: PlayerSprite | PIXI.DisplayObject = this.caster_sprite;
-                if (seq.dont_affect_shadow) {
-                    sprite = this.caster_sprite.char_sprite;
-                } else if (seq.affect_only_shadow) {
-                    sprite = this.caster_sprite.shadow_sprite;
-                }
-                return {
-                    [this.caster_sprite.key]: {
-                        obj: _.get(this.caster_sprite, obj_propety) as keyof PlayerSprite,
-                        sprite: sprite,
-                        index: 0,
-                    },
-                };
-            } else if (seq.sprite_index === target_types.TARGETS || seq.sprite_index === target_types.ALLIES) {
-                const sprites = seq.sprite_index === target_types.TARGETS ? this.targets_sprites : this.allies_sprites;
-                return sprites.reduce((prev, cur, index) => {
-                    let sprite: PlayerSprite | PIXI.DisplayObject = cur;
-                    if (seq.dont_affect_shadow) {
-                        sprite = cur.char_sprite;
-                    } else if (seq.affect_only_shadow) {
-                        sprite = cur.shadow_sprite;
-                    }
-                    prev[`${cur.key}/${index}`] = {
-                        obj: _.get(cur, obj_propety),
-                        sprite: sprite,
-                        index: index,
-                    };
-                    return prev;
-                }, {});
-            } else {
-                if (Array.isArray(seq.sprite_index)) {
-                    return seq.sprite_index.reduce((prev, cur, index) => {
-                        prev[this.sprites[cur].data.custom_key] = {
-                            obj: _.get(this.sprites[cur], obj_propety),
-                            sprite: this.sprites[cur],
-                            index: index,
-                        };
-                        return prev;
-                    }, {});
-                } else if (!Array.isArray(seq.sprite_index) && typeof seq.sprite_index === "object") {
-                    const sprite_index_arr = this.get_expanded_values(
-                        seq.sprite_index as CompactValuesSpecifier,
-                        seq.sprite_index.amount
-                    );
-                    return sprite_index_arr.reduce((prev, cur, index) => {
-                        prev[this.sprites[cur].data.custom_key] = {
-                            obj: _.get(this.sprites[cur], obj_propety),
-                            sprite: this.sprites[cur],
-                            index: index,
-                        };
-                        return prev;
-                    }, {});
-                } else if (seq.per_target_key) {
-                    return this.per_target_sprites[seq.per_target_key].reduce((acc, cur, index) => {
-                        acc[cur.data.custom_key] = {
-                            obj: _.get(cur, obj_propety),
-                            sprite: cur,
-                            index: index,
-                        };
-                        return acc;
-                    }, {});
-                } else {
-                    return {
-                        [this.sprites[seq.sprite_index].data.custom_key]: {
-                            obj: _.get(this.sprites[seq.sprite_index], obj_propety),
-                            sprite: this.sprites[seq.sprite_index],
-                            index: 0,
-                        },
-                    };
-                }
+        const sprites_data: {
+            key: string;
+            sprite: PIXI.DisplayObject | PlayerSprite | keyof PlayerSprite | Phaser.Filter;
+        }[] = [];
+        let index_counter = 0;
+        if (seq.per_target_key) {
+            for (let i = 0; i < this.per_target_sprites[seq.per_target_key].length; ++i) {
+                const sprite = this.per_target_sprites[seq.per_target_key][i];
+                sprites_data.push({
+                    key: `${sprite.data.custom_key}/${index_counter}`,
+                    sprite: sprite,
+                });
+                ++index_counter;
             }
         } else {
-            if (seq.sprite_index === target_types.BACKGROUND) {
-                return this.background_sprites.reduce((prev, cur, index) => {
-                    prev[`${cur.key}/${index}`] = {
-                        obj: cur,
-                        index: index,
-                    };
-                    return prev;
-                }, {});
-            } else if (seq.sprite_index === target_types.CASTER) {
-                let sprite: PlayerSprite | PIXI.DisplayObject = this.caster_sprite;
-                if (seq.dont_affect_shadow) {
-                    sprite = this.caster_sprite.char_sprite;
-                } else if (seq.affect_only_shadow) {
-                    sprite = this.caster_sprite.shadow_sprite;
-                }
-                return {
-                    [this.caster_sprite.key]: {
-                        obj: sprite,
-                        index: 0,
-                    },
-                };
-            } else if (seq.sprite_index === target_types.TARGETS || seq.sprite_index === target_types.ALLIES) {
-                const sprites = seq.sprite_index === target_types.TARGETS ? this.targets_sprites : this.allies_sprites;
-                return sprites.reduce((prev, cur, index) => {
-                    let sprite: PlayerSprite | PIXI.DisplayObject = cur;
-                    if (seq.dont_affect_shadow) {
-                        sprite = cur.char_sprite;
-                    } else if (seq.affect_only_shadow) {
-                        sprite = cur.shadow_sprite;
-                    }
-                    prev[`${cur.key}/${index}`] = {
-                        obj: sprite,
-                        index: index,
-                    };
-                    return prev;
-                }, {});
-            } else if (Array.isArray(seq.sprite_index)) {
-                return seq.sprite_index.reduce((prev, cur, index) => {
-                    prev[this.sprites[cur].data.custom_key] = {
-                        obj: this.sprites[cur],
-                        index: index,
-                    };
-                    return prev;
-                }, {});
+            const all_indices: (string | number)[] = [];
+            if (Array.isArray(seq.sprite_index)) {
+                all_indices.push(...seq.sprite_index);
             } else if (!Array.isArray(seq.sprite_index) && typeof seq.sprite_index === "object") {
-                const sprite_index_arr = this.get_expanded_values(
-                    seq.sprite_index as CompactValuesSpecifier,
-                    seq.sprite_index.amount
+                all_indices.push(
+                    ...this.get_expanded_values(seq.sprite_index as CompactValuesSpecifier, seq.sprite_index.amount)
                 );
-                return sprite_index_arr.reduce((prev, cur, index) => {
-                    prev[this.sprites[cur].data.custom_key] = {
-                        obj: this.sprites[cur],
-                        index: index,
-                    };
-                    return prev;
-                }, {});
-            } else if (seq.per_target_key) {
-                return this.per_target_sprites[seq.per_target_key].reduce((acc, cur, index) => {
-                    acc[cur.data.custom_key] = {
-                        obj: cur,
-                        index: index,
-                    };
-                    return acc;
-                }, {});
             } else {
-                return {
-                    [this.sprites[seq.sprite_index].data.custom_key]: {
-                        obj: this.sprites[seq.sprite_index],
-                        index: 0,
-                    },
-                };
+                all_indices.push(seq.sprite_index);
+            }
+            for (let index of all_indices) {
+                if (index === target_types.BACKGROUND) {
+                    for (let i = 0; i < this.background_sprites.length; ++i) {
+                        sprites_data.push({
+                            key: `${this.background_sprites[i].key}/${index_counter}`,
+                            sprite: this.background_sprites[i],
+                        });
+                        ++index_counter;
+                    }
+                } else if (index === target_types.CASTER) {
+                    let sprite: PlayerSprite | PIXI.DisplayObject = this.caster_sprite;
+                    if (seq.dont_affect_shadow) {
+                        sprite = this.caster_sprite.char_sprite;
+                    } else if (seq.affect_only_shadow) {
+                        sprite = this.caster_sprite.shadow_sprite;
+                    }
+                    sprites_data.push({
+                        key: this.caster_sprite.key,
+                        sprite: sprite,
+                    });
+                    ++index_counter;
+                } else if (
+                    index === target_types.TARGETS ||
+                    index === target_types.ALLIES ||
+                    index === target_types.NON_TARGETS
+                ) {
+                    let player_sprites: PlayerSprite[] = [];
+                    switch (index) {
+                        case target_types.TARGETS:
+                            player_sprites = this.targets_sprites;
+                            break;
+                        case target_types.ALLIES:
+                            player_sprites = this.allies_sprites;
+                            break;
+                        case target_types.NON_TARGETS:
+                            player_sprites = this.non_targets_sprites;
+                            break;
+                    }
+                    for (let i = 0; i < player_sprites.length; ++i) {
+                        let sprite: PlayerSprite | PIXI.DisplayObject = player_sprites[i];
+                        if (seq.dont_affect_shadow) {
+                            sprite = sprite.char_sprite;
+                        } else if (seq.affect_only_shadow) {
+                            sprite = sprite.shadow_sprite;
+                        }
+                        sprites_data.push({
+                            key: `${player_sprites[i].key}/${index_counter}`,
+                            sprite: sprite,
+                        });
+                        ++index_counter;
+                    }
+                } else {
+                    const sprite = this.sprites[index];
+                    sprites_data.push({
+                        key: `${sprite.data.custom_key}/${index_counter}`,
+                        sprite: sprite,
+                    });
+                    ++index_counter;
+                }
             }
         }
+        return sprites_data.reduce((prev, cur, index) => {
+            prev[cur.key] = {
+                obj: obj_propety ? _.get(cur.sprite, obj_propety) : cur.sprite,
+                ...(obj_propety && {sprite: cur.sprite}),
+                index: index,
+            };
+            return prev;
+        }, {});
     }
 
     play_number_property_sequence(
@@ -1110,9 +1058,12 @@ export class BattleAnimation {
                     const seq_to = Array.isArray(seq.to) ? seq.to[sprite_info.index] : seq.to;
                     let to_value: number = seq_to as number;
                     if (
-                        [target_types.TARGETS, target_types.ALLIES, target_types.CASTER].includes(
-                            seq_to as target_types
-                        )
+                        [
+                            target_types.TARGETS,
+                            target_types.ALLIES,
+                            target_types.CASTER,
+                            target_types.NON_TARGETS,
+                        ].includes(seq_to as target_types)
                     ) {
                         let player_sprite = this.caster_sprite;
                         if (seq_to === target_types.TARGETS) {
@@ -1121,8 +1072,10 @@ export class BattleAnimation {
                             } else {
                                 player_sprite = this.targets_sprites[this.targets_sprites.length >> 1];
                             }
-                        } else if (seq_to === target_types.ALLIES) {
-                            player_sprite = this.allies_sprites[this.allies_sprites.length >> 1];
+                        } else if (seq_to === target_types.ALLIES || seq_to === target_types.NON_TARGETS) {
+                            const allies_or_non_targets =
+                                seq_to === target_types.ALLIES ? this.allies_sprites : this.non_targets_sprites;
+                            player_sprite = allies_or_non_targets[allies_or_non_targets.length >> 1];
                         }
                         let shift_sign = 1;
                         if (seq.shift_direction !== undefined) {
@@ -2076,8 +2029,19 @@ export class BattleAnimation {
             if (this.mirrored) {
                 x = numbers.GAME_WIDTH - (x as number);
             }
-        } else if (x === target_types.TARGETS || x === target_types.ALLIES) {
-            const sprites = x === target_types.TARGETS ? this.targets_sprites : this.allies_sprites;
+        } else if (x === target_types.TARGETS || x === target_types.ALLIES || x === target_types.NON_TARGETS) {
+            let sprites: PlayerSprite[] = [];
+            switch (x) {
+                case target_types.TARGETS:
+                    sprites = this.targets_sprites;
+                    break;
+                case target_types.ALLIES:
+                    sprites = this.allies_sprites;
+                    break;
+                case target_types.NON_TARGETS:
+                    sprites = this.non_targets_sprites;
+                    break;
+            }
             x = _.mean(sprites.map(target => target.x));
             if (this.mirrored) {
                 x = numbers.GAME_WIDTH - (x as number);
@@ -2085,8 +2049,19 @@ export class BattleAnimation {
         }
         if (y === target_types.CASTER) {
             y = this.caster_sprite.y;
-        } else if (y === target_types.TARGETS || y === target_types.ALLIES) {
-            const sprites = y === target_types.TARGETS ? this.targets_sprites : this.allies_sprites;
+        } else if (y === target_types.TARGETS || y === target_types.ALLIES || y === target_types.NON_TARGETS) {
+            let sprites: PlayerSprite[] = [];
+            switch (y) {
+                case target_types.TARGETS:
+                    sprites = this.targets_sprites;
+                    break;
+                case target_types.ALLIES:
+                    sprites = this.allies_sprites;
+                    break;
+                case target_types.NON_TARGETS:
+                    sprites = this.non_targets_sprites;
+                    break;
+            }
             y = _.mean(sprites.map(target => target.y));
         }
         (x as number) += shift_x ?? 0;
