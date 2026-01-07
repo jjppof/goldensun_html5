@@ -1,3 +1,4 @@
+import {Button} from "../XGamepad";
 import {GoldenSun} from "../GoldenSun";
 import * as numbers from "../magic_numbers";
 import {SpriteBase} from "../SpriteBase";
@@ -10,6 +11,7 @@ import * as _ from "lodash";
  * To set a dialog, call the DialogManager.set_dialog function and pass the entire dialog text.
  * To advance the dialog (call next window), call the DialogManager.next function.
  * Optionallly, if you know that the given text fits in one window, you can use DialogManager.next_dialog.
+ * Optionallly, if you want a very quick way to set a dialog, you can use DialogManager.quick_dialog.
  */
 export class DialogManager {
     private static readonly DIALOG_CRYSTAL_KEY = "dialog_crystal";
@@ -623,6 +625,47 @@ export class DialogManager {
                 this.dialog_crystal = null;
             }
         }
+    }
+
+    /**
+     * Quick way to invoke a dialog box built on top of DialogManager.next_dialog.
+     * This also contains controls handler for Button.A.
+     * @param text the dialog text or a list of them.
+     * @param options The dialog options.
+     */
+    async quick_dialog(text: string | string[], options?: Parameters<DialogManager["next_dialog"]>[2]) {
+        let controls_enabled = false;
+        const texts: string[] = typeof text === "string" ? [text] : text;
+        const get_crystal_obj = () => Object.assign(options ?? {}, {show_crystal: texts.length > 0});
+        let resolve_calback;
+        const promise = new Promise(resolve => (resolve_calback = resolve));
+        const control_key = this.data.control_manager.add_controls(
+            [
+                {
+                    buttons: Button.A,
+                    on_down: () => {
+                        if (controls_enabled) {
+                            if (texts.length) {
+                                controls_enabled = false;
+                                this.next_dialog(texts.shift(), () => (controls_enabled = true), get_crystal_obj());
+                            } else {
+                                this.kill_dialog(
+                                    () => {
+                                        this.data.control_manager.detach_bindings(control_key);
+                                        resolve_calback();
+                                    },
+                                    false,
+                                    true
+                                );
+                            }
+                        }
+                    },
+                },
+            ],
+            {persist: true}
+        );
+        this.next_dialog(texts.shift(), () => (controls_enabled = true), get_crystal_obj());
+        await promise;
     }
 
     /**

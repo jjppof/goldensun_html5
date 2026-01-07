@@ -2,7 +2,6 @@ import {DialogManager} from "../utils/DialogManager";
 import {zone_types} from "../ParticlesWrapper";
 import {base_actions, directions, promised_wait} from "../utils";
 import {GameEvent, event_types} from "./GameEvent";
-import {Button} from "../XGamepad";
 
 export class GrantAbilityEvent extends GameEvent {
     private ability: string;
@@ -195,36 +194,13 @@ export class GrantAbilityEvent extends GameEvent {
         filter.destroy();
 
         if (this.show_learn_msg) {
-            const dialog_manager = new DialogManager(this.game, this.data);
-            const text = `${char_name} learned ${ability_name}!`;
-            let controls_enabled = false;
-            const dialod_finish_promise = new Promise(resolve => (resolve_calback = resolve));
-            const control_key = this.data.control_manager.add_controls(
-                [
-                    {
-                        buttons: Button.A,
-                        on_down: () => {
-                            if (controls_enabled) {
-                                dialog_manager.kill_dialog(
-                                    () => {
-                                        this.data.control_manager.detach_bindings(control_key);
-                                        resolve_calback();
-                                    },
-                                    false,
-                                    true
-                                );
-                            }
-                        },
-                    },
-                ],
-                {persist: true}
-            );
-            dialog_manager.next_dialog(text, () => (controls_enabled = true));
             this.data.audio.pause_bgm();
             this.data.audio.play_se("misc/party_join", () => {
                 this.data.audio.resume_bgm();
             });
-            await dialod_finish_promise;
+            const dialog_manager = new DialogManager(this.game, this.data);
+            const text = `${char_name} learned ${ability_name}!`;
+            await dialog_manager.quick_dialog(text);
         }
 
         await this.finish(previous_direction, previous_force_idle_action_in_event, prev_collision_state);
