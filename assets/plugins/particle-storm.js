@@ -2584,7 +2584,14 @@ Phaser.ParticleStorm.Particle.prototype = {
 
         this.alive = false;
 
-        this.renderer.kill(this);
+        if (this.data.playOnKill) {
+            const anim = this.sprite.play(this.data.playOnKill, undefined, false);
+            anim.onComplete.addOnce(() => {
+                this.renderer.kill(this);
+            });
+        } else {
+            this.renderer.kill(this);
+        }
 
         this.onKill();
 
@@ -4753,7 +4760,7 @@ Phaser.ParticleStorm.Controls.Texture.prototype = {
             {
                 if (data.play !== undefined)
                 {
-                    sprite.play(this.rnd.pick(names));
+                    sprite.play(this.rnd.pick(data.play));
                 }
                 else
                 {
