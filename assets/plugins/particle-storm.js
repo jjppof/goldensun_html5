@@ -1148,6 +1148,8 @@ Phaser.ParticleStorm.Emitter.prototype = {
             return null;
         }
 
+        this.data = this.parent.dataList[key];
+
         this.batch = [];
 
         this._pCount = 0;
@@ -6112,9 +6114,9 @@ Phaser.ParticleStorm.Renderer.Pixel.prototype.update = function (particle, parti
         particle.pixelSize -= particle.data.pixelReducingFactor * this.game.time.delta * Phaser.ParticleStorm.FPS_MULT;;
         particle.pixelSize = Math.max(0, particle.pixelSize);
     }
-    const pixelSizeToRender = particle.pixelSize ? particle.pixelSize : this.pixelSize;
+    const pixelSizeToRender = particle.data.pixelSize ? particle.pixelSize : this.pixelSize;
     const pixel_size = pixelSizeToRender * pixel_size_scale;
-    if (pixelSizeToRender > 2)
+    if (pixel_size > 2)
     {
         if (this.useRect) {
             this.bmd.rect(x, y, pixel_size, pixel_size, particle.color.rgba);
@@ -6131,21 +6133,23 @@ Phaser.ParticleStorm.Renderer.Pixel.prototype.update = function (particle, parti
     }
     else
     {
-        this.bmd.setPixel32(x, y, r, g, b, a, false);
+        const immediate = Boolean(particle.data.pixelSize);
+
+        this.bmd.setPixel32(x, y, r, g, b, a, immediate);
         if (this.bmd2) {
-            this.bmd2.setPixel32(x, y, 255, 255, 255, a2, false);
+            this.bmd2.setPixel32(x, y, 255, 255, 255, a2, immediate);
         }
 
         //  2x2
-        if (pixelSizeToRender === 2)
+        if (pixel_size === 2)
         {
-            this.bmd.setPixel32(x + 1, y, r, g, b, a, false);
-            this.bmd.setPixel32(x, y + 1, r, g, b, a, false);
-            this.bmd.setPixel32(x + 1, y + 1, r, g, b, a, false);
+            this.bmd.setPixel32(x + 1, y, r, g, b, a, immediate);
+            this.bmd.setPixel32(x, y + 1, r, g, b, a, immediate);
+            this.bmd.setPixel32(x + 1, y + 1, r, g, b, a, immediate);
             if (this.bmd2) {
-                this.bmd2.setPixel32(x + 1, y, 255, 255, 255, a2, false);
-                this.bmd2.setPixel32(x, y + 1, 255, 255, 255, a2, false);
-                this.bmd2.setPixel32(x + 1, y + 1, 255, 255, 255, a2, false);
+                this.bmd2.setPixel32(x + 1, y, 255, 255, 255, a2, immediate);
+                this.bmd2.setPixel32(x, y + 1, 255, 255, 255, a2, immediate);
+                this.bmd2.setPixel32(x + 1, y + 1, 255, 255, 255, a2, immediate);
             }
         }
     }
@@ -6160,7 +6164,7 @@ Phaser.ParticleStorm.Renderer.Pixel.prototype.update = function (particle, parti
 */
 Phaser.ParticleStorm.Renderer.Pixel.prototype.postUpdate = function () {
 
-    if (this.pixelSize <= 2)
+    if (this.pixelSize <= 2 && !this.emitter.data.pixelSize)
     {
         this.bmd.context.putImageData(this.bmd.imageData, 0, 0);
         if (this.bmd2) {
