@@ -1,0 +1,60 @@
+{
+    "key_name": "cure",
+    "cast_type": "psynergy_cast",
+    "wait_for_cast_animation": true,
+    "blink_sequence": [{
+        "sprite_index": "targets",
+        "start_delay": 470,
+        "count": 1,
+        "interval": 0,
+        "duration": 500
+    }],
+    "particles_sequence": [{
+        "data": {
+            "energy" : {
+                "red": 232,
+                "green": 248,
+                "blue": 72,
+                "lifespan": 400,
+                "alpha": 0.8,
+                "target": {
+                    "x": "targets",
+                    "y": "targets",
+                    "shift_y": -20,
+                    "zone_key": "circle_zone"
+                }
+            }
+        },
+        "zones": {
+            "circle_zone": {
+                "type": "circle",
+                "radius": 5
+            },
+            "line_zone": {
+                "type": "line",
+                "points": [{"x":-50,"y":0}, {"x":50,"y":0}]
+            }
+        },
+        "emitters": [{
+            "x": "targets",
+            "y": 135,
+            "position": "over",
+            "render_type": "pixel",
+            "show_trails": true,
+            "trails_clear_factor": 0.2,
+            "pixel_size": 5,
+            "pixel_reducing_factor": 0.04,
+            "pixel_is_rect": false,
+            "particles_display_blend_mode": "screen",
+            "render_white_core": true,
+            "core_custom_color": "rgba(255,255,255,0.85)",
+            "total": 12,
+            "repeat": 2,
+            "frequency": 45,
+            "random_in_zone": true,
+            "emitter_data_key": "energy",
+            "zone_key": "line_zone"
+        }],
+        "emission_finish": 900
+    }]
+}

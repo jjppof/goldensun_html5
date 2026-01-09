@@ -197,10 +197,6 @@ export abstract class BattleBase {
                     action.caster.fighter_type === fighter_types.ALLY
                         ? this.allies_map_sprite
                         : this.enemies_map_sprite,
-                targets:
-                    action.caster.fighter_type === fighter_types.ALLY
-                        ? this.enemies_map_sprite
-                        : this.allies_map_sprite,
                 allies:
                     action.caster.fighter_type === fighter_types.ALLY
                         ? this.allies_map_sprite
@@ -208,7 +204,15 @@ export abstract class BattleBase {
             };
             const caster_sprite = caster_targets_sprites.caster[action.caster_battle_key];
             const target_sprites = action.targets.flatMap(info => {
-                return info.magnitude ? [caster_targets_sprites.targets[info.target.battle_key]] : [];
+                if (!info.magnitude) {
+                    return [];
+                } else if (info.target.sprite) {
+                    return [info.target.sprite];
+                } else if (info.target.battle_key in this.allies_map_sprite) {
+                    return [this.allies_map_sprite[info.target.battle_key]];
+                } else {
+                    return [this.enemies_map_sprite[info.target.battle_key]];
+                }
             });
             const allies_sprites = Object.values(caster_targets_sprites.allies).filter(
                 ally => ally.battle_key !== action.caster_battle_key
