@@ -186,7 +186,7 @@ export abstract class BattleBase {
         });
     }
 
-    async play_battle_animation(action: PlayerAbility, ability: Ability) {
+    async play_battle_animation(action: PlayerAbility, ability: Ability, ability_had_no_effect?: boolean) {
         const anim_availability = this.animation_manager.animation_available(
             action.battle_animation_key,
             action.caster_battle_key
@@ -248,7 +248,10 @@ export abstract class BattleBase {
                     enemies_sprites,
                     group_caster,
                     group_taker,
-                    this.battle_stage
+                    this.battle_stage,
+                    undefined,
+                    undefined,
+                    ability_had_no_effect
                 );
                 if (main_animation.wait_for_cast_animation) {
                     await cast_promise;
@@ -265,7 +268,8 @@ export abstract class BattleBase {
                 group_caster,
                 group_taker,
                 this.battle_stage,
-                target_dodged
+                target_dodged,
+                ability_had_no_effect
             );
             this.battle_stage.prevent_camera_angle_overflow();
         } else if (anim_availability === animation_availability.NOT_AVAILABLE) {

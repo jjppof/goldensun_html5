@@ -85,37 +85,40 @@ export class BattleLog {
         return promise;
     }
 
-    async add_ability(caster, ability, item_name, djinn_name, force_use = false) {
+    add_ability(caster, ability, item_name, djinn_name, force_use = false) {
+        let msg: string = "";
         const msg_type = force_use ? ability_msg_types.USE : ability.msg_type;
         switch (msg_type) {
             case ability_msg_types.ATTACK:
-                await this.add(`${caster.name} attacks!`);
+                msg = `${caster.name} attacks!`;
                 break;
             case ability_msg_types.CAST:
-                await this.add(`${caster.name} casts ${ability.name}!`);
+                msg = `${caster.name} casts ${ability.name}!`;
                 break;
             case ability_msg_types.UNLEASH:
-                await this.add(`${caster.name} unleashes ${ability.name}!`);
+                msg = `${caster.name} unleashes ${ability.name}!`;
                 break;
             case ability_msg_types.SUMMON:
-                await this.add(`${caster.name} summons ${ability.name}!`);
+                msg = `${caster.name} summons ${ability.name}!`;
                 break;
             case ability_msg_types.USE:
-                await this.add(`${caster.name} uses ${item_name ? item_name : ability.name}!`);
+                msg = `${caster.name} uses ${item_name ? item_name : ability.name}!`;
                 break;
             case ability_msg_types.DEFEND:
-                await this.add(`${caster.name} is defending!`);
+                msg = `${caster.name} is defending!`;
                 break;
             case ability_msg_types.ITEM_UNLEASH:
-                await this.add(`${caster.name}'s ${item_name ? item_name : "item"}`);
-                await this.add(`lets out a howl! ${ability.name}!`);
+                msg = `${caster.name}'s ${item_name ? item_name : "item"}`;
+                msg = `lets out a howl! ${ability.name}!`;
                 break;
             case ability_msg_types.SET_DJINN:
-                await this.add(`${djinn_name} is set to ${caster.name}!`);
+                msg = `${djinn_name} is set to ${caster.name}!`;
         }
+        return msg;
     }
 
-    async add_recover_effect(effect: Effect, char?: Player) {
+    add_recover_effect(effect: Effect, char?: Player) {
+        let msg: string = "";
         const player = char ?? effect.char;
         switch (effect.type) {
             case effect_types.MAX_HP:
@@ -124,36 +127,39 @@ export class BattleLog {
             case effect_types.DEFENSE:
             case effect_types.AGILITY:
             case effect_types.LUCK:
-                await this.add(`${player.name}'s ${effect_names[effect.type]} returns to normal!`);
+                msg = `${player.name}'s ${effect_names[effect.type]} returns to normal!`;
                 break;
             case effect_types.POWER:
             case effect_types.RESIST:
-                await this.add(
-                    `${player.name}'s ${element_names[effect.element]} ${effect_names[effect.type]} returns to normal!`
-                );
+                msg = `${player.name}'s ${element_names[effect.element]} ${
+                    effect_names[effect.type]
+                } returns to normal!`;
                 break;
             case effect_types.TEMPORARY_STATUS:
             case effect_types.PERMANENT_STATUS:
-                await this.add(on_remove_status_msg[effect.status_key_name](player));
+                msg = on_remove_status_msg[effect.status_key_name](player);
                 break;
         }
+        return msg;
     }
 
-    async add_damage(damage, target, pp_damage = false) {
+    add_damage(damage, target, pp_damage = false) {
+        let msg: string = "";
         const stat_str = pp_damage ? "PP" : "HP";
         const current_property = pp_damage ? main_stats.CURRENT_PP : main_stats.CURRENT_HP;
         const max_property = pp_damage ? main_stats.MAX_PP : main_stats.MAX_HP;
         if (damage > 0) {
-            await this.add(`${target.name} takes ${damage.toString()} damage!`);
+            msg = `${target.name} takes ${damage.toString()} damage!`;
         } else if (damage === 0) {
-            await this.add(`${target.name} takes no damage!`);
+            msg = `${target.name} takes no damage!`;
         } else {
             if (target[current_property] >= target[max_property]) {
-                await this.add(`${target.name}'s ${stat_str} is fully restored`);
+                msg = `${target.name}'s ${stat_str} is fully restored`;
             } else {
-                await this.add(`${target.name} recovers ${Math.abs(damage).toString()} ${stat_str}!`);
+                msg = `${target.name} recovers ${Math.abs(damage).toString()} ${stat_str}!`;
             }
         }
+        return msg;
     }
 
     clear() {

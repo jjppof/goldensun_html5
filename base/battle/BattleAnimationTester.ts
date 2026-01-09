@@ -153,12 +153,14 @@ export class BattleAnimationTester extends BattleBase {
         const djinn_name = this.action.djinn_key_name
             ? this.data.info.djinni_list[this.action.djinn_key_name].name
             : undefined;
-        await this.battle_log.add_ability(
-            this.action.caster,
-            ability,
-            null,
-            djinn_name,
-            this.action.item_slot !== undefined
+        await this.battle_log.add(
+            this.battle_log.add_ability(
+                this.action.caster,
+                ability,
+                null,
+                djinn_name,
+                this.action.item_slot !== undefined
+            )
         );
 
         //executes the animation of the current ability

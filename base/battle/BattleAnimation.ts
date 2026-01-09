@@ -106,6 +106,7 @@ type DefaultAttr = {
     direction?: string;
     remove?: boolean;
     ignore_if_dodge?: boolean;
+    ignore_if_no_effect?: boolean;
     round_final_value?: boolean;
 };
 
@@ -115,6 +116,7 @@ type MiscAttr = {
     sprite_index?: string | number | number[];
     per_target_key?: string;
     ignore_if_dodge?: boolean;
+    ignore_if_no_effect?: boolean;
     value: any;
 };
 
@@ -123,6 +125,7 @@ type ShakeAttr = {
     sprite_index: string | number | number[];
     per_target_key?: string;
     ignore_if_dodge: boolean;
+    ignore_if_no_effect: boolean;
     interval: number;
     direction: "x" | "y";
     shake_count: number;
@@ -136,6 +139,7 @@ type GeneralFilterAttr = {
     per_target_key?: string;
     remove: boolean;
     ignore_if_dodge?: boolean;
+    ignore_if_no_effect?: boolean;
     duration?: number;
 };
 
@@ -210,6 +214,7 @@ export class BattleAnimation {
     public data: GoldenSun;
     public key_name: string;
     public target_dodged: boolean;
+    public ability_had_no_effect: boolean;
     public sprites_keys: SpriteKey[] | target_types;
     public x_sequence: DefaultAttr[] = [];
     public y_sequence: DefaultAttr[] = [];
@@ -282,18 +287,21 @@ export class BattleAnimation {
         wait_for_index: number;
         hide_on_complete: boolean;
         ignore_if_dodge?: boolean;
+        ignore_if_no_effect?: boolean;
     }[] = [];
     public set_frame_sequence: {
         start_delay: number | number[];
         sprite_index: target_types | number | number[];
         frame_name: string;
         ignore_if_dodge?: boolean;
+        ignore_if_no_effect?: boolean;
     }[] = [];
     public blend_mode_sequence: {
         start_delay: number | number[];
         sprite_index: string | number | number[];
         mode: string;
         ignore_if_dodge?: boolean;
+        ignore_if_no_effect?: boolean;
     }[] = [];
     public sfx_sequence: {
         start_delay: number;
@@ -301,6 +309,7 @@ export class BattleAnimation {
         position_shift: number;
         volume: number;
         ignore_if_dodge?: boolean;
+        ignore_if_no_effect?: boolean;
     }[] = [];
     public lighting_sequence: {
         start_delay: number | number[] | CompactValuesSpecifier;
@@ -331,6 +340,7 @@ export class BattleAnimation {
         interval_time: number | number[];
         render_position: battle_positions;
         ignore_if_dodge?: boolean;
+        ignore_if_no_effect?: boolean;
         trail: boolean;
         trail_factor: number;
         trail_count: number;
@@ -437,6 +447,7 @@ export class BattleAnimation {
         this.data = data;
         this.key_name = key_name;
         this.target_dodged = false;
+        this.ability_had_no_effect = false;
         this.sprites_keys = sprites_keys ?? [];
         this.x_sequence = x_sequence ?? [];
         this.y_sequence = y_sequence ?? [];
@@ -499,7 +510,8 @@ export class BattleAnimation {
         battle_stage: BattleStage,
         background_sprites: Phaser.TileSprite[],
         sprite_key?: string,
-        target_dodged?: boolean
+        target_dodged?: boolean,
+        ability_had_no_effect?: boolean
     ) {
         this.sprites = [];
         this.per_target_sprites = {};
@@ -523,6 +535,7 @@ export class BattleAnimation {
         this.super_group = super_group;
         this.battle_stage = battle_stage;
         this.target_dodged = target_dodged;
+        this.ability_had_no_effect = ability_had_no_effect;
         this.trails_objs = [];
         this.trails_bmps = [];
         if (super_group.getChildIndex(group_caster) < super_group.getChildIndex(group_enemy)) {
@@ -1020,7 +1033,10 @@ export class BattleAnimation {
             dot_index >= 0 ? target_property.slice(dot_index + 1, target_property.length) : target_property;
         for (let i = 0; i < sequence.length; ++i) {
             const seq = sequence[i];
-            if (seq.ignore_if_dodge && this.target_dodged) {
+            if (
+                (seq.ignore_if_dodge && this.target_dodged) ||
+                (seq.ignore_if_no_effect && this.ability_had_no_effect)
+            ) {
                 continue;
             }
             const sprites = this.get_sprites(seq, obj_propety);
@@ -1217,7 +1233,10 @@ export class BattleAnimation {
         });
         for (let i = 0; i < this.play_sequence.length; ++i) {
             const play_seq = this.play_sequence[i];
-            if (play_seq.ignore_if_dodge && this.target_dodged) {
+            if (
+                (play_seq.ignore_if_dodge && this.target_dodged) ||
+                (play_seq.ignore_if_no_effect && this.ability_had_no_effect)
+            ) {
                 continue;
             }
             const sprites = this.get_sprites(play_seq);
@@ -1296,7 +1315,10 @@ export class BattleAnimation {
     play_set_frame_sequence() {
         for (let i = 0; i < this.set_frame_sequence.length; ++i) {
             const set_frame_seq = this.set_frame_sequence[i];
-            if (set_frame_seq.ignore_if_dodge && this.target_dodged) {
+            if (
+                (set_frame_seq.ignore_if_dodge && this.target_dodged) ||
+                (set_frame_seq.ignore_if_no_effect && this.ability_had_no_effect)
+            ) {
                 continue;
             }
             const sprites = this.get_sprites(set_frame_seq);
@@ -1329,7 +1351,10 @@ export class BattleAnimation {
     play_blend_modes() {
         for (let i = 0; i < this.blend_mode_sequence.length; ++i) {
             const blend_mode_seq = this.blend_mode_sequence[i];
-            if (blend_mode_seq.ignore_if_dodge && this.target_dodged) {
+            if (
+                (blend_mode_seq.ignore_if_dodge && this.target_dodged) ||
+                (blend_mode_seq.ignore_if_no_effect && this.ability_had_no_effect)
+            ) {
                 continue;
             }
             const sprites = this.get_sprites(blend_mode_seq);
@@ -1367,7 +1392,10 @@ export class BattleAnimation {
     play_lightning_sequence() {
         for (let i = 0; i < this.lighting_sequence.length; ++i) {
             const lighting_seq = this.lighting_sequence[i];
-            if (lighting_seq.ignore_if_dodge && this.target_dodged) {
+            if (
+                (lighting_seq.ignore_if_dodge && this.target_dodged) ||
+                (lighting_seq.ignore_if_no_effect && this.ability_had_no_effect)
+            ) {
                 continue;
             }
             const from_delta = lighting_seq.from.delta ?? {x: 0, y: 0};
@@ -1516,7 +1544,10 @@ export class BattleAnimation {
     play_sfx() {
         for (let i = 0; i < this.sfx_sequence.length; ++i) {
             const sfx_seq = this.sfx_sequence[i];
-            if (sfx_seq.ignore_if_dodge && this.target_dodged) {
+            if (
+                (sfx_seq.ignore_if_dodge && this.target_dodged) ||
+                (sfx_seq.ignore_if_no_effect && this.ability_had_no_effect)
+            ) {
                 continue;
             }
             let resolve_function;
@@ -1539,7 +1570,10 @@ export class BattleAnimation {
     play_misc_sequence() {
         for (let i = 0; i < this.misc_sequence.length; ++i) {
             const misc_seq = this.misc_sequence[i];
-            if (misc_seq.ignore_if_dodge && this.target_dodged) {
+            if (
+                (misc_seq.ignore_if_dodge && this.target_dodged) ||
+                (misc_seq.ignore_if_no_effect && this.ability_had_no_effect)
+            ) {
                 continue;
             }
             const sprites = this.get_sprites(misc_seq);
@@ -1587,7 +1621,10 @@ export class BattleAnimation {
     ) {
         for (let i = 0; i < sequence.length; ++i) {
             const filter_seq = sequence[i];
-            if (filter_seq.ignore_if_dodge && this.target_dodged) {
+            if (
+                (filter_seq.ignore_if_dodge && this.target_dodged) ||
+                (filter_seq.ignore_if_no_effect && this.ability_had_no_effect)
+            ) {
                 continue;
             }
             const sprites = this.get_sprites(filter_seq);
@@ -1804,7 +1841,10 @@ export class BattleAnimation {
     play_shake_sequence() {
         for (let i = 0; i < this.shake_sequence.length; ++i) {
             const shake_seq = this.shake_sequence[i];
-            if (shake_seq.ignore_if_dodge && this.target_dodged) {
+            if (
+                (shake_seq.ignore_if_dodge && this.target_dodged) ||
+                (shake_seq.ignore_if_no_effect && this.ability_had_no_effect)
+            ) {
                 continue;
             }
             const sprites = this.get_sprites(shake_seq);
@@ -1870,7 +1910,10 @@ export class BattleAnimation {
     play_blink_sequence() {
         for (let i = 0; i < this.blink_sequence.length; ++i) {
             const filter_seq = this.blink_sequence[i];
-            if (filter_seq.ignore_if_dodge && this.target_dodged) {
+            if (
+                (filter_seq.ignore_if_dodge && this.target_dodged) ||
+                (filter_seq.ignore_if_no_effect && this.ability_had_no_effect)
+            ) {
                 continue;
             }
             const sprites = this.get_sprites(filter_seq);

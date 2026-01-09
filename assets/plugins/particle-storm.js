@@ -4758,13 +4758,31 @@ Phaser.ParticleStorm.Controls.Texture.prototype = {
 
             if (names.length > 0)
             {
+                let animation;
                 if (data.play !== undefined)
                 {
-                    sprite.play(this.rnd.pick(data.play));
+                    animation = this.rnd.pick(data.play);
                 }
                 else
                 {
-                    sprite.play(names[0]);
+                    animation = names[0];
+                }
+                if (anim.yoyo) {
+                    const anim_obj = sprite.animations.getAnimation(animation);
+                    anim_obj.isReversed = false;
+                    anim_obj.loop = false;
+                    const playYoyo = () => {
+                        sprite.animations.currentAnim.isReversed = false;
+                        sprite.animations.play(animation);
+                        sprite.animations.currentAnim.onComplete.addOnce(() => {
+                            sprite.animations.currentAnim.isReversed = true;
+                            sprite.animations.play(animation);
+                            sprite.animations.currentAnim.onComplete.addOnce(playYoyo);
+                        });
+                    };
+                    playYoyo();
+                } else {
+                    sprite.play(animation);
                 }
             }
         }
