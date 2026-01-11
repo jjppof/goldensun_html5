@@ -1,0 +1,88 @@
+{
+    "key_name": "impair",
+    "cast_type": "psynergy_cast",
+    "wait_for_cast_animation": true,
+    "sprites": [{
+        "key_name": "shield",
+        "per_target": false,
+        "position": "between",
+        "initial_config": {
+            "x": "targets",
+            "y": "targets",
+            "blend_mode": "screen",
+            "alpha": 1,
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        }
+    }],
+    "alpha_sequence": [{
+        "is_absolute": true,
+        "to": 0,
+        "start_delay": 450,
+        "sprite_index": 0
+    }],
+    "y_sequence": [{
+        "is_absolute": false,
+        "to": -25,
+        "start_delay": 0,
+        "sprite_index": 0
+    }],
+    "play_sequence": [{
+        "animation_key": "shield",
+        "start_delay": 0,
+        "sprite_index": 0,
+        "wait": false,
+        "frame_rate": 10,
+        "repeat": false
+    }],
+    "particles_sequence": [{
+        "data": {
+            "chunks" : {
+                "image": "impair_battle_animation",
+                "blendMode": "SCREEN",
+                "frame": ["particles/000", "particles/001", "particles/002", "particles/003", "particles/004", "particles/005", "particles/006", "particles/007", "particles/008", "particles/009", "particles/010", "particles/011"],
+                "lifespan": 800,
+                "alpha": {
+                    "value": 0.65,
+                    "control": [
+                        {"x": 0.0, "y": 1.0},
+                        {"x": 0.75, "y": 0.85},
+                        {"x": 1.0, "y": 0.25}
+                    ]
+                },
+                "velocity": {
+                    "initial": {"min": 0.5, "max": 1.75},
+                    "radial": {"arcStart": 0, "arcEnd": 360},
+                    "control": [
+                        {"x": 0.0, "y": 1.0},
+                        {"x": 0.75, "y": 0.85},
+                        {"x": 1.0, "y": 0.15}
+                    ]
+                }
+            }
+        },
+        "zones": {
+            "circle_zone": {
+                "type": "circle",
+                "radius": 15
+            }
+        },
+        "emitters": [{
+            "x": "targets",
+            "y": "targets",
+            "shift_y": -25,
+            "position": "between",
+            "render_type": "sprite",
+            "total": 12,
+            "repeat": 2,
+            "frequency": 40,
+            "random_in_zone": true,
+            "emitter_data_key": "chunks",
+            "zone_key": "circle_zone"
+        }],
+        "emission_delay": 450,
+        "emission_finish": 1300
+    }]
+}

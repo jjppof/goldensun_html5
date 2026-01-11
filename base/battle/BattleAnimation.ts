@@ -58,6 +58,7 @@ import * as _ from "lodash";
 import {battle_actions, PlayerSprite} from "./PlayerSprite";
 import {ParticlesInfo} from "../ParticlesWrapper";
 import * as mathjs from "mathjs";
+import {msg_types} from "../Logger";
 
 export const CAST_STAGE_POSITION = 0.5242024;
 export const MIRRORED_CAST_STAGE_POSITION = -0.7151327;
@@ -927,6 +928,7 @@ export class BattleAnimation {
             sprite: PIXI.DisplayObject | PlayerSprite | keyof PlayerSprite | Phaser.Filter;
         }[] = [];
         let index_counter = 0;
+        let not_found_indexes: (string | number)[] = [];
         if (seq.per_target_key) {
             for (let i = 0; i < this.per_target_sprites[seq.per_target_key].length; ++i) {
                 const sprite = this.per_target_sprites[seq.per_target_key][i];
@@ -935,6 +937,9 @@ export class BattleAnimation {
                     sprite: sprite,
                 });
                 ++index_counter;
+            }
+            if (!this.per_target_sprites[seq.per_target_key] || !this.per_target_sprites[seq.per_target_key].length) {
+                not_found_indexes.push(seq.per_target_key);
             }
         } else {
             const all_indices: (string | number)[] = [];
@@ -950,11 +955,15 @@ export class BattleAnimation {
             for (let index of all_indices) {
                 if (index === target_types.BACKGROUND) {
                     for (let i = 0; i < this.background_sprites.length; ++i) {
-                        sprites_data.push({
-                            key: `${this.background_sprites[i].key}/${index_counter}`,
-                            sprite: this.background_sprites[i],
-                        });
-                        ++index_counter;
+                        if (this.background_sprites[i]) {
+                            sprites_data.push({
+                                key: `${this.background_sprites[i].key}/${index_counter}`,
+                                sprite: this.background_sprites[i],
+                            });
+                            ++index_counter;
+                        } else {
+                            not_found_indexes.push(index);
+                        }
                     }
                 } else if (index === target_types.CASTER) {
                     let sprite: PlayerSprite | PIXI.DisplayObject = this.caster_sprite;
@@ -963,11 +972,15 @@ export class BattleAnimation {
                     } else if (seq.affect_only_shadow) {
                         sprite = this.caster_sprite.shadow_sprite;
                     }
-                    sprites_data.push({
-                        key: this.caster_sprite.key,
-                        sprite: sprite,
-                    });
-                    ++index_counter;
+                    if (sprite) {
+                        sprites_data.push({
+                            key: this.caster_sprite.key,
+                            sprite: sprite,
+                        });
+                        ++index_counter;
+                    } else {
+                        not_found_indexes.push(index);
+                    }
                 } else if (
                     index === target_types.TARGETS ||
                     index === target_types.ALLIES ||
@@ -992,21 +1005,36 @@ export class BattleAnimation {
                         } else if (seq.affect_only_shadow) {
                             sprite = sprite.shadow_sprite;
                         }
-                        sprites_data.push({
-                            key: `${player_sprites[i].key}/${index_counter}`,
-                            sprite: sprite,
-                        });
-                        ++index_counter;
+                        if (sprite) {
+                            sprites_data.push({
+                                key: `${player_sprites[i].key}/${index_counter}`,
+                                sprite: sprite,
+                            });
+                            ++index_counter;
+                        } else {
+                            not_found_indexes.push(index);
+                        }
                     }
                 } else {
                     const sprite = this.sprites[index];
-                    sprites_data.push({
-                        key: `${sprite.data.custom_key}/${index_counter}`,
-                        sprite: sprite,
-                    });
-                    ++index_counter;
+                    if (sprite) {
+                        sprites_data.push({
+                            key: `${sprite.data.custom_key}/${index_counter}`,
+                            sprite: sprite,
+                        });
+                        ++index_counter;
+                    } else {
+                        not_found_indexes.push(index);
+                    }
                 }
             }
+        }
+        if (not_found_indexes.length) {
+            this.data.logger.log_message(
+                `"sprite_index" property didn't find any sprite for indices ${not_found_indexes
+                    .map(i => `"${i}"`)
+                    .join(", ")}. Check the battle animation JSON recipe for '${this.key_name}'.`
+            );
         }
         return sprites_data.reduce((prev, cur, index) => {
             prev[cur.key] = {
@@ -1070,6 +1098,12 @@ export class BattleAnimation {
                     }
                     if (this.sprites_prev_properties[uniq_key][property_to_set] === undefined) {
                         this.sprites_prev_properties[uniq_key][property_to_set] = this_sprite[property_to_set];
+                    }
+                    if (typeof seq.to === "undefined") {
+                        this.data.logger.log_message(
+                            `"to" property wasn't defined for a sequence. Check the battle animation JSON recipe for '${this.key_name}'.`,
+                            msg_types.ERROR
+                        );
                     }
                     const seq_to = Array.isArray(seq.to) ? seq.to[sprite_info.index] : seq.to;
                     let to_value: number = seq_to as number;
