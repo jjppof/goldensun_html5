@@ -1,0 +1,193 @@
+{
+    "key_name": "ray",
+    "cast_type": "psynergy_cast",
+    "wait_for_cast_animation": true,
+    "lighting_sequence": [{
+        "start_delay": 100,
+        "from": {
+            "pos": {"x": "targets", "y": 17},
+            "range_delta": {"x": 35}
+        },
+        "to": {
+            "pos": {"x": "targets", "y": "targets"},
+            "delta": {"x": -10, "y": -15},
+            "range_delta": {"x": 35}
+        },
+        "count": 17,
+        "duration": 180,
+        "interval_time": 40,
+        "trail_factor": 0.05,
+        "trail": true,
+        "trail_count": 4,
+        "trail_colorize": {
+            "color": 0.15,
+            "intensity": 1
+        },
+        "glow": {
+            "distance": 5,
+            "r": 0.91,
+            "g": 0.25,
+            "b": 0.94,
+            "strength": 0.6,
+            "quality": 0.2
+        }
+    }],
+    "tint_sequence": [{
+        "sprite_index": "targets",
+        "start_delay": 150,
+        "duration": 180,
+        "r": 1,
+        "g": 1,
+        "b": 1
+    },{
+        "sprite_index": "targets",
+        "start_delay": 1000,
+        "remove": true
+    }],
+    "blink_sequence": [{
+        "sprite_index": "targets",
+        "start_delay": 1200,
+        "count": 1,
+        "interval": 50
+    }],
+    "play_sequence": [{
+        "animation_key": "damage",
+        "start_delay": 180,
+        "sprite_index": "targets",
+        "wait": false
+    }],
+    "shake_sequence": [{
+        "sprite_index": "background",
+        "start_delay": 250,
+        "interval": 50,
+        "shake_count": 3,
+        "intensity": 2,
+        "direction": "y"
+    },{
+        "sprite_index": "background",
+        "start_delay": 750,
+        "interval": 50,
+        "shake_count": 2,
+        "intensity": 2,
+        "direction": "y"
+    }],
+    "alpha_sequence": [{
+        "start_delay": 50,
+        "to": 0.75,
+        "is_absolute": true,
+        "tween": "Linear.None",
+        "sprite_index": "background",
+        "duration": 150
+    },{
+        "start_delay": 250,
+        "to": 1.0,
+        "is_absolute": true,
+        "sprite_index": "background"
+    },{
+        "start_delay": 260,
+        "to": 0.75,
+        "is_absolute": true,
+        "tween": "Linear.None",
+        "sprite_index": "background",
+        "duration": 200
+    },{
+        "start_delay": 750,
+        "to": 1.0,
+        "is_absolute": true,
+        "sprite_index": "background"
+    },{
+        "start_delay": 760,
+        "to": 0.75,
+        "is_absolute": true,
+        "tween": "Linear.None",
+        "sprite_index": "background",
+        "duration": 200
+    },{
+        "start_delay": 1400,
+        "to": 1.0,
+        "is_absolute": true,
+        "tween": "Linear.None",
+        "sprite_index": "background",
+        "duration": 200
+    }],
+    "colorize_sequence": [{
+        "sprite_index": "background",
+        "color": 0,
+        "intensity": 0
+    },{
+        "start_delay": 250,
+        "sprite_index": "background",
+        "color": 0.1,
+        "intensity": 0.3
+    },{
+        "start_delay": 260,
+        "sprite_index": "background",
+        "color": 0.1,
+        "intensity": 0,
+        "duration": 200
+    },{
+        "start_delay": 750,
+        "sprite_index": "background",
+        "color": 0.1,
+        "intensity": 0.3
+    },{
+        "start_delay": 760,
+        "sprite_index": "background",
+        "color": 0.1,
+        "intensity": 0,
+        "duration": 200
+    },{
+        "start_delay": 1100,
+        "sprite_index": "background",
+        "remove": true
+    }],
+    "particles_sequence": [{
+        "data": {
+            "impact" : {
+                "red": 182,
+                "green": 48,
+                "blue": 240,
+                "lifespan": 500,
+                "ay": 0.02,
+                "vx": {
+                    "initial": {"min": -0.95, "max": 0.95}
+                },
+                "vy": {
+                    "initial": {"min": -1.75, "max": -4.5}
+                }
+            }
+        },
+        "zones": {
+            "circle_zone": {
+                "type": "circle",
+                "radius": 33
+            }
+        },
+        "emitters": [{
+            "x": "targets",
+            "y": "targets",
+            "shift_y": -13,
+            "position": "between",
+            "render_type": "pixel",
+            "show_trails": true,
+            "trails_clear_factor": 0.25,
+            "pixel_size": 5,
+            "pixel_reducing_factor": 0.2,
+            "pixel_is_rect": false,
+            "particles_display_blend_mode": "screen",
+            "render_white_core": true,
+            "core_custom_color": "rgba(255,255,255,0.95)",
+            "total": 25,
+            "repeat": 5,
+            "frequency": 100,
+            "emitter_data_key": "impact",
+            "delay": {
+                "start": 180,
+                "visible": false
+            },
+            "random_in_zone": true,
+            "zone_key": "circle_zone"
+        }],
+        "emission_finish": 2000
+    }]
+}

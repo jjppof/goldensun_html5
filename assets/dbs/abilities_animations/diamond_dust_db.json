@@ -1,0 +1,150 @@
+{
+    "key_name": "diamond_dust",
+    "cast_type": "psynergy_cast",
+    "wait_for_cast_animation": false,
+    "stage_angle_sequence": [{
+        "start_delay": 0,
+        "to": "cast_position",
+        "is_absolute": true,
+        "tween": "Quadratic.Out",
+        "duration": 500,
+        "direction": "closest"
+    }],
+    "alpha_sequence": [{
+        "start_delay": 150,
+        "to": 0.75,
+        "is_absolute": true,
+        "tween": "Linear.None",
+        "sprite_index": "background",
+        "duration": 200
+    },{
+        "start_delay": 3000,
+        "to": 1.0,
+        "is_absolute": true,
+        "tween": "Linear.None",
+        "sprite_index": "background",
+        "duration": 200
+    }],
+    "play_sequence": [{
+        "animation_key": "attack",
+        "start_delay": 600,
+        "sprite_index": "caster",
+        "wait": false
+    },{
+        "animation_key": "damage",
+        "start_delay": 1200,
+        "sprite_index": "targets",
+        "wait": false
+    }],
+    "shake_sequence": [{
+        "sprite_index": ["caster", "allies", "background", "non_targets", "targets"],
+        "start_delay": 1100,
+        "interval": 40,
+        "shake_count": 16,
+        "intensity": 2,
+        "direction": "x",
+        "random_delta": 1
+    },{
+        "sprite_index": ["caster", "allies", "background", "non_targets", "targets"],
+        "start_delay": 1100,
+        "interval": 40,
+        "shake_count": 16,
+        "intensity": 2,
+        "direction": "y",
+        "random_delta": 1
+    }],
+    "blink_sequence": [{
+        "sprite_index": "targets",
+        "start_delay": 600,
+        "count": 2,
+        "interval": 600,
+        "duration": 500
+    }],
+    "particles_sequence": [{
+        "data": {
+            "chunks" : {
+                "image": "diamond_dust_battle_animation",
+                "blendMode": "SCREEN",
+                "scale": {"min": 0.4, "max": 1.0},
+                "anchorX": 0.5,
+                "anchorY": 0.5,
+                "rotation" : {
+                    "value": {"min": 0, "max": 360},
+                    "delta": 5
+                },
+                "frame": ["cast/000", "cast/004", "cast/005", "cast/007", "cast/008", "cast/009", "cast/010"],
+                "vx": { "min": -8, "max": -5 },
+                "vy": { "min": 2, "max": 3 },
+                "lifespan": 1000
+            }
+        },
+        "zones": {
+            "line_zone": {
+                "type": "line",
+                "points": [{"x":0,"y":0}, {"x":0,"y":80}]
+            }
+        },
+        "emitters": [{
+            "x": 240,
+            "y": 0,
+            "zone_key": "line_zone",
+            "position": "between",
+            "render_type": "sprite",
+            "repeat": 30,
+            "frequency": 60,
+            "total": 4,
+            "emitter_data_key": "chunks",
+            "gravity_well": {
+                "x": "targets",
+                "y": "targets",
+                "shift_x": 50,
+                "shift_y": -50,
+                "power": 3,
+                "epsilon": 80
+            }
+        }],
+        "emission_delay": 800,
+        "emission_finish": 2400
+    },{
+        "data": {
+            "small_chunks" : {
+                "image": "diamond_dust_battle_animation",
+                "blendMode": "SCREEN",
+                "frame": ["cast/001", "cast/002", "cast/003"],
+                "lifespan": 200,
+                "scale": 0.5,
+                "alpha": 1,
+                "ay": 0.3,
+                "velocity": {
+                    "initial": {"min": 3, "max": 6},
+                    "radial": {"arcStart": -90, "arcEnd": 90},
+                    "control": [
+                        {"x": 0.0, "y": 1.0},
+                        {"x": 1.0, "y": 1.0}
+                    ]
+                }
+            }
+        },
+        "zones": {
+            "circle_zone": {
+                "type": "circle",
+                "radius": 10
+            }
+        },
+        "emitters": [{
+            "x": "targets",
+            "y": "targets",
+            "shift_y": -15,
+            "position": "between",
+            "render_type": "sprite",
+            "total": 15,
+            "repeat": 8,
+            "frequency": 200,
+            "random_in_zone": true,
+            "emitter_data_key": "small_chunks",
+            "zone_key": "circle_zone"
+        }],
+        "emission_delay": 1000,
+        "emission_finish": 2400
+    }]
+}

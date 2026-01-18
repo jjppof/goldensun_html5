@@ -1,0 +1,236 @@
+{"frames": {
+
+"battle/attack_back/00":
+{
+	"frame": {"x":179,"y":1,"w":42,"h":62},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":5,"y":2,"w":42,"h":62},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/attack_back/01":
+{
+	"frame": {"x":1,"y":67,"w":47,"h":51},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":10,"y":13,"w":47,"h":51},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/attack_front/00":
+{
+	"frame": {"x":223,"y":1,"w":33,"h":60},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":21,"y":2,"w":33,"h":60},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/attack_front/01":
+{
+	"frame": {"x":143,"y":67,"w":42,"h":51},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":13,"w":42,"h":51},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/attack_init_back/00":
+{
+	"frame": {"x":179,"y":1,"w":42,"h":62},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":5,"y":2,"w":42,"h":62},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/attack_init_front/00":
+{
+	"frame": {"x":223,"y":1,"w":33,"h":60},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":21,"y":2,"w":33,"h":60},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/cast_back/00":
+{
+	"frame": {"x":1,"y":1,"w":43,"h":64},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":11,"y":0,"w":43,"h":64},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/cast_back/01":
+{
+	"frame": {"x":46,"y":1,"w":43,"h":64},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":11,"y":0,"w":43,"h":64},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/cast_front/00":
+{
+	"frame": {"x":136,"y":1,"w":41,"h":64},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":12,"y":0,"w":41,"h":64},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/cast_front/01":
+{
+	"frame": {"x":91,"y":1,"w":43,"h":64},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":11,"y":0,"w":43,"h":64},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/cast_init_back/00":
+{
+	"frame": {"x":96,"y":67,"w":45,"h":52},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":12,"y":12,"w":45,"h":52},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/cast_init_back/01":
+{
+	"frame": {"x":1,"y":1,"w":43,"h":64},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":11,"y":0,"w":43,"h":64},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/cast_init_back/02":
+{
+	"frame": {"x":46,"y":1,"w":43,"h":64},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":11,"y":0,"w":43,"h":64},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/cast_init_front/00":
+{
+	"frame": {"x":340,"y":58,"w":29,"h":53},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":23,"y":11,"w":29,"h":53},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/cast_init_front/01":
+{
+	"frame": {"x":136,"y":1,"w":41,"h":64},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":12,"y":0,"w":41,"h":64},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/cast_init_front/02":
+{
+	"frame": {"x":91,"y":1,"w":43,"h":64},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":11,"y":0,"w":43,"h":64},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/damage_back/00":
+{
+	"frame": {"x":50,"y":67,"w":44,"h":54},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":10,"y":9,"w":44,"h":54},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/damage_front/00":
+{
+	"frame": {"x":187,"y":65,"w":46,"h":56},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":8,"y":8,"w":46,"h":56},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/downed_back/00":
+{
+	"frame": {"x":371,"y":58,"w":31,"h":43},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":23,"y":21,"w":31,"h":43},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/downed_front/00":
+{
+	"frame": {"x":329,"y":1,"w":38,"h":44},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":9,"y":17,"w":38,"h":44},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/idle_back/00":
+{
+	"frame": {"x":272,"y":58,"w":33,"h":56},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":12,"y":8,"w":33,"h":56},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/idle_back/01":
+{
+	"frame": {"x":258,"y":1,"w":34,"h":55},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":12,"y":9,"w":34,"h":55},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/idle_back/02":
+{
+	"frame": {"x":235,"y":63,"w":35,"h":55},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":12,"y":9,"w":35,"h":55},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/idle_back/03":
+{
+	"frame": {"x":258,"y":1,"w":34,"h":55},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":12,"y":9,"w":34,"h":55},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/idle_front/00":
+{
+	"frame": {"x":307,"y":57,"w":31,"h":55},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":15,"y":9,"w":31,"h":55},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/idle_front/01":
+{
+	"frame": {"x":369,"y":1,"w":31,"h":55},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":15,"y":9,"w":31,"h":55},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/idle_front/02":
+{
+	"frame": {"x":294,"y":1,"w":33,"h":54},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":15,"y":10,"w":33,"h":54},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/idle_front/03":
+{
+	"frame": {"x":369,"y":1,"w":31,"h":55},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":15,"y":9,"w":31,"h":55},
+	"sourceSize": {"w":64,"h":64}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "piers_battle.png",
+	"format": "RGBA8888",
+	"size": {"w":403,"h":122},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:9a242bfae4de78da901b74c611e185d1:d50ce5bced728105abab5115dbeff02b:65f589cc24e000b04bcc8d71ddc9a5d3$"
+}
+}

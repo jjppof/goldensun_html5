@@ -1,0 +1,140 @@
+[
+    {
+        "name":"Madra",
+        "key_name":"madra",
+        "bgm": {
+            "key": "madra_bgm",
+            "path": "assets/sounds/bgm/little_madra.ogg"
+        },
+        "tileset_files": {
+            "image":"assets/images/tilesets/madra.png",
+            "json":"assets/maps/madra/madra.json"
+        },
+        "lazy_load": true,
+        "collision_embedded": true
+    },{
+        "name":"Madra",
+        "key_name":"madra_houses",
+        "bgm": {
+            "key": "madra_bgm",
+            "path": "assets/sounds/bgm/little_madra.ogg"
+        },
+        "tileset_files": {
+            "image":"assets/images/tilesets/madra_interior.png",
+            "json":"assets/maps/madra/madra_houses.json"
+        },
+        "collision_embedded": true
+    },{
+        "name":"Madra",
+        "key_name":"madra_church",
+        "bgm": {
+            "key": "madra_bgm",
+            "path": "assets/sounds/bgm/little_madra.ogg"
+        },
+        "tileset_files": {
+            "image":"assets/images/tilesets/madra_interior.png",
+            "json":"assets/maps/madra/church.json"
+        },
+        "lazy_load": true,
+        "collision_embedded": true
+    },{
+        "name":"Madra",
+        "key_name":"madra_side",
+        "bgm": {
+            "key": "madra_bgm",
+            "path": "assets/sounds/bgm/little_madra.ogg"
+        },
+        "tileset_files": {
+            "image":"assets/images/tilesets/madra.png",
+            "json":"assets/maps/madra/madra_side.json"
+        },
+        "lazy_load": true,
+        "collision_embedded": true
+    },{
+        "name":"Madra",
+        "key_name":"madra_corner",
+        "bgm": {
+            "key": "madra_bgm",
+            "path": "assets/sounds/bgm/little_madra.ogg"
+        },
+        "tileset_files": {
+            "image":"assets/images/tilesets/madra.png",
+            "json":"assets/maps/madra/madra_corner.json"
+        },
+        "lazy_load": true,
+        "collision_embedded": true
+    },{
+        "name":"Madra",
+        "key_name":"madra_cave",
+        "bgm": {
+            "key": "cave_bgm",
+            "path": "assets/sounds/bgm/cave.ogg"
+        },
+        "tileset_files": {
+            "image":"assets/images/tilesets/cave.png",
+            "json":"assets/maps/madra/madra_cave.json"
+        },
+        "lazy_load": true,
+        "collision_embedded": true,
+        "background_key": "bg_cave"
+    },{
+        "name":"Snowland",
+        "key_name":"snowland",
+        "bgm": {
+            "key": "snowland",
+            "path": "assets/sounds/bgm/snowland.ogg"
+        },
+        "tileset_files": {
+            "image":"assets/images/tilesets/snowland.png",
+            "json":"assets/maps/snowland/snowland.json"
+        },
+        "collision_embedded": true,
+        "lazy_load": true
+    },{
+        "name":"World Map",
+        "key_name":"world_map",
+        "bgm": {
+            "key": "world_map",
+            "path": "assets/sounds/bgm/world_map.ogg"
+        },
+        "tileset_files": {
+            "image":"assets/images/tilesets/world_map.png",
+            "json":"assets/maps/world_map/world_map.json"
+        },
+        "lazy_load": true,
+        "collision_embedded": true,
+        "expected_party_level": 18,
+        "background_key": "bg_world_map",
+        "show_map_name": false
+    },{
+        "name":"Cave",
+        "key_name":"cave",
+        "bgm": {
+            "key": "cave_bgm",
+            "path": "assets/sounds/bgm/cave.ogg"
+        },
+        "tileset_files": {
+            "image":"assets/images/tilesets/cave.png",
+            "json":"assets/maps/cave/cave.json"
+        },
+        "lazy_load": true,
+        "collision_embedded": true,
+        "expected_party_level": 21,
+        "background_key": "bg_cave"
+    },{
+        "name":"Nyungwe",
+        "key_name":"nyungwe",
+        "bgm": {
+            "key": "forest_bgm",
+            "path": "assets/sounds/bgm/happy_town.ogg"
+        },
+        "tileset_files": {
+            "image":"assets/images/tilesets/forest.png",
+            "json":"assets/maps/forest/forest.json"
+        },
+        "lazy_load": true,
+        "collision_embedded": true,
+        "expected_party_level": 18,
+        "background_key": "bg_forest"
+    }
+]

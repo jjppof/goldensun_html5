@@ -1,0 +1,20 @@
+{"frames": {
+
+"ground/down/00":
+{
+	"frame": {"x":1,"y":1,"w":19,"h":27},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":6,"y":5,"w":19,"h":27},
+	"sourceSize": {"w":32,"h":32}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "isaac_ground.png",
+	"format": "RGBA8888",
+	"size": {"w":21,"h":29},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:26a6d230fd94dc0f1631876a1625f182:9f50660f0d55957097c119ef95523852:866ca4345210cfdd3378c5ef4639386f$"
+}
+}

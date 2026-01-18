@@ -1,0 +1,20 @@
+{"frames": {
+
+"cast/000":
+{
+	"frame": {"x":1,"y":1,"w":40,"h":64},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":40,"h":64},
+	"sourceSize": {"w":40,"h":64}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "heat_wave.png",
+	"format": "RGBA8888",
+	"size": {"w":42,"h":66},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:095e2c597c53a0892b350b9496b0cbfe:be0a9d55b02e74c7837aacfad6bc7091:4b7907842909184b7c850e4bdfb57828$"
+}
+}

@@ -1,0 +1,28 @@
+{"frames": {
+
+"douse_pillar/empty/00":
+{
+	"frame": {"x":1,"y":1,"w":16,"h":32},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":16,"h":32},
+	"sourceSize": {"w":16,"h":32}
+},
+"douse_pillar/filled/00":
+{
+	"frame": {"x":1,"y":35,"w":16,"h":32},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":16,"h":32},
+	"sourceSize": {"w":16,"h":32}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "douse_pillar.png",
+	"format": "RGBA8888",
+	"size": {"w":18,"h":68},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:ff03afefcf0460cf6625abb56d01280b:47a322c7de3681569ae298247647bbac:65c9aee5cf993ee529830d56893f225d$"
+}
+}

@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<font>
+<info face="font" size="32" bold="0" italic="0" charset="" unicode="0" stretchH="100" smooth="1" aa="1" padding="0,0,0,0" spacing="0,0" />
+<common lineHeight="8" base="26" scaleW="32" scaleH="32" pages="1" packed="0" alphaChnl="1" redChnl="0" greenChnl="0" blueChnl="0" />
+<pages>
+    <page id="0" file="gs-item-font.png" />
+</pages>
+<chars count="12">
+<char id="48" x="6" y="0" width="6" height="8" xoffset="0" yoffset="0" xadvance="4" page="0" chnl="0" letter="0" />
+<char id="49" x="12" y="8" width="5" height="8" xoffset="0" yoffset="0" xadvance="4" page="0" chnl="0" letter="1" />
+<char id="50" x="6" y="24" width="6" height="8" xoffset="0" yoffset="0" xadvance="4" page="0" chnl="0" letter="2" />
+<char id="51" x="6" y="16" width="6" height="8" xoffset="0" yoffset="0" xadvance="4" page="0" chnl="0" letter="3" />
+<char id="52" x="6" y="8" width="6" height="8" xoffset="0" yoffset="0" xadvance="4" page="0" chnl="0" letter="4" />
+<char id="53" x="12" y="0" width="6" height="8" xoffset="0" yoffset="0" xadvance="4" page="0" chnl="0" letter="5" />
+<char id="54" x="0" y="24" width="6" height="8" xoffset="0" yoffset="0" xadvance="4" page="0" chnl="0" letter="6" />
+<char id="55" x="0" y="16" width="6" height="8" xoffset="0" yoffset="0" xadvance="4" page="0" chnl="0" letter="7" />
+<char id="56" x="0" y="8" width="6" height="8" xoffset="0" yoffset="0" xadvance="4" page="0" chnl="0" letter="8" />
+<char id="57" x="0" y="0" width="6" height="8" xoffset="0" yoffset="0" xadvance="4" page="0" chnl="0" letter="9" />
+<char id="32" x="0" y="0" width="0" height="0" xoffset="0" yoffset="0" xadvance="1" page="0" chnl="0" letter=" " />
+<char id="9" x="0" y="0" width="0" height="0" xoffset="0" yoffset="0" xadvance="1" page="0" chnl="0" letter="	" />
+</chars>
+</font>

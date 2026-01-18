@@ -1,0 +1,20 @@
+{"frames": {
+
+"cast/000":
+{
+	"frame": {"x":1,"y":1,"w":120,"h":128},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":120,"h":128},
+	"sourceSize": {"w":120,"h":128}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "ragnarok.png",
+	"format": "RGBA8888",
+	"size": {"w":122,"h":130},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:a4eae13b55eefa16984779e8aa79e60a:f8c0b832f44ae9ae259780805e0c3502:37462c8b1ab8f2eecc7bfd76f683207b$"
+}
+}

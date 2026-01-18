@@ -1,0 +1,236 @@
+{"frames": {
+
+"sword/attack_init_back/00":
+{
+	"frame": {"x":41,"y":145,"w":22,"h":19},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":27,"y":0,"w":22,"h":19},
+	"sourceSize": {"w":64,"h":64}
+},
+"sword/attack_back/00":
+{
+	"frame": {"x":41,"y":145,"w":22,"h":19},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":27,"y":0,"w":22,"h":19},
+	"sourceSize": {"w":64,"h":64}
+},
+"sword/attack_back/01":
+{
+	"frame": {"x":36,"y":171,"w":26,"h":29},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":22,"y":35,"w":26,"h":29},
+	"sourceSize": {"w":64,"h":64}
+},
+"sword/attack_init_front/00":
+{
+	"frame": {"x":1,"y":14,"w":49,"h":17},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":13,"y":2,"w":49,"h":17},
+	"sourceSize": {"w":64,"h":64}
+},
+"sword/attack_front/00":
+{
+	"frame": {"x":1,"y":14,"w":49,"h":17},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":13,"y":2,"w":49,"h":17},
+	"sourceSize": {"w":64,"h":64}
+},
+"sword/attack_front/01":
+{
+	"frame": {"x":1,"y":116,"w":43,"h":23},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":21,"y":39,"w":43,"h":23},
+	"sourceSize": {"w":64,"h":64}
+},
+"sword/cast_back/00":
+{
+	"frame": {"x":1,"y":141,"w":38,"h":13},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":25,"y":0,"w":38,"h":13},
+	"sourceSize": {"w":64,"h":64}
+},
+"sword/cast_back/01":
+{
+	"frame": {"x":1,"y":156,"w":38,"h":13},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":25,"y":0,"w":38,"h":13},
+	"sourceSize": {"w":64,"h":64}
+},
+"sword/cast_front/00":
+{
+	"frame": {"x":1,"y":188,"w":31,"h":10},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":24,"y":0,"w":31,"h":10},
+	"sourceSize": {"w":64,"h":64}
+},
+"sword/cast_front/01":
+{
+	"frame": {"x":1,"y":200,"w":31,"h":10},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":24,"y":0,"w":31,"h":10},
+	"sourceSize": {"w":64,"h":64}
+},
+"sword/cast_init_back/00":
+{
+	"frame": {"x":1,"y":234,"w":25,"h":10},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":1,"y":18,"w":25,"h":10},
+	"sourceSize": {"w":64,"h":64}
+},
+"sword/cast_init_back/01":
+{
+	"frame": {"x":1,"y":141,"w":38,"h":13},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":25,"y":0,"w":38,"h":13},
+	"sourceSize": {"w":64,"h":64}
+},
+"sword/cast_init_back/02":
+{
+	"frame": {"x":1,"y":156,"w":38,"h":13},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":25,"y":0,"w":38,"h":13},
+	"sourceSize": {"w":64,"h":64}
+},
+"sword/cast_init_front/00":
+{
+	"frame": {"x":1,"y":1,"w":54,"h":11},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":10,"y":18,"w":54,"h":11},
+	"sourceSize": {"w":64,"h":64}
+},
+"sword/cast_init_front/01":
+{
+	"frame": {"x":1,"y":188,"w":31,"h":10},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":24,"y":0,"w":31,"h":10},
+	"sourceSize": {"w":64,"h":64}
+},
+"sword/cast_init_front/02":
+{
+	"frame": {"x":1,"y":200,"w":31,"h":10},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":24,"y":0,"w":31,"h":10},
+	"sourceSize": {"w":64,"h":64}
+},
+"sword/damage_back/00":
+{
+	"frame": {"x":1,"y":33,"w":47,"h":13},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":35,"w":47,"h":13},
+	"sourceSize": {"w":64,"h":64}
+},
+"sword/damage_front/00":
+{
+	"frame": {"x":1,"y":171,"w":33,"h":15},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":8,"y":39,"w":33,"h":15},
+	"sourceSize": {"w":64,"h":64}
+},
+"sword/downed_back/00":
+{
+	"frame": {"x":50,"y":33,"w":13,"h":54},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":5,"y":9,"w":13,"h":54},
+	"sourceSize": {"w":64,"h":64}
+},
+"sword/downed_front/00":
+{
+	"frame": {"x":47,"y":89,"w":14,"h":54},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":29,"y":10,"w":14,"h":54},
+	"sourceSize": {"w":64,"h":64}
+},
+"sword/idle_back/00":
+{
+	"frame": {"x":1,"y":48,"w":44,"h":21},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":6,"y":18,"w":44,"h":21},
+	"sourceSize": {"w":64,"h":64}
+},
+"sword/idle_back/01":
+{
+	"frame": {"x":1,"y":71,"w":44,"h":21},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":6,"y":19,"w":44,"h":21},
+	"sourceSize": {"w":64,"h":64}
+},
+"sword/idle_back/02":
+{
+	"frame": {"x":1,"y":94,"w":44,"h":20},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":6,"y":20,"w":44,"h":20},
+	"sourceSize": {"w":64,"h":64}
+},
+"sword/idle_back/03":
+{
+	"frame": {"x":1,"y":71,"w":44,"h":21},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":6,"y":19,"w":44,"h":21},
+	"sourceSize": {"w":64,"h":64}
+},
+"sword/idle_front/00":
+{
+	"frame": {"x":34,"y":202,"w":28,"h":20},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":3,"y":21,"w":28,"h":20},
+	"sourceSize": {"w":64,"h":64}
+},
+"sword/idle_front/01":
+{
+	"frame": {"x":1,"y":212,"w":28,"h":20},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":3,"y":21,"w":28,"h":20},
+	"sourceSize": {"w":64,"h":64}
+},
+"sword/idle_front/02":
+{
+	"frame": {"x":31,"y":224,"w":28,"h":20},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":3,"y":22,"w":28,"h":20},
+	"sourceSize": {"w":64,"h":64}
+},
+"sword/idle_front/03":
+{
+	"frame": {"x":1,"y":212,"w":28,"h":20},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":3,"y":21,"w":28,"h":20},
+	"sourceSize": {"w":64,"h":64}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "isaac.png",
+	"format": "RGBA8888",
+	"size": {"w":64,"h":245},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:b565f4614b12585a99c3c4d40018924a:e16651ded7b1ff91870a77bc4baf7d60:66bb52f016266446df7f485c2a2afe43$"
+}
+}

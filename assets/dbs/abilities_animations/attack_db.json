@@ -1,0 +1,47 @@
+{
+    "key_name": "attack",
+    "x_sequence": [{
+        "start_delay": 0,
+        "to": "targets",
+        "shift": 15,
+        "shift_direction": "in_center",
+        "is_absolute": true,
+        "tween": "Linear.None",
+        "sprite_index": "caster",
+        "duration": 350
+    }],
+    "y_sequence": [{
+        "start_delay": 0,
+        "to": "targets",
+        "is_absolute": true,
+        "tween": "Linear.None",
+        "sprite_index": "caster",
+        "duration": 350
+    }],
+    "play_sequence": [{
+        "animation_key": "attack_init",
+        "start_delay": 0,
+        "sprite_index": "caster",
+        "wait": false
+    },{
+        "animation_key": "attack",
+        "start_delay": 350,
+        "sprite_index": "caster",
+        "wait": false
+    },{
+        "ignore_if_dodge": true,
+        "animation_key": "damage",
+        "start_delay": 350,
+        "sprite_index": "targets",
+        "wait": false
+    }],
+    "center_shift_sequence": [{
+        "ignore_if_dodge": true,
+        "start_delay": 350,
+        "to": 15,
+        "is_absolute": false,
+        "tween": "Quadratic.Out",
+        "sprite_index": "targets",
+        "duration": 200
+    }]
+}

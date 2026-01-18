@@ -1,0 +1,60 @@
+{"frames": {
+
+"bg_cave":
+{
+	"frame": {"x":1,"y":1,"w":256,"h":120},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":256,"h":120},
+	"sourceSize": {"w":256,"h":120}
+},
+"bg_cliffs":
+{
+	"frame": {"x":259,"y":1,"w":256,"h":120},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":256,"h":120},
+	"sourceSize": {"w":256,"h":120}
+},
+"bg_forest":
+{
+	"frame": {"x":517,"y":1,"w":256,"h":120},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":256,"h":120},
+	"sourceSize": {"w":256,"h":120}
+},
+"bg_snowland":
+{
+	"frame": {"x":775,"y":1,"w":256,"h":120},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":256,"h":120},
+	"sourceSize": {"w":256,"h":120}
+},
+"bg_world_map":
+{
+	"frame": {"x":1033,"y":1,"w":256,"h":120},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":256,"h":120},
+	"sourceSize": {"w":256,"h":120}
+},
+"bg_world_map_forest":
+{
+	"frame": {"x":1291,"y":1,"w":256,"h":120},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":256,"h":120},
+	"sourceSize": {"w":256,"h":120}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "battle_backgrounds.png",
+	"format": "RGBA8888",
+	"size": {"w":1548,"h":122},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:0f1ef0945ac4f2c246b46d7470199c88:3913abd1f2b84d7a2995ed2a541142cc:86ba059510f3c3b47da5c50a1445de84$"
+}
+}

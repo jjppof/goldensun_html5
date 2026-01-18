@@ -1,0 +1,265 @@
+{
+    "key_name": "cool",
+    "cast_type": "psynergy_cast",
+    "wait_for_cast_animation": false,
+    "sprites": [{
+        "key_name": "ice",
+        "per_target": false,
+        "position": "between",
+        "count": 4,
+        "initial_config": {
+            "x": "targets",
+            "y": "targets",
+            "blend_mode": "screen",
+            "frame_name": "ice/000",
+            "anchor": {
+                "x": 0.5,
+                "y": 1.0
+            }
+        }
+    },{
+        "key_name": "cloud",
+        "per_target": false,
+        "position": "between",
+        "count": 9,
+        "initial_config": {
+            "alpha": 0,
+            "blend_mode": "screen",
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        }
+    }],
+    "texture_displacement_sequence": [{
+        "sprite_index": 0,
+        "start_delay": 0,
+        "repeat_texture": false,
+        "shift": {
+            "y": 60,
+            "x": -36
+        }
+    },{
+        "sprite_index": 0,
+        "start_delay": 500,
+        "duration": 170,
+        "repeat_texture": false,
+        "tween": "Quadratic.InOut",
+        "shift": {
+            "y": 15,
+            "x": 0
+        }
+    },{
+        "sprite_index": 1,
+        "start_delay": 0,
+        "repeat_texture": false,
+        "shift": {
+            "y": 60,
+            "x": 36
+        }
+    },{
+        "sprite_index": 1,
+        "start_delay": 600,
+        "duration": 170,
+        "repeat_texture": false,
+        "tween": "Quadratic.InOut",
+        "shift": {
+            "y": 15,
+            "x": 0
+        }
+    },{
+        "sprite_index": 2,
+        "start_delay": 0,
+        "repeat_texture": false,
+        "shift": {
+            "y": 35,
+            "x": 17
+        }
+    },{
+        "sprite_index": 2,
+        "start_delay": 550,
+        "duration": 130,
+        "repeat_texture": false,
+        "tween": "Quadratic.InOut",
+        "shift": {
+            "y": 0,
+            "x": 0
+        }
+    },{
+        "sprite_index": 3,
+        "start_delay": 0,
+        "repeat_texture": false,
+        "shift": {
+            "y": 35,
+            "x": -17
+        }
+    },{
+        "sprite_index": 3,
+        "start_delay": 650,
+        "duration": 130,
+        "repeat_texture": false,
+        "tween": "Quadratic.InOut",
+        "shift": {
+            "y": 0,
+            "x": 0
+        }
+    },{
+        "sprite_index": 0,
+        "start_delay": 1100,
+        "duration": 170,
+        "repeat_texture": false,
+        "tween": "Quadratic.InOut",
+        "shift": {
+            "y": 60,
+            "x": -35
+        }
+    },{
+        "sprite_index": 1,
+        "start_delay": 1100,
+        "duration": 170,
+        "repeat_texture": false,
+        "tween": "Quadratic.InOut",
+        "shift": {
+            "y": 60,
+            "x": 35
+        }
+    },{
+        "sprite_index": 2,
+        "start_delay": 1100,
+        "duration": 130,
+        "repeat_texture": false,
+        "tween": "Quadratic.InOut",
+        "shift": {
+            "y": 35,
+            "x": 17
+        }
+    },{
+        "sprite_index": 3,
+        "start_delay": 1100,
+        "duration": 130,
+        "repeat_texture": false,
+        "tween": "Quadratic.InOut",
+        "shift": {
+            "y": 35,
+            "x": -17
+        }
+    }],
+    "x_sequence": [{
+      "to": "targets",
+      "is_absolute": true,
+      "start_delay": 500,
+      "shift": [0, 17, -20, -25, 18, -3],
+      "sprite_index": [4,5,6,7,8,9]
+    },{
+        "start_delay": [500, 570, 540, 620, 650, 670],
+        "to": [10, 5, -14, -7, 8, 2],
+        "duration": 500,
+        "sprite_index": [4,5,6,7,8,9]
+    },{
+      "to": "targets",
+      "is_absolute": true,
+      "start_delay": 500,
+      "shift": [0, 0, 17, -15],
+      "sprite_index": [0, 1, 2, 3]
+    }],
+    "y_sequence": [{
+      "to": "targets",
+      "is_absolute": true,
+      "start_delay": 500,
+      "shift": [-15, -35, -23, -8, -12, -25],
+      "sprite_index": [4,5,6,7,8,9]
+    },{
+        "start_delay": [500, 570, 540, 620, 650, 670],
+        "to": [-10, -3, -7, -14, -12, -5],
+        "duration": 500,
+        "sprite_index": [4,5,6,7,8,9]
+    },{
+      "to": "targets",
+      "is_absolute": true,
+      "start_delay": 500,
+      "shift": [0, 5, 0, 3],
+      "sprite_index": [0, 1, 2, 3]
+    },{
+      "start_delay": {
+        "starting_value": 600,
+        "cumulator": 35,
+        "reverse": true
+      },
+      "to": -3,
+      "is_absolute": false,
+      "tween": "Linear.None",
+      "sprite_index": "targets",
+      "duration": 80,
+      "dont_affect_shadow": true,
+      "yoyo": true
+    }],
+    "x_scale_sequence": [{
+      "to": -1.0,
+      "is_absolute": true,
+      "sprite_index": [1, 2]
+    }],
+    "set_frame_sequence": [{
+        "frame_name": ["ice/001","ice/001"],
+        "sprite_index": [2, 3]
+    }],
+    "stage_angle_sequence": [{
+        "start_delay": 0,
+        "to": "cast_position",
+        "is_absolute": true,
+        "tween": "Quadratic.Out",
+        "duration": 500,
+        "direction": "closest"
+    }],
+    "alpha_sequence": [{
+        "start_delay": 150,
+        "to": 0.75,
+        "is_absolute": true,
+        "tween": "Linear.None",
+        "sprite_index": "background",
+        "duration": 150
+    },{
+        "start_delay": 1200,
+        "to": 1.0,
+        "is_absolute": true,
+        "tween": "Linear.None",
+        "sprite_index": "background",
+        "duration": 200
+    },{
+        "start_delay": [500, 570, 540, 620, 650, 670],
+        "to": 0.9,
+        "is_absolute": true,
+        "sprite_index": [4,5,6,7,8,9]
+    }],
+    "center_shift_sequence": [{
+        "start_delay": {
+            "starting_value": 600,
+            "cumulator": 35,
+            "reverse": true
+        },
+        "to": 12,
+        "is_absolute": false,
+        "tween": "Quadratic.Out",
+        "sprite_index": "targets",
+        "duration": 200
+    }],
+    "play_sequence": [{
+        "animation_key": "damage",
+        "start_delay": 600,
+        "sprite_index": "targets",
+        "wait": false
+    },{
+        "animation_key": "cloud",
+        "start_delay": [500, 570, 540, 620, 650, 670],
+        "sprite_index": [4,5,6,7,8,9],
+        "wait": true,
+        "frame_rate": 15,
+        "hide_on_complete": true,
+        "repeat": false
+    }],
+    "blink_sequence": [{
+        "sprite_index": "targets",
+        "start_delay": 600,
+        "count": 1,
+        "interval": 50
+    }]
+}
