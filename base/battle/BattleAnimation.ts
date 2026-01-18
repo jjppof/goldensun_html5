@@ -966,20 +966,22 @@ export class BattleAnimation {
                         }
                     }
                 } else if (index === target_types.CASTER) {
-                    let sprite: PlayerSprite | PIXI.DisplayObject = this.caster_sprite;
+                    let sprites: (PlayerSprite | PIXI.DisplayObject)[] = [this.caster_sprite];
                     if (seq.dont_affect_shadow) {
-                        sprite = this.caster_sprite.char_sprite;
+                        sprites = [this.caster_sprite.char_sprite, this.caster_sprite.weapon_sprite];
                     } else if (seq.affect_only_shadow) {
-                        sprite = this.caster_sprite.shadow_sprite;
+                        sprites = [this.caster_sprite.shadow_sprite];
                     }
-                    if (sprite) {
-                        sprites_data.push({
-                            key: this.caster_sprite.key,
-                            sprite: sprite,
-                        });
-                        ++index_counter;
-                    } else {
-                        not_found_indexes.push(index);
+                    for (let sprite of sprites) {
+                        if (sprite) {
+                            sprites_data.push({
+                                key: `${this.caster_sprite.key}/${index_counter}`,
+                                sprite: sprite,
+                            });
+                            ++index_counter;
+                        } else {
+                            not_found_indexes.push(index);
+                        }
                     }
                 } else if (
                     index === target_types.TARGETS ||

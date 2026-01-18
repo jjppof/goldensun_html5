@@ -62,7 +62,7 @@ export class PlayerSprite {
     private _char_sprite: Phaser.Sprite;
     private _shadow_sprite: Phaser.Sprite;
     private status_sprite: Phaser.Sprite;
-    private weapon_sprite: Phaser.Sprite;
+    private _weapon_sprite: Phaser.Sprite;
     private parent_group: Phaser.Group;
     private _group: Phaser.Group;
     public ellipses_semi_major: number;
@@ -262,6 +262,9 @@ export class PlayerSprite {
     get shadow_sprite() {
         return this._shadow_sprite;
     }
+    get weapon_sprite() {
+        return this._weapon_sprite;
+    }
 
     initialize_player() {
         this._active = true;
@@ -300,7 +303,7 @@ export class PlayerSprite {
                 this.current_weapon_type = this._data.info.items_list[weapon_slot.key_name].weapon_type;
                 if (player.weapons_sprite_base.hasAction(this.current_weapon_type)) {
                     const weapon_sprite_key = player.weapons_sprite_base.getSpriteKey(this.current_weapon_type);
-                    this.weapon_sprite = this.group.create(0, 0, weapon_sprite_key);
+                    this._weapon_sprite = this.group.create(0, 0, weapon_sprite_key);
                     this.weapon_sprite.anchor.setTo(0.5, 1);
                     this.weapon_sprite.y += player.weapon_sprite_shift;
                     player.weapons_sprite_base.setAnimation(this.weapon_sprite, this.current_weapon_type);
