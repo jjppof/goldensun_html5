@@ -31,6 +31,7 @@ export const MAX_DIAG_WIN_HEIGHT =
     SPACE_BETWEEN_LINES * (MAX_LINES_PER_DIAG_WIN - 1) +
     WINDOW_PADDING_TOP +
     WINDOW_PADDING_BOTTOM;
+export const DIAG_AUTO_ADVANCE_INTERVAL = 250;
 export const PUSH_TIME = 950;
 export const ICON_WIDTH = 14;
 export const ICON_HEIGHT = 14;

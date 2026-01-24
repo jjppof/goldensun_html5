@@ -2,7 +2,7 @@ import {DialogManager} from "../utils/DialogManager";
 import {GameEvent, event_types} from "./GameEvent";
 import {Button} from "../XGamepad";
 import {YesNoMenu} from "../windows/YesNoMenu";
-import {GAME_HEIGHT} from "../magic_numbers";
+import {GAME_HEIGHT, DIAG_AUTO_ADVANCE_INTERVAL} from "../magic_numbers";
 import {base_actions} from "../utils";
 import {NPC} from "../NPC";
 
@@ -46,6 +46,7 @@ export class DialogEvent extends GameEvent {
     private reference_npc: NPC;
     private mind_read_window: boolean;
     private pos_relative_to_canvas: boolean;
+    private auto_advance_timer: Phaser.Timer;
 
     constructor(
         game,
@@ -83,6 +84,7 @@ export class DialogEvent extends GameEvent {
         this.reference_npc = null;
         this.mind_read_window = mind_read_window ?? false;
         this.pos_relative_to_canvas = pos_relative_to_canvas ?? false;
+        this.auto_advance_timer = this.game.time.create(false);
 
         if (finish_events !== undefined && !this.end_with_yes_no) {
             finish_events.forEach(event_info => {
@@ -102,15 +104,21 @@ export class DialogEvent extends GameEvent {
     }
 
     set_control() {
+        const on_down = () => {
+            if (!this.active || !this.running || !this.control_enable) return;
+            this.next();
+        };
+
         this.reset_control();
         this.control_key = this.data.control_manager.add_controls(
             [
                 {
                     buttons: Button.A,
-                    on_down: () => {
-                        if (!this.active || !this.running || !this.control_enable) return;
-                        this.next();
-                    },
+                    on_down,
+                },
+                {
+                    buttons: Button.B,
+                    on_down,
                 },
             ],
             {persist: true}
@@ -122,9 +130,27 @@ export class DialogEvent extends GameEvent {
             this.data.control_manager.detach_bindings(this.control_key);
             this.control_key = null;
         }
+        this.stop_auto_advance();
+    }
+
+    private start_auto_advance() {
+        this.stop_auto_advance();
+        this.auto_advance_timer.loop(DIAG_AUTO_ADVANCE_INTERVAL, () => {
+            if (this.active && this.running && this.control_enable && this.data.gamepad.is_down(Button.B)) {
+                this.next();
+            }
+        });
+        this.auto_advance_timer.start();
+    }
+
+    private stop_auto_advance() {
+        if (this.auto_advance_timer.running) {
+            this.auto_advance_timer.stop();
+        }
     }
 
     async finish() {
+        this.stop_auto_advance();
         if (this.origin_npc && this.npc_hero_reciprocal_look && this.reset_reciprocal_look) {
             await this.origin_npc.face_direction(this.previous_npc_direction);
         }
@@ -141,6 +167,7 @@ export class DialogEvent extends GameEvent {
     }
 
     next(finish_callback?: () => void) {
+        this.stop_auto_advance();
         this.control_enable = false;
         this.dialog_manager.next(
             async finished => {
@@ -192,6 +219,7 @@ export class DialogEvent extends GameEvent {
                     );
                 } else {
                     this.control_enable = true;
+                    this.start_auto_advance();
                 }
             },
             this.current_info.custom_pos,
@@ -246,6 +274,8 @@ export class DialogEvent extends GameEvent {
     }
 
     _destroy() {
+        this.stop_auto_advance();
+        this.auto_advance_timer?.destroy();
         this.finish_events.forEach(event => event?.destroy());
         this.yes_no_events.yes.forEach(event => event?.destroy());
         this.yes_no_events.no.forEach(event => event?.destroy());
