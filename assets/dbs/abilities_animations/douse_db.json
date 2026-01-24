@@ -1,0 +1,131 @@
+{
+    "key_name": "douse",
+    "cast_type": "psynergy_cast",
+    "wait_for_cast_animation": false,
+    "stage_angle_sequence": [{
+        "start_delay": 200,
+        "to": "cast_position",
+        "is_absolute": true,
+        "tween": "Quadratic.Out",
+        "duration": 500,
+        "direction": "closest"
+    }],
+    "alpha_sequence": [{
+        "start_delay": 0,
+        "to": 0.75,
+        "is_absolute": true,
+        "tween": "Linear.None",
+        "sprite_index": "background",
+        "duration": 200
+    },{
+        "start_delay": 1300,
+        "to": 1.0,
+        "is_absolute": true,
+        "tween": "Linear.None",
+        "sprite_index": "background",
+        "duration": 200
+    }],
+    "play_sequence": [{
+        "animation_key": "damage",
+        "start_delay": 500,
+        "sprite_index": "targets",
+        "wait": false
+    }],
+    "blink_sequence": [{
+        "sprite_index": "targets",
+        "start_delay": 500,
+        "count": 2,
+        "interval": 80,
+        "duration": 45
+    }],
+    "particles_sequence": [{
+        "data": {
+            "bubbles" : {
+                "image": "douse_battle_animation",
+                "blendMode": "SCREEN",
+                "anchorX": 0.5,
+                "anchorY": 0.5,
+                "animations": {
+                    "pop": {
+                        "frames": { "start": 0, "stop": 2, "prefix": "bubble/", "suffix": "", "zeroPad": 3 },
+                        "frameRate": 15,
+                        "loop": false
+                    }
+                },
+                "play": [],
+                "playOnKill": "pop",
+                "frame": ["bubble/000"],
+                "lifespan": 300,
+                "vx": -5,
+                "vy": 6
+            }
+        },
+        "zones": {
+            "line_zone": {
+                "type": "line",
+                "points": [{"x":-30,"y":0}, {"x":30,"y":0}]
+            }
+        },
+        "emitters": [{
+            "x": 150,
+            "y": 0,
+            "zone_key": "line_zone",
+            "position": "between",
+            "render_type": "sprite",
+            "repeat": 6,
+            "frequency": 60,
+            "total": 1,
+            "emitter_data_key": "bubbles"
+        }],
+        "emission_delay": 200,
+        "emission_finish": 1300
+    },{
+        "data": {
+            "clouds" : {
+                "image": "douse_battle_animation",
+                "blendMode": "SCREEN",
+                "anchorX": 0.5,
+                "anchorY": 0.5,
+                "scale": 0.3,
+                "animations": {
+                    "cloud": {
+                        "frames": { "start": 0, "stop": 7, "prefix": "cloud/", "suffix": "", "zeroPad": 3 },
+                        "frameRate": 20,
+                        "loop": false
+                    }
+                },
+                "lifespan": 350,
+                "ay": 0.07,
+                "velocity": {
+                    "initial": {"min": 1, "max": 2},
+                    "radial": {"arcStart": -90, "arcEnd": 90},
+                    "control": [
+                        {"x": 0.0, "y": 1.0},
+                        {"x": 1.0, "y": 1.0}
+                    ]
+                }
+            }
+        },
+        "zones": {
+            "circle_zone": {
+                "type": "ellipse",
+                "width": 25,
+                "height": 10
+            }
+        },
+        "emitters": [{
+            "x": "targets",
+            "y": "targets",
+            "shift_y": -25,
+            "zone_key": "circle_zone",
+            "position": "between",
+            "render_type": "sprite",
+            "total": 8,
+            "repeat": 4,
+            "frequency": 80,
+            "emitter_data_key": "clouds"
+        }],
+        "emission_delay": 500,
+        "emission_finish": 1300
+    }]
+}

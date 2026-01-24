@@ -1,0 +1,120 @@
+{
+    "key_name": "impact",
+    "cast_type": "psynergy_cast",
+    "wait_for_cast_animation": true,
+    "sprites": [{
+        "key_name": "whirl",
+        "per_target": false,
+        "position": "over",
+        "initial_config": {
+            "x": "targets",
+            "y": "targets",
+            "blend_mode": "screen",
+            "alpha": 0,
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        }
+    },{
+        "key_name": "sword",
+        "per_target": false,
+        "position": "over",
+        "initial_config": {
+            "x": "targets",
+            "y": "targets",
+            "blend_mode": "screen",
+            "alpha": 0,
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        }
+    }],
+    "blink_sequence": [{
+        "sprite_index": "targets",
+        "start_delay": 800,
+        "count": 1,
+        "interval": 0,
+        "duration": 400
+    }],
+    "play_sequence": [{
+        "animation_key": "whirl",
+        "start_delay": 800,
+        "sprite_index": 0,
+        "wait": false,
+        "frame_rate": 15,
+        "repeat": false
+    },{
+        "animation_key": "sword",
+        "start_delay": 1200,
+        "sprite_index": 1,
+        "wait": true,
+        "frame_rate": 10,
+        "repeat": false
+    }],
+    "y_sequence": [{
+        "is_absolute": false,
+        "to": -25,
+        "start_delay": 800,
+        "sprite_index": 0
+    },{
+        "is_absolute": false,
+        "to": -25,
+        "start_delay": 1200,
+        "sprite_index": 1
+    }],
+    "alpha_sequence": [{
+        "is_absolute": true,
+        "to": 1,
+        "start_delay": 800,
+        "sprite_index": 0
+    },{
+        "is_absolute": true,
+        "to": 1,
+        "start_delay": 1200,
+        "sprite_index": 1
+    }],
+    "particles_sequence": [{
+        "data": {
+            "energy" : {
+                "red": 255,
+                "green": 10,
+                "blue": 0,
+                "lifespan": 500,
+                "alpha": 0.8,
+                "target": {
+                    "x": "targets",
+                    "y": "targets",
+                    "shift_y": -25
+                }
+            }
+        },
+        "zones": {
+            "circle_zone": {
+                "type": "circle",
+                "radius": 50
+            }
+        },
+        "emitters": [{
+            "x": "targets",
+            "y": "targets",
+            "shift_y": -25,
+            "position": "over",
+            "render_type": "pixel",
+            "show_trails": true,
+            "trails_clear_factor": 0.3,
+            "pixel_size": 9,
+            "pixel_is_rect": false,
+            "particles_display_blend_mode": "screen",
+            "render_white_core": true,
+            "core_custom_color": "rgba(255,255,255,0.85)",
+            "total": 7,
+            "repeat": 4,
+            "frequency": 100,
+            "emitter_data_key": "energy",
+            "zone_key": "circle_zone"
+        }],
+        "emission_finish": 1000
+    }]
+}

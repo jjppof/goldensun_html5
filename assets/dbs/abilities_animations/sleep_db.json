@@ -1,0 +1,42 @@
+{
+    "key_name": "sleep",
+    "cast_type": "psynergy_cast",
+    "wait_for_cast_animation": true,
+    "play_sequence": [{
+        "animation_key": "damage",
+        "start_delay": 500,
+        "sprite_index": "targets",
+        "wait": false
+    }],
+    "particles_sequence": [{
+        "data": {
+            "sheeps" : {
+                "image": "sleep_battle_animation",
+                "anchorX": 0.5,
+                "anchorY": 0.5,
+                "lifespan": 1000,
+                "rotation" : { "min": 0, "max": 360},
+                "vy": 4
+            }
+        },
+        "zones": {
+            "line_zone": {
+                "type": "line",
+                "points": [{"x":-35,"y":0}, {"x":35,"y":0}]
+            }
+        },
+        "emitters": [{
+            "x": "targets",
+            "y": 0,
+            "zone_key": "line_zone",
+            "position": "between",
+            "render_type": "sprite",
+            "repeat": 12,
+            "frequency": 60,
+            "total": 1,
+            "emitter_data_key": "sheeps"
+        }],
+        "emission_delay": 0,
+        "emission_finish": 1500
+    }]
+}

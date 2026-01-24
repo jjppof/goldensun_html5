@@ -1,0 +1,239 @@
+{
+    "key_name": "ragnarok",
+    "cast_type": "psynergy_cast",
+    "wait_for_cast_animation": true,
+    "sprites": [{
+        "key_name": "cast",
+        "per_target": false,
+        "position": "between",
+        "initial_config": {
+            "x": "targets",
+            "y": "targets",
+            "blend_mode": "screen",
+            "anchor": {
+                "x": 0.025,
+                "y": 0.96
+            }
+        }
+    }],
+    "x_sequence": [{
+        "to": "targets",
+        "shift": 140,
+        "is_absolute": true,
+        "start_delay": 0,
+        "sprite_index": 0
+    },{
+        "to": "targets",
+        "shift": 0,
+        "is_absolute": true,
+        "start_delay": 50,
+        "sprite_index": 0,
+        "duration": 250
+    },{
+        "to": "targets",
+        "shift": -50,
+        "is_absolute": true,
+        "start_delay": 300,
+        "sprite_index": 0,
+        "duration": 50
+    },{
+        "to": "targets",
+        "shift": -80,
+        "is_absolute": true,
+        "start_delay": 400,
+        "sprite_index": 0,
+        "duration": 1000
+    }],
+    "y_sequence": [{
+        "to": "targets",
+        "shift": -100,
+        "is_absolute": true,
+        "start_delay": 0,
+        "sprite_index": 0
+    },{
+        "to": "targets",
+        "shift": -5,
+        "is_absolute": true,
+        "start_delay": 50,
+        "sprite_index": 0,
+        "duration": 250
+    },{
+        "to": -10,
+        "is_absolute": false,
+        "start_delay": 300,
+        "sprite_index": "targets",
+        "duration": 50
+    },{
+        "to": 10,
+        "is_absolute": false,
+        "start_delay": 400,
+        "sprite_index": "targets",
+        "duration": 30
+    }],
+    "texture_displacement_sequence": [{
+        "sprite_index": 0,
+        "start_delay": 300,
+        "duration": 50,
+        "repeat_texture": false,
+        "shift": {
+            "y": 50,
+            "x": 0
+        }
+    },{
+        "sprite_index": 0,
+        "start_delay": 400,
+        "duration": 1000,
+        "repeat_texture": false,
+        "shift": {
+            "y": 80,
+            "x": 0
+        }
+    }],
+    "alpha_sequence": [{
+        "start_delay": 0,
+        "to": 0.75,
+        "is_absolute": true,
+        "tween": "Linear.None",
+        "sprite_index": "background",
+        "duration": 200
+    },{
+        "start_delay": 2000,
+        "to": 1.0,
+        "is_absolute": true,
+        "tween": "Linear.None",
+        "sprite_index": "background",
+        "duration": 200
+    },{
+        "to": 0,
+        "start_delay": 1300,
+        "duration": 100,
+        "is_absolute": true,
+        "sprite_index": 0
+    }],
+    "blink_sequence": [{
+        "sprite_index": "targets",
+        "start_delay": 300,
+        "count": 1,
+        "duration": 500,
+        "interval": 50
+    }],
+    "play_sequence": [{
+        "animation_key": "attack",
+        "start_delay": 0,
+        "sprite_index": "caster",
+        "wait": false
+    },{
+        "animation_key": "damage",
+        "start_delay": 300,
+        "sprite_index": "targets",
+        "wait": false
+    }],
+    "shake_sequence": [{
+        "sprite_index": "background",
+        "start_delay": 300,
+        "interval": 50,
+        "shake_count": 12,
+        "intensity": 5,
+        "random_delta": 2,
+        "direction": "x"
+    },{
+        "sprite_index": "background",
+        "start_delay": 300,
+        "interval": 45,
+        "shake_count": 12,
+        "intensity": 4,
+        "random_delta": 2,
+        "direction": "y"
+    },{
+        "sprite_index": "caster",
+        "start_delay": 300,
+        "interval": 50,
+        "shake_count": 12,
+        "intensity": 5,
+        "random_delta": 2,
+        "direction": "x"
+    },{
+        "sprite_index": "caster",
+        "start_delay": 300,
+        "interval": 45,
+        "shake_count": 12,
+        "intensity": 4,
+        "random_delta": 2,
+        "direction": "y"
+    },{
+        "sprite_index": "allies",
+        "start_delay": 300,
+        "interval": 50,
+        "shake_count": 12,
+        "intensity": 5,
+        "random_delta": 2,
+        "direction": "x"
+    },{
+        "sprite_index": "allies",
+        "start_delay": 300,
+        "interval": 45,
+        "shake_count": 12,
+        "intensity": 4,
+        "random_delta": 2,
+        "direction": "y"
+    }],
+    "center_shift_sequence": [{
+        "start_delay": 300,
+        "to": 25,
+        "is_absolute": false,
+        "tween": "Quadratic.Out",
+        "sprite_index": "targets",
+        "duration": 50
+    }],
+    "particles_sequence": [{
+        "data": {
+            "explosion" : {
+                "red": 248,
+                "green": 248,
+                "blue": 72,
+                "lifespan": 2000,
+                "alpha": 0.8,
+                "ay": {
+                    "value": 0.03,
+                    "control": [
+                        {"x": 0.0, "y": 1},
+                        {"x": 0.4, "y": 1},
+                        {"x": 0.5, "y": 1},
+                        {"x": 0.8, "y": 1},
+                        {"x": 1.0, "y": 1}
+                    ]
+                },
+                "velocity": {
+                    "initial": {"min": 1.5, "max": 7.5},
+                    "radial": { "arcStart": -90, "arcEnd": 90 },
+                    "control": [
+                        {"x": 0.0, "y": 1.0},
+                        {"x": 0.4, "y": 0.8},
+                        {"x": 0.5, "y": 0.25},
+                        {"x": 1.0, "y": 0.2}
+                    ]
+                }
+            }
+        },
+        "zones": {},
+        "emitters": [{
+            "x": "targets",
+            "y": "targets",
+            "position": "between",
+            "render_type": "pixel",
+            "show_trails": true,
+            "trails_clear_factor": 0.2,
+            "pixel_size": 16,
+            "pixel_reducing_factor": 0.13,
+            "pixel_is_rect": false,
+            "particles_display_blend_mode": "screen",
+            "render_white_core": true,
+            "total": 60,
+            "repeat": 12,
+            "frequency": 60,
+            "emitter_data_key": "explosion"
+        }],
+        "emission_finish": 2000,
+        "emission_delay": 400
+    }]
+}

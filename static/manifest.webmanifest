@@ -1,0 +1,31 @@
+{
+	"start_url": "gshtml5.org",
+	"scope": "/",
+
+	"background_color": "#000",
+	"theme_color": "#fff",
+
+	"display": "browser",
+	"orientation": "portrait-primary",
+
+	"icons": [{
+		"type": "image/ico",
+		"sizes": "22x22",
+		"src": "/static/favicon.ico"
+	}],
+
+	"lang": "en-US",
+	"dir": "ltr",
+
+	"short_name": "GSHTML5",
+	"name": "Golden Sun Engine - HTML5",
+	"description": "An online Golden Sun Engine entirely built in HTML5 with Phaser 2. This project is 100% open source and MIT licensed. Build your own GS game without programming skills.",
+
+	"iarc_rating_id": "",
+	"categories": ["games"],
+
+	"related_applications": [],
+	"prefer_related_applications": false,
+
+	"screenshots": []
+}

@@ -1,0 +1,36 @@
+{"frames": {
+
+"base_fire/000":
+{
+	"frame": {"x":37,"y":1,"w":20,"h":37},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":20,"h":37},
+	"sourceSize": {"w":20,"h":37}
+},
+"base_fire/001":
+{
+	"frame": {"x":37,"y":40,"w":20,"h":37},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":20,"h":37},
+	"sourceSize": {"w":20,"h":37}
+},
+"column/000":
+{
+	"frame": {"x":1,"y":1,"w":34,"h":103},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":34,"h":103},
+	"sourceSize": {"w":34,"h":103}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "volcano.png",
+	"format": "RGBA8888",
+	"size": {"w":58,"h":105},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:e3c8a6165daf2d233ceb54ee2dd4a372:b1b1db8c2534a6730a04cca4a0ba46e3:f4d5ea445817ed40fc372814b819f5db$"
+}
+}

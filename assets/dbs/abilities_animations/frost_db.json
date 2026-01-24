@@ -1,0 +1,364 @@
+{
+    "key_name": "frost",
+    "cast_type": "psynergy_cast",
+    "wait_for_cast_animation": false,
+    "sprites": [{
+        "key_name": "crystals",
+        "per_target": false,
+        "position": "between",
+        "count": 30,
+        "trails": true,
+        "trails_factor": 0.1,
+        "initial_config": {
+            "blend_mode": "screen",
+            "alpha": 0,
+            "anchor": {
+                "x": 0.5,
+                "y": 1.0
+            }
+        }
+    }],
+    "stage_angle_sequence": [{
+        "start_delay": 0,
+        "to": "cast_position",
+        "is_absolute": true,
+        "tween": "Quadratic.Out",
+        "duration": 500,
+        "direction": "closest"
+    }],
+    "alpha_sequence": [{
+        "start_delay": 200,
+        "to": 0.75,
+        "is_absolute": true,
+        "tween": "Linear.None",
+        "sprite_index": "background",
+        "duration": 400
+    },{
+        "start_delay": 3000,
+        "to": 1.0,
+        "is_absolute": true,
+        "tween": "Linear.None",
+        "sprite_index": "background",
+        "duration": 200
+    },{
+        "to": 1,
+        "start_delay": {
+            "starting_value": 600,
+            "cumulator": 50
+        },
+        "tween": "Linear.None",
+        "is_absolute": true,
+        "duration": 120,
+        "sprite_index": {
+            "starting_value": 0,
+            "cumulator": 1,
+            "amount": 22
+        }
+    },{
+        "to": 1,
+        "start_delay": {
+            "starting_value": 1200,
+            "cumulator": 50
+        },
+        "tween": "Linear.None",
+        "is_absolute": true,
+        "duration": 120,
+        "sprite_index": {
+            "starting_value": 22,
+            "cumulator": 1,
+            "amount": 8
+        }
+    },{
+        "to": 0,
+        "start_delay": {
+            "starting_value": 1600,
+            "cumulator": 10
+        },
+        "tween": "Linear.None",
+        "is_absolute": true,
+        "duration": 120,
+        "sprite_index": {
+            "starting_value": 0,
+            "cumulator": 1,
+            "amount": 22
+        }
+    },{
+        "to": 0,
+        "start_delay": 2500,
+        "sprite_index": {
+            "starting_value": 22,
+            "cumulator": 1,
+            "amount": 8
+        },
+        "tween": "Linear.None",
+        "is_absolute": true,
+        "duration": 0
+    },{
+        "to": 1,
+        "start_delay": {
+            "starting_value": 2500,
+            "cumulator": 10
+        },
+        "sprite_index": {
+            "starting_value": 0,
+            "cumulator": 1,
+            "amount": 22
+        },
+        "tween": "Linear.None",
+        "is_absolute": true,
+        "duration": 50
+    },{
+        "to": 0,
+        "start_delay": {
+            "starting_value": 2800,
+            "cumulator": 12
+        },
+        "sprite_index": {
+            "starting_value": 0,
+            "cumulator": 1,
+            "amount": 22
+        },
+        "tween": "Linear.None",
+        "is_absolute": true,
+        "duration": 80
+    }],
+    "x_sequence": [{
+        "to": "targets",
+        "start_delay": 0,
+        "is_absolute": true,
+        "shift": [19, 36, -15, -40, 9, 35, 23, 24, -29, -40, -14, -33, 18, -30, -3, 23, 2, 0, 16, -4, -4, 19],
+        "sprite_index": {
+            "starting_value": 0,
+            "cumulator": 1,
+            "amount": 22
+        }
+    },{
+        "to": "targets",
+        "start_delay": 0,
+        "is_absolute": true,
+        "shift": [19, 36, -15, -40, 9, 35, 23, 24],
+        "sprite_index": {
+            "starting_value": 22,
+            "cumulator": 1,
+            "amount": 8
+        }
+    },{
+        "to": "targets",
+        "tween": "Linear.None",
+        "duration": 120,
+        "is_absolute": true,
+        "shift": [9, -22, -35, -31, 6, 26, 13, -27, 23, -15, 0, -7, -2, -10, 21, 22, 38, 37, -20, 37, 35, -8],
+        "start_delay": {
+            "starting_value": 850,
+            "cumulator": 50
+        },
+        "sprite_index": {
+            "starting_value": 0,
+            "cumulator": 1,
+            "amount": 22
+        }
+    },{
+        "to": [-6, -10, 8, -8, 7, 9, 8, 8, -4, 1, 2, -8, 7, 5, -6, -9, 7, -1, 40, -40, -65, 65],
+        "tween": "Linear.None",
+        "duration": 500,
+        "is_absolute": false,
+        "start_delay": 2500,
+        "sprite_index": {
+            "starting_value": 0,
+            "cumulator": 1,
+            "amount": 22
+        }
+    }],
+    "y_sequence": [{
+        "to": "targets",
+        "start_delay": 0,
+        "is_absolute": true,
+        "shift": [-83, -80, -77, -81, -84, -81, -78, -85, -76, -81, -81, -80, -79, -78, -79, -81, -85, -77, -80, -79, -81, -76],
+        "sprite_index": {
+            "starting_value": 0,
+            "cumulator": 1,
+            "amount": 22
+        }
+    },{
+        "to": "targets",
+        "start_delay": 0,
+        "is_absolute": true,
+        "shift": [3, 4, 0, 3, 3, 3, 5, 5],
+        "sprite_index": {
+            "starting_value": 22,
+            "cumulator": 1,
+            "amount": 8
+        }
+    },{
+        "to": "targets",
+        "tween": "Linear.None",
+        "duration": 120,
+        "is_absolute": true,
+        "start_delay": {
+            "starting_value": 850,
+            "cumulator": 50
+        },
+        "sprite_index": {
+            "starting_value": 0,
+            "cumulator": 1,
+            "amount": 22
+        }
+    },{
+        "to": [-12, -15, -16, -17, -25, -28, -32, -35, -38, -41, -45, -47, -48, -49, -49, -50, -51, -52, -59, -80, -65, -89],
+        "tween": "Linear.None",
+        "duration": 500,
+        "is_absolute": false,
+        "start_delay": 2500,
+        "sprite_index": {
+            "starting_value": 0,
+            "cumulator": 1,
+            "amount": 22
+        }
+    }],
+    "set_frame_sequence": [{
+        "frame_name": ["crystals/003", "crystals/004", "crystals/005", "crystals/006", "crystals/007", "crystals/008", "crystals/009", "crystals/010", "crystals/003", "crystals/004", "crystals/005", "crystals/006", "crystals/007", "crystals/008", "crystals/009", "crystals/010", "crystals/003", "crystals/004", "crystals/005", "crystals/006", "crystals/007", "crystals/008"],
+        "sprite_index": {
+            "starting_value": 0,
+            "cumulator": 1,
+            "amount": 22
+        }
+    },{
+        "frame_name": ["crystals/000", "crystals/001", "crystals/002", "crystals/000", "crystals/001", "crystals/002", "crystals/000", "crystals/001"],
+        "sprite_index": {
+            "starting_value": 22,
+            "cumulator": 1,
+            "amount": 8
+        }
+    }],
+    "color_blend_filter_sequence": [{
+        "start_delay": 0,
+        "sprite_index": {
+            "starting_value": 0,
+            "cumulator": 1,
+            "amount": 30
+        },
+        "r": 0.0,
+        "g": 0.0,
+        "b": 1.1
+    },{
+        "start_delay": 1000,
+        "sprite_index": "targets",
+        "r": 0.5,
+        "g": 0.6,
+        "b": 2.3
+    },{
+        "start_delay": 2700,
+        "sprite_index": "targets",
+        "remove": true
+    }],
+    "levels_filter_sequence": [{
+        "start_delay": 0,
+        "sprite_index": {
+            "starting_value": 0,
+            "cumulator": 1,
+            "amount": 30
+        },
+        "min_input": 0.0,
+        "max_input": 1.0,
+        "gamma": 1.0
+    },{
+        "start_delay": 2000,
+        "sprite_index": {
+            "starting_value": 22,
+            "cumulator": 1,
+            "amount": 8
+        },
+        "duration": 300,
+        "min_input": 0.0,
+        "max_input": 0.2,
+        "gamma": 1.0
+    },{
+        "start_delay": 2500,
+        "sprite_index": {
+            "starting_value": 0,
+            "cumulator": 1,
+            "amount": 22
+        },
+        "min_input": 0.0,
+        "max_input": 0.2,
+        "gamma": 1.0
+    },{
+        "start_delay": 1000, 
+        "sprite_index": "targets", 
+        "min_input": 0.1,
+        "max_input": 0.8,
+        "gamma": 0.7
+    },{
+        "start_delay": 2700, 
+        "sprite_index": "targets", 
+        "remove": true
+    }],
+    "blink_sequence": [{
+        "sprite_index": "targets",
+        "start_delay": 2700,
+        "count": 1,
+        "interval": 70
+    }],
+    "play_sequence": [{
+        "animation_key": "damage",
+        "start_delay": 1000,
+        "sprite_index": "targets",
+        "wait": false
+    }],
+    "misc_sequence": [{
+        "start_delay": 2500,
+        "sprite_index": {
+            "starting_value": 0,
+            "cumulator": 1,
+            "amount": 22
+        },
+        "type": "trail_toggle",
+        "value": false
+    }],
+    "particles_sequence": [{
+        "data": {
+            "particle" : {
+                "image": "frost_battle_animation",
+                "lifespan": 1200,
+                "blendMode": "SCREEN",
+                "alpha": 0.7,
+                "vy": -0.3,
+                "animations": {
+                    "particle": {
+                        "frames": { "start": 0, "stop": 8, "prefix": "particles/", "suffix": "", "zeroPad": 3 },
+                        "frameRate": 20,
+                        "loop": true
+                    }
+                }
+            }
+        },
+        "zones": {
+            "circle_zone": {
+                "type": "circle",
+                "radius": 50
+            }
+        },
+        "emitters": [{
+            "x": "targets",
+            "y": "targets",
+            "shift_x": 0,
+            "shift_y": -40,
+            "position": "between",
+            "render_type": "sprite",
+            "show_trails": true,
+            "trails_clear_factor": 0.2,
+            "particles_display_blend_mode": "screen",
+            "total": 2,
+            "repeat": 20,
+            "frequency": 30,
+            "random_in_zone": true,
+            "emitter_data_key": "particle",
+            "zone_key": "circle_zone",
+            "delay": {
+                "start": 2700,
+                "visible": false
+            }
+        }],
+        "emission_finish": 3400
+    }]
+}

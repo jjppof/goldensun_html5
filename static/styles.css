@@ -1,0 +1,130 @@
+body {
+    margin: 0;
+    background-color: black;
+    color: whitesmoke;
+}
+body.electron {
+    overflow: hidden;
+}
+label {
+    font-family: monospace;
+}
+input[type='checkbox'] {
+    vertical-align: middle;
+}
+.warning-banner {
+    background-color: #ec0040;
+    text-align: center;
+    margin: 0;
+    padding: 1rem 0.5rem;
+    color: white;
+    font-weight: bold;
+    font-family: monospace;
+    font-size: larger;
+    text-shadow: 2px 2px 0px #920000;
+    display: none;
+}
+.bottom-warning {
+    position: fixed;
+    bottom: 0px;
+    width: 100%;
+    padding: 1rem 0 !important;
+}
+.intro {
+    padding: 1rem 20% 0rem 20%;
+}
+#game {
+    padding: 1rem 20%;
+}
+body.electron #game {
+    padding: 0 !important;
+}
+canvas {
+    image-rendering: -moz-crisp-edges;
+    image-rendering: -webkit-crisp-edges;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    transform-origin: top left;
+}
+#key_debug {
+    display: none;
+    flex-direction: row;
+    margin: 1rem 20%;
+}
+#key_debug>* {
+    margin-right: 5px;
+}
+#key_debug .pressed img {
+    background-color: #ff7373;
+    border-radius: 10px;
+}
+#key_debug .up img {
+    transform: rotate(180deg);
+}
+#key_debug .right img {
+    transform: rotate(-90deg);
+}
+#key_debug .left img {
+    transform: rotate(90deg);
+}
+#key_debug table, #stats_debug table {
+    width: 320px;
+    table-layout: fixed;
+    font-family: monospace;
+    border-collapse: collapse;
+}
+#key_debug table tr, #stats_debug table tr {
+    border-bottom: 1px solid gray;
+}
+#key_debug table th, #stats_debug table th {
+    text-align: left;
+}
+#key_debug table td, #stats_debug table td {
+    text-align: right;
+}
+#stats_debug {
+    display: none;
+    margin: 1rem 20%;
+}
+#stats_debug label, #stats_debug_select {
+    font-family: monospace;
+    margin-bottom: 1rem;
+}
+.disclaimer {
+    font-size: small;
+    font-style: italic;
+    margin-left: 20%;
+    color: #9b9b9b;
+    font-family: monospace;
+    max-width: 500px;
+}
+#sliders_debug {
+    display: none;
+    margin: 1rem 20%;
+}
+#sliders_debug button {
+    margin-bottom: 10px;
+}
+#sliders_debug .holder {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    margin-bottom: 10px;
+}
+#sliders_debug .holder input {
+    margin-right: 5px;
+}
+#sliders_debug .holder input[type="number"] {
+    max-width: 100px;
+}
+#animation_tester {
+    margin: 1rem 20%;
+    display: none;
+}
+.CodeMirror {
+    position: fixed !important;
+    right: 0;
+    height: 100% !important;
+    top: 0;
+    width: 30%;
+}

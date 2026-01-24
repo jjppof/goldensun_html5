@@ -1,0 +1,108 @@
+{"frames": {
+
+"stair/down_to_up_in/00":
+{
+	"frame": {"x":1,"y":1,"w":19,"h":31},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":7,"y":0,"w":19,"h":31},
+	"sourceSize": {"w":32,"h":32}
+},
+"stair/down_to_up_in/01":
+{
+	"frame": {"x":77,"y":34,"w":16,"h":27},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":8,"y":0,"w":16,"h":27},
+	"sourceSize": {"w":32,"h":32}
+},
+"stair/down_to_up_in/02":
+{
+	"frame": {"x":95,"y":28,"w":16,"h":22},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":9,"y":0,"w":16,"h":22},
+	"sourceSize": {"w":32,"h":32}
+},
+"stair/down_to_up_out/00":
+{
+	"frame": {"x":85,"y":1,"w":14,"h":25},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":6,"y":2,"w":14,"h":25},
+	"sourceSize": {"w":32,"h":32}
+},
+"stair/down_to_up_out/01":
+{
+	"frame": {"x":1,"y":34,"w":17,"h":29},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":5,"y":1,"w":17,"h":29},
+	"sourceSize": {"w":32,"h":32}
+},
+"stair/down_to_up_out/02":
+{
+	"frame": {"x":22,"y":1,"w":19,"h":31},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":6,"y":0,"w":19,"h":31},
+	"sourceSize": {"w":32,"h":32}
+},
+"stair/up_to_down_in/00":
+{
+	"frame": {"x":43,"y":1,"w":19,"h":31},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":6,"y":0,"w":19,"h":31},
+	"sourceSize": {"w":32,"h":32}
+},
+"stair/up_to_down_in/01":
+{
+	"frame": {"x":20,"y":34,"w":17,"h":29},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":7,"y":0,"w":17,"h":29},
+	"sourceSize": {"w":32,"h":32}
+},
+"stair/up_to_down_in/02":
+{
+	"frame": {"x":39,"y":34,"w":17,"h":26},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":3,"y":0,"w":17,"h":26},
+	"sourceSize": {"w":32,"h":32}
+},
+"stair/up_to_down_out/00":
+{
+	"frame": {"x":101,"y":1,"w":15,"h":22},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":12,"y":0,"w":15,"h":22},
+	"sourceSize": {"w":32,"h":32}
+},
+"stair/up_to_down_out/01":
+{
+	"frame": {"x":58,"y":34,"w":17,"h":26},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":10,"y":0,"w":17,"h":26},
+	"sourceSize": {"w":32,"h":32}
+},
+"stair/up_to_down_out/02":
+{
+	"frame": {"x":64,"y":1,"w":19,"h":31},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":7,"y":0,"w":19,"h":31},
+	"sourceSize": {"w":32,"h":32}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "isaac_stair.png",
+	"format": "RGBA8888",
+	"size": {"w":117,"h":64},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:a791d07bd146e0a19779b0dc2e920d94:050ca5298949ebbe95a068e8e14ab1e5:73112e9ad947a1fcd73df71e12462de4$"
+}
+}

@@ -1,0 +1,108 @@
+{"frames": {
+
+"battle/attack_back/00":
+{
+	"frame": {"x":1,"y":42,"w":28,"h":46},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":20,"y":10,"w":28,"h":46},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/attack_front/00":
+{
+	"frame": {"x":31,"y":48,"w":29,"h":44},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":20,"y":12,"w":29,"h":44},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/cast_back/00":
+{
+	"frame": {"x":1,"y":42,"w":28,"h":46},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":20,"y":10,"w":28,"h":46},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/cast_front/00":
+{
+	"frame": {"x":31,"y":48,"w":29,"h":44},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":20,"y":12,"w":29,"h":44},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/damage_back/00":
+{
+	"frame": {"x":1,"y":1,"w":36,"h":39},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":23,"y":13,"w":36,"h":39},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/damage_front/00":
+{
+	"frame": {"x":31,"y":139,"w":31,"h":38},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":24,"y":14,"w":31,"h":38},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/idle_back/00":
+{
+	"frame": {"x":39,"y":1,"w":24,"h":45},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":21,"y":12,"w":24,"h":45},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/idle_back/01":
+{
+	"frame": {"x":31,"y":179,"w":25,"h":45},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":20,"y":10,"w":25,"h":45},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/idle_back/02":
+{
+	"frame": {"x":1,"y":90,"w":28,"h":45},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":20,"y":11,"w":28,"h":45},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/idle_front/00":
+{
+	"frame": {"x":1,"y":182,"w":24,"h":43},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":21,"y":14,"w":24,"h":43},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/idle_front/01":
+{
+	"frame": {"x":1,"y":137,"w":28,"h":43},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":19,"y":12,"w":28,"h":43},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/idle_front/02":
+{
+	"frame": {"x":31,"y":94,"w":29,"h":43},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":20,"y":13,"w":29,"h":43},
+	"sourceSize": {"w":64,"h":64}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "jupiter_djinn_battle.png",
+	"format": "RGBA8888",
+	"size": {"w":64,"h":226},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:2f7ee20f7946b988a572d3066a0554c2:33315d736443290104d56b3b5d07a3ad:b7bcc326f02c77612a909c5002a3477c$"
+}
+}

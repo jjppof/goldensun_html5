@@ -1,0 +1,231 @@
+{
+    "key_name": "whirlwind",
+    "cast_type": "psynergy_cast",
+    "wait_for_cast_animation": false,
+    "sprites": [{
+        "key_name": "whirlwind",
+        "per_target": false,
+        "position": "between",
+        "initial_config": {
+            "blend_mode": "screen",
+            "alpha": 0,
+            "x": "targets",
+            "y": "targets",
+            "anchor": {
+                "x": 0.5,
+                "y": 1.0
+            },
+            "scale": {
+                "x": 2.2,
+                "y": 1.7
+            }
+        }
+    },{
+        "key_name": "sparks_1",
+        "per_target": false,
+        "position": "between",
+        "follow_sprite": 0,
+        "count": 8,
+        "initial_config": {
+            "blend_mode": "screen",
+            "alpha": 0
+        }
+    },{
+        "key_name": "sparks_2",
+        "per_target": false,
+        "position": "between",
+        "follow_sprite": 0,
+        "count": 8,
+        "initial_config": {
+            "blend_mode": "screen",
+            "alpha": 0
+        }
+    }],
+    "x_anchor_sequence": [{
+        "to": [1.25, 1.1, 1.3, 1.99, -0.16, -0.35, 0.95, 0.19, 1.68, 1.5, 1.25, 1.1, 1.3, 1.99, -0.16, -0.35],
+        "sprite_index": {
+            "starting_value": 1,
+            "cumulator": 1,
+            "amount": 16
+        }
+    }],
+    "y_anchor_sequence": [{
+        "to": [3.07, 2.98, 3.09, 3.19, 2.68, 2.2 , 2.21, 2.75, 2.83, 3.27, 3.07, 2.98, 3.09, 3.19, 2.68, 2.2],
+        "sprite_index": {
+            "starting_value": 1,
+            "cumulator": 1,
+            "amount": 16
+        }
+    }],
+    "x_sequence": [{
+        "to": 40,
+        "start_delay": 200,
+        "is_absolute": false,
+        "sprite_index": 0,
+        "tween": "Quadratic.InOut",
+        "duration": 300
+    },{
+        "to": -80,
+        "start_delay": 500,
+        "is_absolute": false,
+        "sprite_index": 0,
+        "tween": "Quadratic.InOut",
+        "duration": 300
+    },{
+        "to": 80,
+        "start_delay": 800,
+        "is_absolute": false,
+        "sprite_index": 0,
+        "tween": "Quadratic.InOut",
+        "duration": 300
+    },{
+        "to": -70,
+        "start_delay": 1100,
+        "is_absolute": false,
+        "sprite_index": 0,
+        "tween": "Quadratic.InOut",
+        "duration": 300
+    },{
+        "to": 130,
+        "start_delay": 1400,
+        "is_absolute": false,
+        "sprite_index": 0,
+        "tween": "Quadratic.InOut",
+        "duration": 500
+    }],
+    "y_sequence": [{
+        "to": 10,
+        "start_delay": 0,
+        "is_absolute": false,
+        "sprite_index": 0
+    },{
+        "to": -10,
+        "start_delay": 500,
+        "is_absolute": false,
+        "sprite_index": "targets",
+        "dont_affect_shadow": true,
+        "duration": 200
+    },{
+        "to": 10,
+        "start_delay": 1600,
+        "is_absolute": false,
+        "sprite_index": "targets",
+        "dont_affect_shadow": true,
+        "duration": 70,
+        "tween": "Bounce.Out"
+    }],
+    "alpha_sequence": [{
+        "start_delay": 200,
+        "to": 0.75,
+        "is_absolute": true,
+        "tween": "Linear.None",
+        "sprite_index": "background",
+        "duration": 400
+    },{
+        "start_delay": 1900,
+        "to": 1.0,
+        "is_absolute": true,
+        "tween": "Linear.None",
+        "sprite_index": "background",
+        "duration": 200
+    },{
+        "start_delay": 250,
+        "to": 0.9,
+        "is_absolute": true,
+        "tween": "Linear.None",
+        "sprite_index": 0,
+        "duration": 200
+    },{
+        "start_delay": {
+            "starting_value": 250,
+            "cumulator": 80,
+            "amount": 16
+        },
+        "to": 0.9,
+        "is_absolute": true,
+        "tween": "Linear.None",
+        "sprite_index": {
+            "starting_value": 1,
+            "cumulator": 1,
+            "amount": 16
+        },
+        "duration": 200
+    },{
+        "start_delay": 1700,
+        "to": 0.0,
+        "is_absolute": true,
+        "tween": "Linear.None",
+        "sprite_index": 0,
+        "duration": 200
+    }],
+    "play_sequence": [{
+        "animation_key": "whirlwind",
+        "start_delay": 0,
+        "sprite_index": 0,
+        "reverse": false,
+        "frame_rate": 20,
+        "repeat": true,
+        "wait": false,
+        "hide_on_complete": false
+    },{
+        "animation_key": "damage",
+        "start_delay": 500,
+        "sprite_index": "targets",
+        "wait": false
+    },{
+        "animation_key": "sparks_1",
+        "start_delay": {
+            "starting_value": 250,
+            "cumulator": 80,
+            "amount": 8
+        },
+        "sprite_index": {
+            "starting_value": 1,
+            "cumulator": 1,
+            "amount": 8
+        },
+        "reverse": false,
+        "frame_rate": 10,
+        "repeat": false,
+        "wait": false,
+        "hide_on_complete": true
+    },{
+        "animation_key": "sparks_2",
+        "start_delay": {
+            "starting_value": 890,
+            "cumulator": 80,
+            "amount": 8
+        },
+        "sprite_index": {
+            "starting_value": 9,
+            "cumulator": 1,
+            "amount": 8
+        },
+        "reverse": false,
+        "frame_rate": 10,
+        "repeat": false,
+        "wait": false,
+        "hide_on_complete": true
+    }],
+    "blink_sequence": [{
+        "sprite_index": "targets",
+        "start_delay": 600,
+        "count": 7,
+        "interval": 70
+    }],
+    "shake_sequence": [{
+        "sprite_index": "background",
+        "start_delay": 350,
+        "interval": 50,
+        "shake_count": 13,
+        "intensity": 1,
+        "direction": "y"
+    },{
+        "sprite_index": "targets",
+        "start_delay": 800,
+        "interval": 30,
+        "shake_count": 8,
+        "intensity": 3,
+        "direction": "y"
+    }]
+}

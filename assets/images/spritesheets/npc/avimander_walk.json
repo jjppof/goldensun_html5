@@ -1,0 +1,20 @@
+{"frames": {
+
+"walk/down/00":
+{
+	"frame": {"x":1,"y":1,"w":42,"h":37},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":11,"y":22,"w":42,"h":37},
+	"sourceSize": {"w":64,"h":64}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "avimander_idle.png",
+	"format": "RGBA8888",
+	"size": {"w":44,"h":39},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:65f5cc17ca8e9c371dc1d7f6a47bc119:c6c505257f00221920d9d162507345df:e8bc16e0c5f4d7bff2eb89d0d8db075a$"
+}
+}

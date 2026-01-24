@@ -1,0 +1,14 @@
+[
+    {
+        "inn_id": "madra_inn",
+        "cost": 6,
+        "messages": {
+            "welcome_message": "Welcome to our inn.",
+            "price_message": "It's ${PRICE} coins for a room. Would you like to stay?",
+            "cancel_message": "Please, come again.",
+            "stay_message": "Please enjoy your stay.",
+            "goodbye_message": "Have a nice trip!",
+            "not_enough_coins": "You don't have enough coins."
+        }
+    }
+]

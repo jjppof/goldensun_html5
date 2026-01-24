@@ -1,0 +1,872 @@
+[
+    {
+        "key_name": "foo",
+        "interaction_pattern": "simple_interaction",
+        "no_shadow": true,
+        "ignore_physics": true
+    },{
+        "key_name": "chest",
+        "anchor_x": 0.4,
+        "anchor_y": 0.6,
+        "initial_action": "chest",
+        "collision_body_bevel": 3,
+        "interaction_pattern": "tik_tak_toe",
+        "no_shadow": true,
+        "body_radius": 7.0,
+        "scale_x": 0.76,
+        "scale_y": 0.8,
+        "actions": {
+            "chest": {
+                "frame_rate": [1,1,6,10,1],
+                "animations": ["closed", "open", "opening", "shining", "empty"],
+                "frames_count": [1,1,2,2,1],
+                "initial_animation": "closed",
+                "spritesheet": {
+                    "image": "assets/images/misc/chest.png",
+                    "json": "assets/images/misc/chest.json"
+                },
+                "loop": [false, false, false, true, false]
+            }
+        }
+    },{
+        "key_name": "summon",
+        "initial_action": "summon",
+        "collision_body_bevel": 2,
+        "no_shadow": true,
+        "anchor_x": 0.38,
+        "anchor_y": 0.7,
+        "body_radius": 7.0,
+        "interaction_pattern": "simple_interaction",
+        "actions": {
+            "summon": {
+                "frame_rate": [[0.4,18,18,18,18], 45, 45, 1, 8],
+                "initial_animation": "stone",
+                "animations": [
+                    "stone",
+                    "stone_continuos",
+                    "stone_shining",
+                    "letters",
+                    "particles"
+                ],
+                "frames_count": [5, 5, 5, 16, 4],
+                "loop": [true, true, true, false, false],
+                "spritesheet": {
+                    "image": "assets/images/misc/summon.png",
+                    "json": "assets/images/misc/summon.json"
+                }
+            }
+        }
+    },{
+        "key_name": "village_1",
+        "anchor_y": 0.8,
+        "initial_action": "idle",
+        "collision_body_bevel": 3,
+        "interaction_pattern": "cross",
+        "body_radius": 7.0,
+        "voice_key": "adult_female_1",
+        "actions": {
+            "idle": {
+                "frame_rate": [[0.2,3,1,1,1]],
+                "animations": ["down", "up", "left", "right"],
+                "frames_count": 6,
+                "initial_animation": "down",
+                "spritesheet": {
+                    "image": "assets/images/spritesheets/npc/village_1_idle.png",
+                    "json": "assets/images/spritesheets/npc/village_1_idle.json"
+                },
+                "loop": true
+            }
+        }
+    },{
+        "key_name": "healer_1",
+        "anchor_y": 0.8,
+        "initial_action": "idle",
+        "collision_body_bevel": 3,
+        "interaction_pattern": "cross",
+        "body_radius": 7.0,
+        "voice_key": "adult_male_2",
+        "actions": {
+            "idle": {
+                "frame_rate": [[0.2,3,1,1.2,1,0.9,0.9]],
+                "animations": ["down", "up", "left", "right"],
+                "frames_count": 7,
+                "initial_animation": "down",
+                "spritesheet": {
+                    "image": "assets/images/spritesheets/npc/healer_idle.png",
+                    "json": "assets/images/spritesheets/npc/healer_idle.json"
+                },
+                "loop": true
+            }
+        }
+    },{
+        "key_name": "briggs",
+        "anchor_y": 0.8,
+        "initial_action": "idle",
+        "collision_body_bevel": 3,
+        "interaction_pattern": "cross",
+        "body_radius": 7.0,
+        "voice_key": "adult_male_1",
+        "actions": {
+            "idle": {
+                "frame_rate": [[0.2,5,0.3,1,1,1]],
+                "animations": ["down", "up", "left", "right", "up_left", "up_right", "down_left", "down_right"],
+                "frames_count": 6,
+                "initial_animation": "down",
+                "spritesheet": {
+                    "image": "assets/images/spritesheets/npc/briggs_idle.png",
+                    "json": "assets/images/spritesheets/npc/briggs_idle.json"
+                }
+            }
+        }
+    },{
+        "key_name": "venus_djinn",
+        "anchor_y": 0.8,
+        "initial_action": "set",
+        "collision_body_bevel": 3,
+        "interaction_pattern": "tik_tak_toe",
+        "body_radius": 7.0,
+        "walk_speed": 60,
+        "actions": {
+            "set": {
+                "frame_rate": 5,
+                "animations": ["down", "up", "left", "right", "up_left", "up_right", "down_left", "down_right"],
+                "frames_count": 4,
+                "initial_animation": "down",
+                "spritesheet": {
+                    "image": "assets/images/spritesheets/djinn/venus_djinn.png",
+                    "json": "assets/images/spritesheets/djinn/venus_djinn.json"
+                }
+            },"standby": {
+                "frame_rate": 2,
+                "animations": ["down", "up", "left", "right", "up_left", "up_right", "down_left", "down_right"],
+                "frames_count": 4,
+                "initial_animation": "down",
+                "spritesheet": {
+                    "image": "assets/images/spritesheets/djinn/venus_djinn.png",
+                    "json": "assets/images/spritesheets/djinn/venus_djinn.json"
+                }
+            }
+        },
+        "action_aliases": {
+            "idle": "standby",
+            "walk": "set"
+        }
+    },{
+        "key_name": "mercury_djinn",
+        "anchor_y": 0.8,
+        "initial_action": "set",
+        "collision_body_bevel": 3,
+        "interaction_pattern": "tik_tak_toe",
+        "body_radius": 7.0,
+        "walk_speed": 60,
+        "actions": {
+            "set": {
+                "frame_rate": [[3,5,4]],
+                "animations": ["down", "up", "left", "right", "up_left", "up_right", "down_left", "down_right"],
+                "frames_count": 3,
+                "initial_animation": "down",
+                "spritesheet": {
+                    "image": "assets/images/spritesheets/djinn/mercury_djinn.png",
+                    "json": "assets/images/spritesheets/djinn/mercury_djinn.json"
+                }
+            },"standby": {
+                "frame_rate": 2,
+                "animations": ["down", "up", "left", "right", "up_left", "up_right", "down_left", "down_right"],
+                "frames_count": 4,
+                "initial_animation": "down",
+                "spritesheet": {
+                    "image": "assets/images/spritesheets/djinn/mercury_djinn.png",
+                    "json": "assets/images/spritesheets/djinn/mercury_djinn.json"
+                }
+            }
+        },
+        "action_aliases": {
+            "idle": "standby",
+            "walk": "set"
+        }
+    },{
+        "key_name": "mars_djinn",
+        "anchor_y": 0.8,
+        "initial_action": "set",
+        "collision_body_bevel": 3,
+        "interaction_pattern": "tik_tak_toe",
+        "body_radius": 7.0,
+        "walk_speed": 60,
+        "actions": {
+            "set": {
+                "frame_rate": 6,
+                "animations": ["down", "up", "left", "right", "up_left", "up_right", "down_left", "down_right"],
+                "frames_count": 4,
+                "initial_animation": "down",
+                "spritesheet": {
+                    "image": "assets/images/spritesheets/djinn/mars_djinn.png",
+                    "json": "assets/images/spritesheets/djinn/mars_djinn.json"
+                }
+            },"standby": {
+                "frame_rate": 2,
+                "animations": ["down", "up", "left", "right", "up_left", "up_right", "down_left", "down_right"],
+                "frames_count": 4,
+                "initial_animation": "down",
+                "spritesheet": {
+                    "image": "assets/images/spritesheets/djinn/mars_djinn.png",
+                    "json": "assets/images/spritesheets/djinn/mars_djinn.json"
+                }
+            }
+        },
+        "action_aliases": {
+            "idle": "standby",
+            "walk": "set"
+        }
+    },{
+        "key_name": "jupiter_djinn",
+        "anchor_y": 0.8,
+        "initial_action": "set",
+        "collision_body_bevel": 3,
+        "interaction_pattern": "tik_tak_toe",
+        "body_radius": 7.0,
+        "walk_speed": 60,
+        "actions": {
+            "set": {
+                "frame_rate": 6,
+                "animations": ["down", "up", "left", "right", "up_left", "up_right", "down_left", "down_right"],
+                "frames_count": 3,
+                "initial_animation": "down",
+                "spritesheet": {
+                    "image": "assets/images/spritesheets/djinn/jupiter_djinn.png",
+                    "json": "assets/images/spritesheets/djinn/jupiter_djinn.json"
+                }
+            },"standby": {
+                "frame_rate": [[3,3,3,1,3,3,3]],
+                "animations": ["down", "up", "left", "right", "up_left", "up_right", "down_left", "down_right"],
+                "frames_count": 7,
+                "initial_animation": "down",
+                "spritesheet": {
+                    "image": "assets/images/spritesheets/djinn/jupiter_djinn.png",
+                    "json": "assets/images/spritesheets/djinn/jupiter_djinn.json"
+                }
+            }
+        },
+        "action_aliases": {
+            "idle": "standby",
+            "walk": "set"
+        }
+    },{
+        "key_name": "alex",
+        "anchor_y": 0.8,
+        "initial_action": "idle",
+        "collision_body_bevel": 3,
+        "interaction_pattern": "tik_tak_toe",
+        "body_radius": 7.0,
+        "walk_speed": 60,
+        "voice_key": "adult_male_1",
+        "actions": {
+            "idle": {
+                "frame_rate": [[0.2,6,0.3,2,0.4,1,1]],
+                "animations": ["down", "up", "left", "right", "up_left", "up_right", "down_left", "down_right"],
+                "frames_count": 7,
+                "initial_animation": "down",
+                "spritesheet": {
+                    "image": "assets/images/spritesheets/npc/alex_idle.png",
+                    "json": "assets/images/spritesheets/npc/alex_idle.json"
+                },
+                "loop": true
+            },
+            "walk": {
+                "frame_rate": 7,
+                "animations": ["down", "up", "left", "right", "up_left", "up_right", "down_left", "down_right"],
+                "frames_count": 6,
+                "initial_animation": "down",
+                "spritesheet": {
+                    "image": "assets/images/spritesheets/npc/alex_walk.png",
+                    "json": "assets/images/spritesheets/npc/alex_walk.json"
+                },
+                "loop": true
+            }
+        }
+    },{
+        "key_name": "towns",
+        "anchor_x": 0.5,
+        "anchor_y": 0.5,
+        "initial_action": "towns",
+        "no_shadow": true,
+        "interaction_pattern": "no_interaction",
+        "ignore_world_map_scale": true,
+        "actions": {
+            "towns": {
+                "frame_rate": 1,
+                "animations": ["town_00", "town_01", "town_02", "cave_00", "tower_00", "forest_00"],
+                "frames_count": 1,
+                "initial_animation": "town_00",
+                "spritesheet": {
+                    "image": "assets/images/spritesheets/places/towns.png",
+                    "json": "assets/images/spritesheets/places/towns.json"
+                }
+            }
+        }
+    },{
+        "key_name": "isaac",
+        "anchor_y": 0.8,
+        "initial_action": "idle",
+        "collision_body_bevel": 3,
+        "interaction_pattern": "tik_tak_toe",
+        "body_radius": 7.0,
+        "walk_speed": 60,
+        "dash_speed": 85,
+        "climb_speed": 50,
+        "actions": {
+            "idle": {
+                "spritesheet": {
+                    "json": "assets/images/spritesheets/main_chars/isaac_idle.json",
+                    "image": "assets/images/spritesheets/main_chars/isaac_idle.png"
+                },
+                "initial_animation": "down",
+                "animations": [
+                    "down",
+                    "up",
+                    "left",
+                    "right",
+                    "down_left",
+                    "down_right",
+                    "up_left",
+                    "up_right"
+                ],
+                "frames_count": 6,
+                "frame_rate": [[0.1,1,1,7,1,1]]
+            },
+            "walk": {
+                "spritesheet": {
+                    "json": "assets/images/spritesheets/main_chars/isaac_walk.json",
+                    "image": "assets/images/spritesheets/main_chars/isaac_walk.png"
+                },
+                "animations": [
+                    "down",
+                    "up",
+                    "left",
+                    "right",
+                    "down_left",
+                    "down_right",
+                    "up_left",
+                    "up_right"
+                ],
+                "frames_count": 6,
+                "frame_rate": 8
+            },
+            "dash": {
+                "spritesheet": {
+                    "json": "assets/images/spritesheets/main_chars/isaac_dash.json",
+                    "image": "assets/images/spritesheets/main_chars/isaac_dash.png"
+                },
+                "animations": [
+                    "down",
+                    "up",
+                    "left",
+                    "right",
+                    "down_left",
+                    "down_right",
+                    "up_left",
+                    "up_right"
+                ],
+                "frames_count": 6,
+                "frame_rate": 11
+            },
+            "climb": {
+                "spritesheet": {
+                    "json": "assets/images/spritesheets/main_chars/isaac_climb.json",
+                    "image": "assets/images/spritesheets/main_chars/isaac_climb.png"
+                },
+                "animations": [
+                    "down",
+                    "up",
+                    "left",
+                    "right",
+                    "down_left",
+                    "down_right",
+                    "up_left",
+                    "up_right",
+                    "end",
+                    "idle",
+                    "turn",
+                    "start"
+                ],
+                "frames_count": [4,4,3,3,4,4,4,4,2,1,4,3],
+                "frame_rate": [7,7,8,8,7,7,7,7,9,1,15,10],
+                "loop": [true,true,true,true,true,true,true,true,false,true,false,false]
+            },
+            "rope": {
+                "spritesheet": {
+                    "json": "assets/images/spritesheets/main_chars/isaac_rope.json",
+                    "image": "assets/images/spritesheets/main_chars/isaac_rope.png"
+                },
+                "animations": [
+                    "climb",
+                    "idle"
+                ],
+                "frames_count": [2,1],
+                "frame_rate": [6,1],
+                "loop": [true,false]
+            },
+            "jump": {
+                "spritesheet": {
+                    "json": "assets/images/spritesheets/main_chars/isaac_jump.json",
+                    "image": "assets/images/spritesheets/main_chars/isaac_jump.png"
+                },
+                "animations": [
+                    "down",
+                    "up",
+                    "left",
+                    "right"
+                ],
+                "frames_count": 2,
+                "frame_rate": 18,
+                "loop": false
+            },
+            "push": {
+                "spritesheet": {
+                    "json": "assets/images/spritesheets/main_chars/isaac_push.json",
+                    "image": "assets/images/spritesheets/main_chars/isaac_push.png"
+                },
+                "animations": [
+                    "down",
+                    "up",
+                    "left",
+                    "right"
+                ],
+                "frames_count": 4,
+                "frame_rate": 4
+            },
+            "cast": {
+                "spritesheet": {
+                    "json": "assets/images/spritesheets/main_chars/isaac_cast.json",
+                    "image": "assets/images/spritesheets/main_chars/isaac_cast.png"
+                },
+                "animations": [
+                    "down",
+                    "up",
+                    "left",
+                    "right",
+                    "down_left",
+                    "down_right",
+                    "up_left",
+                    "up_right"
+                ],
+                "frames_count": 2,
+                "frame_rate": 8,
+                "loop": false
+            },
+            "grant": {
+                "spritesheet": {
+                    "json": "assets/images/spritesheets/main_chars/isaac_grant.json",
+                    "image": "assets/images/spritesheets/main_chars/isaac_grant.png"
+                },
+                "animations": [
+                    "down"
+                ],
+                "frames_count": 1,
+                "frame_rate": 1
+            },
+            "squat": {
+                "spritesheet": {
+                    "json": "assets/images/spritesheets/main_chars/isaac_squat.json",
+                    "image": "assets/images/spritesheets/main_chars/isaac_squat.png"
+                },
+                "animations": [
+                    "down",
+                    "up",
+                    "left",
+                    "right",
+                    "down_left",
+                    "down_right",
+                    "up_left",
+                    "up_right"
+                ],
+                "frames_count": 1,
+                "frame_rate": 1,
+                "loop": false
+            },
+            "yes": {
+                "spritesheet": {
+                    "json": "assets/images/spritesheets/main_chars/isaac_yes.json",
+                    "image": "assets/images/spritesheets/main_chars/isaac_yes.png"
+                },
+                "animations": [
+                    "down",
+                    "up",
+                    "left",
+                    "right",
+                    "down_left",
+                    "down_right",
+                    "up_left",
+                    "up_right"
+                ],
+                "frames_count": 3,
+                "frame_rate": [[8, 8, 4]],
+                "loop": false
+            },
+            "no": {
+                "spritesheet": {
+                    "json": "assets/images/spritesheets/main_chars/isaac_no.json",
+                    "image": "assets/images/spritesheets/main_chars/isaac_no.png"
+                },
+                "animations": [
+                    "down",
+                    "up",
+                    "left",
+                    "right",
+                    "down_left",
+                    "down_right",
+                    "up_left",
+                    "up_right"
+                ],
+                "frames_count": 4,
+                "frame_rate": 8,
+                "loop": false
+            },
+            "ground": {
+                "spritesheet": {
+                    "json": "assets/images/spritesheets/main_chars/isaac_ground.json",
+                    "image": "assets/images/spritesheets/main_chars/isaac_ground.png"
+                },
+                "animations": [
+                    "down"
+                ],
+                "frames_count": 1,
+                "frame_rate": 1,
+                "loop": false
+            },
+            "stair": {
+                "spritesheet": {
+                    "json": "assets/images/spritesheets/main_chars/isaac_stair.json",
+                    "image": "assets/images/spritesheets/main_chars/isaac_stair.png"
+                },
+                "animations": [
+                    "down_to_up_in",
+                    "down_to_up_out",
+                    "up_to_down_in",
+                    "up_to_down_out"
+                ],
+                "frames_count": 3,
+                "frame_rate": 10,
+                "loop": false
+            },
+            "sand": {
+                "spritesheet": {
+                    "json": "assets/images/spritesheets/main_chars/isaac_sand.json",
+                    "image": "assets/images/spritesheets/main_chars/isaac_sand.png"
+                },
+                "animations": [
+                    "down",
+                    "up",
+                    "left",
+                    "right",
+                    "down_left",
+                    "down_right",
+                    "up_left",
+                    "up_right"
+                ],
+                "frames_count": 3,
+                "frame_rate": 11
+            },
+            "sanding": {
+                "spritesheet": {
+                    "json": "assets/images/spritesheets/main_chars/isaac_sanding.json",
+                    "image": "assets/images/spritesheets/main_chars/isaac_sanding.png"
+                },
+                "animations": [
+                    "down"
+                ],
+                "frames_count": 37,
+                "frame_rate": 40,
+                "loop": false
+            },
+            "battle": {
+                "spritesheet": {
+                    "json": "assets/images/spritesheets/battle/isaac_battle.json",
+                    "image": "assets/images/spritesheets/battle/isaac_battle.png"
+                },
+                "animations": [
+                    "attack_back",
+                    "attack_front",
+                    "idle_back",
+                    "idle_front",
+                    "cast_back",
+                    "cast_front",
+                    "cast_init_back",
+                    "cast_init_front",
+                    "damage_back",
+                    "damage_front",
+                    "downed_back",
+                    "downed_front",
+                    "attack_init_back",
+                    "attack_init_front"
+                ],
+                "frames_count": [2,2,4,4,2,2,3,3,1,1,1,1,1,1],
+                "frame_rate": [10,10,3,3,10,10,12,6,1,1,1,1,1,1],
+                "loop": [false,false,true,true,true,true,false,false,false,false,false,false,false,false]
+            }
+        }
+    },{
+        "key_name": "garet",
+        "anchor_y": 0.8,
+        "initial_action": "idle",
+        "collision_body_bevel": 3,
+        "interaction_pattern": "tik_tak_toe",
+        "body_radius": 7.0,
+        "walk_speed": 60,
+        "dash_speed": 85,
+        "climb_speed": 50,
+        "actions": {
+            "idle": {
+                "spritesheet": {
+                    "json": "assets/images/spritesheets/main_chars/garet_idle.json",
+                    "image": "assets/images/spritesheets/main_chars/garet_idle.png"
+                },
+                "initial_animation": "down",
+                "animations": [
+                    "down",
+                    "up",
+                    "left",
+                    "right",
+                    "down_left",
+                    "down_right",
+                    "up_left",
+                    "up_right"
+                ],
+                "frames_count": 4,
+                "frame_rate": [[0.1,3,0.3,1]]
+            },
+            "walk": {
+                "spritesheet": {
+                    "json": "assets/images/spritesheets/main_chars/garet_walk.json",
+                    "image": "assets/images/spritesheets/main_chars/garet_walk.png"
+                },
+                "animations": [
+                    "down",
+                    "up",
+                    "left",
+                    "right",
+                    "down_left",
+                    "down_right",
+                    "up_left",
+                    "up_right"
+                ],
+                "frames_count": 6,
+                "frame_rate": 8
+            },
+            "battle": {
+                "spritesheet": {
+                    "json": "assets/images/spritesheets/battle/garet_battle.json",
+                    "image": "assets/images/spritesheets/battle/garet_battle.png"
+                },
+                "animations": [
+                    "attack_back",
+                    "attack_front",
+                    "idle_back",
+                    "idle_front",
+                    "cast_back",
+                    "cast_front",
+                    "cast_init_back",
+                    "cast_init_front",
+                    "damage_back",
+                    "damage_front",
+                    "downed_back",
+                    "downed_front",
+                    "attack_init_back",
+                    "attack_init_front"
+                ],
+                "frames_count": [2,2,4,4,2,2,3,3,1,1,1,1,1,1],
+                "frame_rate": [10,10,3,3,10,10,12,6,1,1,1,1,1,1],
+                "loop": [false,false,true,true,true,true,false,false,false,false,false,false,false,false]
+            }
+        }
+    },{
+        "key_name": "sheba",
+        "anchor_y": 0.8,
+        "initial_action": "idle",
+        "collision_body_bevel": 3,
+        "interaction_pattern": "tik_tak_toe",
+        "body_radius": 7.0,
+        "walk_speed": 60,
+        "dash_speed": 85,
+        "climb_speed": 50,
+        "actions": {
+            "idle": {
+                "spritesheet": {
+                    "json": "assets/images/spritesheets/main_chars/sheba_idle.json",
+                    "image": "assets/images/spritesheets/main_chars/sheba_idle.png"
+                },
+                "initial_animation": "down",
+                "animations": [
+                    "down",
+                    "up",
+                    "left",
+                    "right",
+                    "down_left",
+                    "down_right",
+                    "up_left",
+                    "up_right"
+                ],
+                "frames_count": 5,
+                "frame_rate":  [[0.1,3,1,1,1]]
+            },
+            "battle": {
+                "spritesheet": {
+                    "json": "assets/images/spritesheets/battle/sheba_battle.json",
+                    "image": "assets/images/spritesheets/battle/sheba_battle.png"
+                },
+                "animations": [
+                    "attack_back",
+                    "attack_front",
+                    "idle_back",
+                    "idle_front",
+                    "cast_back",
+                    "cast_front",
+                    "cast_init_back",
+                    "cast_init_front",
+                    "damage_back",
+                    "damage_front",
+                    "downed_back",
+                    "downed_front",
+                    "attack_init_back",
+                    "attack_init_front"
+                ],
+                "frames_count": [2,2,4,4,2,2,3,3,1,1,1,1,1,1],
+                "frame_rate": [10,10,3,3,10,10,12,6,1,1,1,1,1,1],
+                "loop": [false,false,true,true,true,true,false,false,false,false,false,false,false,false]
+            }
+        }
+    },{
+        "key_name": "piers",
+        "anchor_y": 0.8,
+        "initial_action": "idle",
+        "voice_key": "adult_male_1",
+        "collision_body_bevel": 3,
+        "interaction_pattern": "tik_tak_toe",
+        "body_radius": 7.0,
+        "walk_speed": 60,
+        "dash_speed": 85,
+        "climb_speed": 50,
+        "actions": {
+            "idle": {
+                "spritesheet": {
+                    "json": "assets/images/spritesheets/main_chars/piers_idle.json",
+                    "image": "assets/images/spritesheets/main_chars/piers_idle.png"
+                },
+                "initial_animation": "down",
+                "animations": [
+                    "down",
+                    "up",
+                    "left",
+                    "right",
+                    "down_left",
+                    "down_right",
+                    "up_left",
+                    "up_right"
+                ],
+                "frames_count": 6,
+                "frame_rate":  [[0.1,3,0.3,2,0.5,2]]
+            },
+            "walk": {
+                "spritesheet": {
+                    "json": "assets/images/spritesheets/main_chars/piers_walk.json",
+                    "image": "assets/images/spritesheets/main_chars/piers_walk.png"
+                },
+                "animations": [
+                    "down",
+                    "up",
+                    "left",
+                    "right",
+                    "down_left",
+                    "down_right",
+                    "up_left",
+                    "up_right"
+                ],
+                "frames_count": 6,
+                "frame_rate": 8
+            },
+            "battle": {
+                "spritesheet": {
+                    "json": "assets/images/spritesheets/battle/piers_battle.json",
+                    "image": "assets/images/spritesheets/battle/piers_battle.png"
+                },
+                "animations": [
+                    "attack_back",
+                    "attack_front",
+                    "idle_back",
+                    "idle_front",
+                    "cast_back",
+                    "cast_front",
+                    "cast_init_back",
+                    "cast_init_front",
+                    "damage_back",
+                    "damage_front",
+                    "downed_back",
+                    "downed_front",
+                    "attack_init_back",
+                    "attack_init_front"
+                ],
+                "frames_count": [2,2,4,4,2,2,3,3,1,1,1,1,1,1],
+                "frame_rate": [10,10,3,3,10,10,12,6,1,1,1,1,1,1],
+                "loop": [false,false,true,true,true,true,false,false,false,false,false,false,false,false]
+            }
+        }
+    },{
+        "key_name": "psynergy_stone",
+        "anchor_y": 0.5,
+        "initial_action": "stone",
+        "collision_body_bevel": 3,
+        "interaction_pattern": "tik_tak_toe",
+        "no_shadow": true,
+        "body_radius": 7.0,
+        "scale_x": 1.0,
+        "scale_y": 1.0,
+        "actions": {
+            "stone": {
+                "frame_rate": [[0.5,20,20,20,20,20,20],15],
+                "animations": ["normal", "shatter"],
+                "frames_count": [7,4],
+                "initial_animation": "normal",
+                "spritesheet": {
+                    "image": "assets/images/misc/psynergy_stone.png",
+                    "json": "assets/images/misc/psynergy_stone.json"
+                },
+                "loop": [true, false]
+            }
+        }
+    },{
+        "key_name": "avimander",
+        "anchor_y": 0.8,
+        "initial_action": "idle",
+        "collision_body_bevel": 3,
+        "interaction_pattern": "tik_tak_toe",
+        "body_radius": 7.0,
+        "walk_speed": 250,
+        "dash_speed": 85,
+        "climb_speed": 50,
+        "actions": {
+            "idle": {
+                "spritesheet": {
+                    "json": "assets/images/spritesheets/npc/avimander_idle.json",
+                    "image": "assets/images/spritesheets/npc/avimander_idle.png"
+                },
+                "initial_animation": "down",
+                "animations": [
+                    "down"
+                ],
+                "frames_count": 1,
+                "frame_rate": 1
+            },
+            "walk": {
+                "spritesheet": {
+                    "json": "assets/images/spritesheets/npc/avimander_walk.json",
+                    "image": "assets/images/spritesheets/npc/avimander_idle.png"
+                },
+                "initial_animation": "down",
+                "animations": [
+                    "down"
+                ],
+                "frames_count": 1,
+                "frame_rate": 1
+            }
+        }
+    }
+]

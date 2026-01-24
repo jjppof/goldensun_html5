@@ -1,0 +1,124 @@
+{"frames": {
+
+"battle/attack_back/00":
+{
+	"frame": {"x":37,"y":34,"w":41,"h":31},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":16,"y":32,"w":41,"h":31},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/attack_front/00":
+{
+	"frame": {"x":81,"y":1,"w":39,"h":31},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":17,"y":32,"w":39,"h":31},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/cast_back/00":
+{
+	"frame": {"x":37,"y":34,"w":41,"h":31},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":16,"y":32,"w":41,"h":31},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/cast_front/00":
+{
+	"frame": {"x":81,"y":1,"w":39,"h":31},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":17,"y":32,"w":39,"h":31},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/damage_back/00":
+{
+	"frame": {"x":1,"y":1,"w":34,"h":37},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":22,"y":27,"w":34,"h":37},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/damage_front/00":
+{
+	"frame": {"x":1,"y":40,"w":34,"h":36},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":22,"y":27,"w":34,"h":36},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/idle_back/00":
+{
+	"frame": {"x":37,"y":34,"w":41,"h":31},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":16,"y":32,"w":41,"h":31},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/idle_back/01":
+{
+	"frame": {"x":37,"y":1,"w":42,"h":31},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":17,"y":32,"w":42,"h":31},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/idle_back/02":
+{
+	"frame": {"x":37,"y":67,"w":41,"h":30},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":17,"y":33,"w":41,"h":30},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/idle_back/03":
+{
+	"frame": {"x":37,"y":1,"w":42,"h":31},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":17,"y":32,"w":42,"h":31},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/idle_front/00":
+{
+	"frame": {"x":81,"y":1,"w":39,"h":31},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":17,"y":32,"w":39,"h":31},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/idle_front/01":
+{
+	"frame": {"x":80,"y":34,"w":40,"h":31},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":17,"y":32,"w":40,"h":31},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/idle_front/02":
+{
+	"frame": {"x":80,"y":67,"w":39,"h":30},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":17,"y":33,"w":39,"h":30},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/idle_front/03":
+{
+	"frame": {"x":80,"y":34,"w":40,"h":31},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":17,"y":32,"w":40,"h":31},
+	"sourceSize": {"w":64,"h":64}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "venus_djinn_battle.png",
+	"format": "RGBA8888",
+	"size": {"w":121,"h":98},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:668ae6cad08fbcc0fe28d91010215574:8051ec77ee480609ebe468e53c1aef4e:25bb596d4f486bf9c3f4df2576c5694c$"
+}
+}

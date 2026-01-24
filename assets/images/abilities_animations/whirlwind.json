@@ -1,0 +1,84 @@
+{"frames": {
+
+"sparks_1/000":
+{
+	"frame": {"x":1,"y":67,"w":23,"h":30},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":23,"h":30},
+	"sourceSize": {"w":23,"h":30}
+},
+"sparks_1/001":
+{
+	"frame": {"x":26,"y":67,"w":23,"h":30},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":23,"h":30},
+	"sourceSize": {"w":23,"h":30}
+},
+"sparks_1/002":
+{
+	"frame": {"x":51,"y":67,"w":23,"h":30},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":23,"h":30},
+	"sourceSize": {"w":23,"h":30}
+},
+"sparks_2/000":
+{
+	"frame": {"x":76,"y":67,"w":19,"h":25},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":19,"h":25},
+	"sourceSize": {"w":19,"h":25}
+},
+"sparks_2/001":
+{
+	"frame": {"x":76,"y":94,"w":19,"h":25},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":19,"h":25},
+	"sourceSize": {"w":19,"h":25}
+},
+"sparks_2/002":
+{
+	"frame": {"x":97,"y":67,"w":19,"h":25},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":19,"h":25},
+	"sourceSize": {"w":19,"h":25}
+},
+"whirlwind/000":
+{
+	"frame": {"x":1,"y":1,"w":40,"h":64},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":40,"h":64},
+	"sourceSize": {"w":40,"h":64}
+},
+"whirlwind/001":
+{
+	"frame": {"x":43,"y":1,"w":40,"h":64},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":40,"h":64},
+	"sourceSize": {"w":40,"h":64}
+},
+"whirlwind/002":
+{
+	"frame": {"x":85,"y":1,"w":40,"h":64},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":40,"h":64},
+	"sourceSize": {"w":40,"h":64}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "whirlwind.png",
+	"format": "RGBA8888",
+	"size": {"w":126,"h":120},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:6b495f47c9c59ac2d0146bb6f60617eb:f1a6c9e61b5dc7d32b77574d59937754:0a95a5b894f783a1b9d573063e21a408$"
+}
+}
