@@ -44,7 +44,7 @@
     "ajv": "~8.17.1",
     "ajv-keywords": "~5.1.0",
     "archiver": "~7.0.1",
-    "electron": "~39.2.7",
+    "electron": "~42.11.16",
     "electron-packager": "~16.0.0",
     "husky": "^5",
     "pinst": "~2.1",
